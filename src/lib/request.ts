@@ -19,26 +19,18 @@ export const apiFetch: <T extends any = any>(url: string, alt?: T) => Promise<T 
     try {
         const res = await fetch(apiBaseUrl + url)
 
-        console.log('res =>', res)
-
         if (res.ok)
             return res.json()
     } catch (err) {
-        console.log('fetch error =>', err)
+        console.warn('fetch error =>', err)
     }
 
     try {
         const refetchRes = await fetch(apiProxyUrl + url)
 
-        console.log('refetch =>', refetchRes)
-
-        if (!refetchRes.ok) {
-            throw new Error('Failed to fetch data')
-        }
-
         return refetchRes.json()
     } catch (err) {
-        console.log('refetch error =>', err)
+        console.warn('refetch error =>', err)
     }
 
     return alt || null
