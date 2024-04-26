@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const apiBaseUrl = "https://api.github.com"
 
-// export const apiProxyUrl = "https://api.classygit.me"
-export const apiProxyUrl = "https://worker-classy-node.dnevend.workers.dev"
+export const apiProxyUrl = "https://api.classygit.me"
 
 export const requestUrl = {
     user: (user: string) => `/users/${user}`,
