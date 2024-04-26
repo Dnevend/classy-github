@@ -1,7 +1,14 @@
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 import viteLogo from "/vite.svg";
+import { useNavigate } from "react-router";
 
 function App() {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState<string>();
+
   return (
     <>
       <div>
@@ -13,6 +20,14 @@ function App() {
         </a>
       </div>
       <h1>Github Profile</h1>
+      <div className="flex">
+        <Input
+          placeholder="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <Button onClick={() => navigate(`${username}`)}>Enter</Button>
+      </div>
     </>
   );
 }
