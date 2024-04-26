@@ -3,7 +3,7 @@ export const routes = {
 
     default: '/:user/*',
     defaultGists: '/:user/gists',
-    defaultGistDetail: '/:user/gists/:gistId',
+    defaultGistDetail: '/:user/gist/:gistId',
 
     nesUser: '/nes/:user/*',
     nesGists: '/nes/:user/gists',

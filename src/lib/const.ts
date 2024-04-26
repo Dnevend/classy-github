@@ -1,5 +1,5 @@
-const repoName = 'github-profile'
+const repoName = 'classy-github'
 
-const configFileName = 'profile.config.json'
+const configFileName = 'classy.config.json'
 
-export const getUserConfigFetchUrl = (user: string) => `https://raw.githubusercontent.com/${user}/${repoName}/main/${configFileName}`
+export const getUserConfigFilePath = (user: string) => `https://raw.githubusercontent.com/${user}/${repoName}/main/${configFileName}`

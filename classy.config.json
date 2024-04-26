@@ -1,0 +1,22 @@
+{
+    "theme": "default",
+    "profile": {
+        "repositories": {
+            "visible": true,
+            "showCount": 6
+        }
+    },
+    "gists": {
+        "prefix": "ClassGit"
+    },
+    "links": [
+        {
+            "title": "Repository",
+            "href": "https://github.com/Dnevend/classy-github"
+        },
+        {
+            "title": "Google",
+            "href": "https://google.com"
+        }
+    ]
+}
