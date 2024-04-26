@@ -3,15 +3,19 @@
 import { useState } from "react";
 import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 
+interface Item {
+  id: number;
+  name: string;
+  designation: string;
+  image: string;
+}
+
 export const AnimatedTooltip = ({
   items,
+  onItemClick,
 }: {
-  items: {
-    id: number;
-    name: string;
-    designation: string;
-    image: string;
-  }[];
+  items: Item[];
+  onItemClick?: (item: Item) => void;
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const springConfig = { stiffness: 100, damping: 5 };
@@ -39,6 +43,7 @@ export const AnimatedTooltip = ({
           key={item.name}
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
+          onClick={() => onItemClick?.(item)}
         >
           {hoveredIndex === item.id && (
             <motion.div
