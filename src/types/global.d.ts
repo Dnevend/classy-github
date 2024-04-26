@@ -1,3 +1,5 @@
+export type Theme = default | nes
+
 export type CacheKey =
     | 'user'
     | 'repos'
