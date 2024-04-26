@@ -1,13 +1,48 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { NormalLayout, NesLayout } from "@/layout";
+import { lazy } from "react";
 import App from "@/App";
-import { Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+
+const UserPage = lazy(() => import("@/pages/normal/user"));
+const Gist = lazy(() => import("@/pages/normal/gist"));
+const Gists = lazy(() => import("@/pages/normal/gists"));
+
+const NesUserPage = lazy(() => import("@/pages/nes/user"));
+const NesGist = lazy(() => import("@/pages/nes/gist"));
+const NesGists = lazy(() => import("@/pages/nes/gists"));
+
+const useRouter = () => {
+  return createBrowserRouter([
+    {
+      path: "/",
+      element: <App />,
+      errorElement: <>Error</>,
+    },
+
+    {
+      path: "/:user/*",
+      element: <NormalLayout />,
+      children: [
+        { path: "*", element: <UserPage /> },
+        { path: "gists", element: <Gists /> },
+        { path: "gist/:gistId", element: <Gist /> },
+      ],
+    },
+
+    {
+      path: "/nes/:user/*",
+      element: <NesLayout />,
+      children: [
+        { path: "*", element: <NesUserPage /> },
+        { path: "gists", element: <NesGists /> },
+        { path: "gists/:gistId", element: <NesGist /> },
+      ],
+    },
+  ]);
+};
 
 export const Router = () => {
-  return (
-    <Suspense fallback={<>Loading...</>}>
-      <Routes>
-        <Route index element={<App />} />
-      </Routes>
-    </Suspense>
-  );
+  const router = useRouter();
+
+  return <RouterProvider router={router} />;
 };
