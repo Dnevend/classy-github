@@ -35,7 +35,7 @@ const useRouter = () => {
       children: [
         { path: "*", element: <NesUserPage /> },
         { path: "gists", element: <NesGists /> },
-        { path: "gists/:gistId", element: <NesGist /> },
+        { path: "gist/:gistId", element: <NesGist /> },
       ],
     },
   ]);

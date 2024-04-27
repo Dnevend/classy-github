@@ -1,4 +1,4 @@
-import { apiFetch, requestUrl } from "@/lib/request";
+import { gitApiFetch, requestUrl } from "@/lib/request";
 import { Gist } from "@/types/github";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -9,7 +9,9 @@ export function Gists() {
 
   useEffect(() => {
     const init = async () => {
-      const _gists = await apiFetch<Gist[]>(requestUrl.gists(params.user), []);
+      const _gists = await gitApiFetch<Gist[]>(requestUrl.gists(params.user), {
+        alt: [],
+      });
       setGists(_gists!);
     };
     init();

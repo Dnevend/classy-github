@@ -1,4 +1,4 @@
-import { apiFetch, requestUrl } from "@/lib/request";
+import { gitApiFetch, requestUrl } from "@/lib/request";
 import { Follower } from "@/types/github";
 import { AnimatedTooltip } from "./animated-tooltip";
 import { useEffect, useState } from "react";
@@ -13,9 +13,9 @@ export const Following = ({ username }: { username: string }) => {
 
   useEffect(() => {
     (async () => {
-      const _followings = await apiFetch<Follower[]>(
+      const _followings = await gitApiFetch<Follower[]>(
         requestUrl.following(username),
-        []
+        { alt: [] }
       );
 
       setFollowers(

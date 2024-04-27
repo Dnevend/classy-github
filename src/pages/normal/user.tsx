@@ -1,25 +1,28 @@
-import { apiFetch, requestUrl } from "@/lib/request";
+import { gitApiFetch, requestUrl } from "@/lib/request";
 import { Repo, User } from "@/types/github";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { UserCard, Following, Followers } from "./components";
+import { useClassyConfig, useClassyParams } from "@/lib/hooks";
 
 export function UserPage() {
-  const params = useParams() as { user: string };
-
-  console.log("🐞 => Page => params:", params);
+  const params = useClassyParams();
 
   const [userinfo, setUserinfo] = useState<User | null>(null);
 
   const [repos, setRepos] = useState<Repo[]>([]);
 
+  useClassyConfig(params.user);
+
   useEffect(() => {
     const init = async () => {
-      const _userinfo = await apiFetch<User>(requestUrl.user(params.user));
+      const _userinfo = await gitApiFetch<User>(requestUrl.user(params.user));
       setUserinfo(_userinfo);
 
-      const _repos = await apiFetch<Repo[]>(requestUrl.repos(params.user), []);
+      const _repos = await gitApiFetch<Repo[]>(requestUrl.repos(params.user), {
+        alt: [],
+      });
       setRepos(_repos!);
     };
     init();

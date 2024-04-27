@@ -1,15 +1,16 @@
-import { apiFetch, requestUrl } from "@/lib/request";
+import { useClassyParams } from "@/lib/hooks";
+import { gitApiFetch, requestUrl } from "@/lib/request";
 import { Gist as IGist } from "@/types/github";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
 
 export function Gist() {
-  const params = useParams() as { gistId: string };
+  const params = useClassyParams();
+
   const [gist, setGist] = useState<IGist | null>(null);
 
   useEffect(() => {
     const init = async () => {
-      const _gist = await apiFetch<IGist>(requestUrl.gist(params.gistId));
+      const _gist = await gitApiFetch<IGist>(requestUrl.gist(params.gistId));
       setGist(_gist);
     };
     init();
