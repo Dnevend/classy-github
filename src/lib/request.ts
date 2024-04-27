@@ -37,7 +37,7 @@ const cacheFetchData = (key: string, expire: number, data: any) => {
 }
 
 export const gitApiFetch: GitApiFetch = async (url, options) => {
-    const { expire = 3 * 1000, alt } = options || {}
+    const { expire = 10 * 1000, alt } = options || {}
 
     const cacheData = storeGet(url) as FetchCache
 
