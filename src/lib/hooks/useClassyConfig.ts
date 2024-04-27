@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import defaultConfig from '@/../classy.config.json'
-import { getUserConfigFilePath } from '../const'
+import { githubUrl } from '../const'
 import { useCallback, useEffect, useState } from 'react'
 
 export const useClassyConfig = (user: string) => {
@@ -13,7 +13,7 @@ export const useClassyConfig = (user: string) => {
     const [userConfig, setUserConfig] = useState<Record<string, any> | null>(null)
 
     const fetchUserConfig = useCallback(async () => {
-        const configFilePath = getUserConfigFilePath(user)
+        const configFilePath = githubUrl.userConfigFilepath(user)
 
         try {
             const configRes = await fetch(configFilePath)
