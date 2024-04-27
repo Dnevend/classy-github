@@ -1,7 +1,6 @@
 import { gitApiFetch, requestUrl } from "@/lib/request";
 import { Repo, User } from "@/types/github";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import { UserCard, Following, Followers } from "./components";
 import { useClassyConfig, useClassyParams } from "@/lib/hooks";
@@ -30,12 +29,6 @@ export function UserPage() {
 
   return (
     <div className="p-6">
-      <h1>Default page</h1>
-      <h2>username: {params.user}</h2>
-      <Link to={`/${params.user}/gists`} className="text-indigo-600">
-        Gists
-      </Link>
-
       <div className="flex gap-6 justify-between flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
 
