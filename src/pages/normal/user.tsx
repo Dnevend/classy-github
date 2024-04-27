@@ -1,31 +1,12 @@
-import { gitApiFetch, requestUrl } from "@/lib/request";
-import { Repo, User } from "@/types/github";
-import { useEffect, useState } from "react";
-
 import { UserCard, Following, Followers } from "./components";
-import { useClassyConfig, useClassyParams } from "@/lib/hooks";
+import { useClassyParams, useUserRepos, useUserinfo } from "@/lib/hooks";
 
 export function UserPage() {
-  const params = useClassyParams();
+  const { user } = useClassyParams();
 
-  const [userinfo, setUserinfo] = useState<User | null>(null);
+  const userinfo = useUserinfo(user);
 
-  const [repos, setRepos] = useState<Repo[]>([]);
-
-  useClassyConfig(params.user);
-
-  useEffect(() => {
-    const init = async () => {
-      const _userinfo = await gitApiFetch<User>(requestUrl.user(params.user));
-      setUserinfo(_userinfo);
-
-      const _repos = await gitApiFetch<Repo[]>(requestUrl.repos(params.user), {
-        alt: [],
-      });
-      setRepos(_repos!);
-    };
-    init();
-  }, [params]);
+  const repos = useUserRepos(user);
 
   return (
     <div className="p-6">
@@ -42,11 +23,11 @@ export function UserPage() {
       </div>
 
       <div className="my-2">
-        <Following username={params.user} />
+        <Following username={user} />
       </div>
 
       <div className="my-2">
-        <Followers username={params.user} />
+        <Followers username={user} />
       </div>
 
       <p className="text-wrap break-words">{JSON.stringify(userinfo)}</p>

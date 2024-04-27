@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-constraint */
+import { Follower, Gist, Repo, User } from "@/types/github"
 import { storeGet, storeSet } from "./cache"
 
 export type FetchOptions<T extends any> = {
@@ -36,8 +37,8 @@ const cacheFetchData = (key: string, expire: number, data: any) => {
     } as FetchCache)
 }
 
-export const gitApiFetch: GitApiFetch = async (url, options) => {
-    const { expire = 30 * 1000, alt } = options || {}
+const gitApiFetch: GitApiFetch = async (url, options) => {
+    const { expire = 60 * 1000, alt } = options || {}
 
     const cacheData = storeGet(url) as FetchCache
 
@@ -68,4 +69,18 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     }
 
     return alt || null
+}
+
+export const gitFetchFunc = {
+    userinfo: async (user: string) => await gitApiFetch<User>(requestUrl.user(user)),
+
+    userRepos: async (user: string) => await gitApiFetch<Repo[]>(requestUrl.repos(user), { alt: [] }),
+
+    userGists: async (user: string) => await gitApiFetch<Gist[]>(requestUrl.gists(user), { alt: [] }),
+
+    gist: async (gistId: string) => await gitApiFetch<Gist>(requestUrl.gist(gistId)),
+
+    userFollowers: async (user: string) => await gitApiFetch<Follower[]>(requestUrl.followers(user), { alt: [] }),
+
+    userFollowing: async (user: string) => gitApiFetch<Follower[]>(requestUrl.following(user), { alt: [] })
 }
