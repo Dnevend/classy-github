@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { NormalLayout, NesLayout } from "@/layout";
 import { lazy } from "react";
 import App from "@/App";
+
+import { NormalLayout } from "@/pages/normal/layout";
+import { NesLayout } from "@/pages/nes/layout";
 
 const UserPage = lazy(() => import("@/pages/normal/user"));
 const Gist = lazy(() => import("@/pages/normal/gist"));
