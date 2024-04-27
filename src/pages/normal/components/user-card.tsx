@@ -1,6 +1,7 @@
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Link } from "react-router-dom";
 import { User } from "@/types/github";
+import SvgPlaceholder from "@/assets/placeholder.svg";
 
 export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
   return (
@@ -12,7 +13,7 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
             <h2>{userinfo?.login}</h2>
           </div>
           <img
-            src={userinfo?.avatar_url || ""}
+            src={userinfo?.avatar_url || SvgPlaceholder}
             height="1000"
             width="1000"
             className="h-10 w-10 object-cover rounded-full group-hover/card:shadow-xl"
@@ -34,7 +35,7 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
         </CardItem>
         <CardItem translateZ="100" className="w-full mt-4">
           <img
-            src={userinfo?.avatar_url || ""}
+            src={userinfo?.avatar_url || SvgPlaceholder}
             height="1000"
             width="1000"
             className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
