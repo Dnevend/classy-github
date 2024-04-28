@@ -53,11 +53,11 @@ export function NormalLayout() {
           </Link>
         </div>
 
-        <div className="h-8 bg-gradient-to-b from-white dark:from-slate-900 opacity-75" />
+        <div className="h-8 -mb-8 bg-gradient-to-b from-white dark:from-slate-900 opacity-75" />
       </header>
 
       <Suspense fallback={<Loading />}>
-        <div>
+        <div className="p-6">
           <Outlet />
         </div>
       </Suspense>

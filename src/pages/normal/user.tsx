@@ -38,7 +38,7 @@ export function UserPage() {
   }, [user]);
 
   return (
-    <div className="p-6">
+    <>
       <div className="flex gap-6 justify-between flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
 
@@ -80,7 +80,7 @@ export function UserPage() {
       </div>
 
       <p className="text-wrap break-words">{JSON.stringify(userinfo)}</p>
-    </div>
+    </>
   );
 }
 

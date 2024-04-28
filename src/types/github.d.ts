@@ -59,13 +59,23 @@ export interface Gist {
     node_id: string
     url: string
     forks_url: string
-    files: Record<string, any>
+    files: Record<string, GistFile>
     public: boolean
     created_at: string
     updated_at: string
     description: string
     comments: number
 
+}
+
+export interface GistFile {
+    content: string
+    filename: string
+    language: string
+    raw_url: string
+    size: number,
+    truncated: boolean
+    type: string
 }
 
 export interface Follower {
@@ -76,3 +86,5 @@ export interface Follower {
     gravatar_id: string
     html_url: string
 }
+
+export type Following = Follower
