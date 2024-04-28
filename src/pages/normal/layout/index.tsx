@@ -26,8 +26,13 @@ export function NormalLayout() {
       className="wrapper min-h-screen"
       style={{ gridTemplateRows: "auto 1fr auto" }}
     >
-      <header className="full-bleed sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex justify-between items-center mx-auto h-14 px-8 max-w-screen-xl items-center">
+      <header className="full-bleed sticky top-0 z-50 w-full ">
+        <div
+          className={cn(
+            "flex justify-between items-center mx-auto h-14 px-8 max-w-screen-xl items-center",
+            "border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          )}
+        >
           <nav className="flex items-center gap-4 text-sm lg:gap-6">
             <Link to="/">
               <Logo />
@@ -47,6 +52,8 @@ export function NormalLayout() {
             <h1>{user}</h1>
           </Link>
         </div>
+
+        <div className="h-8 bg-gradient-to-b from-white dark:from-slate-900 opacity-75" />
       </header>
 
       <Suspense fallback={<Loading />}>
