@@ -1,14 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { githubUrl } from "@/lib/const";
-import { useUserGists } from "@/lib/hooks";
+import { gitFetchFunc } from "@/lib/request";
+import { Gist } from "@/types/github";
 import { ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 
 export function Gists() {
   const { user } = useParams() as { user: string };
 
-  const gists = useUserGists(user);
+  const [gists, setGists] = useState<Gist[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const data = await gitFetchFunc.userGists(user);
+      setGists(data!);
+    })();
+  }, [user]);
 
   return (
     <div>

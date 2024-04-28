@@ -1,9 +1,18 @@
-import { useClassyParams, useGist } from "@/lib/hooks";
+import { useClassyParams } from "@/lib/hooks";
+import { gitFetchFunc } from "@/lib/request";
+import { Gist as IGist } from "@/types/github";
+import { useEffect, useState } from "react";
 
 export function Gist() {
   const { gistId } = useClassyParams();
+  const [gist, setGist] = useState<IGist | null>(null);
 
-  const gist = useGist(gistId);
+  useEffect(() => {
+    (async () => {
+      const data = await gitFetchFunc.gist(gistId);
+      setGist(data);
+    })();
+  }, [gistId]);
 
   return (
     <div>
