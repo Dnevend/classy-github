@@ -1,3 +1,5 @@
+export type Lng = 'en' | 'zh'
+
 export type Theme = default | nes
 
 export type CachePrefix =

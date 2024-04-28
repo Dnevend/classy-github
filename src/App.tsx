@@ -11,6 +11,7 @@ import {
 } from "./components/ui/select";
 import Logo from "./components/logo";
 import { Theme } from "./types/global";
+import { useTranslation } from "react-i18next";
 
 const ThemeRoute: Record<Theme, { label: string; route: string }> = {
   default: { label: "Default", route: "/" },
@@ -19,12 +20,29 @@ const ThemeRoute: Record<Theme, { label: string; route: string }> = {
 
 function App() {
   const navigate = useNavigate();
+  const { i18n, t } = useTranslation();
   const [username, setUsername] = useState<string>();
   const [theme, setTheme] = useState<Theme>("default");
 
   return (
     <div className="min-h-screen flex flex-col gap-6 justify-center items-center">
       <Logo />
+
+      {t("welcome")}
+
+      <Select
+        defaultValue={i18n.language}
+        onValueChange={(v) => i18n.changeLanguage(v)}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Lng" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="en">English</SelectItem>
+          <SelectItem value="zh">中文</SelectItem>
+        </SelectContent>
+      </Select>
+
       <div className="flex gap-2">
         <Input
           placeholder="username"
@@ -37,7 +55,7 @@ function App() {
           </SelectTrigger>
           <SelectContent>
             {Object.entries(ThemeRoute).map(([theme, prop]) => (
-              <SelectItem id={theme} value={theme}>
+              <SelectItem key={theme} value={theme}>
                 {prop.label}
               </SelectItem>
             ))}
