@@ -1,14 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { githubUrl } from "@/lib/const";
 import { gitFetchFunc } from "@/lib/request";
 import { cn } from "@/lib/utils";
-import { Gist } from "@/types/github";
-import { ExternalLink } from "lucide-react";
+import { Gist, GistFile } from "@/types/github";
+import { Braces, ExternalLink, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import {
+  a11yLight,
+  a11yDark,
+} from "react-syntax-highlighter/dist/esm/styles/hljs";
+import Markdown from "react-markdown";
+import SvgLoading from "@/components/loading";
+import { Button } from "@/components/ui/button";
 
 const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
   const files = useMemo(
@@ -19,40 +26,54 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
     [gist]
   );
 
-  const [showFile, setShowFile] = useState<string>(files[0].filename);
-
-  const [content, setContent] = useState<Record<string, any>>({});
+  const [preview, setPreview] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentFile, setCurrentFile] = useState<GistFile>(files[0]);
+  const [fileContent, setFileContent] = useState<Record<string, string>>({});
+  const currentFileContent = fileContent[currentFile.filename];
 
   useEffect(() => {
-    const rawUrl = files.find((it) => it.filename === showFile)?.raw_url;
-
-    if (!rawUrl || content[showFile]) return;
+    if (!currentFile?.raw_url || fileContent[currentFile.filename]) return;
 
     const loadFile = async () => {
-      const res = await fetch(rawUrl);
-
-      const _content = await res.text();
-      setContent({ ...content, [showFile]: _content });
+      try {
+        setLoading(true);
+        const res = await fetch(currentFile.raw_url);
+        const _content = await res.text();
+        setFileContent({
+          ...fileContent,
+          [currentFile.filename]: _content,
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadFile();
-  }, [files, showFile, content]);
+  }, [currentFile, fileContent]);
 
   return (
     <div key={gist.id} className="p-2 rounded-md hover:shadow">
       <div className="flex justify-between">
+        <div className="flex gap-2 items-center">
+          <img src={gist.owner.avatar_url} className="h-10 w-10 rounded-full" />
+          <div>
+            <p className="text-gray-800">{gist.owner.login}</p>
+            <p className="text-sm text-gray-500">{gist.created_at}</p>
+          </div>
+        </div>
         <Link to={`/${user}/gist/${gist.id}`} className="hover:text-indigo-600">
           {gist.description}
         </Link>
-
-        <p>{gist.created_at}</p>
       </div>
 
       <ToggleGroup
         type="single"
-        defaultValue={showFile}
-        className="justify-start my-2"
-        onValueChange={(v) => setShowFile(v)}
+        defaultValue={currentFile.filename}
+        className="justify-start my-2 mt-4"
+        onValueChange={(filename) =>
+          setCurrentFile(files.find((it) => it.filename === filename)!)
+        }
       >
         {files.map((it) => (
           <ToggleGroupItem key={it.filename} value={it.filename}>
@@ -61,7 +82,44 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
         ))}
       </ToggleGroup>
 
-      <div dangerouslySetInnerHTML={{ __html: content[showFile] }} />
+      {loading && (
+        <div className="h-24 flex justify-center items-center">
+          <SvgLoading />
+        </div>
+      )}
+
+      {currentFile.language === "Markdown" && (
+        <div className="flex justify-end">
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => setPreview((v) => !v)}
+          >
+            {preview ? <Braces size={16} /> : <Eye size={16} />}
+          </Button>
+        </div>
+      )}
+
+      {currentFile.language === "Markdown" && preview ? (
+        <Markdown
+          components={{
+            code(props) {
+              const { children } = props;
+              return (
+                <SyntaxHighlighter PreTag="div" style={a11yDark}>
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+              );
+            },
+          }}
+        >
+          {currentFileContent}
+        </Markdown>
+      ) : (
+        <SyntaxHighlighter style={a11yLight}>
+          {currentFileContent}
+        </SyntaxHighlighter>
+      )}
     </div>
   );
 };

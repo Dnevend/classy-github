@@ -65,7 +65,7 @@ export interface Gist {
     updated_at: string
     description: string
     comments: number
-
+    owner: User
 }
 
 export interface GistFile {
