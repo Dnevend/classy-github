@@ -41,12 +41,7 @@ const Logo = ({
   };
 
   return (
-    <div
-      className={cn(
-        "shadow rounded",
-        logoVariants({ orientation, size, className })
-      )}
-    >
+    <div className={cn(logoVariants({ orientation, size, className }))}>
       <Github color="#f00" size={iconSize[size!]} {...iconProps} />
       {size !== "icon" && <span className="px-2 font-bold">ClassyGit</span>}
     </div>

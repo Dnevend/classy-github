@@ -59,6 +59,7 @@ export interface Gist {
     node_id: string
     url: string
     forks_url: string
+    html_url: string
     files: Record<string, GistFile>
     public: boolean
     created_at: string

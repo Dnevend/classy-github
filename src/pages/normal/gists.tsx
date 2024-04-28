@@ -3,19 +3,14 @@ import { githubUrl } from "@/lib/const";
 import { gitFetchFunc } from "@/lib/request";
 import { cn } from "@/lib/utils";
 import { Gist, GistFile } from "@/types/github";
-import { Braces, ExternalLink, Eye } from "lucide-react";
+import { ArrowRight, Braces, ExternalLink, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import {
-  a11yLight,
-  a11yDark,
-} from "react-syntax-highlighter/dist/esm/styles/hljs";
-import Markdown from "react-markdown";
 import SvgLoading from "@/components/loading";
 import { Button } from "@/components/ui/button";
+import { CodeRender, MarkdownRender } from "./components";
 
 const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
   const files = useMemo(
@@ -63,7 +58,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
           </div>
         </div>
         <Link to={`/${user}/gist/${gist.id}`} className="hover:text-indigo-600">
-          {gist.description}
+          {gist.description || <ArrowRight />}
         </Link>
       </div>
 
@@ -71,9 +66,10 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
         type="single"
         defaultValue={currentFile.filename}
         className="justify-start my-2 mt-4"
-        onValueChange={(filename) =>
-          setCurrentFile(files.find((it) => it.filename === filename)!)
-        }
+        onValueChange={(filename) => {
+          if (!filename) return;
+          setCurrentFile(files.find((it) => it.filename === filename)!);
+        }}
       >
         {files.map((it) => (
           <ToggleGroupItem key={it.filename} value={it.filename}>
@@ -101,24 +97,9 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
       )}
 
       {currentFile.language === "Markdown" && preview ? (
-        <Markdown
-          components={{
-            code(props) {
-              const { children } = props;
-              return (
-                <SyntaxHighlighter PreTag="div" style={a11yDark}>
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-              );
-            },
-          }}
-        >
-          {currentFileContent}
-        </Markdown>
+        <MarkdownRender>{currentFileContent}</MarkdownRender>
       ) : (
-        <SyntaxHighlighter style={a11yLight}>
-          {currentFileContent}
-        </SyntaxHighlighter>
+        <CodeRender>{currentFileContent}</CodeRender>
       )}
     </div>
   );
@@ -128,6 +109,7 @@ export function Gists() {
   const { user } = useParams() as { user: string };
 
   const [tab, setTab] = useState<string>("all");
+
   const [gists, setGists] = useState<Gist[]>([]);
 
   useEffect(() => {
