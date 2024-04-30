@@ -1,0 +1,19 @@
+{
+  "name": "@classy/service",
+  "description": "github api proxy service",
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "publish": "wrangler publish"
+  },
+  "dependencies": {
+    "create-cloudflare": "^2.21.1",
+    "fake-useragent": "^1.0.1",
+    "hono": "^4.2.9"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240423.0",
+    "@types/fake-useragent": "^1.0.0",
+    "wrangler": "^3.53.0"
+  }
+}

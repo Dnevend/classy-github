@@ -8,7 +8,8 @@
     "build": "pnpm run -r --filter \"./apps/**\" build",
     "dev:classy": "pnpm --filter classy-github dev",
     "dev:nes": "pnpm --filter nes-github dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:service": "pnpm --filter @classy/service dev",
+    "publish:service": "pnpm --filter @classy/service publish"
   },
   "keywords": [],
   "author": "",
