@@ -1,10 +1,7 @@
 import { Follower, User, Repo, Gist } from '@classy/types/github';
 import { storeGet, storeSet } from "../cache"
 import { GitApiFetch, FetchCache } from './index.d'
-
-export const apiBaseUrl = "https://api.github.com"
-
-export const apiProxyUrl = "https://api.classygit.me"
+import { githubUrl } from '@classy/shared';
 
 export const requestUrl = {
     user: (user: string) => `/users/${user}`,
@@ -24,21 +21,36 @@ const cacheFetchData = (key: string, expire: number, data: any) => {
     } as FetchCache)
 }
 
-export const gitApiFetch: GitApiFetch = async (url, options) => {
-    const { expire = 60 * 1000, alt } = options || {}
+const objToQueryParams = (obj: Record<string, any>) => {
+    const queryParams = Object.keys(obj)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+        .join('&');
+    return queryParams
+}
 
-    const cacheData = storeGet(url) as FetchCache
+export const gitApiFetch: GitApiFetch = async (url, options) => {
+    const { expire = 60 * 1000, params = {}, alt } = options || {}
+
+    const queryParams = objToQueryParams(params)
+
+    let fetchUrl = url
+
+    if (queryParams) {
+        fetchUrl = `${url}?${queryParams}`
+    }
+
+    const cacheData = storeGet(fetchUrl) as FetchCache
 
     if (cacheData && new Date().valueOf() < cacheData.expireTime) {
         return cacheData.value || alt
     }
 
     try {
-        const res = await fetch(apiBaseUrl + url)
+        const res = await fetch(githubUrl.api + fetchUrl)
 
         if (res.ok) {
             const data = await res.json()
-            cacheFetchData(url, expire, data)
+            cacheFetchData(fetchUrl, expire, data)
             return data
         }
     } catch (err) {
@@ -46,10 +58,10 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     }
 
     try {
-        const refetchRes = await fetch(apiProxyUrl + url)
+        const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl)
 
         const data = await refetchRes.json()
-        cacheFetchData(url, expire, data)
+        cacheFetchData(fetchUrl, expire, data)
         return data
     } catch (err) {
         console.warn('refetch error =>', err)
@@ -61,13 +73,13 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
 export const gitFetchFunc = {
     userinfo: async (user: string) => await gitApiFetch<User>(requestUrl.user(user)),
 
-    userRepos: async (user: string) => await gitApiFetch<Repo[]>(requestUrl.repos(user), { alt: [] }),
+    userRepos: async (user: string, params?: Record<string, any>) => await gitApiFetch<Repo[]>(requestUrl.repos(user), { alt: [], params }),
 
-    userGists: async (user: string) => await gitApiFetch<Gist[]>(requestUrl.gists(user), { alt: [] }),
+    userGists: async (user: string, params?: Record<string, any>) => await gitApiFetch<Gist[]>(requestUrl.gists(user), { alt: [], params }),
 
     gist: async (gistId: string) => await gitApiFetch<Gist>(requestUrl.gist(gistId)),
 
-    userFollowers: async (user: string) => await gitApiFetch<Follower[]>(requestUrl.followers(user), { alt: [] }),
+    userFollowers: async (user: string, params?: Record<string, any>) => await gitApiFetch<Follower[]>(requestUrl.followers(user), { alt: [], params }),
 
-    userFollowing: async (user: string) => gitApiFetch<Follower[]>(requestUrl.following(user), { alt: [] })
+    userFollowing: async (user: string, params?: Record<string, any>) => gitApiFetch<Follower[]>(requestUrl.following(user), { alt: [], params })
 }

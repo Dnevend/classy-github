@@ -1,17 +1,18 @@
 import { Theme } from "../theme";
 
-const repoName = "classy-github";
+export const repoName = "classy-github";
 
-const configFileName = "classy.config.json";
+export const userConfigFile = "classy.config.json";
 
 export const githubUrl = {
-  gists: `https://gist.github.com/`,
+  api: "https://api.github.com",
 
-  userConfigFilepath: (user: string) =>
-    `https://raw.githubusercontent.com/${user}/${repoName}/main/${configFileName}`,
+  proxyApi: "https://api.classygit.me",
 
-  userGists: (user: string) => `https://gist.github.com/${user}`,
-} as const;
+  gists: `https://gist.github.com`,
+
+  raw: "https://raw.githubusercontent.com",
+};
 
 export const themeDomains: Record<Theme, string> = {
   default: "classygit.me",
@@ -26,7 +27,7 @@ export const themeMap = new Map(
   ])
 );
 
-export const classyDomain = {
+export const classyDomains = {
   ...themeDomains,
   docs: "https://101.classygit.me",
 };

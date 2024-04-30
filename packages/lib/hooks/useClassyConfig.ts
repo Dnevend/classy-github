@@ -1,4 +1,4 @@
-import { defaultConfig, githubUrl } from '@classy/shared'
+import { defaultConfig, githubUrl, repoName, userConfigFile } from '@classy/shared'
 
 import { useCallback, useEffect, useState } from 'react'
 
@@ -12,7 +12,7 @@ export const useClassyConfig = (user: string) => {
     const [userConfig, setUserConfig] = useState<Record<string, any> | null>(null)
 
     const fetchUserConfig = useCallback(async () => {
-        const configFilePath = githubUrl.userConfigFilepath(user)
+        const configFilePath = `${githubUrl.raw}/${user}/${repoName}/main/${userConfigFile}`
 
         try {
             const configRes = await fetch(configFilePath)

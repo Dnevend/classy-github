@@ -140,7 +140,7 @@ export function Gists() {
       </div>
 
       <Link
-        to={githubUrl.userGists(user)}
+        to={`${githubUrl.gists}/${user}`}
         target="_blank"
         className={cn(
           "flex items-center gap-2 w-fit mx-auto mt-8 text-sm text-gray-600 hover:text-black"
