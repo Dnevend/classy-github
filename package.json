@@ -1,8 +1,7 @@
 {
-  "name": "classy-github",
   "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": "Classy access your github profile.",
   "main": "index.js",
   "type": "module",
   "scripts": {

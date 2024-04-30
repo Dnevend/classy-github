@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unnecessary-type-constraint */
 import { useState } from "react";
 import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 import SvgPlaceholder from "@/assets/placeholder.svg";

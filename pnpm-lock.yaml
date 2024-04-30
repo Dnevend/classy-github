@@ -74,9 +74,6 @@ importers:
       class-variance-authority:
         specifier: ^0.7.0
         version: registry.npmmirror.com/class-variance-authority@0.7.0
-      clsx:
-        specifier: ^2.1.1
-        version: registry.npmmirror.com/clsx@2.1.1
       framer-motion:
         specifier: ^11.1.7
         version: registry.npmmirror.com/framer-motion@11.1.7(react-dom@18.3.1)(react@18.3.1)
@@ -98,12 +95,6 @@ importers:
       react-router-dom:
         specifier: ^6.23.0
         version: registry.npmmirror.com/react-router-dom@6.23.0(react-dom@18.3.1)(react@18.3.1)
-      store2:
-        specifier: ^2.14.3
-        version: registry.npmmirror.com/store2@2.14.3
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: registry.npmmirror.com/tailwind-merge@2.3.0
       tailwindcss-animate:
         specifier: ^1.0.7
         version: registry.npmmirror.com/tailwindcss-animate@1.0.7(tailwindcss@3.4.3)
@@ -159,21 +150,9 @@ importers:
       '@radix-ui/react-select':
         specifier: ^2.0.0
         version: registry.npmmirror.com/@radix-ui/react-select@2.0.0(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
-      '@radix-ui/react-separator':
-        specifier: ^1.0.3
-        version: registry.npmmirror.com/@radix-ui/react-separator@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: registry.npmmirror.com/@radix-ui/react-slot@1.0.2(@types/react@18.3.1)(react@18.3.1)
-      '@radix-ui/react-tabs':
-        specifier: ^1.0.4
-        version: registry.npmmirror.com/@radix-ui/react-tabs@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
-      '@radix-ui/react-toggle':
-        specifier: ^1.0.3
-        version: registry.npmmirror.com/@radix-ui/react-toggle@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
-      '@radix-ui/react-toggle-group':
-        specifier: ^1.0.4
-        version: registry.npmmirror.com/@radix-ui/react-toggle-group@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: registry.npmmirror.com/class-variance-authority@0.7.0
@@ -201,12 +180,6 @@ importers:
       react-router-dom:
         specifier: ^6.23.0
         version: registry.npmmirror.com/react-router-dom@6.23.0(react-dom@18.3.1)(react@18.3.1)
-      store2:
-        specifier: ^2.14.3
-        version: registry.npmmirror.com/store2@2.14.3
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: registry.npmmirror.com/tailwind-merge@2.3.0
       tailwindcss-animate:
         specifier: ^1.0.7
         version: registry.npmmirror.com/tailwindcss-animate@1.0.7(tailwindcss@3.4.3)

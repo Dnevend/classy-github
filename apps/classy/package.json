@@ -21,7 +21,6 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
     "framer-motion": "^11.1.7",
     "i18next": "^23.11.2",
     "i18next-browser-languagedetector": "^7.2.1",
@@ -29,8 +28,6 @@
     "lucide-react": "^0.373.0",
     "react-i18next": "^14.1.1",
     "react-router-dom": "^6.23.0",
-    "store2": "^2.14.3",
-    "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
