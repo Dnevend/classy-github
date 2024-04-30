@@ -1,6 +1,9 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+export * from './style'
 
-export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs))
+import { Theme, themeMap } from '@classy/shared'
+
+export const getCurrentTheme = (alt?: Theme) => {
+    const { host } = window.location
+    const theme = themeMap.get(host)
+    return theme || alt || 'default'
 }

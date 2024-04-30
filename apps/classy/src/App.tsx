@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -10,66 +10,48 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import Logo from "./components/logo";
-import { Theme } from "@classy/shared";
-import { useTranslation } from "react-i18next";
-
-const ThemeRoute: Record<Theme, { label: string; route: string }> = {
-  default: { label: "Default", route: "/" },
-  nes: { label: "NES", route: "/nes/" },
-};
+import { Theme, themeDomains } from "@classy/shared";
+import { getCurrentTheme } from "@classy/lib";
 
 function App() {
-  const navigate = useNavigate();
-  const { i18n, t } = useTranslation();
-  const [username, setUsername] = useState<string>();
+  const [username, setUsername] = useState<string>("");
   const [theme, setTheme] = useState<Theme>("default");
 
   return (
     <div className="min-h-screen flex flex-col gap-6 justify-center items-center">
       <Logo />
 
-      {t("welcome")}
-
-      <Select
-        defaultValue={i18n.language}
-        onValueChange={(v: string) => i18n.changeLanguage(v)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Lng" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="en">English</SelectItem>
-          <SelectItem value="zh">中文</SelectItem>
-        </SelectContent>
-      </Select>
-
       <div className="flex gap-2">
         <Input
-          placeholder="username"
+          placeholder="Your github username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <Select
-          defaultValue="default"
+          defaultValue={getCurrentTheme()}
           onValueChange={(v: Theme) => setTheme(v)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Theme" />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(ThemeRoute).map(([theme, prop]) => (
+            {Object.entries(themeDomains).map(([theme]) => (
               <SelectItem key={theme} value={theme}>
-                {prop.label}
+                {theme}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Button
-          onClick={() =>
-            username && navigate(`${ThemeRoute[theme].route}${username}`)
-          }
-        >
-          Enter
+        <Button asChild>
+          <Link
+            to={
+              theme !== getCurrentTheme()
+                ? `https://${themeDomains[theme]}/${username}`
+                : `${username}`
+            }
+          >
+            Enter
+          </Link>
         </Button>
       </div>
     </div>

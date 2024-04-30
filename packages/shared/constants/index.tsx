@@ -14,9 +14,17 @@ export const githubUrl = {
 } as const;
 
 export const themeDomains: Record<Theme, string> = {
-  default: "https://classygit.me",
-  nes: "https://nes.classygit.me",
+  default: "classygit.me",
+  nes: "nes.classygit.me",
+  win95: "win95.classygit.me",
 };
+
+export const themeMap = new Map(
+  Object.entries(themeDomains).map(([theme, domain]) => [
+    domain,
+    theme as Theme,
+  ])
+);
 
 export const classyDomain = {
   ...themeDomains,
