@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
 import { useNavigate } from "react-router-dom";
 import {
   Select,
@@ -43,33 +42,41 @@ function App() {
         </SelectContent>
       </Select>
 
-      <div className="flex gap-2">
-        <Input
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
           placeholder="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="nes-input"
         />
-        <Select
-          defaultValue="default"
-          onValueChange={(v: Theme) => setTheme(v)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Theme" />
-          </SelectTrigger>
-          <SelectContent>
+
+        <div className="nes-select">
+          <select
+            required
+            defaultValue="default"
+            aria-placeholder="theme"
+            onChange={(e) => {
+              setTheme(e.target.value as Theme);
+            }}
+          >
             {Object.entries(ThemeRoute).map(([theme, prop]) => (
-              <SelectItem key={theme} value={theme}>
+              <option key={theme} value={theme}>
                 {prop.label}
-              </SelectItem>
+              </option>
             ))}
-          </SelectContent>
-        </Select>
+          </select>
+        </div>
+
         <Button
           onClick={() =>
             username && navigate(`${ThemeRoute[theme].route}${username}`)
           }
+          asChild
         >
-          Enter
+          <button type="button" className="nes-btn is-primary">
+            Enter
+          </button>
         </Button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Github, LucideProps } from "lucide-react";
+import { LucideProps } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@classy/lib";
 
@@ -27,23 +27,18 @@ export interface LogoProps
   iconProps?: LucideProps;
 }
 
-const Logo = ({
-  className,
-  orientation,
-  size = "default",
-  iconProps,
-}: LogoProps) => {
-  const iconSize: Record<Exclude<typeof size, null | undefined>, string> = {
-    default: "32",
-    sm: "24",
-    lg: "40",
-    icon: "32",
-  };
-
+const Logo = ({ className, orientation, size = "default" }: LogoProps) => {
   return (
     <div className={cn(logoVariants({ orientation, size, className }))}>
-      <Github color="#f00" size={iconSize[size!]} {...iconProps} />
-      {size !== "icon" && <span className="px-2 font-bold">ClassyGit</span>}
+      <i
+        className={cn(
+          "nes-octocat animate",
+          "!w-[42px] !h-[45px] scale-50 -translate-x-1/4 -translate-y-1/4"
+        )}
+      ></i>
+      {size !== "icon" && (
+        <span className="px-2 md-2 font-bold">ClassyGit</span>
+      )}
     </div>
   );
 };
