@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownRender } from "@classy/components";
 
-import { gitFetchFunc, cn } from "@classy/lib";
+import { cn } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
+import { useGistsFetch } from "../hooks/usePageFetch";
+import { Pagination } from "@/components/pagination";
 
 const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
   const files = useMemo(
@@ -109,14 +111,13 @@ export function Gists() {
 
   const [tab, setTab] = useState<string>("all");
 
-  const [gists, setGists] = useState<Gist[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.userGists(user);
-      setGists(data!);
-    })();
-  }, [user]);
+  const {
+    datalist: gists,
+    current,
+    hasNextPage,
+    goNext,
+    goPrev,
+  } = useGistsFetch({ user, pageSize: 5 });
 
   return (
     <div>
@@ -138,6 +139,14 @@ export function Gists() {
           <GistCard key={it.id} user={user} gist={it} />
         ))}
       </div>
+
+      <Pagination
+        canGoNext={hasNextPage}
+        canGoPrev={current > 1}
+        onNext={goNext}
+        onPrev={goPrev}
+        className="mx-auto my-2"
+      />
 
       <Link
         to={`${githubUrl.gists}/${user}`}
