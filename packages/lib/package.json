@@ -1,0 +1,20 @@
+{
+  "name": "@classy/lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@classy/shared": "workspace:^",
+    "@classy/types": "workspace:^",
+    "clsx": "^2.1.1",
+    "react-router-dom": "^6.23.0",
+    "store2": "^2.14.3",
+    "tailwind-merge": "^2.3.0"
+  }
+}
