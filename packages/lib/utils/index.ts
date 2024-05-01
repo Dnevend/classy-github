@@ -14,12 +14,50 @@ export const getCurrentTheme = (alt?: Theme) => {
     return theme || alt || 'default'
 }
 
-// TODO:
-export const getGistShowName = (prefix: string, split: string, type: string, desc: string) => {
+/** 
+ * - Check if the gist description matches the rule
+ * - 检查Gist描述是否符合匹配规则
+ * @returns boolean
+ */
+export const matchGistRule = (gistStr: string, rule: {
+    prefix: string,
+    split: string,
+    type: string
+}) => {
+    const { prefix, split, type } = rule
 
-    const match = desc.includes(`${prefix}${split}${type}`)
+    const ruleStr = `${prefix}${split}${type}`.toLowerCase()
 
-    if (!match) return desc
+    const _gistStr = gistStr.toLowerCase()
 
-    return desc
+    return _gistStr.includes(ruleStr)
+}
+
+/**
+ * - Get the matched string content
+ * - 获取匹配后的字符串内容
+ * @returns string
+ */
+export const getGistMatchStr = (gistStr: string, rule: {
+    prefix: string,
+    split: string,
+    type: string
+}) => {
+    const { prefix, split, type } = rule
+
+    const ruleStr = `${prefix}${split}${type}`.toLowerCase()
+
+    const _gistStr = gistStr.toLowerCase()
+
+    const matchIndex = _gistStr.indexOf(ruleStr)
+
+    // Gist description does not match the rule, return the origin string
+    // Gist描述与规则不匹配，返回原始字符串
+    if (matchIndex === -1) return gistStr
+
+    const matchStr = _gistStr.slice(matchIndex + ruleStr.length, _gistStr.length)
+
+    if (matchStr.startsWith(split)) return matchStr.slice(1, matchStr.length)
+
+    return matchStr
 }

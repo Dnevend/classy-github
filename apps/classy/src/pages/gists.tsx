@@ -9,12 +9,27 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownRender } from "@classy/components";
 
-import { cn, gitFetchFunc, usePageFetch } from "@classy/lib";
+import {
+  cn,
+  getGistMatchStr,
+  gitFetchFunc,
+  matchGistRule,
+  useClassyConfig,
+  usePageFetch,
+} from "@classy/lib";
 import { githubUrl } from "@classy/shared";
 import { Pagination } from "@/components/pagination";
 import Loading from "@/components/loading";
 
-const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
+const GistCard = ({
+  user,
+  gist,
+  title,
+}: {
+  user: string;
+  gist: Gist;
+  title?: string;
+}) => {
   const files = useMemo(
     () =>
       Object.entries(gist.files).map(([, data]) => ({
@@ -60,7 +75,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
           </div>
         </div>
         <Link to={`/${user}/gist/${gist.id}`} className="hover:text-indigo-600">
-          {gist.description || <ArrowRight />}
+          {title || gist.description || <ArrowRight />}
         </Link>
       </div>
 
@@ -158,6 +173,8 @@ const AllGists = ({ user }: { user: string }) => {
 };
 
 const FilterGists = ({ user, type }: { user: string; type: string }) => {
+  const classyConfig = useClassyConfig(user);
+
   const fetchPageData = useCallback(
     (params?: Record<string, any>) => {
       return gitFetchFunc.userGists(user, params);
@@ -169,7 +186,11 @@ const FilterGists = ({ user, type }: { user: string; type: string }) => {
     fetchFunc: fetchPageData,
   });
 
-  const gists = allDataList.filter((it) => it.description.includes(type));
+  const { prefix, split } = classyConfig.gists;
+
+  const gists = allDataList.filter((it) =>
+    matchGistRule(it.description, { prefix, split, type })
+  );
 
   return (
     <>
@@ -181,7 +202,12 @@ const FilterGists = ({ user, type }: { user: string; type: string }) => {
 
       <div className="flex flex-col gap-2">
         {gists.map((it) => (
-          <GistCard key={it.id} user={user} gist={it} />
+          <GistCard
+            key={it.id}
+            user={user}
+            gist={it}
+            title={getGistMatchStr(it.description, { prefix, split, type })}
+          />
         ))}
       </div>
 

@@ -12,7 +12,13 @@ type ClassyConfig = {
     gists: {
         prefix: `Classy` | string,
         split: string,
-        nav: string[]
+        nav: {
+            key: string,
+            desc?: string
+        }[]
     },
-    links?: { title: string, href: string }[]
+    links?: {
+        title: string,
+        href: string
+    }[]
 }

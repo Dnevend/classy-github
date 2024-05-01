@@ -11,7 +11,9 @@
         "prefix": "Classy",
         "split": ".",
         "nav": [
-            "blog"
+            {
+                "key": "Blog"
+            }
         ]
     },
     "links": [
