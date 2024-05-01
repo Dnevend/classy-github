@@ -1,4 +1,5 @@
 import { ThemeSelect } from "@/components/theme-select";
+import { redirectTheme } from "@classy/lib";
 import { repoUrl } from "@classy/shared";
 import { ClassyConfig } from "@classy/types";
 import { Link } from "react-router-dom";
@@ -39,7 +40,10 @@ export const Footer = ({ links = [] }: { links: ClassyConfig["links"] }) => {
           .
         </div>
         <div className="mt-6 sm:mt-0 flex items-center gap-2 border rounded-full pr-4 hover:shadow">
-          <ThemeSelect className="border-none rounded-full w-[100px]" />
+          <ThemeSelect
+            className="border-none rounded-full w-[100px]"
+            onSelectChange={(theme) => redirectTheme(theme)}
+          />
           <span className="text-sm italic">Theme</span>
         </div>
       </div>

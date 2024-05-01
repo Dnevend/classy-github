@@ -4,7 +4,8 @@
         "repos": {
             "visible": true,
             "showCount": 9
-        }
+        },
+        "cover": ""
     },
     "gists": {
         "prefix": "Classy",
@@ -15,12 +16,16 @@
     },
     "links": [
         {
-            "title": "Repository",
+            "title": "Github",
             "href": "https://github.com/Dnevend/classy-github"
         },
         {
             "title": "Twitter",
             "href": "https://twitter.com/dnevend_09"
+        },
+        {
+            "title": "Docs",
+            "href": "https://101.classygit.me"
         }
     ]
 }

@@ -6,7 +6,8 @@ type ClassyConfig = {
         repos: {
             visible: boolean,
             showCount: number
-        }
+        },
+        cover: string
     },
     gists: {
         prefix: `Classy` | string,

@@ -126,12 +126,6 @@ const AllGists = ({ user }: { user: string }) => {
 
   return (
     <>
-      {gists.length === 0 && fetching && (
-        <div className="w-full h-24 flex justify-center items-center">
-          <Loading />
-        </div>
-      )}
-
       <div className="flex flex-col gap-2">
         <Pagination
           canGoNext={hasMore}
@@ -140,6 +134,13 @@ const AllGists = ({ user }: { user: string }) => {
           onPrev={goPrev}
           className="w-full flex justify-between my-2"
         />
+
+        {gists.length === 0 && fetching && (
+          <div className="w-full h-24 flex justify-center items-center">
+            <Loading />
+          </div>
+        )}
+
         {gists.map((it) => (
           <GistCard key={it.id} user={user} gist={it} />
         ))}
