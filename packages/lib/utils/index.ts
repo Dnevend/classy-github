@@ -19,11 +19,13 @@ export const getCurrentTheme = (alt?: Theme) => {
  * - 检查Gist描述是否符合匹配规则
  * @returns boolean
  */
-export const matchGistRule = (gistStr: string, rule: {
+export const matchGistRule = (gistStr: string | undefined, rule: {
     prefix: string,
     split: string,
     type: string
 }) => {
+    if (!gistStr) return false
+
     const { prefix, split, type } = rule
 
     const ruleStr = `${prefix}${split}${type}`.toLowerCase()
@@ -38,11 +40,13 @@ export const matchGistRule = (gistStr: string, rule: {
  * - 获取匹配后的字符串内容
  * @returns string
  */
-export const getGistMatchStr = (gistStr: string, rule: {
+export const getGistMatchStr = (gistStr: string | undefined, rule: {
     prefix: string,
     split: string,
     type: string
 }) => {
+    if (!gistStr) return ''
+
     const { prefix, split, type } = rule
 
     const ruleStr = `${prefix}${split}${type}`.toLowerCase()

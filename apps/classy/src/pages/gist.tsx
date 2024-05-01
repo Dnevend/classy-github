@@ -1,16 +1,25 @@
-import { gitFetchFunc, useClassyParams, cn } from "@classy/lib";
+import {
+  gitFetchFunc,
+  useClassyParams,
+  cn,
+  useClassyConfig,
+  matchGistRule,
+  getGistMatchStr,
+} from "@classy/lib";
 
 import { Gist as IGist } from "@classy/types/github";
 import { ExternalLink } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import SvgPlaceholder from "@/assets/placeholder.svg";
 import Loading from "@/components/loading";
 import { CodeRender, MarkdownRender } from "@classy/components";
 
 export function Gist() {
-  const { gistId } = useClassyParams();
+  const [params] = useSearchParams();
+  const { user, gistId } = useClassyParams();
+  const classyConfig = useClassyConfig(user);
 
   const [gist, setGist] = useState<IGist | null>(null);
   const [fileContent, setFileContent] = useState<Record<string, string>>({});
@@ -38,19 +47,39 @@ export function Gist() {
     })();
   }, [gistId]);
 
+  const gistType = params.get("type");
+  const { prefix, split } = classyConfig.gists;
+
+  const isGistMatchRule =
+    gistType &&
+    matchGistRule(gist?.description, { prefix, split, type: gistType });
+
+  const getTitle = () => {
+    if (isGistMatchRule) {
+      return getGistMatchStr(gist?.description, {
+        prefix,
+        split,
+        type: gistType,
+      });
+    }
+    return gist?.description || `${gist?.owner.login}'s Gist`;
+  };
+
   return (
     <div>
       <img
         src={gist?.owner.avatar_url || SvgPlaceholder}
         className="h-16 w-16 mx-auto rounded-full"
       />
-      <h1 className="text-center font-bold">
-        {gist?.description || `${gist?.owner.login}'s Gist`}
-      </h1>
-      <p className="text-lg text-center">{gist?.owner.login}</p>
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 text-xs text-gray-300">
+      <h1 className="mt-2 text-center font-bold">{getTitle()}</h1>
+      {isGistMatchRule && (
+        <p className="mt-1 text-sm text-center text-gray-300">
+          {gist?.description}
+        </p>
+      )}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-1 text-xs text-gray-300">
+        <span>{gist?.owner.login}</span>
         <span>{gist?.created_at}</span>
-        <span>id: {gistId}</span>
       </div>
 
       <div className="flex flex-col gap-4 my-6">

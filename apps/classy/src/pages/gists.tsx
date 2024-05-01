@@ -25,10 +25,12 @@ const GistCard = ({
   user,
   gist,
   title,
+  type,
 }: {
   user: string;
   gist: Gist;
   title?: string;
+  type: string;
 }) => {
   const files = useMemo(
     () =>
@@ -74,7 +76,10 @@ const GistCard = ({
             <p className="text-sm text-gray-500">{gist.created_at}</p>
           </div>
         </div>
-        <Link to={`/${user}/gist/${gist.id}`} className="hover:text-indigo-600">
+        <Link
+          to={`/${user}/gist/${gist.id}?type=${type}`}
+          className="hover:text-indigo-600"
+        >
           {title || gist.description || <ArrowRight />}
         </Link>
       </div>
@@ -157,7 +162,7 @@ const AllGists = ({ user }: { user: string }) => {
         )}
 
         {gists.map((it) => (
-          <GistCard key={it.id} user={user} gist={it} />
+          <GistCard key={it.id} user={user} gist={it} type="all" />
         ))}
       </div>
 
@@ -207,6 +212,7 @@ const FilterGists = ({ user, type }: { user: string; type: string }) => {
             user={user}
             gist={it}
             title={getGistMatchStr(it.description, { prefix, split, type })}
+            type={type}
           />
         ))}
       </div>
