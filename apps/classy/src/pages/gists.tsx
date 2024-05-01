@@ -1,16 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Gist, GistFile } from "@classy/types/github";
 import { ArrowRight, Braces, ExternalLink, Eye } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownRender } from "@classy/components";
 
-import { cn } from "@classy/lib";
+import { cn, gitFetchFunc, usePageFetch } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
-import { useGistsFetch } from "../hooks/usePageFetch";
 import { Pagination } from "@/components/pagination";
 
 const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
@@ -111,13 +111,20 @@ export function Gists() {
 
   const [tab, setTab] = useState<string>("all");
 
+  const fetchPageData = useCallback(
+    (params?: Record<string, any>) => {
+      return gitFetchFunc.userGists(user, params);
+    },
+    [user]
+  );
+
   const {
     datalist: gists,
     current,
-    hasNextPage,
+    hasMore,
     goNext,
     goPrev,
-  } = useGistsFetch({ user, pageSize: 5 });
+  } = usePageFetch({ pageSize: 5, fetchFunc: fetchPageData });
 
   return (
     <div>
@@ -141,7 +148,7 @@ export function Gists() {
       </div>
 
       <Pagination
-        canGoNext={hasNextPage}
+        canGoNext={hasMore}
         canGoPrev={current > 1}
         onNext={goNext}
         onPrev={goPrev}

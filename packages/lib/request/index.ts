@@ -67,7 +67,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
         console.warn('refetch error =>', err)
     }
 
-    return alt || null
+    return alt
 }
 
 export const gitFetchFunc = {
