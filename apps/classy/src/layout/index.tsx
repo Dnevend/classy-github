@@ -1,5 +1,5 @@
 import Logo from "@/components/logo";
-import { useClassyParams, cn } from "@classy/lib";
+import { useClassyParams, cn, useClassyConfig } from "@classy/lib";
 import { PropsWithChildren, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -19,6 +19,10 @@ function NavLink({ to, children }: PropsWithChildren<{ to: LinkProps["to"] }>) {
 
 export function Layout() {
   const { user } = useClassyParams();
+
+  const classyConfig = useClassyConfig(user);
+
+  const { links } = classyConfig;
 
   return (
     <main
@@ -61,7 +65,17 @@ export function Layout() {
         </div>
       </Suspense>
 
-      <footer className="p-2">footer</footer>
+      <footer className="p-2">
+        <ul>
+          {links.map((it) => (
+            <li>
+              <Link to={it.href} target="_blank">
+                {it.title || it.href}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </footer>
     </main>
   );
 }

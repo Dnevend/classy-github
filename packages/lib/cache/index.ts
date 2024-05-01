@@ -2,8 +2,9 @@ import store from 'store2'
 
 export type CachePrefix =
     | 'config'
+    | 'fetch'
 
-export type CacheKey = `${CachePrefix}${string}` | string
+export type CacheKey = `${CachePrefix}_${string}`
 
 const prefix = (key: CacheKey) => `classy_${key}`;
 

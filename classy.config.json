@@ -1,14 +1,17 @@
 {
     "theme": "default",
     "profile": {
-        "repositories": {
+        "repos": {
             "visible": true,
             "showCount": 6
         }
     },
     "gists": {
         "prefix": "Classy",
-        "split": "."
+        "split": ".",
+        "nav": [
+            "blog"
+        ]
     },
     "links": [
         {
@@ -16,8 +19,8 @@
             "href": "https://github.com/Dnevend/classy-github"
         },
         {
-            "title": "Google",
-            "href": "https://google.com"
+            "title": "Twitter",
+            "href": "https://twitter.com/dnevend_09"
         }
     ]
 }

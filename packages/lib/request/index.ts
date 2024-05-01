@@ -1,5 +1,5 @@
 import { Follower, User, Repo, Gist } from '@classy/types/github';
-import { storeGet, storeSet } from "../cache"
+import { CacheKey, storeGet, storeSet } from "../cache"
 import { GitApiFetch, FetchCache } from './index.d'
 import { githubUrl } from '@classy/shared';
 
@@ -14,7 +14,7 @@ export const requestUrl = {
     events: (user: string) => `/users/${user}/events`
 }
 
-const cacheFetchData = (key: string, expire: number, data: any) => {
+const cacheFetchData = (key: CacheKey, expire: number, data: any) => {
     storeSet(key, {
         expireTime: new Date().valueOf() + expire,
         value: data
@@ -39,7 +39,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
         fetchUrl = `${url}?${queryParams}`
     }
 
-    const cacheData = storeGet(fetchUrl) as FetchCache
+    const cacheData = storeGet(`fetch_${fetchUrl}`) as FetchCache
 
     if (cacheData && new Date().valueOf() < cacheData.expireTime) {
         return cacheData.value || alt
@@ -50,7 +50,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
 
         if (res.ok) {
             const data = await res.json()
-            cacheFetchData(fetchUrl, expire, data)
+            cacheFetchData(`fetch_${fetchUrl}`, expire, data)
             return data
         }
     } catch (err) {
@@ -61,7 +61,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
         const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl)
 
         const data = await refetchRes.json()
-        cacheFetchData(fetchUrl, expire, data)
+        cacheFetchData(`fetch_${fetchUrl}`, expire, data)
         return data
     } catch (err) {
         console.warn('refetch error =>', err)
