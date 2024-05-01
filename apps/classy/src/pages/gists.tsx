@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Gist, GistFile } from "@classy/types/github";
 import { ArrowRight, Braces, ExternalLink, Eye } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -12,6 +12,7 @@ import { CodeRender, MarkdownRender } from "@classy/components";
 import { cn, gitFetchFunc, usePageFetch } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
 import { Pagination } from "@/components/pagination";
+import Loading from "@/components/loading";
 
 const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
   const files = useMemo(
@@ -106,11 +107,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
   );
 };
 
-export function Gists() {
-  const { user } = useParams() as { user: string };
-
-  const [tab, setTab] = useState<string>("all");
-
+const AllGists = ({ user }: { user: string }) => {
   const fetchPageData = useCallback(
     (params?: Record<string, any>) => {
       return gitFetchFunc.userGists(user, params);
@@ -120,6 +117,7 @@ export function Gists() {
 
   const {
     datalist: gists,
+    fetching,
     current,
     hasMore,
     goNext,
@@ -127,19 +125,12 @@ export function Gists() {
   } = usePageFetch({ pageSize: 5, fetchFunc: fetchPageData });
 
   return (
-    <div>
-      <h1 className="text-xl text-center">{`${user}'s Gists`}</h1>
-
-      <Tabs
-        defaultValue={tab}
-        className="w-[300px] mx-auto my-6"
-        onValueChange={(v) => setTab(v)}
-      >
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="blog">Blog</TabsTrigger>
-        </TabsList>
-      </Tabs>
+    <>
+      {gists.length === 0 && fetching && (
+        <div className="w-full h-24 flex justify-center items-center">
+          <Loading />
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {gists.map((it) => (
@@ -154,6 +145,71 @@ export function Gists() {
         onPrev={goPrev}
         className="mx-auto my-2"
       />
+    </>
+  );
+};
+
+const FilterGists = ({ user, type }: { user: string; type: string }) => {
+  const fetchPageData = useCallback(
+    (params?: Record<string, any>) => {
+      return gitFetchFunc.userGists(user, params);
+    },
+    [user]
+  );
+
+  const { allDataList, fetching, hasMore, loadMore } = usePageFetch({
+    fetchFunc: fetchPageData,
+  });
+
+  const gists = allDataList.filter((it) => it.description.includes(type));
+
+  return (
+    <>
+      {gists.length === 0 && fetching && (
+        <div className="w-full h-24 flex justify-center items-center">
+          <Loading />
+        </div>
+      )}
+
+      <div className="flex flex-col gap-2">
+        {gists.map((it) => (
+          <GistCard key={it.id} user={user} gist={it} />
+        ))}
+      </div>
+
+      <div className="text-center">
+        <Button
+          variant="ghost"
+          onClick={loadMore}
+          disabled={!hasMore}
+          className="my-2"
+        >
+          {hasMore ? "Load more" : "No more"}
+        </Button>
+      </div>
+    </>
+  );
+};
+
+export function Gists() {
+  const { user } = useParams() as { user: string };
+
+  return (
+    <div>
+      <h1 className="text-xl text-center">{`${user}'s Gists`}</h1>
+
+      <Tabs className="mx-auto my-6" defaultValue="all">
+        <TabsList className="w-[300px] grid grid-cols-2 mx-auto">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="blog">Blog</TabsTrigger>
+        </TabsList>
+        <TabsContent value="all">
+          <AllGists user={user} />
+        </TabsContent>
+        <TabsContent value="blog">
+          <FilterGists user={user} type="blog" />
+        </TabsContent>
+      </Tabs>
 
       <Link
         to={`${githubUrl.gists}/${user}`}

@@ -31,6 +31,10 @@ export const usePageFetch = <T extends any = any>({
         setCurrent(p => p - 1)
     }
 
+    const loadMore = () => {
+        setCurrent(p => p + 2)
+    }
+
     useEffect(() => {
         const fetch = async () => {
             try {
@@ -49,5 +53,5 @@ export const usePageFetch = <T extends any = any>({
         fetch()
     }, [current, pageSize, fetchFunc])
 
-    return { current, goNext, goPrev, fetching, hasMore, datalist, allDataList }
+    return { current, goNext, goPrev, fetching, hasMore, loadMore, datalist, allDataList }
 }
