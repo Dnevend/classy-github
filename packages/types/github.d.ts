@@ -52,6 +52,8 @@ export interface Repo {
     is_template: boolean
     homepage: string
     created_at: string
+    updated_at: string
+    pushed_at: string
 }
 
 export interface Gist {

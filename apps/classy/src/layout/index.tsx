@@ -1,28 +1,38 @@
 import Logo from "@/components/logo";
-import { useClassyParams, cn, useClassyConfig } from "@classy/lib";
-import { PropsWithChildren, Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import {
+  useClassyParams,
+  cn,
+  useClassyConfig,
+  gitFetchFunc,
+} from "@classy/lib";
+import { Suspense, useEffect, useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 
-import { Link, LinkProps, useMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Loading } from "./loading";
 import { ExternalLink } from "lucide-react";
-
-function NavLink({ to, children }: PropsWithChildren<{ to: LinkProps["to"] }>) {
-  const match = useMatch(typeof to === "string" ? to : to.pathname!);
-
-  return (
-    <Link to={to} className={cn({ "font-bold": match })}>
-      {children}
-    </Link>
-  );
-}
+import { User } from "@classy/types";
+import { Footer } from "./footer";
 
 export function Layout() {
   const { user } = useClassyParams();
 
+  const [userinfo, setUserinfo] = useState<User>();
+  console.log("🐞 => Layout => userinfo:", userinfo);
   const classyConfig = useClassyConfig(user);
 
+  useEffect(() => {
+    (async () => {
+      const data = await gitFetchFunc.userinfo(user);
+      setUserinfo(data);
+    })();
+  }, [user]);
+
   const { links } = classyConfig;
+
+  const blogUrl = userinfo?.blog.startsWith("http")
+    ? userinfo.blog
+    : `http://${userinfo?.blog}`;
 
   return (
     <main
@@ -41,18 +51,29 @@ export function Layout() {
               <Logo />
             </Link>
 
-            <NavLink to={`/${user}/gists`}>Gists</NavLink>
+            <NavLink
+              to={`/${user}/gists`}
+              className={({ isActive }) =>
+                isActive ? "font-bold" : "hover:text-blue-500"
+              }
+            >
+              Gists
+            </NavLink>
 
-            <Link to={""} target="_blank">
-              <p className="flex items-center gap-1">
-                <span>Website</span>
-                <ExternalLink size={12} />
-              </p>
-            </Link>
+            {userinfo?.blog && (
+              <Link to={blogUrl} target="_blank">
+                <p className="flex items-center gap-1 hover:text-blue-500">
+                  <span>Website</span>
+                  <ExternalLink size={12} />
+                </p>
+              </Link>
+            )}
           </nav>
 
           <Link to={`/${user}`}>
-            <h1>{user}</h1>
+            <span className="text-lg">
+              {userinfo?.name || userinfo?.login || user}
+            </span>
           </Link>
         </div>
 
@@ -65,17 +86,7 @@ export function Layout() {
         </div>
       </Suspense>
 
-      <footer className="p-2">
-        <ul>
-          {links.map((it) => (
-            <li>
-              <Link to={it.href} target="_blank">
-                {it.title || it.href}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </footer>
+      <Footer links={links} />
     </main>
   );
 }

@@ -13,5 +13,5 @@ type ClassyConfig = {
         split: string,
         nav: string[]
     },
-    links: { title: string, href: string }[]
+    links?: { title: string, href: string }[]
 }

@@ -133,6 +133,13 @@ const AllGists = ({ user }: { user: string }) => {
       )}
 
       <div className="flex flex-col gap-2">
+        <Pagination
+          canGoNext={hasMore}
+          canGoPrev={current > 1}
+          onNext={goNext}
+          onPrev={goPrev}
+          className="w-full flex justify-between my-2"
+        />
         {gists.map((it) => (
           <GistCard key={it.id} user={user} gist={it} />
         ))}

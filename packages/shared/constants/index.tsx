@@ -2,6 +2,8 @@ import { Theme } from "../theme";
 
 export const repoName = "classy-github";
 
+export const repoUrl = "https://github.com/dnevend/classy-github";
+
 export const userConfigFile = "classy.config.json";
 
 export const githubUrl = {
