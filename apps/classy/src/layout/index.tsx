@@ -35,7 +35,7 @@ export function Layout() {
 
   return (
     <div
-      className={cn("wrapper min-h-screen")}
+      className={"wrapper min-h-screen dark:bg-black"}
       style={{ gridTemplateRows: "auto 1fr auto" }}
     >
       <div

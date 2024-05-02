@@ -14,7 +14,7 @@ function App() {
   return (
     <div
       className={cn(
-        "min-h-dvh flex flex-col gap-6 justify-center items-center"
+        "min-h-dvh flex flex-col gap-6 justify-center items-center dark:bg-black"
       )}
     >
       <div
