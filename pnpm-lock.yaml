@@ -101,6 +101,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: registry.npmmirror.com/tailwindcss-animate@1.0.7(tailwindcss@3.4.3)
+      vaul:
+        specifier: ^0.9.0
+        version: registry.npmmirror.com/vaul@0.9.0(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.2.0
@@ -4121,6 +4124,43 @@ packages:
       '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.24.5
       '@types/react': registry.npmmirror.com/@types/react@18.3.1
       react: registry.npmmirror.com/react@18.3.1
+    dev: false
+
+  registry.npmmirror.com/@radix-ui/react-dialog@1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-GjWJX/AUpB703eEBanuBnIWdIXg6NvJFCXcNlSZk4xdszCdhrJgBoUd1cGk67vFO+WdA2pfI/plOpqz/5GUP6Q==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@radix-ui/react-dialog/-/react-dialog-1.0.5.tgz}
+    id: registry.npmmirror.com/@radix-ui/react-dialog/1.0.5
+    name: '@radix-ui/react-dialog'
+    version: 1.0.5
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': registry.npmmirror.com/@babel/runtime@7.24.5
+      '@radix-ui/primitive': registry.npmmirror.com/@radix-ui/primitive@1.0.1
+      '@radix-ui/react-compose-refs': registry.npmmirror.com/@radix-ui/react-compose-refs@1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-context': registry.npmmirror.com/@radix-ui/react-context@1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-dismissable-layer': registry.npmmirror.com/@radix-ui/react-dismissable-layer@1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@radix-ui/react-focus-guards': registry.npmmirror.com/@radix-ui/react-focus-guards@1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-focus-scope': registry.npmmirror.com/@radix-ui/react-focus-scope@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@radix-ui/react-id': registry.npmmirror.com/@radix-ui/react-id@1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-portal': registry.npmmirror.com/@radix-ui/react-portal@1.0.4(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@radix-ui/react-presence': registry.npmmirror.com/@radix-ui/react-presence@1.0.1(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@radix-ui/react-primitive': registry.npmmirror.com/@radix-ui/react-primitive@1.0.3(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@radix-ui/react-slot': registry.npmmirror.com/@radix-ui/react-slot@1.0.2(@types/react@18.3.1)(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': registry.npmmirror.com/@radix-ui/react-use-controllable-state@1.0.1(@types/react@18.3.1)(react@18.3.1)
+      '@types/react': registry.npmmirror.com/@types/react@18.3.1
+      '@types/react-dom': registry.npmmirror.com/@types/react-dom@18.3.0
+      aria-hidden: registry.npmmirror.com/aria-hidden@1.2.4
+      react: registry.npmmirror.com/react@18.3.1
+      react-dom: registry.npmmirror.com/react-dom@18.3.1(react@18.3.1)
+      react-remove-scroll: registry.npmmirror.com/react-remove-scroll@2.5.5(@types/react@18.3.1)(react@18.3.1)
     dev: false
 
   registry.npmmirror.com/@radix-ui/react-direction@1.0.1(@types/react@18.3.1)(react@18.3.1):
@@ -14308,6 +14348,23 @@ packages:
     name: vary
     version: 1.1.2
     engines: {node: '>= 0.8'}
+    dev: false
+
+  registry.npmmirror.com/vaul@0.9.0(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-bZSySGbAHiTXmZychprnX/dE0EsSige88xtyyL3/MCRbrFotRPQZo7UdydGXZWw+CKbNOw5Ow8gwAo93/nB/Cg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vaul/-/vaul-0.9.0.tgz}
+    id: registry.npmmirror.com/vaul/0.9.0
+    name: vaul
+    version: 0.9.0
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      '@radix-ui/react-dialog': registry.npmmirror.com/@radix-ui/react-dialog@1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      react: registry.npmmirror.com/react@18.3.1
+      react-dom: registry.npmmirror.com/react-dom@18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
     dev: false
 
   registry.npmmirror.com/vfile-location@5.0.2:

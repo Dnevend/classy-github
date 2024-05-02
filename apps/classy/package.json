@@ -29,7 +29,8 @@
     "mini-svg-data-uri": "^1.4.4",
     "react-i18next": "^14.1.1",
     "react-router-dom": "^6.23.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.2.0",

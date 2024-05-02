@@ -1,5 +1,13 @@
 import Logo from "@/components/logo";
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
   useClassyParams,
   cn,
   useClassyConfig,
@@ -10,9 +18,10 @@ import { NavLink, Outlet } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { Loading } from "./loading";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Menu } from "lucide-react";
 import { User } from "@classy/types";
 import { Footer } from "./footer";
+import { Separator } from "@/components/ui/separator";
 
 export function Layout() {
   const { user } = useClassyParams();
@@ -48,11 +57,11 @@ export function Layout() {
       <header className="full-bleed sticky top-0 z-50 w-full">
         <div
           className={cn(
-            "flex justify-between items-center mx-auto h-14 px-8",
+            "flex justify-between items-center mx-auto h-14 px-2 sm:px-8",
             "border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
           )}
         >
-          <nav className="flex items-center gap-4 text-sm lg:gap-6">
+          <nav className="hidden md:flex items-center gap-4 text-sm lg:gap-6">
             <Link to="/">
               <Logo />
             </Link>
@@ -76,8 +85,47 @@ export function Layout() {
             )}
           </nav>
 
+          <Drawer>
+            <DrawerTrigger>
+              <Menu role="button" className="block md:hidden cursor-pointer" />
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>
+                  <Link to="/">
+                    <Logo />
+                  </Link>
+                </DrawerTitle>
+              </DrawerHeader>
+
+              <Separator />
+
+              <div className="flex flex-col justify-center items-center gap-4 my-8">
+                <NavLink
+                  to={`/${user}/gists`}
+                  className={({ isActive }) =>
+                    isActive ? "font-bold" : "hover:text-blue-500"
+                  }
+                >
+                  <DrawerClose>Gists</DrawerClose>
+                </NavLink>
+
+                {userinfo?.blog && (
+                  <Link to={blogUrl} target="_blank">
+                    <DrawerClose>
+                      <p className="flex items-center gap-1 hover:text-blue-500">
+                        <span>Website</span>
+                        <ExternalLink size={12} />
+                      </p>
+                    </DrawerClose>
+                  </Link>
+                )}
+              </div>
+            </DrawerContent>
+          </Drawer>
+
           <Link to={`/${user}`}>
-            <span className="text-xs md:text-lg">
+            <span className="text-sm md:text-lg">
               {userinfo?.name || userinfo?.login || user}
             </span>
           </Link>
