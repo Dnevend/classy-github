@@ -1,11 +1,15 @@
 import { Gist, GistFile } from "@classy/types/github";
-import { ArrowRight, Braces, Eye } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Braces, ChevronsDown, Eye } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownRender } from "@classy/components";
+import { cn } from "@classy/lib";
+import { useExpand } from "./hooks/useExpand";
+
+const ContentExpandHeight = 200;
 
 const GistCard = ({
   user,
@@ -25,6 +29,13 @@ const GistCard = ({
       })),
     [gist]
   );
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const { expand, isOverflow, toggleExpand } = useExpand({
+    domTarget: contentRef.current,
+    overflowHeight: ContentExpandHeight,
+  });
 
   const [preview, setPreview] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,7 +64,7 @@ const GistCard = ({
   }, [currentFile, fileContent]);
 
   return (
-    <div key={gist.id} className="p-2 rounded-md hover:shadow">
+    <div key={gist.id} className="p-2 rounded-md hover:shadow-md">
       <div className="flex justify-between">
         <div className="flex gap-2 items-center">
           <img src={gist.owner.avatar_url} className="h-10 w-10 rounded-full" />
@@ -104,11 +115,40 @@ const GistCard = ({
         </div>
       )}
 
-      {currentFile.language === "Markdown" && preview ? (
-        <MarkdownRender>{currentFileContent}</MarkdownRender>
-      ) : (
-        <CodeRender>{currentFileContent}</CodeRender>
-      )}
+      <div
+        ref={contentRef}
+        className={cn("overflow-hidden relative rounded-md")}
+      >
+        <div
+          className="p-2"
+          style={{
+            height: isOverflow && !expand ? `${ContentExpandHeight}px` : "auto",
+          }}
+        >
+          {currentFile.language === "Markdown" && preview ? (
+            <MarkdownRender>{currentFileContent}</MarkdownRender>
+          ) : (
+            <CodeRender>{currentFileContent}</CodeRender>
+          )}
+        </div>
+
+        {isOverflow && (
+          <div
+            className={cn("flex justify-center items-center", {
+              "relative p-8 bg-gradient-to-b from-transparent to-black/10 hover:to-black/50":
+                isOverflow && !expand,
+            })}
+            onClick={toggleExpand}
+          >
+            <ChevronsDown
+              className={cn({
+                "animate-bounce-slow": !expand,
+                "rotate-180": expand,
+              })}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
