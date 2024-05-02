@@ -46,7 +46,7 @@ export const usePageFetch = <T extends any = any>({
                     [`${current}`]: currentPageData,
                     [`${current + 1}`]: nextPageData
                 }))
-            } catch {
+            } finally {
                 setFetching(false)
             }
         }
