@@ -30,7 +30,7 @@ export function Layout() {
 
   const { links } = classyConfig;
 
-  const blogUrl = userinfo?.blog.startsWith("http")
+  const blogUrl = userinfo?.blog?.startsWith("http")
     ? userinfo.blog
     : `http://${userinfo?.blog}`;
 

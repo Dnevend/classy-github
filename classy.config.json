@@ -10,9 +10,12 @@
     "gists": {
         "prefix": "Classy",
         "split": ".",
-        "nav": [
+        "type": [
             {
-                "key": "Blog"
+                "name": "Blog"
+            },
+            {
+                "name": "Weekly"
             }
         ]
     },

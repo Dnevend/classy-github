@@ -147,13 +147,15 @@ const AllGists = ({ user }: { user: string }) => {
   return (
     <>
       <div className="flex flex-col gap-2">
-        <Pagination
-          canGoNext={hasMore}
-          canGoPrev={current > 1}
-          onNext={goNext}
-          onPrev={goPrev}
-          className="w-full flex justify-between my-2"
-        />
+        {(hasMore || current !== 1) && (
+          <Pagination
+            canGoNext={hasMore}
+            canGoPrev={current > 1}
+            onNext={goNext}
+            onPrev={goPrev}
+            className="w-full flex justify-between my-2"
+          />
+        )}
 
         {gists.length === 0 && fetching && (
           <div className="w-full h-24 flex justify-center items-center">
@@ -166,13 +168,15 @@ const AllGists = ({ user }: { user: string }) => {
         ))}
       </div>
 
-      <Pagination
-        canGoNext={hasMore}
-        canGoPrev={current > 1}
-        onNext={goNext}
-        onPrev={goPrev}
-        className="mx-auto my-2"
-      />
+      {gists.length > 0 && (
+        <Pagination
+          canGoNext={hasMore}
+          canGoPrev={current > 1}
+          onNext={goNext}
+          onPrev={goPrev}
+          className="mx-auto my-2"
+        />
+      )}
     </>
   );
 };
@@ -224,7 +228,7 @@ const FilterGists = ({ user, type }: { user: string; type: string }) => {
           disabled={!hasMore}
           className="my-2"
         >
-          {hasMore ? "Load more" : "No more"}
+          {hasMore ? "Load more" : "- END -"}
         </Button>
       </div>
     </>
@@ -234,28 +238,44 @@ const FilterGists = ({ user, type }: { user: string; type: string }) => {
 export function Gists() {
   const { user } = useParams() as { user: string };
 
+  const classyConfig = useClassyConfig(user);
+
+  const defaultType = { name: "All" };
+
+  const gistTypes = classyConfig?.gists?.type || [];
+
   return (
     <div>
       <h1 className="text-xl text-center">{`${user}'s Gists`}</h1>
 
-      <Tabs className="mx-auto my-6" defaultValue="all">
-        <TabsList className="w-[300px] grid grid-cols-2 mx-auto">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="blog">Blog</TabsTrigger>
+      <Tabs className="mx-auto my-6" defaultValue={defaultType.name}>
+        <TabsList className={cn("mx-auto")}>
+          <TabsTrigger className="px-3" value={defaultType.name}>
+            {defaultType.name}
+          </TabsTrigger>
+          {gistTypes.map((it) => (
+            <TabsTrigger className="px-3" key={it.name} value={it.name}>
+              {it.name}
+            </TabsTrigger>
+          ))}
         </TabsList>
-        <TabsContent value="all">
+
+        <TabsContent value={defaultType.name}>
           <AllGists user={user} />
         </TabsContent>
-        <TabsContent value="blog">
-          <FilterGists user={user} type="blog" />
-        </TabsContent>
+
+        {gistTypes.map((it) => (
+          <TabsContent key={it.name} value={it.name}>
+            <FilterGists user={user} type={it.name} />
+          </TabsContent>
+        ))}
       </Tabs>
 
       <Link
         to={`${githubUrl.gists}/${user}`}
         target="_blank"
         className={cn(
-          "flex items-center gap-2 w-fit mx-auto mt-8 text-sm text-gray-600 hover:text-black"
+          "flex items-center gap-2 w-fit mx-auto mt-6 text-sm text-gray-600 hover:text-black"
         )}
       >
         Create Gist

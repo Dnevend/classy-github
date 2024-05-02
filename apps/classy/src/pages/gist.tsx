@@ -62,7 +62,7 @@ export function Gist() {
         type: gistType,
       });
     }
-    return gist?.description || `${gist?.owner.login}'s Gist`;
+    return gist?.description || `${gist?.owner.login ?? "User"}'s Gist`;
   };
 
   return (

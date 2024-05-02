@@ -12,8 +12,8 @@ type ClassyConfig = {
     gists: {
         prefix: `Classy` | string,
         split: string,
-        nav: {
-            key: string,
+        type: {
+            name: string,
             desc?: string
         }[]
     },
