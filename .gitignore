@@ -33,3 +33,9 @@ dist-ssr
 .env.test.local
 .env.production.local
 .envrc
+
+# docs
+build
+
+.docusaurus
+.cache-loader
