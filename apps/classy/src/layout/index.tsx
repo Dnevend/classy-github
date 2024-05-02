@@ -18,7 +18,6 @@ export function Layout() {
   const { user } = useClassyParams();
 
   const [userinfo, setUserinfo] = useState<User>();
-  console.log("🐞 => Layout => userinfo:", userinfo);
   const classyConfig = useClassyConfig(user);
 
   useEffect(() => {
@@ -71,7 +70,7 @@ export function Layout() {
           </nav>
 
           <Link to={`/${user}`}>
-            <span className="text-lg">
+            <span className="text-xs md:text-lg">
               {userinfo?.name || userinfo?.login || user}
             </span>
           </Link>

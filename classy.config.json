@@ -12,10 +12,10 @@
         "split": ".",
         "type": [
             {
-                "name": "Blog"
+                "name": "blog"
             },
             {
-                "name": "Weekly"
+                "name": "weekly"
             }
         ]
     },
@@ -23,10 +23,6 @@
         {
             "title": "Github",
             "href": "https://github.com/Dnevend/classy-github"
-        },
-        {
-            "title": "Twitter",
-            "href": "https://twitter.com/dnevend_09"
         },
         {
             "title": "Docs",
