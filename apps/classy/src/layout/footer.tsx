@@ -1,11 +1,16 @@
 import { ThemeSelect } from "@/components/theme-select";
-import { redirectTheme } from "@classy/lib";
+import { cn, redirectTheme } from "@classy/lib";
 import { repoUrl } from "@classy/shared";
 import { ClassyConfig } from "@classy/types";
 import { Link } from "react-router-dom";
 export const Footer = ({ links = [] }: { links: ClassyConfig["links"] }) => {
   return (
-    <footer className="text-gray-500 bg-white px-4 py-5 w-full mx-auto md:px-8">
+    <footer
+      className={cn(
+        "text-gray-500 px-4 py-5 w-full mx-auto md:px-8 border-t border-white",
+        "relative bg-white/90 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
+      )}
+    >
       <ul className="items-center justify-center mt-6 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">
         {(links || []).map((item, idx) => (
           <li className="hover:text-gray-800">

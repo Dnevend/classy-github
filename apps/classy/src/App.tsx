@@ -4,7 +4,7 @@ import { Input } from "./components/ui/input";
 import { Link } from "react-router-dom";
 import Logo from "./components/logo";
 import { Theme, themeDomains } from "@classy/shared";
-import { getCurrentTheme } from "@classy/lib";
+import { cn, getCurrentTheme } from "@classy/lib";
 import { ThemeSelect } from "./components/theme-select";
 
 function App() {
@@ -12,7 +12,18 @@ function App() {
   const [theme, setTheme] = useState<Theme>(getCurrentTheme("default"));
 
   return (
-    <div className="min-h-screen flex flex-col gap-6 justify-center items-center">
+    <div
+      className={cn(
+        "min-h-dvh flex flex-col gap-6 justify-center items-center"
+      )}
+    >
+      <div
+        className={cn(
+          "pointer-events-none dark:bg-black bg-white dark:bg-grid-small-white/[0.2] bg-grid-small-black/[0.2] relative flex items-center justify-center",
+          "fixed inset-0"
+        )}
+      />
+
       <Logo />
 
       <div className="flex gap-2 p-6">

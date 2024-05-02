@@ -34,14 +34,21 @@ export function Layout() {
     : `http://${userinfo?.blog}`;
 
   return (
-    <main
-      className="wrapper min-h-screen"
+    <div
+      className={cn("wrapper min-h-screen")}
       style={{ gridTemplateRows: "auto 1fr auto" }}
     >
-      <header className="full-bleed sticky top-0 z-50 w-full ">
+      <div
+        className={cn(
+          "pointer-events-none dark:bg-black bg-white dark:bg-grid-small-white/[0.2] bg-grid-small-black/[0.2] relative flex items-center justify-center",
+          "fixed inset-0"
+        )}
+      />
+
+      <header className="full-bleed sticky top-0 z-50 w-full">
         <div
           className={cn(
-            "flex justify-between items-center mx-auto h-14 px-8 max-w-screen-xl",
+            "flex justify-between items-center mx-auto h-14 px-8",
             "border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
           )}
         >
@@ -75,18 +82,22 @@ export function Layout() {
             </span>
           </Link>
         </div>
-
-        <div className="h-8 -mb-8 bg-gradient-to-b from-white dark:from-slate-900 opacity-75" />
       </header>
 
       <Suspense fallback={<Loading />}>
-        <div className="p-6">
+        <main
+          className={cn(
+            "p-6",
+            "relative",
+            "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
+          )}
+        >
           <Outlet />
-        </div>
+        </main>
       </Suspense>
 
       <Footer links={links} />
-    </main>
+    </div>
   );
 }
 

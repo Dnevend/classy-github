@@ -89,6 +89,9 @@ importers:
       lucide-react:
         specifier: ^0.373.0
         version: registry.npmmirror.com/lucide-react@0.373.0(react@18.3.1)
+      mini-svg-data-uri:
+        specifier: ^1.4.4
+        version: registry.npmmirror.com/mini-svg-data-uri@1.4.4
       react-i18next:
         specifier: ^14.1.1
         version: registry.npmmirror.com/react-i18next@14.1.1(i18next@23.11.2)(react-dom@18.3.1)(react@18.3.1)
@@ -10816,6 +10819,13 @@ packages:
       schema-utils: registry.npmmirror.com/schema-utils@4.2.0
       tapable: registry.npmmirror.com/tapable@2.2.1
       webpack: registry.npmmirror.com/webpack@5.91.0
+    dev: false
+
+  registry.npmmirror.com/mini-svg-data-uri@1.4.4:
+    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/mini-svg-data-uri/-/mini-svg-data-uri-1.4.4.tgz}
+    name: mini-svg-data-uri
+    version: 1.4.4
+    hasBin: true
     dev: false
 
   registry.npmmirror.com/miniflare@3.20240419.0:
