@@ -31,5 +31,5 @@ export const themeMap = new Map(
 
 export const classyDomains = {
   ...themeDomains,
-  docs: "https://101.classygit.me",
+  docs: "https://docs.classygit.me",
 };
