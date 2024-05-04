@@ -2,12 +2,19 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Link } from "react-router-dom";
 import { User } from "@classy/types/github";
 import SvgPlaceholder from "@/assets/placeholder.svg";
-import { Github, Mail, Twitter, UserRound } from "lucide-react";
+import {
+  Building,
+  Github,
+  Mail,
+  MapPinned,
+  Twitter,
+  UserRound,
+} from "lucide-react";
 
 export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
   return (
     <CardContainer className="inter-var">
-      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[20rem] h-auto rounded-xl p-6 border  ">
+      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[20rem] h-auto rounded-xl p-6 border">
         <CardItem translateZ="100" className="flex justify-between w-full mt-4">
           <div>
             <h1 className="text-xl font-bold">{userinfo?.name}</h1>
@@ -21,6 +28,16 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
             alt="thumbnail"
           />
         </CardItem>
+
+        {userinfo?.bio && (
+          <CardItem
+            as="p"
+            translateZ="60"
+            className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+          >
+            {userinfo?.bio}
+          </CardItem>
+        )}
 
         <CardItem
           translateZ="50"
@@ -52,13 +69,32 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
           </>
         </CardItem>
 
-        <CardItem
-          as="p"
-          translateZ="60"
-          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
-        >
-          {userinfo?.bio || "bio"}
-        </CardItem>
+        {userinfo?.location && (
+          <CardItem
+            translateZ="30"
+            as="div"
+            className="flex justify-center items-center mt-1"
+          >
+            <MapPinned size={16} className="mr-1" />
+            <span className="indent-1 text-xs text-neutral-400">
+              {userinfo?.location}
+            </span>
+          </CardItem>
+        )}
+
+        {userinfo?.company && (
+          <CardItem
+            translateZ="50"
+            as="div"
+            className="flex justify-center items-center mt-1"
+          >
+            <Building size={16} className="mr-1" />
+            <span className="indent-1 text-xs text-neutral-400">
+              {userinfo?.company}
+            </span>
+          </CardItem>
+        )}
+
         <CardItem translateZ="100" className="w-full mt-4">
           <img
             src={userinfo?.avatar_url || SvgPlaceholder}

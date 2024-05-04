@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 import { Follower, Repo, User } from "@classy/types/github";
 import { useClassyParams, gitFetchFunc, useClassyConfig } from "@classy/lib";
 import { GitFork, Star } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function UserPage() {
   const navigate = useNavigate();
@@ -58,7 +63,17 @@ export function UserPage() {
               className="p-4 border rounded-md hover:shadow text-wrap break-words"
             >
               <h3>{it.name}</h3>
-              <p className="text-sm text-slate-500">{it.description}</p>
+              <Tooltip>
+                <TooltipTrigger>
+                  <p className="text-sm text-slate-500 text-start line-clamp-3">
+                    {it.description}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-sm max-w-60">{it.description}</p>
+                </TooltipContent>
+              </Tooltip>
+
               <div className="flex gap-3">
                 <span className="flex items-center gap-1 text-sm">
                   <Star size={12} />
