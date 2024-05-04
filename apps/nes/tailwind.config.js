@@ -9,6 +9,9 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      "press-start-2p": "Press Start 2P"
+    },
     container: {
       center: true,
       padding: "2rem",

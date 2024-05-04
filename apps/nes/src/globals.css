@@ -86,6 +86,14 @@
   h3 {
     @apply text-lg;
   }
+
+  @font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('@/assets/fonts/PressStart2P-Regular.ttf') format('truetype');
+  }
 }
 
 @layer utilities {
