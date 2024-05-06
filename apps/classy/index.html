@@ -5,10 +5,25 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ClassyGit</title>
+
     <!-- TODO: meta info -->
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- counter scale -->
+    <script>
+      (function () {
+        window.counterscale = {
+          q: [["set", "siteId", "classy-github"], ["trackPageview"]],
+        };
+      })();
+    </script>
+    <script
+      id="counterscale-script"
+      src="https://counterscale.classygit.me/tracker.js"
+      defer
+    ></script>
   </body>
 </html>
