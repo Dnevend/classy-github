@@ -1,3 +1,5 @@
+import defaultTheme from 'tailwindcss/defaultTheme'
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -10,7 +12,7 @@ module.exports = {
   prefix: "",
   theme: {
     fontFamily: {
-      "press-start-2p": "Press Start 2P"
+      sans: ['Press Start 2P', ...defaultTheme.fontFamily.sans]
     },
     container: {
       center: true,
