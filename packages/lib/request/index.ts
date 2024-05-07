@@ -70,6 +70,13 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     return alt
 }
 
+const serviceApiFetch = (url: string) => {
+    // TODO: 替换正式环境服务地址
+    return fetch((import.meta.env.MODE  === 'development' ? 'http://localhost:8787' : '') + url).then((res) => {
+        return res.json()
+    });
+}
+
 export const gitFetchFunc = {
     userinfo: async (user: string) => await gitApiFetch<User>(requestUrl.user(user)),
 
@@ -82,4 +89,8 @@ export const gitFetchFunc = {
     userFollowers: async (user: string, params?: Record<string, any>) => await gitApiFetch<Follower[]>(requestUrl.followers(user), { alt: [], params }),
 
     userFollowing: async (user: string, params?: Record<string, any>) => gitApiFetch<Follower[]>(requestUrl.following(user), { alt: [], params })
+}
+
+export const serviceFetchFunc = {
+    githubContributions: (user:string) => serviceApiFetch(`/api/github-contributions/${user}`)
 }

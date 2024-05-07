@@ -1,9 +1,19 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import fakeUa from "fake-useragent"
+import { fetchDataForAllYears } from './utils/githubContributions'
 
 const baseUrl = 'https://api.github.com'
 
 const app = new Hono()
+
+app.use('/api/*', cors())
+
+app.get('/api/github-contributions/:user', (c) => {
+  return fetchDataForAllYears(c.req.param().user).then(res => {
+    return c.json(res)
+  })
+})
 
 app.get('/*', async (c) => {
   const url = baseUrl + c.req.path

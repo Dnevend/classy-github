@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Follower, Repo, User } from "@classy/types/github";
 import { useClassyParams, gitFetchFunc, useClassyConfig } from "@classy/lib";
+import { GithubContributionsChart } from '@classy/components'
 import { GitFork, Star } from "lucide-react";
 import {
   Tooltip,
@@ -52,7 +53,8 @@ export function UserPage() {
   }, [user]);
 
   return (
-    <>
+      <>
+      <GithubContributionsChart />
       <div className="flex gap-6 justify-between flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
 
