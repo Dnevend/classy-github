@@ -13,8 +13,8 @@ import {
 
 export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
   return (
-    <CardContainer className="inter-var">
-      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[20rem] h-auto rounded-xl p-6 border">
+    <CardContainer className="inter-var w-full" containerClassName="py-10">
+      <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-11/12 sm:w-[20rem] h-auto rounded-xl p-6 border">
         <CardItem translateZ="100" className="flex justify-between w-full mt-4">
           <div>
             <h1 className="text-xl font-bold">{userinfo?.name}</h1>
@@ -69,31 +69,25 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
           </>
         </CardItem>
 
-        {userinfo?.location && (
-          <CardItem
-            translateZ="30"
-            as="div"
-            className="flex justify-center items-center mt-1"
-          >
-            <MapPinned size={16} className="mr-1" />
-            <span className="indent-1 text-xs text-neutral-400">
-              {userinfo?.location}
-            </span>
-          </CardItem>
-        )}
+        <CardItem translateZ="30" className="flex flex-col gap-1">
+          {userinfo?.location && (
+            <div className="flex items-center">
+              <MapPinned size={16} className="mr-1" />
+              <span className="indent-1 text-xs text-neutral-400">
+                {userinfo?.location}
+              </span>
+            </div>
+          )}
 
-        {userinfo?.company && (
-          <CardItem
-            translateZ="50"
-            as="div"
-            className="flex justify-center items-center mt-1"
-          >
-            <Building size={16} className="mr-1" />
-            <span className="indent-1 text-xs text-neutral-400">
-              {userinfo?.company}
-            </span>
-          </CardItem>
-        )}
+          {userinfo?.company && (
+            <div className="flex items-center">
+              <Building size={16} className="mr-1" />
+              <span className="indent-1 text-xs text-neutral-400">
+                {userinfo?.company}
+              </span>
+            </div>
+          )}
+        </CardItem>
 
         <CardItem translateZ="100" className="w-full mt-4">
           <img
@@ -104,42 +98,40 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
             alt="thumbnail"
           />
         </CardItem>
-        <div className="flex justify-between items-center mt-10">
+
+        <CardItem
+          translateZ="50"
+          className="w-full flex justify-between items-center mt-10"
+        >
           <div className="flex justify-center items-center gap-1 py-1">
             {userinfo?.twitter_username && (
-              <CardItem
-                translateZ={20}
-                as={Link}
+              <Link
                 to={`https://twitter.com/${userinfo.twitter_username}`}
                 target="_blank"
                 className="px-1 rounded-xl dark:text-white text-black text-xs font-bold"
               >
                 <Twitter size={18} />
-              </CardItem>
+              </Link>
             )}
             {userinfo?.email && (
-              <CardItem
-                translateZ={20}
-                as={Link}
-                // TODO:
+              <Link
                 to={"mailto:" + userinfo.email}
                 target="_blank"
                 className="px-1 rounded-xl dark:text-white text-black text-xs font-bold"
               >
                 <Mail size={18} />
-              </CardItem>
+              </Link>
             )}
           </div>
-          <CardItem
-            translateZ={20}
-            as={Link}
+
+          <Link
             to={userinfo?.html_url || ""}
             target="_blank"
             className="px-1 py-1 rounded-xl dark:text-white text-black text-xs font-bold"
           >
             <Github size={18} />
-          </CardItem>
-        </div>
+          </Link>
+        </CardItem>
       </CardBody>
     </CardContainer>
   );
