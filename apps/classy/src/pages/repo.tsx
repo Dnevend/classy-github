@@ -45,7 +45,7 @@ function replaceRelativePathsInHTML(
   // 使用replace方法将匹配到的相对路径替换为绝对路径
   var replacedString = markdownString.replace(
     regex,
-    function (match, p1, p2, p3, p4) {
+    function (_match, p1, _p2, p3, p4) {
       return p1 + absolutePath + "/" + p3 + p4;
     }
   );
