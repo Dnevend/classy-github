@@ -3,13 +3,61 @@ import { AnimatedTooltip } from "@/components/animated-tooltip";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Follower, Repo, User } from "@classy/types/github";
-import { useClassyParams, gitFetchFunc, useClassyConfig } from "@classy/lib";
+import {
+  useClassyParams,
+  gitFetchFunc,
+  useClassyConfig,
+  cn,
+} from "@classy/lib";
 import { GitFork, Star } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
+
+const RepoCard = ({ repo, className }: { repo: Repo; className: string }) => (
+  <div
+    className={cn(
+      "flex flex-col justify-between h-auto w-full p-4 border rounded-lg hover:shadow text-wrap break-words",
+      className
+    )}
+  >
+    <div>
+      <h3 className="text-lg font-bold line-clamp-1 bg-gradient-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
+        {repo.name}
+      </h3>
+      {repo.description && (
+        <Tooltip>
+          <TooltipTrigger>
+            <p className="text-xs text-slate-500 text-start line-clamp-3">
+              {repo.description}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm max-w-60">{repo.description}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </div>
+
+    <div>
+      <Separator className="mt-4 mb-2" />
+
+      <div className="flex gap-3">
+        <span className="flex items-center gap-1 text-sm">
+          <Star size={12} />
+          <span>{repo.stargazers_count}</span>
+        </span>
+        <span className="flex items-center gap-1 text-sm">
+          <GitFork size={12} />
+          <span>{repo.forks_count}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+);
 
 export function UserPage() {
   const navigate = useNavigate();
@@ -56,36 +104,19 @@ export function UserPage() {
       <div className="flex gap-6 justify-between flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
 
-        <div className="grid grid-cols-3 gap-4">
-          {showRepos?.map((it) => (
-            <div
-              key={it.id}
-              className="p-4 border rounded-md hover:shadow text-wrap break-words"
-            >
-              <h3>{it.name}</h3>
-              <Tooltip>
-                <TooltipTrigger>
-                  <p className="text-sm text-slate-500 text-start line-clamp-3">
-                    {it.description}
-                  </p>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-sm max-w-60">{it.description}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <div className="flex gap-3">
-                <span className="flex items-center gap-1 text-sm">
-                  <Star size={12} />
-                  <span>{it.stargazers_count}</span>
-                </span>
-                <span className="flex items-center gap-1 text-sm">
-                  <GitFork size={12} />
-                  <span>{it.forks_count}</span>
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className="h-auto w-full flex justify-center items-center">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {showRepos?.map((it, index) => (
+              <RepoCard
+                repo={it}
+                className={cn({
+                  "col-span-2":
+                    showRepos.length % 2 !== 0 &&
+                    index === showRepos.length - 1,
+                })}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
