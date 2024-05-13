@@ -6,8 +6,10 @@ import App from "@/App";
 import { Layout } from "@/layout";
 
 const UserPage = lazy(() => import("@/pages/user"));
-const Gist = lazy(() => import("@/pages/gist"));
 const Gists = lazy(() => import("@/pages/gists"));
+const Gist = lazy(() => import("@/pages/gist"));
+const Repos = lazy(() => import("@/pages/repos"));
+const Repo = lazy(() => import("@/pages/repo"));
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,8 @@ const router = createBrowserRouter([
       { path: "*", element: <UserPage /> },
       { path: "gists", element: <Gists /> },
       { path: "gist/:gistId", element: <Gist /> },
+      { path: "repos", element: <Repos /> },
+      { path: "repo/:repo", element: <Repo /> },
     ],
   },
 ]);

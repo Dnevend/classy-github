@@ -1,4 +1,4 @@
-import { Follower, User, Repo, Gist } from '@classy/types/github';
+import { Follower, User, Repo, Gist, RepoContent } from '@classy/types/github';
 import { CacheKey, storeGet, storeSet } from "../cache"
 import { GitApiFetch, FetchCache } from './index.d'
 import { githubUrl } from '@classy/shared';
@@ -11,6 +11,8 @@ export const requestUrl = {
     gist: (gistId: string) => `/gists/${gistId}`,
     starred: (user: string) => `/users/${user}/starred`,
     repos: (user: string) => `/users/${user}/repos`,
+    repo: (user: string, repo: string) => `/repos/${user}/${repo}`,
+    repoContents: (user: string, repo: string) => `/repos/${user}/${repo}/contents`,
     events: (user: string) => `/users/${user}/events`
 }
 
@@ -74,6 +76,10 @@ export const gitFetchFunc = {
     userinfo: async (user: string) => await gitApiFetch<User>(requestUrl.user(user)),
 
     userRepos: async (user: string, params?: Record<string, any>) => await gitApiFetch<Repo[]>(requestUrl.repos(user), { alt: [], params }),
+
+    userRepo: async (user: string, repo: string) => await gitApiFetch<Repo>(requestUrl.repo(user, repo)),
+
+    repoContents: async (user: string, repo: string) => await gitApiFetch<RepoContent[]>(requestUrl.repoContents(user, repo)),
 
     userGists: async (user: string, params?: Record<string, any>) => await gitApiFetch<Gist[]>(requestUrl.gists(user), { alt: [], params }),
 

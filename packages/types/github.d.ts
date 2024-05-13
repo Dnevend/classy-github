@@ -54,6 +54,17 @@ export interface Repo {
     created_at: string
     updated_at: string
     pushed_at: string
+    ssh_url: string
+    clone_url: string
+}
+
+export interface RepoContent {
+    name: string
+    sha: string
+    size: number
+    git_url: string
+    download_url: string
+    type: string
 }
 
 export interface Gist {

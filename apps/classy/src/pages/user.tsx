@@ -1,6 +1,6 @@
 import { UserCard } from "@/components/user-card";
 import { AnimatedTooltip } from "@/components/animated-tooltip";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Follower, Repo, User } from "@classy/types/github";
 import {
@@ -17,8 +17,17 @@ import {
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 
-const RepoCard = ({ repo, className }: { repo: Repo; className: string }) => (
-  <div
+const RepoCard = ({
+  user,
+  repo,
+  className,
+}: {
+  user: string;
+  repo: Repo;
+  className: string;
+}) => (
+  <Link
+    to={`/${user}/repo/${repo.name}`}
     className={cn(
       "flex flex-col justify-between h-auto w-full p-4 border rounded-lg hover:shadow text-wrap break-words",
       className
@@ -56,7 +65,7 @@ const RepoCard = ({ repo, className }: { repo: Repo; className: string }) => (
         </span>
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 export function UserPage() {
@@ -108,6 +117,7 @@ export function UserPage() {
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             {showRepos?.map((it, index) => (
               <RepoCard
+                user={user}
                 repo={it}
                 className={cn({
                   "col-span-2":
