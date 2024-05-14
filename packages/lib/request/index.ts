@@ -62,9 +62,11 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     try {
         const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl)
 
-        const data = await refetchRes.json()
-        cacheFetchData(`fetch_${fetchUrl}`, expire, data)
-        return data
+        if (refetchRes.ok) {
+            const data = await refetchRes.json()
+            cacheFetchData(`fetch_${fetchUrl}`, expire, data)
+            return data
+        }
     } catch (err) {
         console.warn('refetch error =>', err)
     }
