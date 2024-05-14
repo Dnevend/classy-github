@@ -113,6 +113,8 @@ export function UserPage() {
       <div className="flex gap-6 justify-between flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
 
+        {/* TODO: 解析用户仓库内在主页展示的README文件 */}
+
         <div className="h-auto w-full flex justify-center items-center">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             {showRepos?.map((it, index) => (

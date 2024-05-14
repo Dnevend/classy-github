@@ -21,6 +21,7 @@ function replaceRelativeSourcePaths(
   return replacedString;
 }
 
+/** FIXME: 匹配以`/`开头或者无初始路径标识符的相对路径 */
 function replaceRelativePaths(markdownString: string, replacementPath: string) {
   // 匹配Markdown中的链接地址，包括图片和视频的Markdown语法 ![alt text](relativePath)
   const regex = /\((\.{1,2}\/[^\)]+)\)/g;
@@ -53,6 +54,12 @@ function replaceRelativePathsInHTML(
   return replacedString;
 }
 
+/**
+ * Review Address
+ * /ant-design/repo/ant-design
+ * /React95/repo/React95
+ */
+
 export function Repo() {
   const [params] = useSearchParams();
   const { user, repo } = useParams() as { user: string; repo: string };
@@ -78,6 +85,7 @@ export function Repo() {
   }, [user, repo]);
 
   useEffect(() => {
+    // FIXME: 调整匹配规则 README.md > other.md > readme.other > ./docs/README.md > ./docs/other.md
     const readmeRawUrl = repoContents.find((it) =>
       it.name.toLowerCase().includes("readme")
     )?.download_url;
@@ -139,6 +147,7 @@ export function Repo() {
       <p className="text-sm text-center text-slate-500">
         {repository?.description}
       </p>
+      {/* TODO: 添加过加载效果 */}
       <div className="my-6">
         <MarkdownPreview source={renderContent} />
       </div>

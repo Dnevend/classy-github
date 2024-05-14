@@ -26,6 +26,8 @@ function App() {
 
       <Logo />
 
+      {/* TODO: 添加简介：无需部署，访问你的GitHub个性主页、博客、随笔... */}
+
       <div className="flex gap-2 p-6">
         <Input
           id="username"
