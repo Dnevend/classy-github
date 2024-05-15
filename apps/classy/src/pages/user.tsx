@@ -113,7 +113,7 @@ export function UserPage() {
     // https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme
     (async () => {
       const repoContents = await gitFetchFunc.repoContents(user, user);
-      const readmeRawUrl = repoContents.find(
+      const readmeRawUrl = repoContents?.find(
         (it) => it.name.toLowerCase() === "readme.md"
       )?.download_url;
       if (readmeRawUrl) {
@@ -138,6 +138,7 @@ export function UserPage() {
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             {showRepos?.map((it, index) => (
               <RepoCard
+                key={it.id}
                 user={user}
                 repo={it}
                 className={cn({

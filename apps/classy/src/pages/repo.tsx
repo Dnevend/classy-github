@@ -40,11 +40,11 @@ function replaceRelativePathsInHTML(
   absolutePath: string
 ) {
   // 正则表达式用于匹配HTML标签中的相对路径
-  var regex =
+  const regex =
     /(<(?:img|a)\s+(?:[^>]*?\s+)?(?:src|href)\s*=\s*['"])(\.\/|\.\.\/)([^'"]+)(['"])/gi;
 
   // 使用replace方法将匹配到的相对路径替换为绝对路径
-  var replacedString = markdownString.replace(
+  const replacedString = markdownString.replace(
     regex,
     function (_match, p1, _p2, p3, p4) {
       return p1 + absolutePath + "/" + p3 + p4;
@@ -58,6 +58,7 @@ function replaceRelativePathsInHTML(
  * Review Address
  * /ant-design/repo/ant-design
  * /React95/repo/React95
+ * /WaylonWalker/repo/WaylonWalker
  */
 
 export function Repo() {

@@ -13,7 +13,7 @@ export const Footer = ({ links = [] }: { links: ClassyConfig["links"] }) => {
     >
       <ul className="items-center justify-center mt-6 space-y-5 sm:flex sm:space-x-4 sm:space-y-0">
         {(links || []).map((item, idx) => (
-          <li className="hover:text-gray-800">
+          <li key={idx} className="hover:text-gray-800">
             <Link key={idx} to={item.href} target="_blank">
               {item.title}
             </Link>
