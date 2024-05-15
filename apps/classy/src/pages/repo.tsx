@@ -1,8 +1,11 @@
 import { gitFetchFunc } from "@classy/lib";
 import { Repo as IRepo, RepoContent } from "@classy/types";
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Eye, GitFork, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 function replaceRelativeSourcePaths(
   markdownString: string,
@@ -107,7 +110,7 @@ export function Repo() {
       if (data.ok) {
         let _content = await data.text();
         // TODO: 地址替换时，忽略Markdown中代码片段```内的地址
-
+        // TODO: 当内容指向另一个markdown文件地址时，获取指向文件内容
         // 替换资源类型文件路径为`https://raw.githubusercontent.com/...`文件源地址以进行预览展示
         _content = replaceRelativeSourcePaths(_content, absPath);
         // 其他路径替换为`?path=...`点击后重新渲染指定路径文件
@@ -143,16 +146,58 @@ export function Repo() {
   }, [renderFilePath, absPath]);
 
   return (
-    <div>
-      <h1 className="text-center">{repository?.name}</h1>
-      <p className="text-sm text-center text-slate-500">
-        {repository?.description}
-      </p>
-      {/* TODO: 添加过加载效果 */}
-      <div className="my-6">
-        <MarkdownPreview source={renderContent} />
+    <>
+      <div>
+        {repository ? (
+          <div className="flex flex-col gap-2">
+            <h1 className="text-center">{repository?.name}</h1>
+            <p className="text-sm text-center text-slate-500">
+              {repository?.description}
+            </p>
+
+            <div className="w-fit mx-auto flex gap-2">
+              <Link to={repository.html_url} target="_blank">
+                <Badge className="gap-1">
+                  <Eye size={16} />
+                  {repository?.watchers_count}
+                </Badge>
+              </Link>
+              <Link to={repository.html_url} target="_blank">
+                <Badge className="gap-1">
+                  <GitFork size={16} />
+                  {repository?.forks_count}
+                </Badge>
+              </Link>
+              <Link to={repository.html_url} target="_blank">
+                <Badge className="gap-1">
+                  <Star size={16} />
+                  {repository?.stargazers_count}
+                </Badge>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="w-fit flex flex-col space-y-3 mx-auto">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        )}
       </div>
-    </div>
+
+      <div className="my-6">
+        {renderContent ? (
+          <MarkdownPreview source={renderContent} />
+        ) : (
+          <div className="flex flex-col space-y-3">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+            <Skeleton className="h-[125px] w-full rounded-xl" />
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

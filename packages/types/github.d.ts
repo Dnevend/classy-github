@@ -56,6 +56,7 @@ export interface Repo {
     pushed_at: string
     ssh_url: string
     clone_url: string
+    owner: User
 }
 
 export interface RepoContent {
