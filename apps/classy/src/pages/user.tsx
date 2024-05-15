@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 const RepoCard = ({
   user,
@@ -73,6 +74,7 @@ export function UserPage() {
   const { user } = useClassyParams();
   const classyConfig = useClassyConfig(user);
 
+  const [readme, setReadme] = useState<string | undefined>();
   const [userinfo, setUserinfo] = useState<User | null>(null);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [followers, setFollowers] = useState<Follower[]>([]);
@@ -106,14 +108,31 @@ export function UserPage() {
       const data = await gitFetchFunc.userFollowing(user);
       setFollowing(data!);
     })();
+
+    // 获取用户个人自述文件
+    // https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme
+    (async () => {
+      const repoContents = await gitFetchFunc.repoContents(user, user);
+      const readmeRawUrl = repoContents.find(
+        (it) => it.name.toLowerCase() === "readme.md"
+      )?.download_url;
+      if (readmeRawUrl) {
+        const data = await fetch(readmeRawUrl);
+        if (data.ok) {
+          const _readme = await data.text();
+          // TODO: 解析markdown文件
+          setReadme(_readme);
+        }
+      } else {
+        setReadme(undefined);
+      }
+    })();
   }, [user]);
 
   return (
     <>
-      <div className="flex gap-6 justify-between flex-col md:flex-row">
+      <div className="flex gap-6 justify-between item flex-col md:flex-row">
         <UserCard userinfo={userinfo} />
-
-        {/* TODO: 解析用户仓库内在主页展示的README文件 */}
 
         <div className="h-auto w-full flex justify-center items-center">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -131,6 +150,8 @@ export function UserPage() {
           </div>
         </div>
       </div>
+
+      <MarkdownPreview source={readme} className="my-6" />
 
       <div className="flex flex-row flex-wrap my-6 items-center justify-center mb-10 w-full">
         {followers.length > 0 && (
