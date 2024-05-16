@@ -57,7 +57,7 @@ export function Repo() {
 
   useEffect(() => {
     // FIXME: 调整匹配规则 README.md > other.md > readme.other > ./docs/README.md > ./docs/other.md
-    const readmeRawUrl = repoContents.find((it) =>
+    const readmeRawUrl = repoContents?.find((it) =>
       it.name.toLowerCase().includes("readme")
     )?.download_url;
 

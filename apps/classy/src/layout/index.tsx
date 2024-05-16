@@ -22,6 +22,7 @@ import { ExternalLink, Menu } from "lucide-react";
 import { User } from "@classy/types";
 import { Footer } from "./footer";
 import { Separator } from "@/components/ui/separator";
+import ErrorBoundary from "@/components/error-boundary";
 
 export function Layout() {
   const { user } = useClassyParams();
@@ -140,7 +141,9 @@ export function Layout() {
             "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
           )}
         >
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </Suspense>
 
