@@ -142,7 +142,7 @@ export function UserPage() {
       <div className="flex sm:hidden flex-col gap-2 my-6">
         <UserCard userinfo={userinfo} />
 
-        <div className="w-11/12 sm:w-full mx-auto flex gap-2">
+        <div className="w-full mx-auto flex gap-2">
           <Link
             to={`/${user}/repos`}
             className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"

@@ -3,7 +3,7 @@ import { Repo as IRepo, RepoContent } from "@classy/types";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Link, To, useParams, useSearchParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Eye, GitFork, Star } from "lucide-react";
+import { Eye, GitFork, LucideLink, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
 import { MarkdownPreview } from "@classy/components";
@@ -126,6 +126,13 @@ export function Repo() {
                 <Star size={16} />
                 {repository?.stargazers_count}
               </LinkBadge>
+
+              <Link to={repository.homepage} target="_blank">
+                <Badge className="gap-1" variant="secondary">
+                  <LucideLink size={16} />
+                  Home Page
+                </Badge>
+              </Link>
             </div>
           </div>
         ) : (
