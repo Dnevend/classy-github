@@ -139,32 +139,51 @@ export function UserPage() {
 
   return (
     <>
-      <div className="flex gap-6 justify-between item flex-col md:flex-row">
+      <div className="flex sm:hidden flex-col gap-2 my-6">
         <UserCard userinfo={userinfo} />
 
-        <div className="h-auto w-full flex justify-center items-center">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {showRepos?.map((it, index) => (
-              <RepoCard
-                key={it.id}
-                user={user}
-                repo={it}
-                className={cn({
-                  "col-span-2":
-                    showRepos.length % 2 !== 0 &&
-                    index === showRepos.length - 1,
-                })}
-              />
-            ))}
-          </div>
+        <div className="w-11/12 sm:w-full mx-auto flex gap-2">
+          <Link
+            to={`/${user}/repos`}
+            className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+          >
+            <span>Repos</span>
+            <strong>{userinfo?.public_repos}</strong>
+          </Link>
+
+          <Link
+            to={`/${user}/gists`}
+            className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+          >
+            <span>Gists</span>
+            <strong>{userinfo?.public_gists}</strong>
+          </Link>
         </div>
       </div>
 
-      <MarkdownPreview
-        source={readme?.source}
-        pathRewrite={{ absPath: readme?.path }}
-        className="my-6 p-6"
-      />
+      {readme?.source && (
+        <MarkdownPreview
+          source={readme?.source}
+          pathRewrite={{ absPath: readme?.path }}
+          className="my-6"
+        />
+      )}
+
+      <div className="h-auto w-full flex justify-center items-center">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {showRepos?.map((it, index) => (
+            <RepoCard
+              key={it.id}
+              user={user}
+              repo={it}
+              className={cn({
+                "col-span-2":
+                  showRepos.length % 2 !== 0 && index === showRepos.length - 1,
+              })}
+            />
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-row flex-wrap my-6 items-center justify-center mb-10 w-full">
         {followers.length > 0 && (

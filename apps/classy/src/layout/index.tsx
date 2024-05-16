@@ -23,11 +23,12 @@ import { User } from "@classy/types";
 import { Footer } from "./footer";
 import { Separator } from "@/components/ui/separator";
 import ErrorBoundary from "@/components/error-boundary";
+import UserCard from "@/components/user-card";
 
 export function Layout() {
   const { user } = useClassyParams();
 
-  const [userinfo, setUserinfo] = useState<User>();
+  const [userinfo, setUserinfo] = useState<User | null>(null);
   const classyConfig = useClassyConfig(user);
 
   useEffect(() => {
@@ -151,21 +152,52 @@ export function Layout() {
         </div>
       </header>
 
-      <Suspense fallback={<Loading />}>
-        <main
-          className={cn(
-            "p-6",
-            "relative",
-            "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
-          )}
-        >
-          <ErrorBoundary>
-            <Outlet />
-          </ErrorBoundary>
-        </main>
-      </Suspense>
+      <div className="relative flex gap-4">
+        <div className="grow">
+          <Suspense
+            fallback={
+              <div className="w-full min-h-dvh flex justify-center items-center bg-white/85 dark:bg-zinc-900/80">
+                <Loading />
+              </div>
+            }
+          >
+            <main
+              className={cn(
+                "relative p-6 min-h-dvh",
+                "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
+              )}
+            >
+              <ErrorBoundary>
+                <Outlet />
+              </ErrorBoundary>
+            </main>
+          </Suspense>
 
-      <Footer links={links} />
+          <Footer links={links} />
+        </div>
+
+        <div className="hidden sm:sticky sm:block h-fit top-14 py-4">
+          <UserCard userinfo={userinfo} />
+
+          <div className="flex gap-2 mt-2">
+            <Link
+              to={`/${user}/repos`}
+              className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+            >
+              <span>Repos</span>
+              <strong>{userinfo?.public_repos}</strong>
+            </Link>
+
+            <Link
+              to={`/${user}/gists`}
+              className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+            >
+              <span>Gists</span>
+              <strong>{userinfo?.public_gists}</strong>
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
