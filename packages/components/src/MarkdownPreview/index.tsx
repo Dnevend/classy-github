@@ -50,6 +50,13 @@ export const MarkdownPreview = (
     <UiwMarkdownPreview
       {...originProps}
       rehypeRewrite={(node: Element, index, parent) => {
+        if (node.tagName === "a") {
+          const { href } = node.properties;
+          if (isAbsolutePath(String(href))) {
+            node.properties.target = "_blank";
+          }
+        }
+
         props.rehypeRewrite?.(node, index, parent);
 
         if (pathRewrite !== undefined) {
