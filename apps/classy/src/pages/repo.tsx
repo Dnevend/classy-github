@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
-import { Element } from "@types/hast";
 
 /**
  * Review Address
@@ -143,7 +142,8 @@ export function Repo() {
         {renderContent ? (
           <MarkdownPreview
             source={renderContent}
-            rehypeRewrite={(node: Element) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            rehypeRewrite={(node: any) => {
               if (node.tagName === "img") {
                 const { src, height, style = "" } = node.properties;
 
