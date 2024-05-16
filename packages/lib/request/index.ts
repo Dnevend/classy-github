@@ -5,14 +5,24 @@ import { githubUrl } from '@classy/shared';
 
 export const requestUrl = {
     user: (user: string) => `/users/${user}`,
+
     followers: (user: string) => `/users/${user}/followers`,
+
     following: (user: string) => `/users/${user}/following`,
+
     gists: (user: string) => `/users/${user}/gists`,
+
     gist: (gistId: string) => `/gists/${gistId}`,
+
     starred: (user: string) => `/users/${user}/starred`,
+
+    // https://docs.github.com/zh/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user
     repos: (user: string) => `/users/${user}/repos`,
+
     repo: (user: string, repo: string) => `/repos/${user}/${repo}`,
+
     repoContents: (user: string, repo: string) => `/repos/${user}/${repo}/contents`,
+
     events: (user: string) => `/users/${user}/events`
 }
 

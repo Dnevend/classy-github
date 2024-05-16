@@ -98,7 +98,10 @@ export function UserPage() {
     })();
 
     (async () => {
-      const data = await gitFetchFunc.userRepos(user);
+      const data = await gitFetchFunc.userRepos(user, {
+        sort: "updated",
+        per_page: 100,
+      });
       setRepos(data!);
     })();
 

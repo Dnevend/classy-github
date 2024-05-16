@@ -68,6 +68,15 @@ export function Layout() {
             </Link>
 
             <NavLink
+              to={`/${user}/repos`}
+              className={({ isActive }) =>
+                isActive ? "font-bold" : "hover:text-blue-500"
+              }
+            >
+              Repos
+            </NavLink>
+
+            <NavLink
               to={`/${user}/gists`}
               className={({ isActive }) =>
                 isActive ? "font-bold" : "hover:text-blue-500"
@@ -102,6 +111,15 @@ export function Layout() {
               <Separator />
 
               <div className="flex flex-col justify-center items-center gap-4 my-8">
+                <NavLink
+                  to={`/${user}/repos`}
+                  className={({ isActive }) =>
+                    isActive ? "font-bold" : "hover:text-blue-500"
+                  }
+                >
+                  <DrawerClose>Repos</DrawerClose>
+                </NavLink>
+
                 <NavLink
                   to={`/${user}/gists`}
                   className={({ isActive }) =>

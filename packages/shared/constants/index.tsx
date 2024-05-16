@@ -14,6 +14,8 @@ export const githubUrl = {
   gists: `https://gist.github.com`,
 
   raw: "https://raw.githubusercontent.com",
+
+  new: "https://github.com/new",
 };
 
 export const themeDomains: Record<Theme, string> = {
