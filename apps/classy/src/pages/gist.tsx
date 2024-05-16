@@ -14,7 +14,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import SvgPlaceholder from "@/assets/placeholder.svg";
 import Loading from "@/components/loading";
-import { CodeRender, MarkdownRender } from "@classy/components";
+import { CodeRender, MarkdownPreview } from "@classy/components";
 
 export function Gist() {
   const [params] = useSearchParams();
@@ -98,7 +98,10 @@ export function Gist() {
             )}
 
             {it.language === "Markdown" ? (
-              <MarkdownRender>{fileContent[it.filename]}</MarkdownRender>
+              <MarkdownPreview
+                source={fileContent[it.filename]}
+                className="px-6"
+              />
             ) : (
               <CodeRender>{fileContent[it.filename]}</CodeRender>
             )}

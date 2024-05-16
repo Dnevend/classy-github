@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CodeRender, MarkdownRender } from "@classy/components";
+import { CodeRender, MarkdownPreview } from "@classy/components";
 import { cn } from "@classy/lib";
 import { useExpand } from "./hooks/useExpand";
 
@@ -117,7 +117,9 @@ const GistCard = ({
 
       <div
         ref={contentRef}
-        className={cn("overflow-hidden relative rounded-md")}
+        className={cn("overflow-hidden relative rounded-md", {
+          "max-h-[288px]": isOverflow && !expand,
+        })}
       >
         <div
           className="p-2"
@@ -126,7 +128,7 @@ const GistCard = ({
           }}
         >
           {currentFile.language === "Markdown" && preview ? (
-            <MarkdownRender>{currentFileContent}</MarkdownRender>
+            <MarkdownPreview source={currentFileContent} className="px-6" />
           ) : (
             <CodeRender>{currentFileContent}</CodeRender>
           )}
@@ -134,8 +136,8 @@ const GistCard = ({
 
         {isOverflow && (
           <div
-            className={cn("flex justify-center items-center", {
-              "relative p-8 bg-gradient-to-b from-transparent to-black/10 hover:to-black/50":
+            className={cn("flex justify-center items-center bg-transparent", {
+              "relative h-28 bg-gradient-to-b from-transparent to-black/10 hover:to-black/50":
                 isOverflow && !expand,
             })}
             onClick={toggleExpand}
