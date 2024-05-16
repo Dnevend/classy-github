@@ -74,9 +74,6 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.0.7
         version: registry.npmmirror.com/@radix-ui/react-tooltip@1.0.7(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
-      '@uiw/react-markdown-preview':
-        specifier: ^5.1.1
-        version: registry.npmmirror.com/@uiw/react-markdown-preview@5.1.1(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: registry.npmmirror.com/class-variance-authority@0.7.0
@@ -266,6 +263,15 @@ importers:
 
   packages/components:
     dependencies:
+      '@classy/lib':
+        specifier: workspace:^
+        version: link:../lib
+      '@uiw/react-markdown-preview':
+        specifier: ^5.1.1
+        version: registry.npmmirror.com/@uiw/react-markdown-preview@5.1.1(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      hast:
+        specifier: ^1.0.0
+        version: registry.npmmirror.com/hast@1.0.0
       react-markdown:
         specifier: ^9.0.1
         version: registry.npmmirror.com/react-markdown@9.0.1(@types/react@18.3.1)(react@18.3.1)
@@ -273,6 +279,9 @@ importers:
         specifier: ^15.5.0
         version: registry.npmmirror.com/react-syntax-highlighter@15.5.0(react@18.3.1)
     devDependencies:
+      '@types/hast':
+        specifier: ^3.0.4
+        version: registry.npmmirror.com/@types/hast@3.0.4
       '@types/react-syntax-highlighter':
         specifier: ^15.5.11
         version: registry.npmmirror.com/@types/react-syntax-highlighter@15.5.11
@@ -9106,6 +9115,13 @@ packages:
     version: 3.0.0
     dependencies:
       '@types/hast': registry.npmmirror.com/@types/hast@3.0.4
+
+  registry.npmmirror.com/hast@1.0.0:
+    resolution: {integrity: sha512-vFUqlRV5C+xqP76Wwq2SrM0kipnmpxJm7OfvVXpB35Fp+Fn4MV+ozr+JZr5qFvyR1q/U+Foim2x+3P+x9S1PLA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hast/-/hast-1.0.0.tgz}
+    name: hast
+    version: 1.0.0
+    deprecated: Renamed to rehype
+    dev: false
 
   registry.npmmirror.com/hastscript@6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hastscript/-/hastscript-6.0.0.tgz}

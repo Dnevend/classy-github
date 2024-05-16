@@ -10,10 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@classy/lib": "workspace:^",
+    "@uiw/react-markdown-preview": "^5.1.1",
+    "hast": "^1.0.0",
     "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
+    "@types/hast": "^3.0.4",
     "@types/react-syntax-highlighter": "^15.5.11"
   }
 }

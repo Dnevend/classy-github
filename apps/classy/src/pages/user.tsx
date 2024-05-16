@@ -16,7 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import MarkdownPreview from "@uiw/react-markdown-preview";
+import { MarkdownPreview } from "@classy/components";
 
 const RepoCard = ({
   user,
@@ -74,7 +74,10 @@ export function UserPage() {
   const { user } = useClassyParams();
   const classyConfig = useClassyConfig(user);
 
-  const [readme, setReadme] = useState<string | undefined>();
+  const [readme, setReadme] = useState<{
+    path?: string;
+    source?: string;
+  } | null>(null);
   const [userinfo, setUserinfo] = useState<User | null>(null);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [followers, setFollowers] = useState<Follower[]>([]);
@@ -119,12 +122,14 @@ export function UserPage() {
       if (readmeRawUrl) {
         const data = await fetch(readmeRawUrl);
         if (data.ok) {
-          const _readme = await data.text();
-          // TODO: 解析markdown文件
-          setReadme(_readme);
+          const readme = await data.text();
+          setReadme({
+            path: readmeRawUrl.substring(0, readmeRawUrl.lastIndexOf("/") + 1),
+            source: readme,
+          });
         }
       } else {
-        setReadme(undefined);
+        setReadme(null);
       }
     })();
   }, [user]);
@@ -152,7 +157,11 @@ export function UserPage() {
         </div>
       </div>
 
-      <MarkdownPreview source={readme} className="my-6" />
+      <MarkdownPreview
+        source={readme?.source}
+        pathRewrite={{ absPath: readme?.path }}
+        className="my-6 p-6"
+      />
 
       <div className="flex flex-row flex-wrap my-6 items-center justify-center mb-10 w-full">
         {followers.length > 0 && (

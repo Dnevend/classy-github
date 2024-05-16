@@ -1,12 +1,23 @@
 import { gitFetchFunc } from "@classy/lib";
 import { Repo as IRepo, RepoContent } from "@classy/types";
-import { useEffect, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import MarkdownPreview from "@uiw/react-markdown-preview";
+import { PropsWithChildren, useEffect, useState } from "react";
+import { Link, To, useParams, useSearchParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
+import { MarkdownPreview } from "@classy/components";
+
+const LinkBadge = ({ to, children }: PropsWithChildren<{ to: To }>) => (
+  <Link to={to} target="_blank">
+    <Badge
+      className="gap-1 hover:bg-black hover:text-slate-50"
+      variant="outline"
+    >
+      {children}
+    </Badge>
+  </Link>
+);
 
 /**
  * Review Address
@@ -101,33 +112,20 @@ export function Repo() {
             </p>
 
             <div className="w-fit mx-auto flex gap-2">
-              <Link to={repository.html_url} target="_blank">
-                <Badge
-                  className="gap-1 hover:bg-black hover:text-slate-50"
-                  variant="outline"
-                >
-                  <Eye size={16} />
-                  {repository?.watchers_count}
-                </Badge>
-              </Link>
-              <Link to={repository.html_url} target="_blank">
-                <Badge
-                  className="gap-1 hover:bg-black hover:text-slate-50"
-                  variant="outline"
-                >
-                  <GitFork size={16} />
-                  {repository?.forks_count}
-                </Badge>
-              </Link>
-              <Link to={repository.html_url} target="_blank">
-                <Badge
-                  className="gap-1 hover:bg-black hover:text-slate-50"
-                  variant="outline"
-                >
-                  <Star size={16} />
-                  {repository?.stargazers_count}
-                </Badge>
-              </Link>
+              <LinkBadge to={repository.html_url}>
+                <Eye size={16} />
+                {repository?.watchers_count}
+              </LinkBadge>
+
+              <LinkBadge to={repository.html_url}>
+                <GitFork size={16} />
+                {repository?.forks_count}
+              </LinkBadge>
+
+              <LinkBadge to={repository.html_url}>
+                <Star size={16} />
+                {repository?.stargazers_count}
+              </LinkBadge>
             </div>
           </div>
         ) : (
@@ -142,31 +140,7 @@ export function Repo() {
         {renderContent ? (
           <MarkdownPreview
             source={renderContent}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            rehypeRewrite={(node: any) => {
-              if (node.tagName === "img") {
-                const { src, height, style = "" } = node.properties;
-
-                if (Number.isInteger(height)) {
-                  node.properties.style = `${style} height: ${height}px`;
-                }
-
-                if (src && !isAbsolutePath(String(src))) {
-                  node.properties.src = `${absPath}${relativePath}${src}`;
-                }
-              }
-
-              if (node.tagName === "a") {
-                const { href } = node.properties;
-                if (
-                  href &&
-                  !String(href).startsWith("#") &&
-                  !isAbsolutePath(String(href))
-                ) {
-                  node.properties.href = `?file=${relativePath}${href}`;
-                }
-              }
-            }}
+            pathRewrite={{ absPath, relativePath }}
           />
         ) : (
           <div className="flex flex-col space-y-3">
