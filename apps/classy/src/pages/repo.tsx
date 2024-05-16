@@ -22,7 +22,7 @@ export function Repo() {
 
   // 目标渲染文件
   const [renderFile, setRenderFile] = useState<string | null>(
-    params.get("path")
+    params.get("file")
   );
   // 目标渲染文件路径
   const relativePath =
