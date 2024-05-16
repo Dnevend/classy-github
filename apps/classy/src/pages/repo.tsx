@@ -6,56 +6,8 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-function replaceRelativeSourcePaths(
-  markdownString: string,
-  replacementPath: string
-) {
-  // 匹配图片的Markdown语法 ![alt text](relativePath)
-  const regex = /(!\[[^\]]*\]\()([^\)]+\.(?:jpg|jpeg|gif|png|bmp|svg))(?=\))/gi;
-
-  // 使用replace方法来替换匹配到的相对路径
-  const replacedString = markdownString.replace(regex, (_match, p1, p2) => {
-    // p1 是 ![alt text]( 部分，p2 是图片相对路径
-    // 这里将相对路径替换为指定的路径地址
-    return p1 + replacementPath + p2;
-  });
-
-  return replacedString;
-}
-
-/** FIXME: 匹配以`/`开头或者无初始路径标识符的相对路径 */
-function replaceRelativePaths(markdownString: string, replacementPath: string) {
-  // 匹配Markdown中的链接地址，包括图片和视频的Markdown语法 ![alt text](relativePath)
-  const regex = /\((\.{1,2}\/[^\)]+)\)/g;
-
-  // 使用replace方法来替换匹配到的相对路径
-  const replacedString = markdownString.replace(regex, (_match, p1) => {
-    // 将相对路径替换为指定的路径地址
-    return "(" + replacementPath + p1 + ")";
-  });
-
-  return replacedString;
-}
-
-function replaceRelativePathsInHTML(
-  markdownString: string,
-  absolutePath: string
-) {
-  // 正则表达式用于匹配HTML标签中的相对路径
-  const regex =
-    /(<(?:img|a)\s+(?:[^>]*?\s+)?(?:src|href)\s*=\s*['"])(\.\/|\.\.\/)([^'"]+)(['"])/gi;
-
-  // 使用replace方法将匹配到的相对路径替换为绝对路径
-  const replacedString = markdownString.replace(
-    regex,
-    function (_match, p1, _p2, p3, p4) {
-      return p1 + absolutePath + "/" + p3 + p4;
-    }
-  );
-
-  return replacedString;
-}
+import { isAbsolutePath } from "@classy/lib";
+import { Element } from "@types/hast";
 
 /**
  * Review Address
@@ -69,7 +21,12 @@ export function Repo() {
   const { user, repo } = useParams() as { user: string; repo: string };
 
   // 目标渲染文件
-  const renderFilePath = params.get("path");
+  const [renderFile, setRenderFile] = useState<string | null>(
+    params.get("path")
+  );
+  // 目标渲染文件路径
+  const relativePath =
+    renderFile?.substring(0, renderFile.lastIndexOf("/") + 1) ?? "";
 
   const [repository, setRepo] = useState<IRepo | null>(null);
   const [repoContents, setRepoContents] = useState<RepoContent[]>([]);
@@ -102,48 +59,37 @@ export function Repo() {
     );
     setAbsPath(absPath);
 
-    // 当指定要渲染的文件时，不进行README文件渲染
-    if (renderFilePath) return;
+    // 当指定了渲染的文件时，不再进行README文件渲染
+    if (renderFile) return;
 
     (async () => {
       const data = await fetch(readmeRawUrl);
       if (data.ok) {
-        let _content = await data.text();
-        // TODO: 地址替换时，忽略Markdown中代码片段```内的地址
-        // TODO: 当内容指向另一个markdown文件地址时，获取指向文件内容
-        // 替换资源类型文件路径为`https://raw.githubusercontent.com/...`文件源地址以进行预览展示
-        _content = replaceRelativeSourcePaths(_content, absPath);
-        // 其他路径替换为`?path=...`点击后重新渲染指定路径文件
-        _content = replaceRelativePaths(_content, "?path=");
-        // 替换Markdown中的HTML链接地址为绝对路径
-        _content = replaceRelativePathsInHTML(_content, absPath);
-        setRenderContent(_content);
+        const content = await data.text();
+        setRenderContent(content);
+
+        // 当内容指向另一个markdown文件地址时，获取指向文件内容
+        if (content.trim().endsWith("md")) {
+          setRenderFile(content.trim());
+        }
       }
     })();
-  }, [repoContents, renderFilePath]);
+  }, [repoContents, renderFile]);
 
   useEffect(() => {
-    if (!absPath || !renderFilePath) return;
-
-    const relativePath = renderFilePath.substring(
-      0,
-      renderFilePath.lastIndexOf("/") + 1
-    );
+    if (!absPath || !renderFile) return;
 
     (async () => {
-      const data = await fetch(`${absPath}${renderFilePath}`);
+      // 获取目标文件内容
+      const data = await fetch(
+        isAbsolutePath(renderFile) ? renderFile : `${absPath}${renderFile}`
+      );
       if (data.ok) {
-        let _content = await data.text();
-        _content = replaceRelativeSourcePaths(
-          _content,
-          `${absPath}${relativePath}`
-        );
-        _content = replaceRelativePaths(_content, `?path=${relativePath}`);
-        _content = replaceRelativePathsInHTML(_content, absPath);
-        setRenderContent(_content);
+        const content = await data.text();
+        setRenderContent(content);
       }
     })();
-  }, [renderFilePath, absPath]);
+  }, [renderFile, absPath]);
 
   return (
     <>
@@ -157,19 +103,28 @@ export function Repo() {
 
             <div className="w-fit mx-auto flex gap-2">
               <Link to={repository.html_url} target="_blank">
-                <Badge className="gap-1">
+                <Badge
+                  className="gap-1 hover:bg-black hover:text-slate-50"
+                  variant="outline"
+                >
                   <Eye size={16} />
                   {repository?.watchers_count}
                 </Badge>
               </Link>
               <Link to={repository.html_url} target="_blank">
-                <Badge className="gap-1">
+                <Badge
+                  className="gap-1 hover:bg-black hover:text-slate-50"
+                  variant="outline"
+                >
                   <GitFork size={16} />
                   {repository?.forks_count}
                 </Badge>
               </Link>
               <Link to={repository.html_url} target="_blank">
-                <Badge className="gap-1">
+                <Badge
+                  className="gap-1 hover:bg-black hover:text-slate-50"
+                  variant="outline"
+                >
                   <Star size={16} />
                   {repository?.stargazers_count}
                 </Badge>
@@ -186,7 +141,33 @@ export function Repo() {
 
       <div className="my-6">
         {renderContent ? (
-          <MarkdownPreview source={renderContent} />
+          <MarkdownPreview
+            source={renderContent}
+            rehypeRewrite={(node: Element) => {
+              if (node.tagName === "img") {
+                const { src, height, style = "" } = node.properties;
+
+                if (Number.isInteger(height)) {
+                  node.properties.style = `${style} height: ${height}px`;
+                }
+
+                if (src && !isAbsolutePath(String(src))) {
+                  node.properties.src = `${absPath}${relativePath}${src}`;
+                }
+              }
+
+              if (node.tagName === "a") {
+                const { href } = node.properties;
+                if (
+                  href &&
+                  !String(href).startsWith("#") &&
+                  !isAbsolutePath(String(href))
+                ) {
+                  node.properties.href = `?file=${relativePath}${href}`;
+                }
+              }
+            }}
+          />
         ) : (
           <div className="flex flex-col space-y-3">
             <div className="space-y-2">

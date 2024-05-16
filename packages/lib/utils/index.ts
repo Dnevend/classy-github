@@ -65,3 +65,11 @@ export const getGistMatchStr = (gistStr: string | undefined, rule: {
 
     return matchStr
 }
+
+/**
+ * 判断路径是否为绝对地址
+ * Check if the path is an absolute address
+ * @param str 
+ * @returns boolean
+ */
+export const isAbsolutePath = (str: string) => /^[a-z][a-z0-9+.-]*:/.test(str);
