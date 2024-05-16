@@ -14,7 +14,7 @@ import {
   gitFetchFunc,
 } from "@classy/lib";
 import { Suspense, useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useMatch } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { Loading } from "./loading";
@@ -27,6 +27,8 @@ import UserCard from "@/components/user-card";
 
 export function Layout() {
   const { user } = useClassyParams();
+
+  const matchUserPage = useMatch("/:user");
 
   const [userinfo, setUserinfo] = useState<User | null>(null);
   const classyConfig = useClassyConfig(user);
@@ -176,27 +178,29 @@ export function Layout() {
           <Footer links={links} />
         </div>
 
-        <div className="hidden sm:sticky sm:block h-fit top-14 py-4">
-          <UserCard userinfo={userinfo} />
+        {matchUserPage && (
+          <div className="hidden sm:sticky sm:block h-fit top-14 py-4">
+            <UserCard userinfo={userinfo} />
 
-          <div className="flex gap-2 mt-2">
-            <Link
-              to={`/${user}/repos`}
-              className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
-            >
-              <span>Repos</span>
-              <strong>{userinfo?.public_repos}</strong>
-            </Link>
+            <div className="flex gap-2 mt-2">
+              <Link
+                to={`/${user}/repos`}
+                className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+              >
+                <span>Repos</span>
+                <strong>{userinfo?.public_repos}</strong>
+              </Link>
 
-            <Link
-              to={`/${user}/gists`}
-              className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
-            >
-              <span>Gists</span>
-              <strong>{userinfo?.public_gists}</strong>
-            </Link>
+              <Link
+                to={`/${user}/gists`}
+                className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+              >
+                <span>Gists</span>
+                <strong>{userinfo?.public_gists}</strong>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
