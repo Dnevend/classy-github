@@ -100,7 +100,7 @@ export function Repos() {
           />
         </Link>
 
-        <p className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300 text-pretty">
+        <p className="text-neutral-500 text-sm text-center max-w-sm mt-2 dark:text-neutral-300 text-pretty">
           {userinfo?.bio}
         </p>
 
@@ -151,7 +151,7 @@ export function Repos() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
         {allDataList.length === 0 && fetching && (
           <>
-            {new Array(6).fill(null).map(() => (
+            {new Array(9).fill(null).map(() => (
               <Skeleton className="h-28 w-full" />
             ))}
           </>

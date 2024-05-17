@@ -65,7 +65,7 @@ const GistCard = ({
 
   return (
     <div key={gist.id} className="p-2 rounded-md hover:shadow-md">
-      <div className="flex justify-between">
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex gap-2 items-center">
           <img src={gist.owner.avatar_url} className="h-10 w-10 rounded-full" />
           <div>
@@ -77,7 +77,7 @@ const GistCard = ({
           to={`/${user}/gist/${gist.id}?type=${type}`}
           className="hover:text-indigo-600"
         >
-          {title || gist.description || <ArrowRight />}
+          {title || gist.description || "View Detail"}
         </Link>
       </div>
 
@@ -128,7 +128,10 @@ const GistCard = ({
           }}
         >
           {currentFile.language === "Markdown" && preview ? (
-            <MarkdownPreview source={currentFileContent} className="px-6" />
+            <MarkdownPreview
+              source={currentFileContent}
+              className="px-0 sm:px-4"
+            />
           ) : (
             <CodeRender>{currentFileContent}</CodeRender>
           )}
