@@ -155,17 +155,17 @@ export function Layout() {
       </header>
 
       <div className="relative flex gap-4">
-        <div className="w-full grow">
+        <div className="w-full grow flex flex-col">
           <Suspense
             fallback={
-              <div className="w-full min-h-dvh flex justify-center items-center bg-white/85 dark:bg-zinc-900/80">
+              <div className="w-full grow flex justify-center items-center bg-white/85 dark:bg-zinc-900/80">
                 <Loading />
               </div>
             }
           >
             <main
               className={cn(
-                "relative p-6 min-h-dvh",
+                "relative grow p-6",
                 "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
               )}
             >
