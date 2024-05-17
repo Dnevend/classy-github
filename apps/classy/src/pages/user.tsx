@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { MarkdownPreview } from "@classy/components";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 const RepoCard = ({
   user,
@@ -72,6 +73,7 @@ const RepoCard = ({
 export function UserPage() {
   const navigate = useNavigate();
   const { user } = useClassyParams();
+  const { theme } = useThemeMode();
   const classyConfig = useClassyConfig(user);
 
   const [readme, setReadme] = useState<{
@@ -165,7 +167,8 @@ export function UserPage() {
         <MarkdownPreview
           source={readme?.source}
           pathRewrite={{ absPath: readme?.path }}
-          className="my-6"
+          wrapperElement={{ "data-color-mode": theme }}
+          className="my-6 rounded-md overflow-hidden"
         />
       )}
 

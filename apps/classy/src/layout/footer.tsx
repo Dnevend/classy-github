@@ -1,9 +1,14 @@
 import { ThemeSelect } from "@/components/theme-select";
+import { Button } from "@/components/ui/button";
+import { useThemeMode } from "@/hooks/useThemeMode";
 import { cn, redirectTheme } from "@classy/lib";
 import { repoUrl } from "@classy/shared";
 import { ClassyConfig } from "@classy/types";
+import { Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
 export const Footer = ({ links = [] }: { links: ClassyConfig["links"] }) => {
+  const { theme, toggleTheme } = useThemeMode();
+
   return (
     <footer
       className={cn(
@@ -33,12 +38,19 @@ export const Footer = ({ links = [] }: { links: ClassyConfig["links"] }) => {
           </Link>
           .
         </div>
-        <div className="mt-6 sm:mt-0 flex items-center gap-2 border rounded-full pr-4 hover:shadow">
+        <div className="mt-6 sm:mt-0 flex justify-between items-center gap-2 border rounded-full hover:shadow">
           <ThemeSelect
             className="border-none rounded-full w-[100px]"
             onSelectChange={(theme) => redirectTheme(theme)}
           />
-          <span className="text-sm italic">Theme</span>
+
+          <Button
+            onClick={toggleTheme}
+            variant="ghost"
+            className="rounded-full"
+          >
+            {theme === "dark" ? <Sun /> : <Moon />}
+          </Button>
         </div>
       </div>
     </footer>

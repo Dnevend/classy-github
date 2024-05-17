@@ -15,11 +15,13 @@ import { Separator } from "@/components/ui/separator";
 import SvgPlaceholder from "@/assets/placeholder.svg";
 import Loading from "@/components/loading";
 import { CodeRender, MarkdownPreview } from "@classy/components";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 export function Gist() {
   const [params] = useSearchParams();
   const { user, gistId } = useClassyParams();
   const classyConfig = useClassyConfig(user);
+  const { theme } = useThemeMode();
 
   const [gist, setGist] = useState<IGist | null>(null);
   const [fileContent, setFileContent] = useState<Record<string, string>>({});
@@ -100,10 +102,15 @@ export function Gist() {
             {it.language === "Markdown" ? (
               <MarkdownPreview
                 source={fileContent[it.filename]}
+                wrapperElement={{ "data-color-mode": theme }}
                 className="px-6"
               />
             ) : (
-              <CodeRender>{fileContent[it.filename]}</CodeRender>
+              <div className="rounded-md overflow-hidden">
+                <CodeRender theme={theme === "dark" ? "a11yDark" : "a11yLight"}>
+                  {fileContent[it.filename]}
+                </CodeRender>
+              </div>
             )}
           </div>
         ))}

@@ -107,6 +107,9 @@ importers:
       vaul:
         specifier: ^0.9.0
         version: registry.npmmirror.com/vaul@0.9.0(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      zustand:
+        specifier: ^4.5.2
+        version: registry.npmmirror.com/zustand@4.5.2(@types/react@18.3.1)(react@18.3.1)
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.2.0
@@ -14627,6 +14630,17 @@ packages:
       tslib: registry.npmmirror.com/tslib@2.6.2
     dev: false
 
+  registry.npmmirror.com/use-sync-external-store@1.2.0(react@18.3.1):
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz}
+    id: registry.npmmirror.com/use-sync-external-store/1.2.0
+    name: use-sync-external-store
+    version: 1.2.0
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: registry.npmmirror.com/react@18.3.1
+    dev: false
+
   registry.npmmirror.com/util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/util-deprecate/-/util-deprecate-1.0.2.tgz}
     name: util-deprecate
@@ -15220,6 +15234,29 @@ packages:
     name: zod
     version: 3.23.5
     dev: true
+
+  registry.npmmirror.com/zustand@4.5.2(@types/react@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/zustand/-/zustand-4.5.2.tgz}
+    id: registry.npmmirror.com/zustand/4.5.2
+    name: zustand
+    version: 4.5.2
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': registry.npmmirror.com/@types/react@18.3.1
+      react: registry.npmmirror.com/react@18.3.1
+      use-sync-external-store: registry.npmmirror.com/use-sync-external-store@1.2.0(react@18.3.1)
+    dev: false
 
   registry.npmmirror.com/zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/zwitch/-/zwitch-2.0.4.tgz}

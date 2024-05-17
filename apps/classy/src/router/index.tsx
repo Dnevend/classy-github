@@ -4,6 +4,7 @@ import { lazy } from "react";
 import App from "@/App";
 
 import { Layout } from "@/layout";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 const UserPage = lazy(() => import("@/pages/user"));
 const Gists = lazy(() => import("@/pages/gists"));
@@ -31,4 +32,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-export const Router = () => <RouterProvider router={router} />;
+export const Router = () => {
+  useThemeMode();
+  return <RouterProvider router={router} />;
+};

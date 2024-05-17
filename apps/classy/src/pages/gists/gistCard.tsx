@@ -8,6 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownPreview } from "@classy/components";
 import { cn } from "@classy/lib";
 import { useExpand } from "./hooks/useExpand";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 const ContentExpandHeight = 200;
 
@@ -29,7 +30,7 @@ const GistCard = ({
       })),
     [gist]
   );
-
+  const { theme } = useThemeMode();
   const contentRef = useRef<HTMLDivElement>(null);
 
   const { expand, isOverflow, toggleExpand } = useExpand({
@@ -130,10 +131,15 @@ const GistCard = ({
           {currentFile.language === "Markdown" && preview ? (
             <MarkdownPreview
               source={currentFileContent}
+              wrapperElement={{ "data-color-mode": theme }}
               className="px-0 sm:px-4"
             />
           ) : (
-            <CodeRender>{currentFileContent}</CodeRender>
+            <div className="rounded-md overflow-hidden">
+              <CodeRender theme={theme === "dark" ? "a11yDark" : "a11yLight"}>
+                {currentFileContent}
+              </CodeRender>
+            </div>
           )}
         </div>
 
