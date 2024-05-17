@@ -155,7 +155,7 @@ export function Layout() {
       </header>
 
       <div className="relative flex gap-4">
-        <div className="grow">
+        <div className="w-full grow">
           <Suspense
             fallback={
               <div className="w-full min-h-dvh flex justify-center items-center bg-white/85 dark:bg-zinc-900/80">

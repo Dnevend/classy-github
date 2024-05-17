@@ -3,7 +3,7 @@ import { Repo as IRepo, RepoContent } from "@classy/types";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Link, To, useParams, useSearchParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Eye, GitFork, LucideLink, Star } from "lucide-react";
+import { ExternalLink, Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
 import { MarkdownPreview } from "@classy/components";
@@ -106,7 +106,19 @@ export function Repo() {
       <div>
         {repository ? (
           <div className="flex flex-col gap-2">
-            <h1 className="text-center">{repository?.name}</h1>
+            <h1 className="text-center font-bold">{repository?.name}</h1>
+
+            {repository.homepage && (
+              <Link
+                to={repository.homepage}
+                target="_blank"
+                className="flex justify-center items-center gap-1 text-sm text-slate-500"
+              >
+                <span className="underline">{repository.homepage}</span>
+                <ExternalLink size={14} />
+              </Link>
+            )}
+
             <p className="text-sm text-center text-slate-500">
               {repository?.description}
             </p>
@@ -126,13 +138,6 @@ export function Repo() {
                 <Star size={16} />
                 {repository?.stargazers_count}
               </LinkBadge>
-
-              <Link to={repository.homepage} target="_blank">
-                <Badge className="gap-1" variant="secondary">
-                  <LucideLink size={16} />
-                  Home Page
-                </Badge>
-              </Link>
             </div>
           </div>
         ) : (
