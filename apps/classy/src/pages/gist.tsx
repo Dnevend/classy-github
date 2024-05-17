@@ -116,6 +116,8 @@ export function Gist() {
         ))}
       </div>
 
+      {/* TODO: 获取Gist对应评论 */}
+
       <Link
         to={gist?.html_url || ""}
         target="_blank"

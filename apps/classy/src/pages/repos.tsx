@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { githubUrl } from "@classy/shared";
 
+// TODO: 展示仓库主要使用语言
 const RepoCard = ({
   user,
   repo,

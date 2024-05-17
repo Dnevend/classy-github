@@ -163,6 +163,7 @@ export function UserPage() {
         </div>
       </div>
 
+      {/* FIXME: width */}
       {readme?.source && (
         <MarkdownPreview
           source={readme?.source}
@@ -191,9 +192,11 @@ export function UserPage() {
 
       {followers.length > 0 && (
         <section>
-          <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
-            Followers
-          </h2>
+          <Link to={`https://github.com/${user}?tab=followers`} target="_blank">
+            <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+              Followers
+            </h2>
+          </Link>
           <div className="flex flex-row flex-wrap my-2 items-center justify-center w-full">
             {followers.length > 0 && (
               <AnimatedTooltip
@@ -212,9 +215,11 @@ export function UserPage() {
 
       {following.length > 0 && (
         <section>
-          <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
-            Following
-          </h2>
+          <Link to={`https://github.com/${user}?tab=following`} target="_blank">
+            <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+              Following
+            </h2>
+          </Link>
           <div className="flex flex-row flex-wrap my-2 items-center justify-center w-full">
             {following.length > 0 && (
               <AnimatedTooltip

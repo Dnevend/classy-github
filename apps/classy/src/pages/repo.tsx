@@ -7,6 +7,7 @@ import { ExternalLink, Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
 import { MarkdownPreview } from "@classy/components";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 const LinkBadge = ({ to, children }: PropsWithChildren<{ to: To }>) => (
   <Link to={to} target="_blank">
@@ -19,16 +20,10 @@ const LinkBadge = ({ to, children }: PropsWithChildren<{ to: To }>) => (
   </Link>
 );
 
-/**
- * Review Address
- * /ant-design/repo/ant-design
- * /React95/repo/React95
- * /WaylonWalker/repo/WaylonWalker
- */
-
 export function Repo() {
   const [params] = useSearchParams();
   const { user, repo } = useParams() as { user: string; repo: string };
+  const { theme } = useThemeMode();
 
   // 目标渲染文件
   const [renderFile, setRenderFile] = useState<string | null>(
@@ -153,6 +148,7 @@ export function Repo() {
           <MarkdownPreview
             source={renderContent}
             pathRewrite={{ absPath, relativePath }}
+            wrapperElement={{ "data-color-mode": theme }}
           />
         ) : (
           <div className="flex flex-col space-y-3">
