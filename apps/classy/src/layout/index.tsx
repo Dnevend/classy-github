@@ -147,7 +147,12 @@ export function Layout() {
           </Drawer>
 
           <Link to={`/${user}`}>
-            <span className="text-sm md:text-lg">
+            <span
+              className={cn(
+                "text-sm md:text-lg font-bold",
+                "bg-gradient-to-r from-neutral-500 to-slate-900 bg-clip-text text-transparent"
+              )}
+            >
               {userinfo?.name || userinfo?.login || user}
             </span>
           </Link>
@@ -165,7 +170,7 @@ export function Layout() {
           >
             <main
               className={cn(
-                "relative grow p-6",
+                "relative grow p-4",
                 "bg-white/85 ring-1 ring-zinc-100 dark:bg-zinc-900/80 dark:ring-zinc-400/20"
               )}
             >

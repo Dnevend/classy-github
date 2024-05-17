@@ -141,9 +141,9 @@ export function Repo() {
             </div>
           </div>
         ) : (
-          <div className="w-fit flex flex-col space-y-3 mx-auto">
+          <div className="w-fit flex flex-col items-center space-y-3 mx-auto">
             <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-36" />
           </div>
         )}
       </div>

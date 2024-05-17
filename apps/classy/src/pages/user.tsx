@@ -138,8 +138,8 @@ export function UserPage() {
   }, [user]);
 
   return (
-    <>
-      <div className="flex sm:hidden flex-col gap-2 my-6">
+    <div className="flex flex-col gap-6">
+      <div className="flex sm:hidden flex-col gap-2 mt-4">
         <UserCard userinfo={userinfo} />
 
         <div className="w-full mx-auto flex gap-2">
@@ -169,6 +169,7 @@ export function UserPage() {
         />
       )}
 
+      {/* TODO: skelton */}
       <div className="h-auto w-full flex justify-center items-center">
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
           {showRepos?.map((it, index) => (
@@ -185,34 +186,48 @@ export function UserPage() {
         </div>
       </div>
 
-      <div className="flex flex-row flex-wrap my-6 items-center justify-center mb-10 w-full">
-        {followers.length > 0 && (
-          <AnimatedTooltip
-            items={followers.map((it) => ({
-              id: it.id,
-              name: it.login,
-              designation: it.html_url,
-              image: it.avatar_url,
-            }))}
-            onItemClick={(item) => navigate(`/${item.name}`)}
-          />
-        )}
-      </div>
+      {followers.length > 0 && (
+        <section>
+          <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+            Followers
+          </h2>
+          <div className="flex flex-row flex-wrap my-2 items-center justify-center w-full">
+            {followers.length > 0 && (
+              <AnimatedTooltip
+                items={followers.map((it) => ({
+                  id: it.id,
+                  name: it.login,
+                  designation: it.html_url,
+                  image: it.avatar_url,
+                }))}
+                onItemClick={(item) => navigate(`/${item.name}`)}
+              />
+            )}
+          </div>
+        </section>
+      )}
 
-      <div className="flex flex-row flex-wrap my-2 items-center justify-center mb-10 w-full">
-        {following.length > 0 && (
-          <AnimatedTooltip
-            items={following.map((it) => ({
-              id: it.id,
-              name: it.login,
-              designation: it.html_url,
-              image: it.avatar_url,
-            }))}
-            onItemClick={(item) => navigate(`/${item.name}`)}
-          />
-        )}
-      </div>
-    </>
+      {following.length > 0 && (
+        <section>
+          <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+            Following
+          </h2>
+          <div className="flex flex-row flex-wrap my-2 items-center justify-center w-full">
+            {following.length > 0 && (
+              <AnimatedTooltip
+                items={following.map((it) => ({
+                  id: it.id,
+                  name: it.login,
+                  designation: it.html_url,
+                  image: it.avatar_url,
+                }))}
+                onItemClick={(item) => navigate(`/${item.name}`)}
+              />
+            )}
+          </div>
+        </section>
+      )}
+    </div>
   );
 }
 
