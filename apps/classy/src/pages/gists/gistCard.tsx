@@ -1,5 +1,5 @@
 import { Gist, GistFile } from "@classy/types/github";
-import { ArrowRight, Braces, ChevronsDown, Eye } from "lucide-react";
+import { Braces, ChevronsDown, Eye } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
