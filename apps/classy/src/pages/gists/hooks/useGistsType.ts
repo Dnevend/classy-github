@@ -21,7 +21,7 @@ export const useGistsType = (user: string) => {
     };
 
     const getDefaultType = () => {
-        if (!searchType) return defaultType.name;
+        if (!searchType) return classyConfig.gists.default || defaultType.name;
         if (
             searchType !== defaultType.name &&
             !gistTypes.some((it) => it.name.toLowerCase() === searchType)

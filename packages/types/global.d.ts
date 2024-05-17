@@ -12,6 +12,7 @@ type ClassyConfig = {
     gists: {
         prefix: `Classy` | string,
         split: string,
+        default: string,
         type: {
             name: string,
             desc?: string

@@ -10,6 +10,7 @@
     "gists": {
         "prefix": "Classy",
         "split": ".",
+        "default": "blog",
         "type": [
             {
                 "name": "blog"
