@@ -34,7 +34,13 @@ const RepoCard = ({
     )}
   >
     <div>
-      <h3 className="text-lg font-bold line-clamp-1 bg-gradient-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
+      <h3
+        className={cn(
+          "text-lg font-bold line-clamp-1",
+          "bg-gradient-to-r bg-clip-text text-transparent",
+          "from-slate-900 to-slate-500 dark:from-slate-300 dark:to-slate-50"
+        )}
+      >
         {repo.name}
       </h3>
       {repo.description && (

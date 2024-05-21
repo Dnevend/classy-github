@@ -150,7 +150,8 @@ export function Layout() {
             <span
               className={cn(
                 "text-sm md:text-lg font-bold",
-                "bg-gradient-to-r from-neutral-500 to-slate-900 bg-clip-text text-transparent"
+                "bg-gradient-to-r  bg-clip-text text-transparent",
+                "from-slate-500 to-slate-900 dark:from-slate-50 dark:to-slate-300"
               )}
             >
               {userinfo?.name || userinfo?.login || user}
@@ -190,7 +191,10 @@ export function Layout() {
             <div className="flex gap-2 mt-2">
               <Link
                 to={`/${user}/repos`}
-                className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+                className={cn(
+                  "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
+                  "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
+                )}
               >
                 <span>Repos</span>
                 <strong>{userinfo?.public_repos}</strong>
@@ -198,7 +202,10 @@ export function Layout() {
 
               <Link
                 to={`/${user}/gists`}
-                className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+                className={cn(
+                  "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
+                  "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
+                )}
               >
                 <span>Gists</span>
                 <strong>{userinfo?.public_gists}</strong>

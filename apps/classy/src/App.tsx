@@ -32,14 +32,14 @@ function App() {
         <Input
           id="username"
           placeholder="Your github username"
-          className="bg-zinc-50"
+          className="bg-zinc-50 dark:bg-black"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
 
         <ThemeSelect
           onSelectChange={(theme) => setTheme(theme)}
-          className="bg-zinc-50"
+          className="bg-zinc-50 dark:bg-black"
         />
 
         <Button asChild>
@@ -49,7 +49,7 @@ function App() {
                 ? `https://${themeDomains[theme]}/${username}`
                 : `${username}`
             }
-            className="animate-shimmer rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-slate-50"
+            className="animate-shimmer rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] dark:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-slate-50"
           >
             Enter
           </Link>

@@ -36,7 +36,13 @@ const RepoCard = ({
     )}
   >
     <div>
-      <h3 className="text-lg font-bold line-clamp-1 bg-gradient-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent">
+      <h3
+        className={cn(
+          "text-lg font-bold line-clamp-1",
+          "bg-gradient-to-r bg-clip-text text-transparent",
+          "from-slate-900 to-slate-500 dark:from-slate-300 dark:to-slate-50"
+        )}
+      >
         {repo.name}
       </h3>
       {repo.description && (
@@ -147,7 +153,10 @@ export function UserPage() {
         <div className="w-full mx-auto flex gap-2">
           <Link
             to={`/${user}/repos`}
-            className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+            className={cn(
+              "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
+              "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
+            )}
           >
             <span>Repos</span>
             <strong>{userinfo?.public_repos}</strong>
@@ -155,7 +164,10 @@ export function UserPage() {
 
           <Link
             to={`/${user}/gists`}
-            className="w-full flex flex-col items-center py-2 px-6 border rounded-lg bg-gray-50 hover:shadow-sm"
+            className={cn(
+              "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
+              "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
+            )}
           >
             <span>Gists</span>
             <strong>{userinfo?.public_gists}</strong>
@@ -193,7 +205,12 @@ export function UserPage() {
       {followers.length > 0 && (
         <section>
           <Link to={`https://github.com/${user}?tab=followers`} target="_blank">
-            <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+            <h2
+              className={cn(
+                "text-center font-bold tracking-wide bg-gradient-to-r bg-clip-text text-transparent",
+                "from-slate-600 to-slate-900 dark:from-slate-50 dark:to-slate-300"
+              )}
+            >
               Followers
             </h2>
           </Link>
@@ -216,7 +233,12 @@ export function UserPage() {
       {following.length > 0 && (
         <section>
           <Link to={`https://github.com/${user}?tab=following`} target="_blank">
-            <h2 className="text-center font-bold tracking-wide bg-gradient-to-r from-zinc-600 to-slate-300 bg-clip-text text-transparent">
+            <h2
+              className={cn(
+                "text-center font-bold tracking-wide bg-gradient-to-r bg-clip-text text-transparent",
+                "from-slate-600 to-slate-900 dark:from-slate-50 dark:to-slate-300"
+              )}
+            >
               Following
             </h2>
           </Link>
