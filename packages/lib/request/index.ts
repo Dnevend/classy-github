@@ -41,7 +41,7 @@ const objToQueryParams = (obj: Record<string, any>) => {
 }
 
 export const gitApiFetch: GitApiFetch = async (url, options) => {
-    const { expire = 60 * 1000, params = {}, alt, priority } = options || {}
+    const { expire = 60 * 1000, params = {}, alt } = options || {}
 
     const queryParams = objToQueryParams(params)
 
@@ -58,7 +58,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     }
 
     try {
-        const res = await fetch(githubUrl.api + fetchUrl, { priority })
+        const res = await fetch(githubUrl.api + fetchUrl)
 
         if (res.ok) {
             const data = await res.json()
@@ -70,7 +70,7 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     }
 
     try {
-        const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl, { priority })
+        const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl)
 
         if (refetchRes.ok) {
             const data = await refetchRes.json()
