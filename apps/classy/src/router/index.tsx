@@ -5,6 +5,7 @@ import App from "@/App";
 
 import { Layout } from "@/layout";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { userLoader } from "./loader";
 
 const UserPage = lazy(() => import("@/pages/user"));
 const Gists = lazy(() => import("@/pages/gists"));
@@ -22,8 +23,12 @@ const router = createBrowserRouter([
   {
     path: "/:user/*",
     element: <Layout />,
+    loader: userLoader,
     children: [
-      { path: "*", element: <UserPage /> },
+      {
+        path: "*",
+        element: <UserPage />,
+      },
       { path: "gists", element: <Gists /> },
       { path: "gist/:gistId", element: <Gist /> },
       { path: "repos", element: <Repos /> },

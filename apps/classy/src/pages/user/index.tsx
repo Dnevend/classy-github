@@ -2,79 +2,17 @@ import { UserCard } from "@/components/user-card";
 import { AnimatedTooltip } from "@/components/animated-tooltip";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Follower, Repo, User } from "@classy/types/github";
+import { Follower, Repo, RepoContent, User } from "@classy/types/github";
 import {
   useClassyParams,
-  gitFetchFunc,
   useClassyConfig,
   cn,
+  gitApiFetch,
+  requestUrl,
 } from "@classy/lib";
-import { GitFork, Star } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
+import RepoCard from "./RepoCard";
 import { MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
-
-const RepoCard = ({
-  user,
-  repo,
-  className,
-}: {
-  user: string;
-  repo: Repo;
-  className: string;
-}) => (
-  <Link
-    to={`/${user}/repo/${repo.name}`}
-    className={cn(
-      "flex flex-col justify-between h-auto w-full p-4 border rounded-lg hover:shadow text-wrap break-words",
-      className
-    )}
-  >
-    <div>
-      <h3
-        className={cn(
-          "text-lg font-bold line-clamp-1",
-          "bg-gradient-to-r bg-clip-text text-transparent",
-          "from-slate-900 to-slate-500 dark:from-slate-300 dark:to-slate-50"
-        )}
-      >
-        {repo.name}
-      </h3>
-      {repo.description && (
-        <Tooltip>
-          <TooltipTrigger>
-            <p className="text-xs text-slate-500 text-start line-clamp-3">
-              {repo.description}
-            </p>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-sm max-w-60">{repo.description}</p>
-          </TooltipContent>
-        </Tooltip>
-      )}
-    </div>
-
-    <div>
-      <Separator className="mt-4 mb-2" />
-
-      <div className="flex gap-3">
-        <span className="flex items-center gap-1 text-sm">
-          <Star size={12} />
-          <span>{repo.stargazers_count}</span>
-        </span>
-        <span className="flex items-center gap-1 text-sm">
-          <GitFork size={12} />
-          <span>{repo.forks_count}</span>
-        </span>
-      </div>
-    </div>
-  </Link>
-);
 
 export function UserPage() {
   const navigate = useNavigate();
@@ -101,32 +39,30 @@ export function UserPage() {
 
   useEffect(() => {
     (async () => {
-      const data = await gitFetchFunc.userinfo(user);
+      const data = await await gitApiFetch<User>(requestUrl.user(user), {
+        priority: "low",
+      });
       setUserinfo(data);
     })();
 
     (async () => {
-      const data = await gitFetchFunc.userRepos(user, {
-        sort: "updated",
-        per_page: 100,
+      const data = await gitApiFetch<Repo[]>(requestUrl.repos(user), {
+        params: {
+          sort: "updated",
+          per_page: 100,
+        },
+        priority: "high",
       });
       setRepos(data!);
-    })();
-
-    (async () => {
-      const data = await gitFetchFunc.userFollowers(user);
-      setFollowers(data!);
-    })();
-
-    (async () => {
-      const data = await gitFetchFunc.userFollowing(user);
-      setFollowing(data!);
     })();
 
     // 获取用户个人自述文件
     // https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme
     (async () => {
-      const repoContents = await gitFetchFunc.repoContents(user, user);
+      const repoContents = await gitApiFetch<RepoContent[]>(
+        requestUrl.repoContents(user, user),
+        { priority: "high" }
+      );
       const readmeRawUrl = repoContents?.find(
         (it) => it.name.toLowerCase() === "readme.md"
       )?.download_url;
@@ -142,6 +78,22 @@ export function UserPage() {
       } else {
         setReadme(null);
       }
+    })();
+
+    (async () => {
+      const data = await await gitApiFetch<Follower[]>(
+        requestUrl.followers(user),
+        { alt: [], priority: "low" }
+      );
+      setFollowers(data);
+    })();
+
+    (async () => {
+      const data = await gitApiFetch<Follower[]>(requestUrl.following(user), {
+        alt: [],
+        priority: "low",
+      });
+      setFollowing(data);
     })();
   }, [user]);
 

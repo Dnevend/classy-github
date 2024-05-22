@@ -1,8 +1,9 @@
 
-export type FetchOptions<T extends any> = {
+export type FetchOptions<T extends any = any> = {
     expire: number,
     alt: T,
-    params: Record<string, any>
+    params: Record<string, any>,
+    priority: RequestPriority
 }
 
 export type GitApiFetch = <T extends any = any>(url: string, options?: Partial<FetchOptions<T>>) => Promise<T>

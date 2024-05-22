@@ -7,14 +7,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  useClassyParams,
-  cn,
-  useClassyConfig,
-  gitFetchFunc,
-} from "@classy/lib";
-import { Suspense, useEffect, useState } from "react";
-import { NavLink, Outlet, useMatch } from "react-router-dom";
+import { useClassyParams, cn, useClassyConfig } from "@classy/lib";
+import { Suspense } from "react";
+import { NavLink, Outlet, useLoaderData, useMatch } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { Loading } from "./loading";
@@ -26,19 +21,14 @@ import ErrorBoundary from "@/components/error-boundary";
 import UserCard from "@/components/user-card";
 
 export function Layout() {
+  const { userinfo } = useLoaderData() as {
+    userinfo: User | null;
+  };
   const { user } = useClassyParams();
 
   const matchUserPage = useMatch("/:user");
 
-  const [userinfo, setUserinfo] = useState<User | null>(null);
   const classyConfig = useClassyConfig(user);
-
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.userinfo(user);
-      setUserinfo(data);
-    })();
-  }, [user]);
 
   const { links } = classyConfig;
 
