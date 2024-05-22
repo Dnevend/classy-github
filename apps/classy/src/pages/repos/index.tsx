@@ -1,88 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Separator } from "@/components/ui/separator";
-import { cn, gitFetchFunc, usePageFetch } from "@classy/lib";
-import { Repo, User } from "@classy/types";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
-import { BookCopy, Ellipsis, ExternalLink, GitFork, Star } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import SvgPlaceholder from "@/assets/placeholder.svg";
+  cn,
+  gitApiFetch,
+  gitFetchFunc,
+  requestUrl,
+  usePageFetch,
+} from "@classy/lib";
+import { Repo, User } from "@classy/types";
+import { BookCopy, Ellipsis, ExternalLink } from "lucide-react";
+import { useCallback } from "react";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { githubUrl } from "@classy/shared";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import SvgPlaceholder from "@/assets/placeholder.svg";
+import RepoCard from "./RepoCard";
 
-// TODO: 展示仓库主要使用语言
-const RepoCard = ({
-  user,
-  repo,
-  className,
-}: {
-  user: string;
-  repo: Repo;
-  className?: string;
-}) => (
-  <Link
-    to={`/${user}/repo/${repo.name}`}
-    className={cn(
-      "flex flex-col justify-between h-auto w-full p-4 border rounded-lg hover:shadow text-wrap break-words",
-      className
-    )}
-  >
-    <div>
-      <h3
-        className={cn(
-          "text-lg font-bold line-clamp-1",
-          "bg-gradient-to-r bg-clip-text text-transparent",
-          "from-slate-900 to-slate-500 dark:from-slate-300 dark:to-slate-50"
-        )}
-      >
-        {repo.name}
-      </h3>
-      {repo.description && (
-        <Tooltip>
-          <TooltipTrigger>
-            <p className="text-xs text-slate-500 text-start line-clamp-3">
-              {repo.description}
-            </p>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-sm max-w-60">{repo.description}</p>
-          </TooltipContent>
-        </Tooltip>
-      )}
-    </div>
-
-    <div>
-      <Separator className="mt-4 mb-2" />
-
-      <div className="flex gap-3">
-        <span className="flex items-center gap-1 text-sm">
-          <Star size={12} />
-          <span>{repo.stargazers_count}</span>
-        </span>
-        <span className="flex items-center gap-1 text-sm">
-          <GitFork size={12} />
-          <span>{repo.forks_count}</span>
-        </span>
-      </div>
-    </div>
-  </Link>
-);
 export function Repos() {
   const { user } = useParams() as { user: string };
 
-  const [userinfo, setUserinfo] = useState<User | null>(null);
+  const { repos: loaderRepos } = useLoaderData() as { repos: Repo[] };
 
+  const { data: userinfo = null } = useQuery<User>({
+    queryKey: ["user", user],
+    queryFn: () => gitApiFetch(requestUrl.user(user), { priority: "low" }),
+  });
+
+  const queryClient = useQueryClient();
   const fetchRepos = useCallback(
-    (params?: Record<string, any>) => {
-      return gitFetchFunc.userRepos(user, { sort: "updated", ...params });
-    },
-    [user]
+    async (params?: Record<string, any>) =>
+      queryClient.fetchQuery({
+        queryKey: ["repos", user, params],
+        queryFn: () =>
+          gitFetchFunc.userRepos(user, { sort: "updated", ...params }),
+      }),
+    [user, queryClient]
   );
 
   const { allDataList, hasMore, loadMore, fetching } = usePageFetch({
@@ -90,12 +44,7 @@ export function Repos() {
     fetchFunc: fetchRepos,
   });
 
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.userinfo(user);
-      setUserinfo(data);
-    })();
-  }, [user]);
+  const showRepos = allDataList.length === 0 ? loaderRepos : allDataList;
 
   return (
     <>
@@ -130,7 +79,7 @@ export function Repos() {
         </div>
       </div>
 
-      {allDataList.length === 0 && !fetching && (
+      {showRepos.length === 0 && !fetching && (
         <div className="w-full h-60">
           <div
             className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-12"
@@ -156,7 +105,7 @@ export function Repos() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-        {allDataList.length === 0 && fetching && (
+        {showRepos.length === 0 && fetching && (
           <>
             {new Array(9).fill(null).map(() => (
               <Skeleton className="h-28 w-full" />
@@ -164,7 +113,7 @@ export function Repos() {
           </>
         )}
 
-        {allDataList.map((it) => (
+        {showRepos.map((it) => (
           <RepoCard key={it.id} user={user} repo={it} />
         ))}
 

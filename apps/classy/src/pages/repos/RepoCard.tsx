@@ -9,6 +9,7 @@ import { Repo } from "@classy/types";
 import { GitFork, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// TODO: 展示仓库主要使用语言
 const RepoCard = ({
   user,
   repo,
@@ -16,7 +17,7 @@ const RepoCard = ({
 }: {
   user: string;
   repo: Repo;
-  className: string;
+  className?: string;
 }) => (
   <Link
     to={`/${user}/repo/${repo.name}`}

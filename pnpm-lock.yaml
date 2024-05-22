@@ -74,6 +74,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.0.7
         version: registry.npmmirror.com/@radix-ui/react-tooltip@1.0.7(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.37.1
+        version: registry.npmmirror.com/@tanstack/react-query@5.37.1(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: registry.npmmirror.com/class-variance-authority@0.7.0
@@ -5210,6 +5213,24 @@ packages:
     engines: {node: '>=14.16'}
     dependencies:
       defer-to-connect: registry.npmmirror.com/defer-to-connect@2.0.1
+    dev: false
+
+  registry.npmmirror.com/@tanstack/query-core@5.36.1:
+    resolution: {integrity: sha512-BteWYEPUcucEu3NBcDAgKuI4U25R9aPrHSP6YSf2NvaD2pSlIQTdqOfLRsxH9WdRYg7k0Uom35Uacb6nvbIMJg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@tanstack/query-core/-/query-core-5.36.1.tgz}
+    name: '@tanstack/query-core'
+    version: 5.36.1
+    dev: false
+
+  registry.npmmirror.com/@tanstack/react-query@5.37.1(react@18.3.1):
+    resolution: {integrity: sha512-EhtBNA8GL3XFeSx6VYUjXQ96n44xe3JGKZCzBINrCYlxbZP6UwBafv7ti4eSRWc2Fy+fybQre0w17gR6lMzULA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@tanstack/react-query/-/react-query-5.37.1.tgz}
+    id: registry.npmmirror.com/@tanstack/react-query/5.37.1
+    name: '@tanstack/react-query'
+    version: 5.37.1
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': registry.npmmirror.com/@tanstack/query-core@5.36.1
+      react: registry.npmmirror.com/react@18.3.1
     dev: false
 
   registry.npmmirror.com/@trysound/sax@0.2.0:

@@ -1,101 +1,92 @@
 import { UserCard } from "@/components/user-card";
 import { AnimatedTooltip } from "@/components/animated-tooltip";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Follower, Repo, RepoContent, User } from "@classy/types/github";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  useClassyParams,
-  useClassyConfig,
-  cn,
-  gitApiFetch,
-  requestUrl,
-} from "@classy/lib";
-import RepoCard from "./RepoCard";
+  Follower,
+  Following,
+  Repo,
+  RepoContent,
+  User,
+} from "@classy/types/github";
+import { useClassyConfig, cn, gitApiFetch, requestUrl } from "@classy/lib";
+import RepoCard from "./repos/RepoCard";
 import { MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { useQuery } from "@tanstack/react-query";
 
 export function UserPage() {
   const navigate = useNavigate();
-  const { user } = useClassyParams();
+  const { user } = useParams() as { user: string };
   const { theme } = useThemeMode();
   const classyConfig = useClassyConfig(user);
 
-  const [readme, setReadme] = useState<{
-    path?: string;
-    source?: string;
-  } | null>(null);
-  const [userinfo, setUserinfo] = useState<User | null>(null);
-  const [repos, setRepos] = useState<Repo[]>([]);
-  const [followers, setFollowers] = useState<Follower[]>([]);
-  const [following, setFollowing] = useState<Follower[]>([]);
+  const { data: userinfo = null } = useQuery<User>({
+    queryKey: ["user", user],
+    queryFn: () => gitApiFetch(requestUrl.user(user), { priority: "low" }),
+  });
 
-  const showRepos = repos
-    .sort((a, b) => {
-      const aCount = a.stargazers_count + a.forks_count;
-      const bCount = b.stargazers_count + b.forks_count;
-      return aCount > bCount ? -1 : 1;
-    })
-    .slice(0, classyConfig.profile.repos.showCount);
-
-  useEffect(() => {
-    (async () => {
-      const data = await await gitApiFetch<User>(requestUrl.user(user), {
-        priority: "low",
-      });
-      setUserinfo(data);
-    })();
-
-    (async () => {
-      const data = await gitApiFetch<Repo[]>(requestUrl.repos(user), {
+  const { data: repos = [] } = useQuery<Repo[]>({
+    queryKey: ["repos", user, { sort: "updated", per_page: 100 }],
+    queryFn: () =>
+      gitApiFetch(requestUrl.repos(user), {
         params: {
           sort: "updated",
           per_page: 100,
         },
         priority: "high",
-      });
-      setRepos(data!);
-    })();
+      }),
+    select: (data) =>
+      data
+        .sort((a, b) => {
+          const aCount = a.stargazers_count + a.forks_count;
+          const bCount = b.stargazers_count + b.forks_count;
+          return aCount > bCount ? -1 : 1;
+        })
+        .slice(0, classyConfig.profile.repos.showCount),
+  });
 
+  const { data: followers = [] } = useQuery<Follower[]>({
+    queryKey: ["followers", user],
+    queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
+  });
+
+  const { data: following = [] } = useQuery<Following[]>({
+    queryKey: ["followers", user],
+    queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
+  });
+
+  const { data: readme } = useQuery<{
+    path?: string;
+    source?: string;
+  } | null>({
+    queryKey: ["readme", user],
     // 获取用户个人自述文件
     // https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme
-    (async () => {
+    queryFn: async () => {
       const repoContents = await gitApiFetch<RepoContent[]>(
         requestUrl.repoContents(user, user),
         { priority: "high" }
       );
+
       const readmeRawUrl = repoContents?.find(
         (it) => it.name.toLowerCase() === "readme.md"
       )?.download_url;
+
       if (readmeRawUrl) {
         const data = await fetch(readmeRawUrl);
         if (data.ok) {
           const readme = await data.text();
-          setReadme({
+
+          return {
             path: readmeRawUrl.substring(0, readmeRawUrl.lastIndexOf("/") + 1),
             source: readme,
-          });
+          };
         }
-      } else {
-        setReadme(null);
       }
-    })();
 
-    (async () => {
-      const data = await await gitApiFetch<Follower[]>(
-        requestUrl.followers(user),
-        { alt: [], priority: "low" }
-      );
-      setFollowers(data);
-    })();
-
-    (async () => {
-      const data = await gitApiFetch<Follower[]>(requestUrl.following(user), {
-        alt: [],
-        priority: "low",
-      });
-      setFollowing(data);
-    })();
-  }, [user]);
+      return null;
+    },
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -140,14 +131,14 @@ export function UserPage() {
       {/* TODO: skelton */}
       <div className="h-auto w-full flex justify-center items-center">
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {showRepos?.map((it, index) => (
+          {repos?.map((it, index) => (
             <RepoCard
               key={it.id}
               user={user}
               repo={it}
               className={cn({
                 "col-span-2":
-                  showRepos.length % 2 !== 0 && index === showRepos.length - 1,
+                  repos.length % 2 !== 0 && index === repos.length - 1,
               })}
             />
           ))}
