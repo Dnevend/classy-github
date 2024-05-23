@@ -6,8 +6,10 @@ import Logo from "./components/logo";
 import { Theme, themeDomains } from "@classy/shared";
 import { cn, getCurrentTheme } from "@classy/lib";
 import { ThemeSelect } from "./components/theme-select";
+import { useNProgress } from "./hooks/useNProgress";
 
 function App() {
+  useNProgress();
   const [username, setUsername] = useState<string>("");
   const [theme, setTheme] = useState<Theme>(getCurrentTheme("default"));
 

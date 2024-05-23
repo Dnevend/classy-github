@@ -25,6 +25,7 @@ import { Footer } from "./footer";
 import { Separator } from "@/components/ui/separator";
 import ErrorBoundary from "@/components/error-boundary";
 import { ProfileCard } from "@/pages/user/ProfileCard";
+import { useNProgress } from "@/hooks/useNProgress";
 
 const Navbar = ({ user, blog }: { user: string; blog: string }) => (
   <nav className="hidden md:flex items-center gap-4 text-sm lg:gap-6">
@@ -115,6 +116,8 @@ export function Layout() {
   const { userinfo } = useLoaderData() as {
     userinfo: User | null;
   };
+
+  useNProgress();
 
   const location = useLocation();
 
