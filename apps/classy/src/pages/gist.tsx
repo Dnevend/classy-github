@@ -134,7 +134,12 @@ export function Gist() {
               </Link>
 
               <div className="w-full border rounded-md p-2">
-                <p className="font-bold">{it.user.login}</p>
+                <div className="flex justify-between">
+                  <span className="font-bold">{it.user.login}</span>
+                  <span className="text-sm text-slate-500">
+                    {it.updated_at}
+                  </span>
+                </div>
                 <Separator className="my-2" />
                 <MarkdownPreview
                   source={it.body}

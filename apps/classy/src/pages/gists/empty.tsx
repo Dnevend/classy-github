@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { cn, useClassyConfig, useClassyParams } from "@classy/lib";
+import { cn, useClassyConfig } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
 import { ExternalLink } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const GistsEmpty = ({ type }: { type?: string }) => {
-  const { user } = useClassyParams();
+  const { user } = useParams() as { user: string };
 
   const { gists } = useClassyConfig(user);
 

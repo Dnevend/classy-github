@@ -1,12 +1,7 @@
-import {
-  cn,
-  gitFetchFunc,
-  useClassyConfig,
-  useClassyParams,
-} from "@classy/lib";
+import { cn, gitFetchFunc, useClassyConfig } from "@classy/lib";
 import { Follower, Following, Repo, User } from "@classy/types";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const Account = ({
   avatar,
@@ -32,7 +27,7 @@ const Account = ({
 
 export function UserPage() {
   const navigate = useNavigate();
-  const { user } = useClassyParams();
+  const { user } = useParams() as { user: string };
   const classyConfig = useClassyConfig(user);
 
   const [userinfo, setUserinfo] = useState<User | null>(null);

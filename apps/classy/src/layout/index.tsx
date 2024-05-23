@@ -7,7 +7,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useClassyParams, cn, useClassyConfig } from "@classy/lib";
+import { cn, useClassyConfig } from "@classy/lib";
 import { Suspense, useLayoutEffect } from "react";
 import {
   NavLink,
@@ -15,6 +15,7 @@ import {
   useLoaderData,
   useLocation,
   useMatch,
+  useParams,
 } from "react-router-dom";
 
 import { Link } from "react-router-dom";
@@ -33,7 +34,7 @@ export function Layout() {
 
   const location = useLocation();
 
-  const { user } = useClassyParams();
+  const { user } = useParams() as { user: string };
 
   const matchUserPage = useMatch("/:user");
 
