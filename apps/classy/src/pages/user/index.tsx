@@ -54,8 +54,8 @@ export function UserPage() {
   const { data: following = [], isLoading: followingLoading } = useQuery<
     Following[]
   >({
-    queryKey: ["followers", user],
-    queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
+    queryKey: ["following", user],
+    queryFn: () => gitApiFetch(requestUrl.following(user), { priority: "low" }),
   });
 
   const { data: readme, isLoading: readmeLoading } = useQuery<{
