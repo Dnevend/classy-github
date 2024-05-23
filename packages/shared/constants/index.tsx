@@ -22,6 +22,7 @@ export const themeDomains: Record<Theme, string> = {
   default: "classygit.me",
   nes: "nes.classygit.me",
   win95: "win95.classygit.me",
+  mac: "mac.classygit.me",
 };
 
 export const themeMap = new Map(
