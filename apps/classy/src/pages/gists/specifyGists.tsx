@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getGistMatchStr,
-  gitFetchFunc,
+  gitApiFetch,
   matchGistRule,
+  requestUrl,
   useClassyConfig,
   usePageFetch,
 } from "@classy/lib";
 
 import GistCard from "./gistCard";
 import GistsEmpty from "./empty";
+import { useQueryClient } from "@tanstack/react-query";
 
 const GistSkeleton = () => (
   <div className="flex flex-col space-y-3 my-8">
@@ -26,15 +28,18 @@ const GistSkeleton = () => (
 const SpecifyGists = ({ user, type }: { user: string; type: string }) => {
   const classyConfig = useClassyConfig(user);
 
-  const fetchPageData = useCallback(
-    (params?: Record<string, any>) => {
-      return gitFetchFunc.userGists(user, params);
-    },
-    [user]
+  const queryClient = useQueryClient();
+  const fetchGists = useCallback(
+    async (params?: Record<string, any>) =>
+      queryClient.fetchQuery({
+        queryKey: ["gists", user, params],
+        queryFn: () => gitApiFetch(requestUrl.gists(user), { params }),
+      }),
+    [user, queryClient]
   );
 
   const { allDataList, fetching, hasMore, loadMore } = usePageFetch({
-    fetchFunc: fetchPageData,
+    fetchFunc: fetchGists,
   });
 
   const { prefix, split } = classyConfig.gists;

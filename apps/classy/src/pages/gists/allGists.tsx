@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback } from "react";
-import { gitFetchFunc, usePageFetch } from "@classy/lib";
+import { gitApiFetch, requestUrl, usePageFetch } from "@classy/lib";
 import { Pagination } from "@/components/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import GistsEmpty from "./empty";
 import GistCard from "./gistCard";
+import { useQueryClient } from "@tanstack/react-query";
 
 const GistSkeleton = () => (
   <div className="flex flex-col space-y-3 my-8">
@@ -18,11 +19,14 @@ const GistSkeleton = () => (
 );
 
 const AllGists = ({ user }: { user: string }) => {
-  const fetchPageData = useCallback(
-    (params?: Record<string, any>) => {
-      return gitFetchFunc.userGists(user, params);
-    },
-    [user]
+  const queryClient = useQueryClient();
+  const fetchGists = useCallback(
+    async (params?: Record<string, any>) =>
+      queryClient.fetchQuery({
+        queryKey: ["gists", user, params],
+        queryFn: () => gitApiFetch(requestUrl.gists(user), { params }),
+      }),
+    [user, queryClient]
   );
 
   const {
@@ -32,7 +36,7 @@ const AllGists = ({ user }: { user: string }) => {
     hasMore,
     goNext,
     goPrev,
-  } = usePageFetch({ pageSize: 5, fetchFunc: fetchPageData });
+  } = usePageFetch({ pageSize: 5, fetchFunc: fetchGists });
 
   return (
     <>

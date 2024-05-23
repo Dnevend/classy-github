@@ -1,5 +1,5 @@
-import { gitFetchFunc } from "@classy/lib";
-import { Repo as IRepo } from "@classy/types";
+import { gitApiFetch, requestUrl } from "@classy/lib";
+import { Repo as IRepo, RepoContent } from "@classy/types";
 import { PropsWithChildren, useEffect, useState } from "react";
 import {
   Link,
@@ -47,7 +47,10 @@ export function Repo() {
 
   const { data: repoContents } = useQuery({
     queryKey: ["repoContents", user, repo],
-    queryFn: () => gitFetchFunc.repoContents(user, repo),
+    queryFn: () =>
+      gitApiFetch<RepoContent[]>(requestUrl.repoContents(user, repo), {
+        alt: [],
+      }),
   });
 
   useEffect(() => {

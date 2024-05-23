@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  cn,
-  gitApiFetch,
-  gitFetchFunc,
-  requestUrl,
-  usePageFetch,
-} from "@classy/lib";
+import { cn, gitApiFetch, requestUrl, usePageFetch } from "@classy/lib";
 import { Repo, User } from "@classy/types";
 import { BookCopy, Ellipsis, ExternalLink } from "lucide-react";
 import { useCallback } from "react";
@@ -34,7 +28,9 @@ export function Repos() {
       queryClient.fetchQuery({
         queryKey: ["repos", user, params],
         queryFn: () =>
-          gitFetchFunc.userRepos(user, { sort: "updated", ...params }),
+          gitApiFetch(requestUrl.repos(user), {
+            params: { sort: "updated", ...params },
+          }),
       }),
     [user, queryClient]
   );
