@@ -1,4 +1,3 @@
-import { UserCard } from "@/components/user-card";
 import { AnimatedTooltip } from "@/components/animated-tooltip";
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
@@ -9,11 +8,12 @@ import {
   User,
 } from "@classy/types/github";
 import { useClassyConfig, cn, gitApiFetch, requestUrl } from "@classy/lib";
-import RepoCard from "./repos/RepoCard";
+import RepoCard from "../repos/RepoCard";
 import { MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProfileCard } from "./ProfileCard";
 
 // FIXME: /cumsoft
 
@@ -93,32 +93,8 @@ export function UserPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex sm:hidden flex-col gap-2 mt-4">
-        <UserCard userinfo={userinfo} />
-
-        <div className="w-full mx-auto flex gap-2">
-          <Link
-            to={`/${user}/repos`}
-            className={cn(
-              "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
-              "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
-            )}
-          >
-            <span>Repos</span>
-            <strong>{userinfo?.public_repos}</strong>
-          </Link>
-
-          <Link
-            to={`/${user}/gists`}
-            className={cn(
-              "w-full flex flex-col items-center py-2 px-6 border rounded-lg hover:shadow-sm",
-              "bg-gray-50 dark:bg-black dark:border-white/[0.2]"
-            )}
-          >
-            <span>Gists</span>
-            <strong>{userinfo?.public_gists}</strong>
-          </Link>
-        </div>
+      <div className="block sm:hidden mt-4">
+        <ProfileCard user={user} userinfo={userinfo} />
       </div>
 
       {readmeLoading && <Skeleton className="w-full h-32" />}
