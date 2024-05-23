@@ -9,6 +9,11 @@ import { ThemeSelect } from "./components/theme-select";
 import { useNProgress } from "./hooks/useNProgress";
 import { AnimatePresence, motion } from "framer-motion";
 
+const FADE_DOWN_ANIMATION_VARIANTS = {
+  hidden: { opacity: 0, y: -10 },
+  show: { opacity: 1, y: 0, transition: { type: "spring" } },
+};
+
 const words = ["定制主页", "个人博客", "随笔记录"];
 
 function App() {
@@ -28,10 +33,21 @@ function App() {
   }, []);
 
   return (
-    <div
+    <motion.div
       className={cn(
         "min-h-dvh flex flex-col gap-6 justify-center items-center dark:bg-black"
       )}
+      initial="hidden"
+      animate="show"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.15,
+          },
+        },
+      }}
     >
       <div
         className={cn(
@@ -40,9 +56,14 @@ function App() {
         )}
       />
 
-      <Logo />
+      <motion.div variants={FADE_DOWN_ANIMATION_VARIANTS}>
+        <Logo />
+      </motion.div>
 
-      <code className="text-center">
+      <motion.div
+        className="text-center"
+        variants={FADE_DOWN_ANIMATION_VARIANTS}
+      >
         <span className="mr-2 font-bold">无需部署，即刻访问你的</span>
         <AnimatePresence mode="wait">
           <motion.span
@@ -59,9 +80,12 @@ function App() {
             {words[index]}
           </motion.span>
         </AnimatePresence>
-      </code>
+      </motion.div>
 
-      <div className="flex gap-2 p-6">
+      <motion.div
+        className="flex gap-2 p-6"
+        variants={FADE_DOWN_ANIMATION_VARIANTS}
+      >
         <Input
           id="username"
           placeholder="Your github username"
@@ -87,8 +111,8 @@ function App() {
             Enter
           </Link>
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
