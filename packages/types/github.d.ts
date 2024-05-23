@@ -83,6 +83,17 @@ export interface Gist {
     owner: User
 }
 
+export interface GistComment {
+    url: string
+    id: number,
+    node_id: string,
+    user: User,
+    author_association: string
+    created_at: string
+    updated_at: string
+    body: string
+}
+
 export interface GistFile {
     content: string
     filename: string

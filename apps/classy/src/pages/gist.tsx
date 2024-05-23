@@ -1,29 +1,39 @@
 import {
-  gitFetchFunc,
-  useClassyParams,
   cn,
   useClassyConfig,
   matchGistRule,
   getGistMatchStr,
+  gitApiFetch,
+  requestUrl,
 } from "@classy/lib";
-
-import { Gist as IGist } from "@classy/types/github";
+import { GistComment, Gist as IGist } from "@classy/types/github";
 import { ExternalLink } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import SvgPlaceholder from "@/assets/placeholder.svg";
 import Loading from "@/components/loading";
 import { CodeRender, MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { useQuery } from "@tanstack/react-query";
 
 export function Gist() {
-  const [params] = useSearchParams();
-  const { user, gistId } = useClassyParams();
-  const classyConfig = useClassyConfig(user);
   const { theme } = useThemeMode();
 
-  const [gist, setGist] = useState<IGist | null>(null);
+  const [params] = useSearchParams();
+  const gistType = params.get("type");
+
+  const { user, gistId } = useParams() as { user: string; gistId: string };
+  const classyConfig = useClassyConfig(user);
+  const { prefix, split } = classyConfig.gists;
+
+  const { gist } = useLoaderData() as { gist: IGist | null };
+
   const [fileContent, setFileContent] = useState<Record<string, string>>({});
 
   const files = useMemo(
@@ -42,15 +52,11 @@ export function Gist() {
     });
   }, [files]);
 
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.gist(gistId);
-      setGist(data);
-    })();
-  }, [gistId]);
-
-  const gistType = params.get("type");
-  const { prefix, split } = classyConfig.gists;
+  const { data: comments = [] } = useQuery({
+    queryKey: ["gist", "comments", gistId],
+    queryFn: () =>
+      gitApiFetch<GistComment[]>(requestUrl.gistComments(gistId), { alt: [] }),
+  });
 
   const isGistMatchRule =
     gistType &&
@@ -116,7 +122,29 @@ export function Gist() {
         ))}
       </div>
 
-      {/* TODO: 获取Gist对应评论 */}
+      {comments?.length > 0 && (
+        <div className="flex flex-col gap-3">
+          {comments.map((it) => (
+            <div key={it.id} className="flex items-start gap-2">
+              <Link to={`/${it.user.login}`} className="py-1">
+                <img
+                  src={it.user.avatar_url}
+                  className="h-8 w-8 rounded-full"
+                />
+              </Link>
+
+              <div className="w-full border rounded-md p-2">
+                <p className="font-bold">{it.user.login}</p>
+                <Separator className="my-2" />
+                <MarkdownPreview
+                  source={it.body}
+                  wrapperElement={{ "data-color-mode": theme }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <Link
         to={gist?.html_url || ""}

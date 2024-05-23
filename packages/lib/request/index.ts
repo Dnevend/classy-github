@@ -14,6 +14,8 @@ export const requestUrl = {
 
     gist: (gistId: string) => `/gists/${gistId}`,
 
+    gistComments: (gistId: string) => `/gists/${gistId}/comments`,
+
     starred: (user: string) => `/users/${user}/starred`,
 
     // https://docs.github.com/zh/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user

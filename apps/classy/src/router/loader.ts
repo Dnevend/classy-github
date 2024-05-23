@@ -1,6 +1,6 @@
 import { gitApiFetch, requestUrl } from "@classy/lib";
 import { LoaderFunctionArgs } from "react-router-dom";
-import { Repo, User } from "@classy/types";
+import { Gist, Repo, User } from "@classy/types";
 
 export async function userLoader(args: LoaderFunctionArgs<{ user: string }>) {
     const { user } = args.params
@@ -41,4 +41,16 @@ export async function repoLoader(args: LoaderFunctionArgs<{ user: string, repo: 
     }
 
     return { repository }
+}
+
+export async function gistLoader(args: LoaderFunctionArgs<{ gistId: string }>) {
+    const { gistId } = args.params
+
+    let gist: Gist | null = null
+
+    if (gistId) {
+        gist = await gitApiFetch<Gist>(requestUrl.gist(gistId));
+    }
+
+    return { gist }
 }
