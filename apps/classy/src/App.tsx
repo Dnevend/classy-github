@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Link } from "react-router-dom";
@@ -7,11 +7,25 @@ import { Theme, themeDomains } from "@classy/shared";
 import { cn, getCurrentTheme } from "@classy/lib";
 import { ThemeSelect } from "./components/theme-select";
 import { useNProgress } from "./hooks/useNProgress";
+import { AnimatePresence, motion } from "framer-motion";
+
+const words = ["定制主页", "个人博客", "随笔记录"];
 
 function App() {
   useNProgress();
   const [username, setUsername] = useState<string>("");
   const [theme, setTheme] = useState<Theme>(getCurrentTheme("default"));
+
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, 3000);
+
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div
@@ -28,7 +42,24 @@ function App() {
 
       <Logo />
 
-      {/* TODO: 添加简介：无需部署，访问你的GitHub个性主页、博客、随笔... */}
+      <div className="text-center">
+        <span className="mr-2 italic">无需部署，即刻访问你的</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={words[index]}
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5 }}
+            className={cn(
+              "text-center font-display text-xl font-bold tracking-[-0.02em] drop-shadow-sm md:text-2xl",
+              "bg-gradient-to-r from-neutral-600 to-neutral-900 dark:from-neutral-300 dark:to-neutral-600 bg-clip-text text-transparent"
+            )}
+          >
+            {words[index]}
+          </motion.span>
+        </AnimatePresence>
+      </div>
 
       <div className="flex gap-2 p-6">
         <Input
