@@ -42,8 +42,8 @@ function App() {
 
       <Logo />
 
-      <div className="text-center">
-        <span className="mr-2 italic">无需部署，即刻访问你的</span>
+      <code className="text-center">
+        <span className="mr-2 font-bold">无需部署，即刻访问你的</span>
         <AnimatePresence mode="wait">
           <motion.span
             key={words[index]}
@@ -59,7 +59,7 @@ function App() {
             {words[index]}
           </motion.span>
         </AnimatePresence>
-      </div>
+      </code>
 
       <div className="flex gap-2 p-6">
         <Input
