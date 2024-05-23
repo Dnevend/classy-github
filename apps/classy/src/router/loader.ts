@@ -30,3 +30,15 @@ export async function reposLoader(args: LoaderFunctionArgs<{ user: string }>) {
 
     return { repos }
 }
+
+export async function repoLoader(args: LoaderFunctionArgs<{ user: string, repo: string }>) {
+    const { user, repo } = args.params
+
+    let repository: Repo | null = null
+
+    if (user && repo) {
+        repository = await gitApiFetch<Repo>(requestUrl.repo(user, repo));
+    }
+
+    return { repository }
+}

@@ -8,8 +8,14 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useClassyParams, cn, useClassyConfig } from "@classy/lib";
-import { Suspense } from "react";
-import { NavLink, Outlet, useLoaderData, useMatch } from "react-router-dom";
+import { Suspense, useLayoutEffect } from "react";
+import {
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useMatch,
+} from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { Loading } from "./loading";
@@ -24,6 +30,9 @@ export function Layout() {
   const { userinfo } = useLoaderData() as {
     userinfo: User | null;
   };
+
+  const location = useLocation();
+
   const { user } = useClassyParams();
 
   const matchUserPage = useMatch("/:user");
@@ -35,6 +44,10 @@ export function Layout() {
   const blogUrl = userinfo?.blog?.startsWith("http")
     ? userinfo.blog
     : `http://${userinfo?.blog}`;
+
+  useLayoutEffect(() => {
+    document.documentElement.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div

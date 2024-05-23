@@ -1,13 +1,20 @@
 import { gitFetchFunc } from "@classy/lib";
-import { Repo as IRepo, RepoContent } from "@classy/types";
+import { Repo as IRepo } from "@classy/types";
 import { PropsWithChildren, useEffect, useState } from "react";
-import { Link, To, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  To,
+  useLoaderData,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink, Eye, GitFork, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { isAbsolutePath } from "@classy/lib";
 import { MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { useQuery } from "@tanstack/react-query";
 
 const LinkBadge = ({ to, children }: PropsWithChildren<{ to: To }>) => (
   <Link to={to} target="_blank">
@@ -23,32 +30,25 @@ const LinkBadge = ({ to, children }: PropsWithChildren<{ to: To }>) => (
 export function Repo() {
   const [params] = useSearchParams();
   const { user, repo } = useParams() as { user: string; repo: string };
+  const { repository } = useLoaderData() as { repository: IRepo | null };
   const { theme } = useThemeMode();
 
   // 目标渲染文件
   const [renderFile, setRenderFile] = useState<string | null>(
     params.get("file")
   );
+
   // 目标渲染文件路径
   const relativePath =
     renderFile?.substring(0, renderFile.lastIndexOf("/") + 1) ?? "";
 
-  const [repository, setRepo] = useState<IRepo | null>(null);
-  const [repoContents, setRepoContents] = useState<RepoContent[]>([]);
   const [absPath, setAbsPath] = useState<string>();
   const [renderContent, setRenderContent] = useState<string>();
 
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.userRepo(user, repo);
-      setRepo(data);
-    })();
-
-    (async () => {
-      const data = await gitFetchFunc.repoContents(user, repo);
-      setRepoContents(data);
-    })();
-  }, [user, repo]);
+  const { data: repoContents } = useQuery({
+    queryKey: ["repoContents", user, repo],
+    queryFn: () => gitFetchFunc.repoContents(user, repo),
+  });
 
   useEffect(() => {
     // FIXME: 调整匹配规则 README.md > other.md > readme.other > ./docs/README.md > ./docs/other.md
@@ -107,7 +107,7 @@ export function Repo() {
               <Link
                 to={repository.homepage}
                 target="_blank"
-                className="flex justify-center items-center gap-1 text-sm text-slate-500"
+                className="w-fit flex justify-center items-center gap-1 text-sm text-slate-500 mx-auto"
               >
                 <span className="underline">{repository.homepage}</span>
                 <ExternalLink size={14} />

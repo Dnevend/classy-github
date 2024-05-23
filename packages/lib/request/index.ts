@@ -41,7 +41,7 @@ const objToQueryParams = (obj: Record<string, any>) => {
 }
 
 export const gitApiFetch: GitApiFetch = async (url, options) => {
-    const { expire = 60 * 1000, params = {}, alt } = options || {}
+    const { expire = 3 * 60 * 1000, params = {}, alt } = options || {}
 
     const queryParams = objToQueryParams(params)
 

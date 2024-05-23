@@ -1,6 +1,6 @@
 import { UserCard } from "@/components/user-card";
 import { AnimatedTooltip } from "@/components/animated-tooltip";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
   Follower,
   Following,
@@ -13,19 +13,18 @@ import RepoCard from "./repos/RepoCard";
 import { MarkdownPreview } from "@classy/components";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// FIXME: /cumsoft
 
 export function UserPage() {
   const navigate = useNavigate();
   const { user } = useParams() as { user: string };
+  const { userinfo } = useLoaderData() as { userinfo: User | null };
   const { theme } = useThemeMode();
   const classyConfig = useClassyConfig(user);
 
-  const { data: userinfo = null } = useQuery<User>({
-    queryKey: ["user", user],
-    queryFn: () => gitApiFetch(requestUrl.user(user), { priority: "low" }),
-  });
-
-  const { data: repos = [] } = useQuery<Repo[]>({
+  const { data: repos = [], isLoading: reposLoading } = useQuery<Repo[]>({
     queryKey: ["repos", user, { sort: "updated", per_page: 100 }],
     queryFn: () =>
       gitApiFetch(requestUrl.repos(user), {
@@ -45,17 +44,21 @@ export function UserPage() {
         .slice(0, classyConfig.profile.repos.showCount),
   });
 
-  const { data: followers = [] } = useQuery<Follower[]>({
+  const { data: followers = [], isLoading: followerLoading } = useQuery<
+    Follower[]
+  >({
     queryKey: ["followers", user],
     queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
   });
 
-  const { data: following = [] } = useQuery<Following[]>({
+  const { data: following = [], isLoading: followingLoading } = useQuery<
+    Following[]
+  >({
     queryKey: ["followers", user],
     queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
   });
 
-  const { data: readme } = useQuery<{
+  const { data: readme, isLoading: readmeLoading } = useQuery<{
     path?: string;
     source?: string;
   } | null>({
@@ -118,6 +121,7 @@ export function UserPage() {
         </div>
       </div>
 
+      {readmeLoading && <Skeleton className="w-full h-32" />}
       {/* FIXME: width */}
       {readme?.source && (
         <MarkdownPreview
@@ -128,9 +132,16 @@ export function UserPage() {
         />
       )}
 
-      {/* TODO: skelton */}
       <div className="h-auto w-full flex justify-center items-center">
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {reposLoading && (
+            <>
+              {new Array(6).fill(0).map((_, index) => (
+                <Skeleton key={index} className="h-28 w-full" />
+              ))}
+            </>
+          )}
+
           {repos?.map((it, index) => (
             <RepoCard
               key={it.id}
@@ -144,6 +155,14 @@ export function UserPage() {
           ))}
         </div>
       </div>
+
+      {(followerLoading || followingLoading) && (
+        <div className="flex -gap-2 mx-auto">
+          {new Array(6).fill(0).map((_, index) => (
+            <Skeleton key={index} className="h-14 w-14 rounded-full" />
+          ))}
+        </div>
+      )}
 
       {followers.length > 0 && (
         <section>
