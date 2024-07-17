@@ -3,6 +3,7 @@ import { lazy } from "react";
 import App from "@/App";
 
 import { Layout } from "@/layout";
+import { userLoader } from "./loader";
 
 const UserPage = lazy(() => import("@/pages/user"));
 const Gist = lazy(() => import("@/pages/gist"));
@@ -18,8 +19,9 @@ const router = createBrowserRouter([
   {
     path: "/:user/*",
     element: <Layout />,
+    loader: userLoader,
     children: [
-      { path: "*", element: <UserPage /> },
+      { path: "*", element: <UserPage />, loader: userLoader },
       { path: "gists", element: <Gists /> },
       { path: "gist/:gistId", element: <Gist /> },
     ],

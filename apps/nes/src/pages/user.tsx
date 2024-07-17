@@ -1,7 +1,8 @@
-import { cn, gitFetchFunc, useClassyConfig } from "@classy/lib";
-import { Follower, Following, Repo, User } from "@classy/types";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { cn, gitApiFetch, requestUrl, useClassyConfig } from "@classy/lib";
+import { Follower, Following, Repo, RepoContent, User } from "@classy/types";
+import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { MarkdownPreview } from "@classy/components";
 
 const Account = ({
   avatar,
@@ -28,42 +29,69 @@ const Account = ({
 export function UserPage() {
   const navigate = useNavigate();
   const { user } = useParams() as { user: string };
+  const { userinfo } = useLoaderData() as { userinfo: User | null };
   const classyConfig = useClassyConfig(user);
 
-  const [userinfo, setUserinfo] = useState<User | null>(null);
-  const [repos, setRepos] = useState<Repo[]>([]);
-  const [followers, setFollowers] = useState<Follower[]>([]);
-  const [following, setFollowing] = useState<Following[]>([]);
+  const { data: repos = [] } = useQuery<Repo[]>({
+    queryKey: ["repos", user, { sort: "updated", per_page: 100 }],
+    queryFn: () =>
+      gitApiFetch(requestUrl.repos(user), {
+        params: {
+          sort: "updated",
+          per_page: 100,
+        },
+        priority: "high",
+      }),
+    select: (data) =>
+      data
+        .sort((a, b) => {
+          const aCount = a.stargazers_count + a.forks_count;
+          const bCount = b.stargazers_count + b.forks_count;
+          return aCount > bCount ? -1 : 1;
+        })
+        .slice(0, classyConfig.profile.repos.showCount),
+  });
 
-  const showRepos = repos
-    .sort((a, b) => {
-      const aCount = a.stargazers_count + a.forks_count;
-      const bCount = b.stargazers_count + b.forks_count;
-      return aCount > bCount ? -1 : 1;
-    })
-    .slice(0, classyConfig.profile.repos.showCount);
+  const { data: followers = [] } = useQuery<Follower[]>({
+    queryKey: ["followers", user],
+    queryFn: () => gitApiFetch(requestUrl.followers(user), { priority: "low" }),
+  });
 
-  useEffect(() => {
-    (async () => {
-      const data = await gitFetchFunc.userinfo(user);
-      setUserinfo(data);
-    })();
+  const { data: following = [] } = useQuery<Following[]>({
+    queryKey: ["following", user],
+    queryFn: () => gitApiFetch(requestUrl.following(user), { priority: "low" }),
+  });
 
-    (async () => {
-      const data = await gitFetchFunc.userRepos(user);
-      setRepos(data!);
-    })();
+  const { data: readme } = useQuery<{
+    path?: string;
+    source?: string;
+  } | null>({
+    queryKey: ["readme", user],
+    queryFn: async () => {
+      const repoContents = await gitApiFetch<RepoContent[]>(
+        requestUrl.repoContents(user, user),
+        { priority: "high" }
+      );
 
-    (async () => {
-      const data = await gitFetchFunc.userFollowers(user);
-      setFollowers(data!);
-    })();
+      const readmeRawUrl = repoContents?.find(
+        (it) => it.name.toLowerCase() === "readme.md"
+      )?.download_url;
 
-    (async () => {
-      const data = await gitFetchFunc.userFollowing(user);
-      setFollowing(data!);
-    })();
-  }, [user]);
+      if (readmeRawUrl) {
+        const data = await fetch(readmeRawUrl);
+        if (data.ok) {
+          const readme = await data.text();
+
+          return {
+            path: readmeRawUrl.substring(0, readmeRawUrl.lastIndexOf("/") + 1),
+            source: readme,
+          };
+        }
+      }
+
+      return null;
+    },
+  });
 
   return (
     <div className="p-6">
@@ -77,7 +105,7 @@ export function UserPage() {
             src={userinfo?.avatar_url}
             style={{ imageRendering: "pixelated" }}
           />
-          <p>{userinfo?.name}</p>
+          <p className="m-0">{userinfo?.name}</p>
         </div>
 
         <p>{userinfo?.bio}</p>
@@ -87,17 +115,35 @@ export function UserPage() {
         </Link>
       </div>
 
+      <section>
+        {readme?.source && (
+          <MarkdownPreview
+            source={readme?.source}
+            pathRewrite={{ absPath: readme?.path }}
+            wrapperElement={{ "data-color-mode": "light" }}
+            className="my-6 rounded-md overflow-hidden"
+          />
+        )}
+      </section>
+
       <section className="mt-12">
-        <h2>Repos</h2>
-        <div>
-          {showRepos.map((it) => (
+        <h2 id="repos">
+          <a href="#repos">#</a>
+          Repos
+        </h2>
+
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {repos.map((it) => (
             <div>{it.name}</div>
           ))}
         </div>
       </section>
 
       <section className="mt-12">
-        <h2>Followers</h2>
+        <h2 id="followers">
+          <a href="#followers">#</a>
+          Followers
+        </h2>
         <div className="flex flex-wrap gap-6 mx-auto">
           {followers.map((it) => (
             <Account
@@ -110,7 +156,11 @@ export function UserPage() {
       </section>
 
       <section className="mt-12">
-        <h2>Following</h2>
+        <h2 id="following">
+          <a href="#following">#</a>
+          Following
+        </h2>
+
         <div className="flex flex-wrap gap-6 mx-auto">
           {following.map((it) => (
             <Account
