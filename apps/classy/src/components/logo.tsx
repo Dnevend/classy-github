@@ -1,6 +1,7 @@
-import { Github, LucideProps } from "lucide-react";
+import { LucideProps } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@classy/lib";
+import GithubLogo from "@/assets/github.svg";
 
 const logoVariants = cva("flex items-center justify-center", {
   variants: {
@@ -27,22 +28,17 @@ export interface LogoProps
   iconProps?: LucideProps;
 }
 
-const Logo = ({
-  className,
-  orientation,
-  size = "default",
-  iconProps,
-}: LogoProps) => {
-  const iconSize: Record<Exclude<typeof size, null | undefined>, string> = {
-    default: "32",
-    sm: "24",
-    lg: "40",
-    icon: "32",
-  };
+const Logo = ({ className, orientation, size = "default" }: LogoProps) => {
+  // const iconSize: Record<Exclude<typeof size, null | undefined>, string> = {
+  //   default: "32",
+  //   sm: "24",
+  //   lg: "40",
+  //   icon: "32",
+  // };
 
   return (
     <div className={cn(logoVariants({ orientation, size, className }))}>
-      <Github color="#f00" size={iconSize[size!]} {...iconProps} />
+      <img src={GithubLogo} className="w-8 h-8" />
       {size !== "icon" && <span className="px-2 font-bold">ClassyGit</span>}
     </div>
   );
