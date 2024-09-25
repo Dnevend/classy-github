@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "./components/logo";
 import { Theme, themeDomains } from "@classy/shared";
 import { cn, getCurrentTheme } from "@classy/lib";
@@ -18,10 +18,16 @@ const words = ["定制主页", "个人博客", "随笔记录"];
 
 function App() {
   useNProgress();
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState<string>("");
   const [theme, setTheme] = useState<Theme>(getCurrentTheme("default"));
 
   const [index, setIndex] = useState(0);
+
+  /** 首页 */
+  const homePage =
+    theme !== getCurrentTheme() ? `https://${themeDomains[theme]}/${username}` : `${username}`;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,6 +37,22 @@ function App() {
     // Clean up interval on unmount
     return () => clearInterval(interval);
   }, []);
+
+  /** 监听回车键 -> 触发跳转 */
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        navigate(homePage);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homePage]);
+
 
   return (
     <motion.div
@@ -101,11 +123,7 @@ function App() {
 
         <Button asChild>
           <Link
-            to={
-              theme !== getCurrentTheme()
-                ? `https://${themeDomains[theme]}/${username}`
-                : `${username}`
-            }
+            to={homePage}
             className="animate-shimmer rounded-md border bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] dark:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-slate-50"
           >
             Enter
