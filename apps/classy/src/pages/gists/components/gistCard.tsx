@@ -3,11 +3,9 @@ import { Braces, ChevronsDown, Eye } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CodeRender, MarkdownPreview } from "@classy/components";
 import { cn } from "@classy/lib";
-import { useExpand } from "./hooks/useExpand";
+import { useExpand } from "../hooks/useExpand";
 import { useThemeMode } from "@/hooks/useThemeMode";
 
 const ContentExpandHeight = 200;
@@ -65,54 +63,53 @@ const GistCard = ({
   }, [currentFile, fileContent]);
 
   return (
-    <div key={gist.id} className="p-2 rounded-md hover:shadow-md">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
+    <div key={gist.id} id={gist.id} className="p-2 rounded-md hover:shadow-sm">
+      <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <img src={gist.owner.avatar_url} className="h-10 w-10 rounded-full" />
-          <div>
-            <p className="text-gray-800">{gist.owner.login}</p>
-            <p className="text-sm text-gray-500">{gist.created_at}</p>
-          </div>
+          <Link
+            to={`/${user}/gist/${gist.id}?type=${type}`}
+            className="hover:text-indigo-600"
+          >
+            <div>
+              <h2 className="text-lg text-gray-800">
+                {title || gist.description || "View Detail"}
+              </h2>
+              <p className="text-sm text-gray-500">{gist.created_at}</p>
+            </div>
+          </Link>
         </div>
-        <Link
-          to={`/${user}/gist/${gist.id}?type=${type}`}
-          className="hover:text-indigo-600"
-        >
-          {title || gist.description || "View Detail"}
-        </Link>
+
+        {currentFile.language === "Markdown" && (
+          <button className="p-2" onClick={() => setPreview((v) => !v)}>
+            {preview ? <Braces size={16} /> : <Eye size={16} />}
+          </button>
+        )}
       </div>
 
-      <ToggleGroup
-        type="single"
-        defaultValue={currentFile.filename}
-        className="justify-start my-2 mt-4"
-        onValueChange={(filename) => {
-          if (!filename) return;
-          setCurrentFile(files.find((it) => it.filename === filename)!);
-        }}
-      >
-        {files.map((it) => (
-          <ToggleGroupItem key={it.filename} value={it.filename}>
-            {it.filename}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+      {files.length > 1 && (
+        <ul className="flex flex-wrap gap-2 py-4">
+          {files.map((it) => (
+            <li
+              key={it.filename}
+              onClick={() => setCurrentFile(it)}
+              className={cn(
+                `${
+                  currentFile.filename === it.filename
+                    ? "text-black font-semibold"
+                    : "text-gray-500"
+                } hover:underline hover:decoration-wavy cursor-pointer`
+              )}
+            >
+              {it.filename}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {loading && (
         <div className="h-24 flex justify-center items-center">
           <SvgLoading />
-        </div>
-      )}
-
-      {currentFile.language === "Markdown" && (
-        <div className="flex justify-end">
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={() => setPreview((v) => !v)}
-          >
-            {preview ? <Braces size={16} /> : <Eye size={16} />}
-          </Button>
         </div>
       )}
 
@@ -123,7 +120,7 @@ const GistCard = ({
         })}
       >
         <div
-          className="p-2"
+          className="p-2 mt-4"
           style={{
             height: isOverflow && !expand ? `${ContentExpandHeight}px` : "auto",
           }}
@@ -132,7 +129,6 @@ const GistCard = ({
             <MarkdownPreview
               source={currentFileContent}
               wrapperElement={{ "data-color-mode": theme }}
-              className="px-0 sm:px-4"
             />
           ) : (
             <div className="rounded-md overflow-hidden">
@@ -145,11 +141,21 @@ const GistCard = ({
 
         {isOverflow && (
           <div
-            className={cn("flex justify-center items-center bg-transparent", {
-              "relative h-28 bg-gradient-to-b from-transparent to-black/10 hover:to-black/50":
-                isOverflow && !expand,
-            })}
-            onClick={toggleExpand}
+            className={cn(
+              "flex justify-center items-center bg-transparent cursor-pointer",
+              {
+                "relative h-28 bg-gradient-to-b from-transparent to-black/10 hover:to-black/50":
+                  isOverflow && !expand,
+              }
+            )}
+            onClick={() => {
+              toggleExpand();
+
+              window.scrollTo({
+                top: document.getElementById(gist.id)?.offsetTop || 0,
+                behavior: "smooth",
+              });
+            }}
           >
             <ChevronsDown
               className={cn({

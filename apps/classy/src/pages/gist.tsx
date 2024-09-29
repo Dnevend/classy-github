@@ -90,37 +90,63 @@ export function Gist() {
         <span>{gist?.created_at}</span>
       </div>
 
-      <div className="flex flex-col gap-4 my-6">
-        {files.map((it) => (
-          <div className="border rounded-md hover:shadow overflow-hidden p-2">
-            <div className="flex justify-between items-center py-2">
-              <p>{it.filename}</p>
+      {files.length > 1 ? (
+        <div className="flex flex-col gap-4 my-6">
+          {files.map((it) => (
+            <div className="border rounded-md hover:shadow overflow-hidden p-2">
+              <div className="flex justify-between items-center py-2">
+                <p>{it.filename}</p>
+              </div>
+
+              <Separator />
+
+              {!fileContent[it.filename] && (
+                <div className="h-24 flex justify-center items-center">
+                  <Loading />
+                </div>
+              )}
+
+              {it.language === "Markdown" ? (
+                <MarkdownPreview
+                  source={fileContent[it.filename]}
+                  wrapperElement={{ "data-color-mode": theme }}
+                  className="px-6"
+                />
+              ) : (
+                <div className="rounded-md overflow-hidden">
+                  <CodeRender
+                    theme={theme === "dark" ? "a11yDark" : "a11yLight"}
+                  >
+                    {fileContent[it.filename]}
+                  </CodeRender>
+                </div>
+              )}
             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="p-2 py-4">
+          {!fileContent[files[0].filename] && (
+            <div className="h-24 flex justify-center items-center">
+              <Loading />
+            </div>
+          )}
 
-            <Separator />
-
-            {!fileContent[it.filename] && (
-              <div className="h-24 flex justify-center items-center">
-                <Loading />
-              </div>
-            )}
-
-            {it.language === "Markdown" ? (
-              <MarkdownPreview
-                source={fileContent[it.filename]}
-                wrapperElement={{ "data-color-mode": theme }}
-                className="px-6"
-              />
-            ) : (
-              <div className="rounded-md overflow-hidden">
-                <CodeRender theme={theme === "dark" ? "a11yDark" : "a11yLight"}>
-                  {fileContent[it.filename]}
-                </CodeRender>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+          {files[0].language === "Markdown" ? (
+            <MarkdownPreview
+              source={fileContent[files[0].filename]}
+              wrapperElement={{ "data-color-mode": theme }}
+              className="px-6"
+            />
+          ) : (
+            <div className="rounded-md overflow-hidden">
+              <CodeRender theme={theme === "dark" ? "a11yDark" : "a11yLight"}>
+                {fileContent[files[0].filename]}
+              </CodeRender>
+            </div>
+          )}
+        </div>
+      )}
 
       {comments?.length > 0 && (
         <div className="flex flex-col gap-3">
