@@ -54,7 +54,7 @@ const SpecifyGists = ({ user, type }: { user: string; type: string }) => {
 
       {gists.length === 0 && !fetching && <GistsEmpty type={type} />}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col space-y-8 divide-y-2 divide-dashed">
         {gists.map((it) => (
           <GistCard
             key={it.id}

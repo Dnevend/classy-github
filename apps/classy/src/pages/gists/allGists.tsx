@@ -40,7 +40,7 @@ const AllGists = ({ user }: { user: string }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col space-y-8 divide-y-2 divide-dashed">
         {(hasMore || current !== 1) && (
           <Pagination
             canGoNext={hasMore}
