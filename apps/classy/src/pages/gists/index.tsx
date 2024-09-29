@@ -4,8 +4,8 @@ import { ExternalLink } from "lucide-react";
 import { useParams, Link } from "react-router-dom";
 import { cn } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
-import AllGists from "./allGists";
-import SpecifyGists from "./specifyGists";
+import AllGists from "./components/allGists";
+import SpecifyGists from "./components/specifyGists";
 import { useGistsType } from "./hooks/useGistsType";
 
 export function Gists() {

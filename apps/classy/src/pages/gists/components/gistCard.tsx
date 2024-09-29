@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
 import { CodeRender, MarkdownPreview } from "@classy/components";
 import { cn } from "@classy/lib";
-import { useExpand } from "./hooks/useExpand";
+import { useExpand } from "../hooks/useExpand";
 import { useThemeMode } from "@/hooks/useThemeMode";
 
 const ContentExpandHeight = 200;
