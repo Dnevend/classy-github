@@ -15,28 +15,28 @@ export function Gists() {
     useGistsType(user);
 
   return (
-    <div>
-      <h1 className="text-xl text-center">{`${user}'s Gists`}</h1>
-
+    <>
       <Tabs
-        className="mx-auto my-6"
+        className="mx-auto my-2"
         defaultValue={getDefaultType()}
         onValueChange={(v) => onChangeType(v)}
       >
-        <TabsList className={cn("mx-auto")}>
-          <TabsTrigger className="px-3 capitalize" value={defaultType.name}>
-            {defaultType.name}
-          </TabsTrigger>
-          {gistTypes.map((it) => (
-            <TabsTrigger
-              className="px-3 capitalize"
-              key={it.name}
-              value={it.name}
-            >
-              {it.name}
+        <div className="flex items-center justify-end">
+          <TabsList>
+            <TabsTrigger className="px-3 capitalize" value={defaultType.name}>
+              {defaultType.name}
             </TabsTrigger>
-          ))}
-        </TabsList>
+            {gistTypes.map((it) => (
+              <TabsTrigger
+                className="px-3 capitalize"
+                key={it.name}
+                value={it.name}
+              >
+                {it.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         <TabsContent value={defaultType.name}>
           <AllGists user={user} />
@@ -59,7 +59,7 @@ export function Gists() {
         Create Gist
         <ExternalLink size={12} />
       </Link>
-    </div>
+    </>
   );
 }
 
