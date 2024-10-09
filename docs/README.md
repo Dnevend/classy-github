@@ -4,9 +4,33 @@
 
 ## 介绍
 
+### 项目实现
+
 - 本项目基于 [Github 公共 API](https://docs.github.com/en/rest)，获取公开数据，生成你的多种主题可定制的个性主页。
 
 - 随笔/博客或者任何其他记录性质的文档，依赖于 [Github Gist](https://gist.github.com/)，通过自定义规则配置以实现分类展示。
+
+- 项目仅依赖于 Github 并部署在 Cloudflare，同时通过 Cloudflare 的边缘服务处理了 Github API 的限流问题。
+
+### 主要技术
+
+- 前端：Vite + Monorepo + React + Tailwind CSS
+
+- 服务：Github API + Hono
+
+- 部署：Cloudflare
+
+## 运行
+
+```bash
+git clone https://github.com/Dnevend/classy-github.git # 克隆项目
+
+pnpm install # 安装依赖
+
+pnpm run dev # 运行默认主题
+
+pnpm run dev:[other] # 运行其他主题
+```
 
 ## 配置
 
