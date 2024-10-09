@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "docs": "pnpm --filter classy-docs start",
-    "dev:classy": "pnpm --filter classy-github dev",
+    "dev": "pnpm --filter classy-github dev",
     "dev:nes": "pnpm --filter nes-github dev",
     "dev:service": "pnpm --filter @classy/service dev",
     "build": "pnpm run -r --filter \"./apps/**\" build",
