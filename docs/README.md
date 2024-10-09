@@ -1,8 +1,17 @@
 # ClassyGithub
 
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true"
+        height="80">
+</p>
+
+<p align="center">
+    <a href="https://classygit.me/">https://classygit.me/[username]</a>
+</p>
+
 无需部署登录，[即刻访问](https://classygit.me/)你的定制 Github 主页、代码片段、个人博客、随笔集。
 
-## 介绍
+## 📖 介绍
 
 ### 项目实现
 
@@ -20,7 +29,7 @@
 
 - 部署：Cloudflare
 
-## 运行
+## 🚀 运行
 
 ```bash
 git clone https://github.com/Dnevend/classy-github.git # 克隆项目
@@ -32,9 +41,10 @@ pnpm run dev # 运行默认主题
 pnpm run dev:[other] # 运行其他主题
 ```
 
-## 配置
+## 🔧 配置
 
-```json classygit.config.json
+```json
+// classygit.config.json
 {
   "theme": "default",
   // 个人主页配置
@@ -74,11 +84,11 @@ pnpm run dev:[other] # 运行其他主题
 }
 ```
 
-## TODO:
+## 📝 TODO
 
-- 主题
+- [ ] 使用 Next.js 重构，带来更好的 SEO 效果
+
+- 多主题
   - [x] 经典主题
   - [ ] NES 复古主题
   - [ ] Mac 复古主题
-- [ ] 使用 Next.js 重构
-- [ ] SEO 优化
