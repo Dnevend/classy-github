@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { ExternalLink } from "lucide-react";
 import { useParams, Link } from "react-router-dom";
 import { cn } from "@classy/lib";
@@ -7,10 +8,13 @@ import { githubUrl } from "@classy/shared";
 import AllGists from "./components/allGists";
 import SpecifyGists from "./components/specifyGists";
 import { useGistsType } from "./hooks/useGistsType";
+import Outline from "./components/outline";
+import { useState } from "react";
 
 export function Gists() {
   const { user } = useParams() as { user: string };
 
+  const [showOutline, setShowOutline] = useState(true);
   const { defaultType, gistTypes, getDefaultType, onChangeType } =
     useGistsType(user);
 
@@ -21,7 +25,18 @@ export function Gists() {
         defaultValue={getDefaultType()}
         onValueChange={(v) => onChangeType(v)}
       >
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-1">
+            <Switch
+              id="detail"
+              checked={showOutline}
+              onCheckedChange={(v) => setShowOutline(v)}
+            />
+            <label htmlFor="detail" className="text-sm text-gray-600">
+              Outline
+            </label>
+          </div>
+
           <TabsList>
             <TabsTrigger className="px-3 capitalize" value={defaultType.name}>
               {defaultType.name}
@@ -38,15 +53,25 @@ export function Gists() {
           </TabsList>
         </div>
 
-        <TabsContent value={defaultType.name}>
-          <AllGists user={user} />
-        </TabsContent>
+        {showOutline && (
+          <div className="my-6 sm:my-8">
+            <Outline user={user} />
+          </div>
+        )}
 
-        {gistTypes.map((it) => (
-          <TabsContent key={it.name} value={it.name}>
-            <SpecifyGists user={user} type={it.name} />
-          </TabsContent>
-        ))}
+        {!showOutline && (
+          <>
+            <TabsContent value={defaultType.name}>
+              <AllGists user={user} />
+            </TabsContent>
+
+            {gistTypes.map((it) => (
+              <TabsContent key={it.name} value={it.name}>
+                <SpecifyGists user={user} type={it.name} />
+              </TabsContent>
+            ))}
+          </>
+        )}
       </Tabs>
 
       <Link
