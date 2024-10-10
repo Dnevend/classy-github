@@ -8,7 +8,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { cn, useClassyConfig } from "@classy/lib";
-import { Suspense, useLayoutEffect } from "react";
+import { Suspense, useEffect, useLayoutEffect } from "react";
 import {
   NavLink,
   Outlet,
@@ -127,11 +127,16 @@ export function Layout() {
 
   const classyConfig = useClassyConfig(user);
 
-  const { links } = classyConfig;
+  const { links } = classyConfig || {};
 
   const blogUrl = userinfo?.blog?.startsWith("http")
     ? userinfo.blog
     : `http://${userinfo?.blog}`;
+
+  useEffect(() => {
+    document.title =
+      `${userinfo?.name || userinfo?.login || user}` || "ClassyGit";
+  }, [user, userinfo]);
 
   useLayoutEffect(() => {
     document.documentElement.scrollTo(0, 0);

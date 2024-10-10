@@ -162,7 +162,7 @@ export function UserPage() {
                 items={followers.map((it) => ({
                   id: it.id,
                   name: it.login,
-                  designation: it.html_url,
+                  designation: "",
                   image: it.avatar_url,
                 }))}
                 onItemClick={(item) => navigate(`/${item.name}`)}
@@ -190,7 +190,7 @@ export function UserPage() {
                 items={following.map((it) => ({
                   id: it.id,
                   name: it.login,
-                  designation: it.html_url,
+                  designation: "",
                   image: it.avatar_url,
                 }))}
                 onItemClick={(item) => navigate(`/${item.name}`)}
