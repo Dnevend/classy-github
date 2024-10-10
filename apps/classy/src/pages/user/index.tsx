@@ -108,29 +108,33 @@ export function UserPage() {
         />
       )}
 
-      <div className="h-auto w-full flex justify-center items-center">
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {reposLoading && (
-            <>
-              {new Array(6).fill(0).map((_, index) => (
-                <Skeleton key={index} className="h-28 w-full" />
-              ))}
-            </>
-          )}
+      {classyConfig.profile.repos.visible && (
+        <div className="h-auto w-full flex justify-center items-center">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {reposLoading && (
+              <>
+                {new Array(classyConfig.profile.repos.showCount)
+                  .fill(0)
+                  .map((_, index) => (
+                    <Skeleton key={index} className="h-28 w-full" />
+                  ))}
+              </>
+            )}
 
-          {repos?.map((it, index) => (
-            <RepoCard
-              key={it.id}
-              user={user}
-              repo={it}
-              className={cn({
-                "col-span-2":
-                  repos.length % 2 !== 0 && index === repos.length - 1,
-              })}
-            />
-          ))}
+            {repos?.map((it, index) => (
+              <RepoCard
+                key={it.id}
+                user={user}
+                repo={it}
+                className={cn({
+                  "col-span-2":
+                    repos.length % 2 !== 0 && index === repos.length - 1,
+                })}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {(followerLoading || followingLoading) && (
         <div className="flex -gap-2 mx-auto">
@@ -140,7 +144,7 @@ export function UserPage() {
         </div>
       )}
 
-      {followers.length > 0 && (
+      {classyConfig.profile.showFollowers && followers.length > 0 && (
         <section>
           <Link to={`https://github.com/${user}?tab=followers`} target="_blank">
             <h2
@@ -168,7 +172,7 @@ export function UserPage() {
         </section>
       )}
 
-      {following.length > 0 && (
+      {classyConfig.profile.showFollowing && following.length > 0 && (
         <section>
           <Link to={`https://github.com/${user}?tab=following`} target="_blank">
             <h2

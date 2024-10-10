@@ -63,13 +63,11 @@ export function Gists() {
           )}
         </div>
 
-        {showOutline && (
+        {showOutline ? (
           <div className="my-6 sm:my-8">
             <Outline user={user} />
           </div>
-        )}
-
-        {!showOutline && (
+        ) : (
           <>
             <TabsContent value={defaultType.name}>
               <AllGists user={user} />

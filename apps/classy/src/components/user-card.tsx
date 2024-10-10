@@ -10,8 +10,10 @@ import {
   Twitter,
   UserRound,
 } from "lucide-react";
-
+import { useClassyConfig } from "@classy/lib/hooks";
 export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
+  const classyConfig = useClassyConfig(userinfo?.login);
+
   return (
     <CardContainer className="inter-var w-full" containerClassName="py-0">
       <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full sm:w-[20rem] h-auto rounded-xl p-6 border">
@@ -91,7 +93,11 @@ export const UserCard = ({ userinfo }: { userinfo: User | null }) => {
 
         <CardItem translateZ="100" className="w-full mt-4">
           <img
-            src={userinfo?.avatar_url || SvgPlaceholder}
+            src={
+              classyConfig.profile.cover ||
+              userinfo?.avatar_url ||
+              SvgPlaceholder
+            }
             height="1000"
             width="1000"
             className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl"

@@ -5,7 +5,9 @@
             "visible": true,
             "showCount": 6
         },
-        "cover": ""
+        "cover": "https://picsum.photos/1200/760",
+        "showFollowers": true,
+        "showFollowing": true
     },
     "gists": {
         "prefix": "Classy",
@@ -16,7 +18,7 @@
                 "name": "blog"
             },
             {
-                "name": "weekly"
+                "name": "code"
             }
         ]
     },
