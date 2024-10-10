@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Gist } from "@classy/types";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import GistsEmpty from "./empty";
 
 const Outline = ({ user }: { user: string }) => {
   const queryClient = useQueryClient();
@@ -49,6 +50,8 @@ const Outline = ({ user }: { user: string }) => {
         </div>
       )}
 
+      {datalist.length === 0 && !fetching && <GistsEmpty />}
+
       {groupList.map((it) => (
         <div key={it.year}>
           <h2 className="text-2xl font-bold text-gray-500 mb-2">{it.year}</h2>
@@ -61,7 +64,7 @@ const Outline = ({ user }: { user: string }) => {
               >
                 <Link to={`/${user}/gist/${it.id}`}>
                   <span className="hover:underline cursor-pointer">
-                    {it.description}
+                    {it.description || "UnTitle"}
 
                     {Object.keys(it.files).length > 1 && (
                       <span className="text-sm text-gray-500 ml-1">

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { gitApiFetch, requestUrl, usePageFetch } from "@classy/lib";
 import { Pagination } from "@/components/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,6 +37,10 @@ const AllGists = ({ user }: { user: string }) => {
     goNext,
     goPrev,
   } = usePageFetch({ pageSize: 5, fetchFunc: fetchGists });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [current]);
 
   return (
     <>

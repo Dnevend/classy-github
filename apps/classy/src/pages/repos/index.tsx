@@ -15,7 +15,7 @@ import RepoCard from "./RepoCard";
 export function Repos() {
   const { user } = useParams() as { user: string };
 
-  const { repos: loaderRepos } = useLoaderData() as { repos: Repo[] };
+  const { repos: loaderRepos = [] } = useLoaderData() as { repos?: Repo[] };
 
   const { data: userinfo = null } = useQuery<User>({
     queryKey: ["user", user],

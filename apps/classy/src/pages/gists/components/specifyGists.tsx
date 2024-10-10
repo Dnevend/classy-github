@@ -74,7 +74,7 @@ const SpecifyGists = ({ user, type }: { user: string; type: string }) => {
             disabled={!hasMore}
             className="my-2"
           >
-            {hasMore ? "Load more" : "- END -"}
+            {fetching ? "Loading..." : hasMore ? "Load more" : "- END -"}
           </Button>
         </div>
       )}
