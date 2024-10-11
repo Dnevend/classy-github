@@ -115,7 +115,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
 
         <div
           className={cn("p-2 mt-4 transition-all", {
-            "grayscale opacity-35": isOverflow && !expand,
+            "grayscale-[15%] opacity-50": isOverflow && !expand,
           })}
           style={{
             height: isOverflow && !expand ? `${ContentExpandHeight}px` : "auto",
