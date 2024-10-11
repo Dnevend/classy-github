@@ -65,7 +65,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
             className="hover:text-indigo-600"
           >
             <div>
-              <h2 className="text-lg text-gray-800 font-semibold">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {getGistMatchStr(gist.description, { prefix, split }) ||
                   "View Detail"}
               </h2>

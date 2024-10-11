@@ -146,7 +146,7 @@ export function Repo() {
         )}
       </div>
 
-      <div className="my-6">
+      <div className="my-6 px-2">
         {renderContent ? (
           <MarkdownPreview
             source={renderContent}
