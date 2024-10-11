@@ -65,7 +65,7 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
             className="hover:text-indigo-600"
           >
             <div>
-              <h2 className="text-lg text-gray-800">
+              <h2 className="text-lg text-gray-800 font-semibold">
                 {getGistMatchStr(gist.description, { prefix, split }) ||
                   "View Detail"}
               </h2>
@@ -114,7 +114,9 @@ const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
         )}
 
         <div
-          className="p-2 mt-4"
+          className={cn("p-2 mt-4 transition-all", {
+            "grayscale opacity-35": isOverflow && !expand,
+          })}
           style={{
             height: isOverflow && !expand ? `${ContentExpandHeight}px` : "auto",
           }}
