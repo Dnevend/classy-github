@@ -60,7 +60,7 @@ const AllGists = ({ user }: { user: string }) => {
         {gists.length === 0 && !fetching && <GistsEmpty />}
 
         {gists.map((it) => (
-          <GistCard key={it.id} user={user} gist={it} type="all" />
+          <GistCard key={it.id} user={user} gist={it} />
         ))}
       </div>
 

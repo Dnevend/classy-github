@@ -26,13 +26,21 @@ export const matchGistRule = (gistStr: string | undefined, rule: {
 }) => {
     if (!gistStr) return false
 
-    const { prefix, split, type } = rule
+    const { prefix = 'classy', split = '.', type } = rule || {};
 
-    const ruleStr = `${prefix}${split}${type}`.toLowerCase()
+    // Escape special regex characters in the split
+    const escapedSplit = split.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    const _gistStr = gistStr.toLowerCase()
+    // If type is provided, use it; otherwise, match any word characters (letters)
+    const typePattern = type ? type : '[a-zA-Z]+';
 
-    return _gistStr.includes(ruleStr)
+    // Create a regex pattern to match the rule format with optional type
+    const regex = new RegExp(`^${prefix}${escapedSplit}${typePattern}${escapedSplit}(.+)$`, 'i');
+
+    // Attempt to match the gistStr using the regex pattern
+    const match = gistStr.match(regex);
+
+    return !!match;
 }
 
 /**
@@ -40,30 +48,24 @@ export const matchGistRule = (gistStr: string | undefined, rule: {
  * - 获取匹配后的字符串内容
  * @returns string
  */
-export const getGistMatchStr = (gistStr: string | undefined, rule: {
+export const getGistMatchStr = (gistStr: string | undefined, rule?: {
     prefix: string,
     split: string,
-    type: string
+    type?: string
 }) => {
-    if (!gistStr) return ''
+    if (!gistStr) return '';
 
-    const { prefix, split, type } = rule
+    const { prefix = 'classy', split = '.', type } = rule || {};
 
-    const ruleStr = `${prefix}${split}${type}`.toLowerCase()
+    const escapedSplit = split.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    const _gistStr = gistStr.toLowerCase()
+    const typePattern = type ? type : '[a-zA-Z]+';
 
-    const matchIndex = _gistStr.indexOf(ruleStr)
+    const regex = new RegExp(`^${prefix}${escapedSplit}${typePattern}${escapedSplit}(.+)$`, 'i');
 
-    // Gist description does not match the rule, return the origin string
-    // Gist描述与规则不匹配，返回原始字符串
-    if (matchIndex === -1) return gistStr
+    const match = gistStr.match(regex);
 
-    const matchStr = _gistStr.slice(matchIndex + ruleStr.length, _gistStr.length)
-
-    if (matchStr.startsWith(split)) return matchStr.slice(1, matchStr.length)
-
-    return matchStr
+    return match ? match[1] : gistStr;
 }
 
 /**

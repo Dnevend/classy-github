@@ -1,7 +1,6 @@
 import {
   cn,
   useClassyConfig,
-  matchGistRule,
   getGistMatchStr,
   gitApiFetch,
   requestUrl,
@@ -9,12 +8,7 @@ import {
 import { GistComment, Gist as IGist } from "@classy/types/github";
 import { ExternalLink } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Link,
-  useLoaderData,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useLoaderData, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import SvgPlaceholder from "@/assets/placeholder.svg";
 import Loading from "@/components/loading";
@@ -24,9 +18,6 @@ import { useQuery } from "@tanstack/react-query";
 
 export function Gist() {
   const { theme } = useThemeMode();
-
-  const [params] = useSearchParams();
-  const gistType = params.get("type");
 
   const { user, gistId } = useParams() as { user: string; gistId: string };
   const classyConfig = useClassyConfig(user);
@@ -58,20 +49,11 @@ export function Gist() {
       gitApiFetch<GistComment[]>(requestUrl.gistComments(gistId), { alt: [] }),
   });
 
-  const isGistMatchRule =
-    gistType &&
-    matchGistRule(gist?.description, { prefix, split, type: gistType });
-
-  const getTitle = () => {
-    if (isGistMatchRule) {
-      return getGistMatchStr(gist?.description, {
-        prefix,
-        split,
-        type: gistType,
-      });
-    }
-    return gist?.description || `${gist?.owner.login ?? "User"}'s Gist`;
-  };
+  const title =
+    getGistMatchStr(gist?.description, {
+      prefix,
+      split,
+    }) || `${gist?.owner.login}'s Gist`;
 
   return (
     <div>
@@ -79,12 +61,14 @@ export function Gist() {
         src={gist?.owner.avatar_url || SvgPlaceholder}
         className="h-16 w-16 mx-auto rounded-full"
       />
-      <h1 className="mt-2 text-center font-bold">{getTitle()}</h1>
-      {isGistMatchRule && (
+      <h1 className="mt-2 text-center font-bold">{title}</h1>
+
+      {title !== gist?.description && (
         <p className="mt-1 text-sm text-center text-gray-300">
           {gist?.description}
         </p>
       )}
+
       <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-1 text-xs text-gray-300">
         <span>{gist?.owner.login}</span>
         <span>{gist?.created_at}</span>

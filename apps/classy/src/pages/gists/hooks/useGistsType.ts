@@ -1,10 +1,9 @@
 import { useClassyConfig } from "@classy/lib";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export const useGistsType = (user: string) => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [searchParams] = useSearchParams();
+
+    const [searchParams, setSearchParams] = useSearchParams();
     const classyConfig = useClassyConfig(user);
 
     const searchType = searchParams.get("type");
@@ -14,10 +13,11 @@ export const useGistsType = (user: string) => {
     const gistTypes = classyConfig?.gists?.type || [];
 
     const onChangeType = (type: string) => {
-        navigate(
-            { pathname: location.pathname, search: `type=${type}` },
-            { replace: true }
-        );
+        if (type === defaultType.name) {
+            setSearchParams({});
+        } else {
+            setSearchParams({ type });
+        }
     };
 
     const getDefaultType = () => {

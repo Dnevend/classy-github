@@ -7,7 +7,7 @@ export const useExpand = ({
 }: { domTarget: string | HTMLElement | null, overflowHeight: number, defaultExpand?: boolean }) => {
 
     const [expanded, setExpanded] = useState<boolean>(defaultExpand);
-    const [isOverflow, setIsOverflow] = useState<boolean>(false);
+    const [isOverflow, setIsOverflow] = useState<boolean>(true);
 
     const toggleExpand = () => setExpanded(!expanded)
 

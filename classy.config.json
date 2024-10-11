@@ -10,7 +10,7 @@
         "showFollowing": true
     },
     "gists": {
-        "prefix": "Classy",
+        "prefix": "classy",
         "split": ".",
         "default": null,
         "type": [

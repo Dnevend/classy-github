@@ -4,23 +4,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SvgLoading from "@/components/loading";
 import { CodeRender, MarkdownPreview } from "@classy/components";
-import { cn } from "@classy/lib";
+import { cn, getGistMatchStr, useClassyConfig } from "@classy/lib";
 import { useExpand } from "../hooks/useExpand";
 import { useThemeMode } from "@/hooks/useThemeMode";
 
 const ContentExpandHeight = 200;
 
-const GistCard = ({
-  user,
-  gist,
-  title,
-  type,
-}: {
-  user: string;
-  gist: Gist;
-  title?: string;
-  type: string;
-}) => {
+const GistCard = ({ user, gist }: { user: string; gist: Gist }) => {
+  const classyConfig = useClassyConfig(user);
+  const { prefix, split } = classyConfig.gists;
+
   const files = useMemo(
     () =>
       Object.entries(gist.files).map(([, data]) => ({
@@ -68,12 +61,13 @@ const GistCard = ({
         <div className="flex gap-2 items-center">
           <img src={gist.owner.avatar_url} className="h-10 w-10 rounded-full" />
           <Link
-            to={`/${user}/gist/${gist.id}?type=${type}`}
+            to={`/${user}/gist/${gist.id}`}
             className="hover:text-indigo-600"
           >
             <div>
               <h2 className="text-lg text-gray-800">
-                {title || gist.description || "View Detail"}
+                {getGistMatchStr(gist.description, { prefix, split }) ||
+                  "View Detail"}
               </h2>
               <p className="text-sm text-gray-500">{gist.created_at}</p>
             </div>
@@ -107,18 +101,18 @@ const GistCard = ({
         </ul>
       )}
 
-      {loading && (
-        <div className="h-24 flex justify-center items-center">
-          <SvgLoading />
-        </div>
-      )}
-
       <div
         ref={contentRef}
         className={cn("overflow-hidden relative rounded-md", {
           "max-h-[288px]": isOverflow && !expand,
         })}
       >
+        {loading && (
+          <div className="h-24 flex justify-center items-center">
+            <SvgLoading />
+          </div>
+        )}
+
         <div
           className="p-2 mt-4"
           style={{

@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo } from "react";
-import { gitApiFetch, requestUrl, usePageFetch } from "@classy/lib";
+import {
+  gitApiFetch,
+  requestUrl,
+  usePageFetch,
+  getGistMatchStr,
+} from "@classy/lib";
 import { useQueryClient } from "@tanstack/react-query";
 import { Gist } from "@classy/types";
 import { Link } from "react-router-dom";
@@ -64,7 +69,7 @@ const Outline = ({ user }: { user: string }) => {
               >
                 <Link to={`/${user}/gist/${it.id}`}>
                   <span className="hover:underline cursor-pointer">
-                    {it.description || "UnTitle"}
+                    {getGistMatchStr(it.description) || "UnTitle"}
 
                     {Object.keys(it.files).length > 1 && (
                       <span className="text-sm text-gray-500 ml-1">

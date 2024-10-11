@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  getGistMatchStr,
   gitApiFetch,
   matchGistRule,
   requestUrl,
@@ -56,13 +55,7 @@ const SpecifyGists = ({ user, type }: { user: string; type: string }) => {
 
       <div className="flex flex-col space-y-8 divide-y-2 divide-dashed">
         {gists.map((it) => (
-          <GistCard
-            key={it.id}
-            user={user}
-            gist={it}
-            title={getGistMatchStr(it.description, { prefix, split, type })}
-            type={type}
-          />
+          <GistCard key={it.id} user={user} gist={it} />
         ))}
       </div>
 
