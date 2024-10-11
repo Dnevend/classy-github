@@ -48,30 +48,32 @@ pnpm run dev:[other] # 运行其他主题
 
 ## 🔧 配置
 
+`classy.config.json`
+
 ```json
-// classygit.config.json
 {
   "theme": "default",
   // 个人主页配置
   "profile": {
     "repos": {
-      "visible": true, // 是否展示仓库
-      "showCount": 6 // 展示仓库数量
+      "visible": true,
+      "showCount": 6
     },
-    "cover": "" // 封面（暂未使用）
+    "cover": "https://picsum.photos/1200/760",
+    "showFollowers": true,
+    "showFollowing": true
   },
   // Gist 页配置
   "gists": {
-    "prefix": "Classy", // 规则前缀
-    "split": ".", // 分隔符
-    "default": null, // 默认分类
-    // 分类
+    "prefix": "classy",
+    "split": ".",
+    "default": null,
     "type": [
       {
         "name": "blog"
       },
       {
-        "name": "weekly"
+        "name": "code"
       }
     ]
   },
@@ -88,6 +90,24 @@ pnpm run dev:[other] # 运行其他主题
   ]
 }
 ```
+
+## Q&A
+
+- 如何实现自定义配置？
+
+  如需实现自定义主页配置，请先 Fork 本仓库，再修改根目录下 `classy.config.json` 配置文件。
+
+- 为什么我的 Gist 没有按分类展示？
+
+  请检查你的 Gist 描述是否符合规则，默认规则为 `classy.[类型].[标题]`，例：`classy.blog.title`
+
+  如需自定义规则请修改上述配置文件。
+
+- 为什么数据没有即使更新？
+
+  首先是 Github 接口的数据同步存在延迟。
+
+  其次，本项目使用了缓存以减少请求次数以获取更快的数据渲染，缓存时效为 3 分钟。
 
 ## 📝 TODO
 

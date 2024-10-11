@@ -48,30 +48,32 @@ pnpm run dev:[other] # 运行其他主题
 
 ## 🔧 配置
 
+`classy.config.json`
+
 ```json
-// classygit.config.json
 {
   "theme": "default",
   // 个人主页配置
   "profile": {
     "repos": {
-      "visible": true, // 是否展示仓库
-      "showCount": 6 // 展示仓库数量
+      "visible": true,
+      "showCount": 6
     },
-    "cover": "" // 封面（暂未使用）
+    "cover": "https://picsum.photos/1200/760",
+    "showFollowers": true,
+    "showFollowing": true
   },
   // Gist 页配置
   "gists": {
-    "prefix": "Classy", // 规则前缀
-    "split": ".", // 分隔符
-    "default": null, // 默认分类
-    // 分类
+    "prefix": "classy",
+    "split": ".",
+    "default": null,
     "type": [
       {
         "name": "blog"
       },
       {
-        "name": "weekly"
+        "name": "code"
       }
     ]
   },
