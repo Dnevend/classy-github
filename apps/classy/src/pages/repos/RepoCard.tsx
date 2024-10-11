@@ -50,9 +50,9 @@ const RepoCard = ({
       )}
     </div>
 
-    <div>
-      <Separator className="mt-4 mb-2" />
+    <Separator className="mt-4 mb-2" />
 
+    <div className="flex justify-between">
       <div className="flex gap-3">
         <span className="flex items-center gap-1 text-sm">
           <Star size={12} />
@@ -63,6 +63,8 @@ const RepoCard = ({
           <span>{repo.forks_count}</span>
         </span>
       </div>
+
+      <span className="text-sm text-slate-500">{repo.language}</span>
     </div>
   </Link>
 );
