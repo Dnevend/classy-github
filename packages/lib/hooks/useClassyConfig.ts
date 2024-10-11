@@ -7,7 +7,7 @@ import defaultConfig from "../../../classy.config.json";
 
 export const useClassyConfig = (user?: string) => {
   const [userConfig, setUserConfig] = useState<ClassyConfig>(
-    (storeGet(`config_${user}`) || defaultConfig) as ClassyConfig
+    storeGet(`config_${user}`, defaultConfig) as ClassyConfig
   );
 
   useEffect(() => {

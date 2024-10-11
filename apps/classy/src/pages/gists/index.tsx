@@ -2,7 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { ExternalLink } from "lucide-react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { cn, storeGet, storeSet } from "@classy/lib";
 import { githubUrl } from "@classy/shared";
 import AllGists from "./components/allGists";
@@ -13,9 +13,10 @@ import { useState } from "react";
 
 export function Gists() {
   const { user } = useParams() as { user: string };
+  const [searchParams] = useSearchParams();
 
   const [showOutline, setShowOutline] = useState(
-    storeGet("config_gist_mode", true)
+    searchParams.get("type") ? false : storeGet("config_gist_mode", true)
   );
 
   const { defaultType, gistTypes, getDefaultType, onChangeType } =
