@@ -16,12 +16,16 @@
 
 ## ClassyGithub
 
+<p align="center">
+    <img src="./assets/demo.gif" alt="ClassyGithub" style="width: 61.8%;" />
+</p>
+
 <table width="100%">
   <thead>
     <tr>
-      <th width="33%" style="text-align: center"><a href="https://nes.classygit.me" target="_blank">NES(Building)</a></th>
-      <th width="33%"  style="text-align: center">Windows(Todo)</th>
-      <th width="33%"  style="text-align: center">Mac(Todo)</th>
+      <th width="33%" style="text-align: center"><a href="https://nostalgic-css.github.io/NES.css/" target="_blank">NES(Building)</a></th>
+      <th width="33%"  style="text-align: center"><a href="https://react95.github.io/React95/" target="_blank">Win 95(Todo)</a></th>
+      <th width="33%"  style="text-align: center"><a href="https://sakofchit.github.io/system.css/" target="_blank">Mac(Todo)</a></th>
     </tr>
   </thead>
 
@@ -128,9 +132,9 @@ pnpm run dev:[other] # 运行其他主题
 
 - 多主题
   - [x] 经典主题
-  - [ ] [NES 像素主题: nes.classygit.me](https://nostalgic-css.github.io/NES.css/)
-  - [ ] [Mac 复古主题: mac.classygit.me](https://sakofchit.github.io/system.css/)
-  - [ ] [Windows 95 主题 win.classygit.me](https://react95.github.io/React95/)
+  - [ ] [NES 像素主题](https://nostalgic-css.github.io/NES.css/)
+  - [ ] [Mac 复古主题](https://sakofchit.github.io/system.css/)
+  - [ ] [Windows 95 主题](https://react95.github.io/React95/)
   - [ ] 更多主题...
 
 ## 项目共建
