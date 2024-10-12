@@ -89,11 +89,11 @@ pnpm run dev:[other] # 运行其他主题
 }
 ```
 
-## Q&A
+## 常见问题
 
 - 如何实现自定义配置？
 
-  > 如需实现自定义主页配置，请先 Fork 本仓库，再修改根目录下 `classy.config.json` 配置文件。
+  > 如需实现自定义主页配置，请先 [Fork 本仓库](https://github.com/Dnevend/classy-github/fork)，再修改根目录下 `classy.config.json` 配置文件。
 
 - 为什么我的 Gist 没有按分类展示？
 
@@ -112,3 +112,7 @@ pnpm run dev:[other] # 运行其他主题
   - [x] 经典主题
   - [ ] NES 复古主题
   - [ ] Mac 复古主题
+
+## 共建
+
+[提出想法&反馈问题](https://github.com/Dnevend/classy-github/issues/new) • [共建项目](https://github.com/Dnevend/classy-github/fork)
