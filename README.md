@@ -78,7 +78,7 @@ pnpm run dev:[other] # 运行其他主题
       "visible": true,
       "showCount": 6
     },
-    "cover": "https://picsum.photos/1200/760",
+    "cover": "https://picsum.photos/1024/576",
     "showFollowers": true,
     "showFollowing": true
   },
