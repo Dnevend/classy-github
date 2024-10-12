@@ -16,9 +16,9 @@
 
 ## ClassyGithub
 
-<div style="width: 61.8%; margin: 0 auto;">
-    <img src="./assets/demo.gif" alt="ClassyGithub" />
-</div>
+<p align="center">
+    <img src="./assets/demo.gif" alt="ClassyGithub" width="61.8%" />
+</p>
 
 <table width="100%">
   <thead>
