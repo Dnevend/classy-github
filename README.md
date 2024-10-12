@@ -133,7 +133,7 @@ pnpm run dev:[other] # 运行其他主题
 
 - 多主题
   - [x] 经典主题
-  - [-] [NES 像素主题](https://nostalgic-css.github.io/NES.css/)
+  - [ ] [NES 像素主题(Building...)](https://nostalgic-css.github.io/NES.css/)
   - [ ] [Mac 复古主题](https://sakofchit.github.io/system.css/)
   - [ ] [Windows 95 主题](https://react95.github.io/React95/)
   - [ ] 更多主题...
