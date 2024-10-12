@@ -1,5 +1,3 @@
-# ClassyGithub
-
 <p align="center">
     <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true"
         height="80">
@@ -16,11 +14,11 @@
     <img src="https://img.shields.io/badge/-Hono-000000?logo=hono&logoColor=white&style=for-the-badge" alt="Hono">
 </p>
 
-## 📖 介绍
+## ClassyGithub
 
 ### 项目实现
 
-- 本项目基于 [Github 公共 API](https://docs.github.com/en/rest)，获取公开数据，生成你的多种主题可定制的个性主页。
+- 项目基于 [Github 公共 API](https://docs.github.com/en/rest)，获取公开数据，生成你的多种主题可配置的个性主页。
 
 - 随笔/博客或者任何其他记录性质的文档，依赖于 [Github Gist](https://gist.github.com/)，通过自定义规则配置以实现分类展示。
 
@@ -34,7 +32,7 @@
 
 - 部署：Cloudflare
 
-## 🚀 运行
+## 本地运行
 
 ```bash
 git clone https://github.com/Dnevend/classy-github.git # 克隆项目
@@ -46,7 +44,7 @@ pnpm run dev # 运行默认主题
 pnpm run dev:[other] # 运行其他主题
 ```
 
-## 🔧 配置
+## 自定义配置
 
 `classy.config.json`
 
@@ -95,21 +93,18 @@ pnpm run dev:[other] # 运行其他主题
 
 - 如何实现自定义配置？
 
-  如需实现自定义主页配置，请先 Fork 本仓库，再修改根目录下 `classy.config.json` 配置文件。
+  > 如需实现自定义主页配置，请先 Fork 本仓库，再修改根目录下 `classy.config.json` 配置文件。
 
 - 为什么我的 Gist 没有按分类展示？
 
-  请检查你的 Gist 描述是否符合规则，默认规则为 `classy.[类型].[标题]`，例：`classy.blog.title`
-
-  如需自定义规则请修改上述配置文件。
+  > 请检查你的 Gist 描述是否符合规则，默认规则为 `classy.[类型].[标题]`，例：`classy.blog.title`。
 
 - 为什么数据没有即使更新？
 
-  首先是 Github 接口的数据同步存在延迟。
+  > 首先是 Github 接口的数据同步存在些许延迟。
+  > 其次，本项目使用了缓存以减少请求次数以获取更快的数据渲染，缓存时效为 3 分钟。
 
-  其次，本项目使用了缓存以减少请求次数以获取更快的数据渲染，缓存时效为 3 分钟。
-
-## 📝 TODO
+## TODO
 
 - [ ] 使用 Next.js 重构，带来更好的 SEO 效果
 
