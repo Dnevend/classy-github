@@ -1,5 +1,5 @@
-<p align="center" style="height: 60px; line-height: 60px;">
-    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true">
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true" height="60">
 </p>
 <h1 align="center">ClassyGithub</h1>
 
