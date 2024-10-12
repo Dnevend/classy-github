@@ -99,9 +99,9 @@ pnpm run dev:[other] # 运行其他主题
 
   > 请检查你的 Gist 描述是否符合规则，默认规则为 `classy.[类型].[标题]`，例：`classy.blog.title`。
 
-- 为什么数据没有即使更新？
+- 为什么数据没有及时更新？
 
-  > 首先是 Github 接口的数据同步存在些许延迟。
+  > 首先是 Github 接口的数据同步存在略微延迟。
   > 其次，本项目使用了缓存以减少请求次数以获取更快的数据渲染，缓存时效为 3 分钟。
 
 ## TODO
@@ -110,9 +110,11 @@ pnpm run dev:[other] # 运行其他主题
 
 - 多主题
   - [x] 经典主题
-  - [ ] NES 复古主题
-  - [ ] Mac 复古主题
+  - [ ] [NES 像素主题: nes.classygit.me](https://nostalgic-css.github.io/NES.css/)
+  - [ ] [Mac 复古主题: mac.classygit.me](https://sakofchit.github.io/system.css/)
+  - [ ] [Windows 95 主题 win.classygit.me](https://react95.github.io/React95/)
+  - [ ] 更多主题...
 
-## 共建
+## 项目共建
 
 [提出想法&反馈问题](https://github.com/Dnevend/classy-github/issues/new) • [共建项目](https://github.com/Dnevend/classy-github/fork)
