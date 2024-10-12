@@ -4,17 +4,15 @@
 </p>
 
 <p align="center">
-    无需部署登录，<a href="https://classygit.me/" target="_blank">即刻访问</a>你的定制 Github 主页、代码片段、个人博客、随笔集。
-</p>
-
-<p align="center">
     <img src="https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge" alt="Vite">
     <img src="https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge" alt="ReactJs">
     <img src="https://img.shields.io/badge/-Cloudflare-F36F27?logo=cloudflare&logoColor=white&style=for-the-badge" alt="Cloudflare">
     <img src="https://img.shields.io/badge/-Hono-000000?logo=hono&logoColor=white&style=for-the-badge" alt="Hono">
 </p>
 
-## ClassyGithub
+<p align="center">
+    无需部署登录，<a href="https://classygit.me/" target="_blank">即刻访问</a>你的定制 Github 主页、代码片段、个人博客、随笔集。
+</p>
 
 <p align="center">
     <img src="./assets/demo.gif" alt="ClassyGithub" width="61.8%" />
@@ -37,6 +35,8 @@
     </tr>
   </tbody>
 </table>
+
+## ClassyGithub
 
 ### 项目实现
 
