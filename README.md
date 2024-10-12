@@ -1,7 +1,7 @@
 <p align="center">
     <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true" height="60">
 </p>
-<h1 align="center">ClassyGithub</h1>
+<h2 align="center">ClassyGithub</h2>
 
 <p align="center">
     <img src="https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge" alt="Vite">
