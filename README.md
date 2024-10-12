@@ -1,7 +1,7 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true"
-        height="80">
+<p align="center" style="height: 60px; line-height: 60px;">
+    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true">
 </p>
+<h1 align="center">ClassyGithub</h1>
 
 <p align="center">
     <img src="https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge" alt="Vite">
@@ -35,8 +35,6 @@
     </tr>
   </tbody>
 </table>
-
-## ClassyGithub
 
 ### 项目实现
 
