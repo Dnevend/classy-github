@@ -1,6 +1,7 @@
 <p align="center">
     <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true" height="60">
 </p>
+
 <h2 align="center">ClassyGithub</h2>
 
 <p align="center">
@@ -126,11 +127,13 @@ pnpm run dev:[other] # 运行其他主题
 
 ## TODO
 
+- [x] 暗色模式
+- [x] 移动端适配
 - [ ] 使用 Next.js 重构，带来更好的 SEO 效果
 
 - 多主题
   - [x] 经典主题
-  - [ ] [NES 像素主题](https://nostalgic-css.github.io/NES.css/)
+  - [-] [NES 像素主题](https://nostalgic-css.github.io/NES.css/)
   - [ ] [Mac 复古主题](https://sakofchit.github.io/system.css/)
   - [ ] [Windows 95 主题](https://react95.github.io/React95/)
   - [ ] 更多主题...
