@@ -67,7 +67,7 @@ pnpm run dev:[other] # 运行其他主题
 
 ## 自定义配置
 
-`classy.config.json`
+### 项目配置 `classy.config.json`
 
 ```json
 {
@@ -109,6 +109,14 @@ pnpm run dev:[other] # 运行其他主题
   ]
 }
 ```
+
+### 第三方配置
+
+- [Metrics](https://github.com/lowlighter/metrics)
+
+- [Github Readme Stats](https://github.com/anuraghazra/github-readme-stats)
+
+- [Awesome Github Profile Readme](https://github.com/abhisheknaiidu/awesome-github-profile-readme)
 
 ## 常见问题
 
