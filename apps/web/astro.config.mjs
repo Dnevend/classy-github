@@ -4,7 +4,10 @@ import cloudflare from '@astrojs/cloudflare';
 // M1 只做最小切片：默认 static 输出，动态路由用 `export const prerender = false`
 // 显式退出预渲染（而不是整站 server，静态页仍走边缘静态资源）。
 export default defineConfig({
-  adapter: cloudflare(),
+  // 不使用 astro:assets，图片走 passthrough，避免绑定 Cloudflare Images
+  adapter: cloudflare({ imageService: 'passthrough' }),
+  // 不需要服务端会话，关掉以免部署时要求 KV 命名空间
+  session: false,
   output: 'static',
   build: {
     inlineStylesheets: 'auto',

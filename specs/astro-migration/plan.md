@@ -1,7 +1,7 @@
 # ClassyGit → Astro 迁移计划书
 
 > 状态：草案（M0 已落地，M1 起待执行）
-> 分支：`chore/astro-migration-m0`
+> 分支：`v2`（长期集成分支，全部完成后合入 `main`）
 > 最后更新：2026-11-15
 
 **已确认决策**（2026-11-15，来自项目 owner）：
@@ -318,7 +318,33 @@ curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-ex
 
 ---
 
-## 9. 开放问题
+## 9. 分支与部署策略
+
+| 分支 | 角色 | 部署 |
+|---|---|---|
+| `main` | v1（Vite + React SPA） | Cloudflare Pages · `classy-github.pages.dev` · 冻结，不再接受重构提交 |
+| `v2` | v2（Astro）集成分支，M1–M5 全部提交进这里 | Cloudflare Workers · `classy-web.dnevend.workers.dev` |
+
+一条命令发布：
+
+```bash
+pnpm deploy:web        # = build:web + wrangler deploy --config dist/server/wrangler.json
+```
+
+回滚（Workers 侧保留版本历史）：
+
+```bash
+pnpm --filter @classy/web exec wrangler deployments list --config dist/server/wrangler.json
+pnpm --filter @classy/web exec wrangler rollback <version-id> --config dist/server/wrangler.json
+```
+
+收尾切流（M5 之后）：
+
+1. `v2` 合入 `main`（fast-forward 或 squash 均可，保留 M1–M5 的分阶段记录更利于回溯）；
+2. Cloudflare Pages 项目的 production branch 改到 `main`，或直接停用该项目；
+3. 主域名指到 Workers（`routes` 里加 `custom_domain`），`themeDomains` / canonical 的 base 改用环境变量。
+
+## 10. 开放问题
 
 1. ~~Workers 免费版够不够？~~ **已解决**：已开通 $5/月套餐。
 2. **`classygit.me` 还要不要？** 若要，先查注册状态；不要就把所有常量收敛到环境变量，别再写死第三次。
@@ -328,7 +354,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-ex
 
 ---
 
-## 10. 附录：决策依据的实测记录（2026-11-15）
+## 11. 附录：决策依据的实测记录（2026-11-15）
 
 ```
 GET https://classy-api.dnevend.workers.dev/users/Dnevend

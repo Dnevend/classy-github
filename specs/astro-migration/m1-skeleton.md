@@ -1,6 +1,6 @@
 # M1 · Astro 骨架记录
 
-> 分支：`chore/astro-migration-m0`
+> 分支：`v2`
 > 日期：2026-11-15
 > 目标：`apps/web` 跑通 5 条路由 + 服务端 token + 边缘缓存 + SEO + 真 404，只做 default 一套皮肤。
 
@@ -164,6 +164,12 @@ wrangler secret list → [{ name: "GITHUB_TOKEN", type: "secret_text" }]
 
 结论：边缘缓存在线上生效；token 配好后不再出现 503。冷渲染 1.5–2.3s 是当前的主要体感问题，
 M5 可以考虑：热门用户预热、或把 `getUser` 与 `listRepos` 的串行依赖拆掉。
+
+## 部署命令
+
+```bash
+pnpm deploy:web        # build:web + wrangler deploy --config dist/server/wrangler.json
+```
 
 ## 部署步骤（给后续用）
 

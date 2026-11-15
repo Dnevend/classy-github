@@ -14,7 +14,8 @@
     "build:docs": "pnpm run -r --filter classy-docs build",
     "dev:web": "pnpm --filter @classy/web dev",
     "build:web": "pnpm --filter @classy/web build",
-    "test:web": "pnpm --filter @classy/web test"
+    "test:web": "pnpm --filter @classy/web test",
+    "deploy:web": "pnpm run build:web && pnpm --filter @classy/web exec wrangler deploy --config dist/server/wrangler.json"
   },
   "keywords": [],
   "author": "Dnevend",
