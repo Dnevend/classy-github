@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import svgToDataUri from "mini-svg-data-uri";
+/* eslint-disable @typescript-eslint/no-var-requires */
+// mini-svg-data-uri 是纯 CJS 包（module.exports = fn），且没有 __esModule 标记。
+// Tailwind 通过 jiti 加载本配置时不注入 ESM interop，`import x from` 会拿到 undefined，
+// 表现为构建报错 "svgDataUri.default.call is not a function"。用 require 取原始导出。
+const svgToDataUri: (svg: string) => string = require("mini-svg-data-uri");
 import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
 
 function addVariablesForColors({ addBase, theme }: any) {

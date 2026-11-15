@@ -42,6 +42,13 @@ const objToQueryParams = (obj: Record<string, any>) => {
     return queryParams
 }
 
+/**
+ * 拼接 base 与 path，容忍两侧任意数量的斜杠。
+ * 之前用字符串直接相加，base 带尾斜杠时会拼出 `host//users/x`。
+ */
+const joinUrl = (base: string, path: string) =>
+    `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
+
 export const gitApiFetch: GitApiFetch = async (url, options) => {
     const { expire = 3 * 60 * 1000, params = {}, alt } = options || {}
 
@@ -60,25 +67,37 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
     }
 
     try {
-        const res = await fetch(githubUrl.api + fetchUrl)
+        const res = await fetch(joinUrl(githubUrl.api, fetchUrl))
 
         if (res.ok) {
             const data = await res.json()
             cacheFetchData(`fetch_${fetchUrl}`, expire, data)
             return data
         }
+
+        // 404 表示资源本身不存在（例如用户拼错了用户名），换代理也不会变，直接返回
+        if (res.status === 404) {
+            console.warn(`[gitApiFetch] 404 ${fetchUrl}`)
+            return alt
+        }
+
+        console.warn(`[gitApiFetch] ${res.status} ${res.statusText} ${fetchUrl}`)
     } catch (err) {
         console.warn('fetch error =>', err)
     }
 
     try {
-        const refetchRes = await fetch(githubUrl.proxyApi + fetchUrl)
+        const refetchRes = await fetch(joinUrl(githubUrl.proxyApi, fetchUrl))
 
         if (refetchRes.ok) {
             const data = await refetchRes.json()
             cacheFetchData(`fetch_${fetchUrl}`, expire, data)
             return data
         }
+
+        console.warn(
+            `[gitApiFetch] proxy ${refetchRes.status} ${refetchRes.statusText} ${fetchUrl}`
+        )
     } catch (err) {
         console.warn('refetch error =>', err)
     }

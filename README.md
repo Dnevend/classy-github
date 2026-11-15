@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-    无需部署登录，<a href="https://classygit.me/" target="_blank">即刻访问</a>你的定制 Github 主页、代码片段、个人博客、随笔集。
+    无需部署登录，<a href="https://classy-github.pages.dev/" target="_blank">即刻访问</a>你的定制 Github 主页、代码片段、个人博客、随笔集。
 </p>
 
 <p align="center">
@@ -103,8 +103,8 @@ pnpm run dev:[other] # 运行其他主题
       "href": "https://github.com/Dnevend/classy-github"
     },
     {
-      "title": "Docs",
-      "href": "https://docs.classygit.me"
+      "title": "配置说明",
+      "href": "https://github.com/Dnevend/classy-github#自定义配置"
     }
   ]
 }

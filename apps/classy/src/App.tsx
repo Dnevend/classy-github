@@ -26,8 +26,12 @@ function App() {
   const [index, setIndex] = useState(0);
 
   /** 首页 */
-  const homePage =
-    theme !== getCurrentTheme() ? `https://${themeDomains[theme]}/${username}` : `${username}`;
+  const themeDomain =
+    theme !== getCurrentTheme() ? themeDomains[theme] : undefined;
+
+  const homePage = themeDomain
+    ? `https://${themeDomain}/${username}`
+    : `${username}`;
 
   useEffect(() => {
     const interval = setInterval(() => {

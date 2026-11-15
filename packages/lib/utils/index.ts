@@ -5,6 +5,10 @@ import { Theme, themeDomains, themeMap } from '@classy/shared'
 export const redirectTheme = (theme: Theme) => {
     const { pathname, search } = window.location
     const themeDomain = themeDomains[theme]
+
+    // 主题尚未部署时不做跳转，避免跳到一个不存在的域名
+    if (!themeDomain) return
+
     window.location.href = `https://${themeDomain}${pathname}${search}`
 }
 

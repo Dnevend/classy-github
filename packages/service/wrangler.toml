@@ -1,28 +1,17 @@
 #:schema node_modules/wrangler/config-schema.json
+# wrangler.toml — GitHub API 代理
+#
+# 说明：原 `routes` 里配置的是 `api.classygit.me` 自定义域名，
+# 该域名已失效（NXDOMAIN），保留会导致 `wrangler deploy` 直接失败。
+# 现在改用 workers.dev 默认域名：https://classy-api.dnevend.workers.dev
 
-name = "api-classygit"
+name = "classy-api"
 main = "src/index.ts"
 compatibility_date = "2023-12-01"
+workers_dev = true
 
-routes = [
-	{ pattern = "api.classygit.me", custom_domain = true }
-]
-
-# [vars]
-# MY_VAR = "my-variable"
-
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
-
-# [ai]
-# binding = "AI"
+# 域名恢复后，取消下面这段注释即可重新挂自定义域（同时要把
+# packages/shared/constants/index.tsx 里的 proxyApi 改回去）
+# routes = [
+# 	{ pattern = "api.classygit.me", custom_domain = true }
+# ]

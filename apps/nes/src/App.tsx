@@ -42,7 +42,7 @@ function App() {
 
         <Link
           to={
-            theme !== getCurrentTheme("nes")
+            theme !== getCurrentTheme("nes") && themeDomains[theme]
               ? `https://${themeDomains[theme]}/${username}`
               : `${username}`
           }
