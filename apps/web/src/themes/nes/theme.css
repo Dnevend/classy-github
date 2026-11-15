@@ -455,3 +455,9 @@
 .nes-repo .nes-btn {
   margin-top: auto;
 }
+
+/* 右侧资料卡不要被拉到整列高度 */
+.nes-aside .nes-container {
+  height: auto;
+  align-self: start;
+}

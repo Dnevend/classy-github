@@ -43,8 +43,12 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
   >
     <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
       <path
-        fill="currentColor"
-        d="M11 1a4 4 0 0 1 3.9 3.1A4.5 4.5 0 0 1 18 8.5c0 2.5-2 4.5-4.5 4.5H5a4 4 0 0 1-.6-8 4 4 0 0 1 6.6-4Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M8 6H4v8h8v-4M10 2h4v4M14 2 8 8"
       ></path>
     </svg>
     <span class="share-card__trigger-text">{t('share.trigger')}</span>
@@ -196,7 +200,10 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
 
     copyBtn?.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(location.href);
+        const shareUrl = new URL(location.href);
+        const currentTheme = document.documentElement.dataset.theme;
+        if (currentTheme) shareUrl.searchParams.set('theme', currentTheme);
+        await navigator.clipboard.writeText(shareUrl.toString());
         copyBtn.classList.add('is-done');
         setTimeout(() => copyBtn.classList.remove('is-done'), 1200);
       } catch {

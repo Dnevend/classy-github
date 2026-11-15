@@ -463,3 +463,52 @@
   margin-top: auto;
   align-self: flex-start;
 }
+
+/* 语言按钮 / 分享按钮：跟着 TUI 的蓝底白字，不要白边框 */
+[data-theme='tui'] .lang-toggle,
+[data-theme='tui'] .share-card__trigger {
+  background: #a8a8a8;
+  color: #000;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 2px 2px #000;
+}
+
+[data-theme='tui'] .lang-toggle:hover,
+[data-theme='tui'] .share-card__trigger:hover {
+  background: #00a800;
+  color: #000;
+}
+
+[data-theme='tui'] .share-card__action {
+  background: #0000a8;
+  color: #fff;
+  border: 1px solid #a8a8a8;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[data-theme='tui'] .share-card__action:hover {
+  background: #00a800;
+  color: #000;
+  border-color: #00a800;
+}
+
+[data-theme='tui'] .share-card__panel {
+  background: #0000a8;
+  color: #fff;
+  border-color: #a8a8a8;
+  border-radius: 0;
+}
+
+[data-theme='tui'] .share-card__preview {
+  background: #000080;
+  border-color: #a8a8a8;
+  border-radius: 0;
+}
+
+/* 右侧资料卡不要被拉到整列高度 */
+.tui-aside .window {
+  height: auto;
+  align-self: start;
+}

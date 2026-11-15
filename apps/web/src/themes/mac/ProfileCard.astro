@@ -33,10 +33,10 @@ const t = createTranslator(Astro.locals.locale);
 
       {userinfo.bio && <p class="mac-bio">{userinfo.bio}</p>}
       <ProfileMeta userinfo={userinfo} />
-      <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="lazy" />
+      <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="eager" decoding="async" />
 
     <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
-    <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="lazy" />
+    <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="eager" decoding="async" />
 
     <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 

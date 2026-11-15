@@ -8,6 +8,7 @@ import { DEFAULT_CONFIG, type ResolvedConfig } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { localeFromConfig, createTranslator } from '../../lib/i18n';
 import { resolveTheme } from '../../themes';
+import ListSearch from '../../themes/_shared/ListSearch.astro';
 
 export const prerender = false;
 
@@ -81,11 +82,14 @@ const hasPrev = page > 1;
         {data.repos.length === 0 ? (
           <p class="bio">{t('repos.empty')}</p>
         ) : (
-          <ul class="repo-grid">
-            {data.repos.map((repo) => (
-              <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
-            ))}
-          </ul>
+          <>
+            <ListSearch target="#repo-list" />
+            <ul class="repo-grid" id="repo-list">
+              {data.repos.map((repo) => (
+                <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
+              ))}
+            </ul>
+          </>
         )}
 
         {(hasPrev || hasNext) && (

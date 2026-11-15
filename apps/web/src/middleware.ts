@@ -14,6 +14,9 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
   [/^\/[^/]+\/?$/, 300],
 ];
 
+/** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
+const CACHE_VERSION = '2';
+
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
 
@@ -67,7 +70,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // 分页参数要进缓存键
   const page = url.searchParams.get('page');
   const key = new Request(
-    `${url.origin}${url.pathname}?theme=${theme}&lang=${locale}${page ? `&page=${page}` : ''}`,
+    `${url.origin}${url.pathname}?theme=${theme}&lang=${locale}&v=${CACHE_VERSION}${page ? `&page=${page}` : ''}`,
     { method: 'GET' }
   );
 

@@ -487,3 +487,9 @@
   border-bottom: 2px solid #404040;
   border-radius: 0;
 }
+
+/* 右侧资料卡不要被拉到整列高度 */
+.w95-aside .window {
+  height: auto;
+  align-self: start;
+}

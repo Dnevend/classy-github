@@ -1,0 +1,44 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+---
+
+<div class="list-search" data-list-search data-target={target} data-empty={t('search.empty')}>
+  <input type="search" placeholder={t('search.placeholder')} aria-label={t('search.placeholder')} data-list-search-input />
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-list-search]').forEach((box) => {
+    const input = box.querySelector<HTMLInputElement>('[data-list-search-input]');
+    const list = document.querySelector<HTMLElement>(box.dataset.target ?? '');
+    if (!input || !list) return;
+
+    let empty: HTMLElement | null = null;
+
+    input.addEventListener('input', () => {
+      const query = input.value.trim().toLowerCase();
+      let visible = 0;
+
+      list.querySelectorAll<HTMLElement>(':scope > li').forEach((item) => {
+        const match = !query || (item.textContent ?? '').toLowerCase().includes(query);
+        item.hidden = !match;
+        if (match) visible += 1;
+      });
+
+      if (!empty) {
+        empty = document.createElement('p');
+        empty.className = 'list-search__empty';
+        empty.textContent = box.dataset.empty ?? '';
+        list.after(empty);
+      }
+
+      empty.hidden = visible > 0;
+    });
+  });
+</script>

@@ -475,3 +475,9 @@
   margin-top: auto;
   align-self: flex-start;
 }
+
+/* 右侧资料卡不要被拉到整列高度 */
+.mac-aside .mac-window {
+  height: auto;
+  align-self: start;
+}

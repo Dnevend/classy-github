@@ -710,6 +710,7 @@ img {
 .stats-image {
   display: block;
   width: 100%;
+  aspect-ratio: 320 / 132;
   height: auto;
   margin-top: 14px;
   border-radius: 10px;
@@ -783,28 +784,57 @@ img {
   border-radius: 8px;
 }
 
-/* ---------- 首页示例 ---------- */
+/* ---------- 首页 Fork 入口 ---------- */
 
-.hero-samples {
-  margin-top: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+.hero-fork {
+  margin-top: 18px;
   font-size: 0.85em;
   color: var(--fg-muted);
 }
 
-.hero-chip {
-  padding: 4px 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+.hero-fork a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.hero-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
+/* ---------- 贡献墙 ---------- */
+
+.contrib-wall {
+  display: block;
+  width: 100%;
+  aspect-ratio: 795 / 105;
+  max-width: 100%;
+  height: auto;
+  overflow-x: auto;
+  image-rendering: auto;
+}
+
+/* ---------- 列表搜索 ---------- */
+
+.list-search {
+  margin-bottom: 14px;
+}
+
+.list-search input {
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 0.85em;
+  color: var(--fg);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.list-search input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  outline-offset: 1px;
+}
+
+.list-search__empty {
+  margin-top: 12px;
+  font-size: 0.85em;
+  color: var(--fg-muted);
 }

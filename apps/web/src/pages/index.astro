@@ -38,14 +38,11 @@ const seo: SeoMeta = {
       <button type="submit">{t('landing.submit')}</button>
     </form>
 
-    <div class="hero-samples">
-      <span>{t('landing.try')}</span>
-      {['Dnevend', 'antfu', 'sindresorhus'].map((name) => (
-        <a class="hero-chip" href={`/${name}`}>
-          {name}
-        </a>
-      ))}
-    </div>
+    <p class="hero-fork">
+      <a href="https://github.com/Dnevend/classy-github/fork" target="_blank" rel="noopener noreferrer">
+        {t('landing.fork')} ↗
+      </a>
+    </p>
   </section>
 
   <script is:inline>

@@ -96,6 +96,19 @@ const seo = data
         <div class="profile__main">
           {readmeHtml && <Markdown html={readmeHtml} />}
 
+          <section class="section contrib">
+            <h2 class="section__title">{t('contrib.title')}</h2>
+            <img
+              class="contrib-wall"
+              src={`/contrib/${user}?theme=${themeName}`}
+              alt=""
+              width="795"
+              height="105"
+              loading="eager"
+              decoding="async"
+            />
+          </section>
+
           {config.profile.repos.visible && topRepos.length > 0 && (
             <section class="section">
               <h2 class="section__title">{t('section.recent')}</h2>

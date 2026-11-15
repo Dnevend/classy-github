@@ -9,6 +9,7 @@ import { loadConfig } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { resolveTheme } from '../../themes';
+import ListSearch from '../../themes/_shared/ListSearch.astro';
 
 export const prerender = false;
 
@@ -79,7 +80,9 @@ const parseDescription = createGistDescriptionParser({
         {gists.length === 0 ? (
           <p class="bio">{t('gists.empty')}</p>
         ) : (
-          <ul class="gist-list">
+          <>
+            <ListSearch target="#gist-list" />
+            <ul class="gist-list" id="gist-list">
             {gists.map((gist) => {
               const parsed = parseDescription(gist.description);
               return (
@@ -90,8 +93,9 @@ const parseDescription = createGistDescriptionParser({
                   title={parsed.title || Object.keys(gist.files)[0] || t('gist.untitled')}
                 />
               );
-            })}
-          </ul>
+              })}
+            </ul>
+          </>
         )}
       </>
     )
