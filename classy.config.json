@@ -31,5 +31,8 @@
             "title": "配置说明",
             "href": "https://github.com/Dnevend/classy-github#自定义配置"
         }
-    ]
+    ],
+    "seo": {
+        "index": true
+    }
 }
