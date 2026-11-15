@@ -4,6 +4,12 @@
 > 分支：`chore/astro-migration-m0`
 > 最后更新：2026-11-15
 
+**已确认决策**（2026-11-15，来自项目 owner）：
+
+1. 生产环境无人在用 → **API 代理直接下线**，不做修复部署（`classy-api.dnevend.workers.dev` 已删除）。
+2. 主题采用 **`?theme=`** 形式，不做子域名、不做路径前缀。
+3. Cloudflare 已开通 **$5/月 Workers Paid**（30s CPU/请求）→ Shiki 渲染不设 CPU 顾虑，§8 的 CPU 风险解除。
+
 ---
 
 ## 1. 背景与目标
@@ -11,7 +17,8 @@
 ### 现状
 
 - 前端是 Vite + React 18 的纯客户端 SPA（`apps/classy`、`apps/nes` 两个复制品）。
-- 数据来自 GitHub 公共 API，浏览器直连（60 次/小时/IP），失败时回退到自建 Worker 代理。
+- 数据来自 GitHub 公共 API，浏览器直连（60 次/小时/IP）。
+- 自建 Worker 代理已于 2026-11-15 下线（`classy-api.dnevend.workers.dev` 已删除，访问返回 `error code: 1042`）。
 - 用户配置从被访问者自己 fork 的仓库里读：`raw.githubusercontent.com/<user>/classy-github/main/classy.config.json`。
 - 部署在 Cloudflare Pages（`classy-github.pages.dev`），原域名 `classygit.me` 已失效。
 
@@ -68,12 +75,13 @@
 
 详见 `theme-contract.md`。
 
-### D3：删掉独立的 API 代理（M5）
+### D3：删掉独立的 API 代理（已执行）
 
-服务端渲染后，GitHub 请求全部由 Worker 发出，带 token，浏览器不再直连 API。因此 `packages/service` 的历史使命结束。
+服务端渲染后，GitHub 请求全部由 Astro Worker 发出，带 token，浏览器不再直连 API。因此 `packages/service` 的历史使命结束。
 
-- M0 阶段仍然要它（SPA 还没下线），所以这次给它补了缓存和白名单。
-- M5 之后删除 `packages/service`；若仍需要给「加载更多」这类交互留接口，在 Astro 里用 `src/pages/api/gh/[...path].ts` 取代。
+- **2026-11-15 已执行**：删除线上 worker `classy-api`（确认返回 `error code: 1042`），并删除 `packages/service` 与 `githubUrl.proxyApi`、`gitApiFetch` 的代理回退分支。
+- M0 曾给该 worker 补过缓存与路径白名单，本地 miniflare 验证通过（MISS→HIT、非白名单 403），但既然生产无人在用，就不做部署，直接下线——少一个需要维护的公开端点。
+- M1 之后若仍需给「加载更多」这类交互留接口，在 Astro 里用 `src/pages/api/gh/[...path].ts`，同样带 token + 边缘缓存。
 
 ### D4：SEO 分层，而不是全站索引
 
@@ -121,7 +129,7 @@ packages/
   shared/  types/                  # 保留（常量、类型）
   components/                      # 逐步删除（被 themes/ 取代）
   lib/                             # 保留纯函数部分，其余搬进 apps/web/src/lib
-  service/                         # M5 删除
+                                   # （service/ 已于 2026-11-15 删除）
 ```
 
 ### 数据流
@@ -238,7 +246,7 @@ Shiki 体积控制：只注册实际用到的语言（`shiki/bundle/web` + 常�
 
 ### M0 · 止血（本次已做）
 
-范围：代理地址修正、URL 拼接、Worker 缓存与白名单、失效链接、主题选择器指向不存在的域名。
+范围：URL 拼接修正、**代理下线**、失效链接、主题选择器指向不存在的域名、修掉既有的构建失败。
 详见 `m0-hotfix.md`。
 
 验收：
@@ -297,7 +305,8 @@ curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-ex
 
 | 风险 | 影响 | 缓解 |
 |---|---|---|
-| Workers 免费版 10ms CPU 不够 Markdown+Shiki | M1 直接卡住 | 先测；缓存命中后不再付 CPU；必要时上 Paid 或降语言集 |
+| ~~Workers 免费版 10ms CPU 不够~~ | 已解除 | 已开通 $5/月 Paid（30s CPU）；仍需靠缓存把冷渲染摊薄 |
+| 冷启动 + 缓存命中率不足导致 TTFB 抖动 | 首屏比静态站慢 | 缓存 300s + SWR；上线后用 `wrangler tail` 采样 p50/p95 |
 | Astro 大版本迭代快（当前 7.x） | 文档/API 漂移 | 锁版本，`pnpm` 精确版本而非 `^` |
 | `rehype-sanitize` 默认 schema 过严，README 样式塌 | 视觉退化 | 显式扩 schema，写一组「真实 README」快照测试 |
 | 多租户缓存污染（大量随机用户名） | KV/Cache 膨胀 | 只对「成功渲染」写 KV；Cache API 自带 LRU |
@@ -308,7 +317,7 @@ curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-ex
 
 ## 9. 开放问题
 
-1. **Workers 免费版够不够？** 取决于 M1 的 CPU 实测。
+1. ~~Workers 免费版够不够？~~ **已解决**：已开通 $5/月套餐。
 2. **`classygit.me` 还要不要？** 若要，先查注册状态；不要就把所有常量收敛到环境变量，别再写死第三次。
 3. **主页要不要可索引？** 本文默认 noindex + 用户 opt-in；若想全站索引，需要额外的内容差异化策略。
 4. **配置方式要不要升级？** 现在是「fork + 改 JSON」，是最大的 UX 硬伤。若做 OAuth 后台，D1 + Auth.js，并重新评估框架（见 D1 翻转条件）。
@@ -332,5 +341,9 @@ dig classygit.me / api.classygit.me / docs.classygit.me / nes.classygit.me
 curl https://classy-github.pages.dev/Dnevend/repos
 → 200（SPA fallback 已生效，但配置不在仓库里）
 ```
+
+代理下线记录：`wrangler delete --name classy-api --force` → `Successfully deleted classy-api`，
+随后 `GET https://classy-api.dnevend.workers.dev/users/Dnevend` 返回 404 `error code: 1042`；
+`api-classygit.dnevend.workers.dev` 同样返回 1042（该 worker 本就不存在）。
 
 npm 版本（同日）：`astro@7.4.12`、`@astrojs/cloudflare@14.4.8`、`next@16.4.6`、`@opennextjs/cloudflare@1.20.17`。

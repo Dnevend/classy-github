@@ -8,12 +8,10 @@
     "docs": "pnpm --filter classy-docs start",
     "dev": "pnpm --filter classy-github dev",
     "dev:nes": "pnpm --filter nes-github dev",
-    "dev:service": "pnpm --filter @classy/service dev",
     "build": "pnpm run -r --filter \"./apps/**\" build",
     "build:classy": "pnpm run -r --filter classy-github build",
     "build:nes": "pnpm run -r --filter nes-github build",
-    "build:docs": "pnpm run -r --filter classy-docs build",
-    "publish:service": "pnpm --filter @classy/service publish"
+    "build:docs": "pnpm run -r --filter classy-docs build"
   },
   "keywords": [],
   "author": "Dnevend",

@@ -75,31 +75,17 @@ export const gitApiFetch: GitApiFetch = async (url, options) => {
             return data
         }
 
-        // 404 表示资源本身不存在（例如用户拼错了用户名），换代理也不会变，直接返回
+        // 404 表示资源本身不存在（例如用户拼错了用户名）
         if (res.status === 404) {
             console.warn(`[gitApiFetch] 404 ${fetchUrl}`)
             return alt
         }
 
+        // 403/429 基本都是匿名 60 次/小时的限流。代理下线后没有兜底，
+        // 只能记日志：M1 起改由服务端带 token 取数，不再有这个问题。
         console.warn(`[gitApiFetch] ${res.status} ${res.statusText} ${fetchUrl}`)
     } catch (err) {
         console.warn('fetch error =>', err)
-    }
-
-    try {
-        const refetchRes = await fetch(joinUrl(githubUrl.proxyApi, fetchUrl))
-
-        if (refetchRes.ok) {
-            const data = await refetchRes.json()
-            cacheFetchData(`fetch_${fetchUrl}`, expire, data)
-            return data
-        }
-
-        console.warn(
-            `[gitApiFetch] proxy ${refetchRes.status} ${refetchRes.statusText} ${fetchUrl}`
-        )
-    } catch (err) {
-        console.warn('refetch error =>', err)
     }
 
     return alt
