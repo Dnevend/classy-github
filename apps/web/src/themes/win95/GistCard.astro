@@ -1,0 +1,16 @@
+---
+import type { ThemeGistCardProps } from '../types';
+
+const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+---
+
+<li class="w95-gist">
+  <a href={href}>
+    <span class="w95-gist__icon" aria-hidden="true">📄</span>
+    <span class="w95-gist__title">{title}</span>
+    <span class="w95-gist__meta">
+      {type && <span class="w95-tag">{type}</span>}
+      {Object.keys(gist.files).length} 个文件 · {gist.created_at.slice(0, 10)}
+    </span>
+  </a>
+</li>

@@ -25,5 +25,18 @@ const { seo, theme = 'default' } = Astro.props as Props;
 
   <body>
     <slot />
+
+    <script is:inline>
+      // README 里的第三方图片（统计卡、徽章）经常 404 或超时，
+      // 失败时把 <img> 收起来，别留一块空白。
+      document.addEventListener(
+        'error',
+        (event) => {
+          const target = event.target;
+          if (target instanceof HTMLImageElement) target.style.display = 'none';
+        },
+        true
+      );
+    </script>
   </body>
 </html>

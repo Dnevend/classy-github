@@ -37,9 +37,7 @@ const { data, error } = await safeLoad(async () => {
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
-const { name: themeName, components } = await resolveTheme(
-  Astro.url.searchParams.get('theme')
-);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, Markdown } = components;
 
 if (error === 'not-found') {

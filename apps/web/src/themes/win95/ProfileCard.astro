@@ -1,0 +1,55 @@
+---
+import type { ThemeProfileCardProps } from '../types';
+
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+---
+
+<aside class="w95-aside">
+  <div class="window">
+    <div class="title-bar">
+      <div class="title-bar-text">{userinfo.login}.exe</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize"></button>
+        <button aria-label="Maximize"></button>
+        <button aria-label="Close"></button>
+      </div>
+    </div>
+
+    <div class="window-body">
+      <div class="w95-profile">
+        <img
+          class="w95-avatar"
+          src={userinfo.avatar_url}
+          alt={`${userinfo.login} 的头像`}
+          width="64"
+          height="64"
+          loading="lazy"
+        />
+        <div>
+          <p class="w95-name">{userinfo.name || userinfo.login}</p>
+          <p class="w95-handle">@{userinfo.login}</p>
+        </div>
+      </div>
+
+      {userinfo.bio && <p class="w95-bio">{userinfo.bio}</p>}
+
+      <fieldset class="w95-stats">
+        <legend>stats</legend>
+        <ul>
+          <li>{userinfo.followers} followers</li>
+          <li>{userinfo.following} following</li>
+          <li>{userinfo.public_repos} repos</li>
+          <li>{userinfo.public_gists} gists</li>
+        </ul>
+      </fieldset>
+
+      <div class="w95-actions">
+        <a class="w95-btn" href={links.repos}>Repos</a>
+        <a class="w95-btn" href={links.gists}>Gists</a>
+        <a class="w95-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>

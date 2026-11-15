@@ -1,0 +1,25 @@
+---
+import type { ThemeRepoCardProps } from '../types';
+
+const { repo, href } = Astro.props as ThemeRepoCardProps;
+---
+
+<li class="mac-repo">
+  <div class="mac-window">
+    <div class="mac-titlebar">
+      <span class="mac-close" aria-hidden="true"></span>
+      <span class="mac-title mac-repo__name">{repo.name}</span>
+    </div>
+
+    <div class="mac-body">
+      {repo.description && <p class="mac-repo__desc">{repo.description}</p>}
+
+      <p class="mac-repo__meta">
+        ★ {repo.stargazers_count} · ⑂ {repo.forks_count}
+        {repo.language && <> · {repo.language}</>}
+      </p>
+
+      <a class="mac-btn" {href}>打开</a>
+    </div>
+  </div>
+</li>

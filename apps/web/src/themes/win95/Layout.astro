@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import type { ThemeLayoutProps } from '../types';
+
+import winCss from './vendor/98.css?url';
+import themeCss from './theme.css?url';
+
+const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+---
+
+<Base {seo} {theme}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={winCss} />
+    <link rel="stylesheet" href={themeCss} />
+  </Fragment>
+
+  <div class="w95-desktop">
+    <header class="w95-taskbar">
+      <a class="w95-start" href="/">
+        <span class="w95-start__logo" aria-hidden="true">▣</span>
+        ClassyGit
+      </a>
+
+      {
+        userinfo && (
+          <nav class="w95-menu">
+            <a href={`/${user}`}>主页</a>
+            <a href={`/${user}/repos`}>Repos</a>
+            <a href={`/${user}/gists`}>Gists</a>
+          </nav>
+        )
+      }
+
+      {brand && <span class="w95-clock">{brand}</span>}
+    </header>
+
+    <main class="w95-main">
+      <slot />
+    </main>
+
+    <footer class="w95-footer">
+      {
+        config.links.length > 0 && (
+          <nav class="w95-links">
+            {config.links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.title} ↗
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <div class="w95-footer__row">
+        <span>Powered by ClassyGit</span>
+        <ThemeSwitcher current={theme} />
+      </div>
+    </footer>
+  </div>
+</Base>

@@ -30,9 +30,7 @@ if (error) {
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
-const { name: themeName, components } = await resolveTheme(
-  Astro.url.searchParams.get('theme')
-);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, RepoCard } = components;
 
 const display = data?.userinfo.name || data?.userinfo.login || user;

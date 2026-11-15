@@ -16,6 +16,9 @@ export default defineConfig({
     build: {
       // Worker 里不需要 sourcemap，体积能省一半
       sourcemap: false,
+      // 98.css 里有 lightningcss 判为「非法媒体查询」的写法（第三方老 CSS），
+      // 用 esbuild 压缩更宽容
+      cssMinify: 'esbuild',
     },
   },
   env: {

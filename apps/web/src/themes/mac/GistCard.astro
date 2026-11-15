@@ -1,0 +1,15 @@
+---
+import type { ThemeGistCardProps } from '../types';
+
+const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+---
+
+<li class="mac-gist">
+  <a href={href}>
+    <span class="mac-gist__title">{title}</span>
+    <span class="mac-gist__meta">
+      {type && <span class="mac-tag">{type}</span>}
+      {Object.keys(gist.files).length} 个文件 · {gist.created_at.slice(0, 10)}
+    </span>
+  </a>
+</li>

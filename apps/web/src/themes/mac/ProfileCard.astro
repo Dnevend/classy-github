@@ -1,0 +1,50 @@
+---
+import type { ThemeProfileCardProps } from '../types';
+
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+---
+
+<aside class="mac-aside">
+  <div class="mac-window">
+    <div class="mac-titlebar">
+      <span class="mac-close" aria-hidden="true"></span>
+      <span class="mac-title">About This User</span>
+    </div>
+
+    <div class="mac-body">
+      <div class="mac-profile">
+        <img
+          class="mac-avatar"
+          src={userinfo.avatar_url}
+          alt={`${userinfo.login} 的头像`}
+          width="64"
+          height="64"
+          loading="lazy"
+        />
+        <div>
+          <p class="mac-name">{userinfo.name || userinfo.login}</p>
+          <p class="mac-handle">@{userinfo.login}</p>
+        </div>
+      </div>
+
+      {userinfo.bio && <p class="mac-bio">{userinfo.bio}</p>}
+
+      <table class="mac-stats">
+        <tbody>
+          <tr><th>Followers</th><td>{userinfo.followers}</td></tr>
+          <tr><th>Following</th><td>{userinfo.following}</td></tr>
+          <tr><th>Repos</th><td>{userinfo.public_repos}</td></tr>
+          <tr><th>Gists</th><td>{userinfo.public_gists}</td></tr>
+        </tbody>
+      </table>
+
+      <div class="mac-actions">
+        <a class="mac-btn" href={links.repos}>Repos</a>
+        <a class="mac-btn" href={links.gists}>Gists</a>
+        <a class="mac-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>

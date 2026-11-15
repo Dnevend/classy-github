@@ -36,9 +36,7 @@ if (error) {
 // 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
-const { name: themeName, components } = await resolveTheme(
-  Astro.url.searchParams.get('theme')
-);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, ProfileCard, RepoCard, Markdown } = components;
 
 const readmeHtml =

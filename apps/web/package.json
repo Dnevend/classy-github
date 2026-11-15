@@ -12,6 +12,7 @@
     "test": "node --experimental-strip-types scripts/markdown-smoke.ts && node --experimental-strip-types scripts/config-smoke.ts"
   },
   "dependencies": {
+    "98.css": "^0.1.21",
     "@astrojs/cloudflare": "^14.4.8",
     "@classy/types": "workspace:^",
     "@shikijs/rehype": "^4.6.0",

@@ -1,0 +1,27 @@
+---
+import type { ThemeRepoCardProps } from '../types';
+
+const { repo, href } = Astro.props as ThemeRepoCardProps;
+---
+
+<li class="w95-repo">
+  <div class="window">
+    <div class="title-bar">
+      <div class="title-bar-text w95-repo__name">{repo.name}</div>
+      <div class="title-bar-controls">
+        <button aria-label="Close"></button>
+      </div>
+    </div>
+
+    <div class="window-body">
+      {repo.description && <p class="w95-repo__desc">{repo.description}</p>}
+
+      <p class="w95-repo__meta">
+        ★ {repo.stargazers_count} · ⑂ {repo.forks_count}
+        {repo.language && <> · {repo.language}</>}
+      </p>
+
+      <a class="w95-btn" {href}>打开</a>
+    </div>
+  </div>
+</li>

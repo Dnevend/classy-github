@@ -1,0 +1,459 @@
+/* Mac System 6 主题：纯手写 CSS（system.css 不在 npm 上，也没有可靠维护版本）。
+   黑白 + 1px 边框 + 条纹标题栏，字体走系统无衬线，避免像素字体缺中文字形。 */
+
+:root[data-theme='mac'] {
+  --bg: #ffffff;
+  --bg-subtle: #f2f2f2;
+  --bg-elevated: #ffffff;
+  --fg: #000000;
+  --fg-muted: #4a4a4a;
+  --border: #000000;
+  --accent: #000000;
+  --radius: 0px;
+  --mac-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  color-scheme: light;
+}
+
+[data-theme='mac'] body {
+  background: #ffffff;
+  color: #000;
+  font-family: var(--mac-cjk);
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: none;
+}
+
+.mac-screen {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding: 0 12px 12px;
+}
+
+/* ---------- 菜单栏 ---------- */
+
+.mac-menubar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 2px 8px;
+  background: #fff;
+  border-bottom: 1px solid #000;
+  font-size: 12px;
+}
+
+.mac-apple {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.mac-appname {
+  font-weight: 700;
+}
+
+.mac-menu {
+  display: flex;
+  gap: 14px;
+}
+
+.mac-menu a:hover {
+  background: #000;
+  color: #fff;
+}
+
+.mac-clock {
+  margin-left: auto;
+}
+
+/* ---------- 窗口 ---------- */
+
+.mac-window {
+  border: 1px solid #000;
+  background: #fff;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.mac-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  border-bottom: 1px solid #000;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #000 0,
+    #000 1px,
+    #fff 1px,
+    #fff 3px
+  );
+}
+
+.mac-close {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 11px;
+  height: 11px;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+.mac-title {
+  padding: 0 6px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mac-body {
+  padding: 12px;
+}
+
+.mac-btn {
+  display: inline-block;
+  padding: 2px 10px;
+  background: #fff;
+  border: 1px solid #000;
+  box-shadow: 1px 1px 0 #000;
+  font-size: 12px;
+}
+
+.mac-btn:active {
+  box-shadow: none;
+  transform: translate(1px, 1px);
+}
+
+.mac-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ---------- 布局 ---------- */
+
+.mac-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 14px;
+}
+
+[data-theme='mac'] .profile {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  [data-theme='mac'] .profile {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+
+  .mac-aside {
+    position: sticky;
+    top: 40px;
+    order: 2;
+  }
+}
+
+[data-theme='mac'] .page-title {
+  font-size: 18px;
+  margin: 0 0 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-theme='mac'] .page-title__count {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+[data-theme='mac'] .section {
+  margin-top: 20px;
+}
+
+[data-theme='mac'] .section__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 8px;
+}
+
+[data-theme='mac'] .repo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.mac-repo .mac-window,
+.mac-aside .mac-window,
+.mac-readme {
+  height: 100%;
+}
+
+.mac-repo__name {
+  max-width: 65%;
+}
+
+.mac-repo__desc {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #333;
+}
+
+.mac-repo__meta {
+  margin: 0 0 10px;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+/* ---------- 资料卡 ---------- */
+
+.mac-profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mac-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid #000;
+  image-rendering: auto;
+}
+
+.mac-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.mac-handle {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.mac-bio {
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.mac-stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.mac-stats th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--fg-muted);
+  padding: 1px 0;
+}
+
+.mac-stats td {
+  text-align: right;
+  font-weight: 700;
+  padding: 1px 0;
+}
+
+.mac-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Gist 列表 ---------- */
+
+[data-theme='mac'] .gist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+.mac-gist a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 8px;
+  border-bottom: 1px dotted #000;
+  font-size: 12px;
+}
+
+.mac-gist:last-child a {
+  border-bottom: 0;
+}
+
+.mac-gist a:hover {
+  background: #000;
+  color: #fff;
+}
+
+.mac-gist__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mac-gist__meta {
+  flex-shrink: 0;
+}
+
+.mac-tag {
+  border: 1px solid currentColor;
+  padding: 0 4px;
+  margin-right: 8px;
+  font-size: 10px;
+}
+
+/* ---------- 正文 ---------- */
+
+[data-theme='mac'] .prose {
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+[data-theme='mac'] .prose a {
+  color: #000;
+  text-decoration: underline;
+}
+
+[data-theme='mac'] .prose code,
+[data-theme='mac'] .prose pre {
+  font-family: ui-monospace, Menlo, monospace;
+  border-radius: 0;
+}
+
+[data-theme='mac'] .prose pre {
+  border: 1px solid #000;
+}
+
+[data-theme='mac'] .repo-detail .bio {
+  font-size: 12px;
+}
+
+[data-theme='mac'] .repo-card__meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+[data-theme='mac'] .tag {
+  border: 1px solid #000;
+  padding: 0 5px;
+  font-size: 10px;
+}
+
+/* ---------- 页脚 ---------- */
+
+.mac-footer {
+  margin-top: 24px;
+  padding: 8px 0 0;
+  border-top: 1px solid #000;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.mac-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.mac-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------- 主题切换 ---------- */
+
+.theme-switcher {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.theme-switcher a {
+  padding: 1px 8px;
+  border: 1px solid #000;
+  text-transform: capitalize;
+}
+
+.theme-switcher a.is-current {
+  background: #000;
+  color: #fff;
+}
+
+/* ---------- 首页 hero ---------- */
+
+[data-theme='mac'] .hero {
+  border: 1px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  padding: 24px 20px;
+  margin-top: 8vh;
+  background: #fff;
+}
+
+[data-theme='mac'] .hero h1 {
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+[data-theme='mac'] .hero p {
+  font-size: 13px;
+  color: #333;
+}
+
+[data-theme='mac'] .hero input {
+  font-family: var(--mac-cjk);
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  padding: 4px 6px;
+  border-radius: 0;
+}
+
+[data-theme='mac'] .hero button {
+  font-family: var(--mac-cjk);
+  font-size: 12px;
+  padding: 3px 14px;
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  box-shadow: 1px 1px 0 #000;
+  border-radius: 0;
+}
+
+[data-theme='mac'] .hero button:hover {
+  filter: none;
+  background: #000;
+  color: #fff;
+}

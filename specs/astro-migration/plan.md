@@ -302,10 +302,16 @@ NES 页面加载 279KB nes.css + 4.7KB 主题样式 —— 分包是真的成立
 **契约是否被逼改**：没有。五个槽位够用，只在实现上补了两处基础设施：
 `Base` 开放 `head` 插槽（主题自注入样式表），以及主题变量必须用 `:root[data-theme=x]` 提权。
 
-### M4 · Mac + Win95（4–5 天）
+### M4 · Win95 + Mac（已完成 2026-11-15）
 
-- Mac：`system.css` 纯 CSS，补窗口铬 markup。
-- Win95：**手写 CSS**，不引 `react95`。只需要窗口框、标题栏、按钮、Tab 四样；引 React95 会让这个主题重新背上 React runtime。
+- Win95：引 `98.css`（纯 CSS，拷进 vendor 目录并修字体路径）；链接按钮另写样式。
+- Mac：`system.css` 不在 npm 上，手写 System 6 外观（条纹标题栏 / 1px 硬阴影 / 菜单栏）。
+- 同时完成：主题持久化（`?theme=` > cookie > default）、首页主题化、移动端过查。
+详见 `m4-themes-mobile.md`。
+
+### M4.5 · 主题持久化（已完成）
+
+`?theme=` 写入 cookie，缓存键带解析后的主题，Set-Cookie 不进缓存。详见 `m4-themes-mobile.md`。
 
 ### M5 · 收尾
 

@@ -1,0 +1,444 @@
+/* Windows 95 主题：98.css 提供控件外观，这里只补页面骨架与布局。
+   设计变量借用 98.css 的银色/深蓝配色。 */
+
+:root[data-theme='win95'] {
+  --bg: #008080;
+  --bg-subtle: #c0c0c0;
+  --bg-elevated: #c0c0c0;
+  --fg: #000000;
+  --fg-muted: #404040;
+  --border: #808080;
+  --accent: #000080;
+  --radius: 0px;
+  --w95-gray: #c0c0c0;
+  --w95-face: #dfdfdf;
+  --w95-navy: #000080;
+  color-scheme: light;
+}
+
+[data-theme='win95'] body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Pixelated MS Sans Serif', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.w95-desktop {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 12px;
+}
+
+/* ---------- 顶部任务栏 ---------- */
+
+.w95-taskbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px;
+  background: var(--w95-gray);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.w95-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-weight: 700;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.w95-start__logo {
+  color: var(--w95-navy);
+}
+
+.w95-menu {
+  display: flex;
+  gap: 4px;
+}
+
+.w95-menu a {
+  padding: 2px 8px;
+}
+
+.w95-menu a:hover {
+  background: var(--w95-navy);
+  color: #fff;
+}
+
+.w95-clock {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* ---------- 主体 ---------- */
+
+.w95-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+[data-theme='win95'] .profile {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  [data-theme='win95'] .profile {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+
+  .w95-aside {
+    position: sticky;
+    top: 12px;
+    order: 2;
+  }
+}
+
+[data-theme='win95'] .page-title {
+  font-size: 18px;
+  margin: 4px 0 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-theme='win95'] .page-title__count {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+[data-theme='win95'] .section {
+  margin-top: 20px;
+}
+
+[data-theme='win95'] .section__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 8px;
+  color: var(--w95-navy);
+}
+
+/* 98.css 的 .window 自带阴影边框，这里只控制布局 */
+.w95-repo .window,
+.w95-aside .window,
+.w95-readme {
+  height: 100%;
+}
+
+.w95-repo__name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w95-repo__desc {
+  margin: 0 0 8px;
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.w95-repo__meta {
+  margin: 0 0 10px;
+  color: var(--fg-muted);
+}
+
+[data-theme='win95'] .repo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* 链接式按钮：98.css 只给 <button> 做了外观，这里给 <a> 补一份 */
+.w95-btn {
+  display: inline-block;
+  min-width: 68px;
+  padding: 3px 10px;
+  text-align: center;
+  color: #000;
+  background: var(--w95-gray);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.w95-btn:hover {
+  background: #d4d4d4;
+  color: #000;
+}
+
+.w95-btn:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+/* ---------- 资料卡 ---------- */
+
+.w95-profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.w95-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 2px solid #808080;
+}
+
+.w95-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.w95-handle {
+  margin: 2px 0 0;
+  color: var(--fg-muted);
+}
+
+.w95-bio {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.w95-stats {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border: 2px groove #fff;
+  background: var(--w95-gray);
+}
+
+.w95-stats ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.w95-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Gist 列表 ---------- */
+
+[data-theme='win95'] .gist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border: 2px inset #dfdfdf;
+}
+
+.w95-gist a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.w95-gist a:hover {
+  background: var(--w95-navy);
+  color: #fff;
+}
+
+.w95-gist__icon {
+  font-size: 12px;
+}
+
+.w95-gist__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w95-gist__meta {
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.w95-tag {
+  display: inline-block;
+  padding: 0 6px;
+  margin-right: 8px;
+  background: var(--w95-navy);
+  color: #fff;
+}
+
+/* ---------- 正文 ---------- */
+
+.w95-readme .window-body {
+  background: #fff;
+}
+
+[data-theme='win95'] .prose {
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #000;
+}
+
+[data-theme='win95'] .prose code,
+[data-theme='win95'] .prose pre {
+  font-family: 'Pixelated MS Sans Serif', Consolas, monospace;
+}
+
+[data-theme='win95'] .prose a {
+  color: var(--w95-navy);
+}
+
+[data-theme='win95'] .repo-detail .bio {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+[data-theme='win95'] .repo-card__meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+[data-theme='win95'] .tag {
+  border: 1px solid var(--w95-navy);
+  color: var(--w95-navy);
+  padding: 0 6px;
+}
+
+/* ---------- 页脚 ---------- */
+
+.w95-footer {
+  margin-top: 24px;
+  padding: 6px 8px;
+  background: var(--w95-gray);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.w95-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.w95-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------- 主题切换 ---------- */
+
+.theme-switcher {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.theme-switcher a {
+  padding: 2px 8px;
+  background: var(--w95-gray);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  text-transform: capitalize;
+}
+
+.theme-switcher a.is-current {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  font-weight: 700;
+}
+
+/* ---------- 首页 hero ---------- */
+
+[data-theme='win95'] .hero {
+  background: var(--w95-gray);
+  padding: 24px 20px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+[data-theme='win95'] .hero h1 {
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+[data-theme='win95'] .hero p {
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  color: #000;
+}
+
+[data-theme='win95'] .hero input {
+  font-family: 'Pixelated MS Sans Serif', Arial, sans-serif;
+  border: 2px inset #dfdfdf;
+  background: #fff;
+  color: #000;
+  padding: 4px 6px;
+}
+
+[data-theme='win95'] .hero button {
+  font-family: 'Pixelated MS Sans Serif', Arial, sans-serif;
+  font-size: 12px;
+  padding: 4px 12px;
+  color: #000;
+  background: var(--w95-gray);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  border-radius: 0;
+}
+
+[data-theme='win95'] .hero button:hover {
+  filter: none;
+  background: #d4d4d4;
+}

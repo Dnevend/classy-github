@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 
 import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
 import { seoForProfile } from '../src/lib/seo.ts';
-import { THEME_NAMES, parseThemeParam } from '../src/lib/theme.ts';
+import { THEME_NAMES, parseThemeParam, resolveThemeChoice } from '../src/lib/theme.ts';
 
 type Case = { name: string; run: () => void };
 
@@ -146,6 +146,32 @@ const cases: Case[] = [
       assert.equal(parseThemeParam(' NES '), 'nes');
       assert.equal(parseThemeParam('amiga'), 'default');
       assert.equal(parseThemeParam('win95'), 'win95');
+    },
+  },
+  {
+    name: '主题持久化：?theme= 优先，其次 cookie，都没有就 default',
+    run: () => {
+      // 显式选了主题 → 要写 cookie
+      assert.deepEqual(resolveThemeChoice({ param: 'nes' }), { theme: 'nes', persist: true });
+      assert.deepEqual(resolveThemeChoice({ param: 'default', cookie: 'nes' }), {
+        theme: 'default',
+        persist: true,
+      });
+      // 没带参数 → 用 cookie，不重复写
+      assert.deepEqual(resolveThemeChoice({ cookie: 'nes' }), { theme: 'nes', persist: false });
+      // 都没有 / 都非法 → default，不写
+      assert.deepEqual(resolveThemeChoice({}), { theme: 'default', persist: false });
+      assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'xx' }), {
+        theme: 'default',
+        persist: false,
+      });
+      // 参数非法时仍要尊重合法 cookie
+      assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'win95' }), {
+        theme: 'win95',
+        persist: false,
+      });
+      // 大小写
+      assert.equal(resolveThemeChoice({ param: 'NES' }).theme, 'nes');
     },
   },
   {

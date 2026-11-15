@@ -1,6 +1,13 @@
 ---
-import Base from '../layouts/Base.astro';
+import { DEFAULT_CONFIG } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
+import { resolveTheme } from '../themes';
+
+// 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
+export const prerender = false;
+
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout } = components;
 
 const seo: SeoMeta = {
   title: 'ClassyGit · 你的 GitHub 主页、代码片段与博客',
@@ -11,8 +18,7 @@ const seo: SeoMeta = {
 };
 ---
 
-<Base {seo}>
-  <div class="container page">
+<Layout user="" userinfo={null} config={DEFAULT_CONFIG} theme={themeName} {seo}>
   <section class="hero">
     <h1>你的 GitHub，换一种打开方式</h1>
     <p>输入用户名，即刻得到个人主页、代码片段和随笔集。无需部署，无需登录。</p>
@@ -31,7 +37,6 @@ const seo: SeoMeta = {
       <button type="submit">查看</button>
     </form>
   </section>
-  </div>
 
   <script is:inline>
     const form = document.getElementById('lookup');
@@ -44,4 +49,4 @@ const seo: SeoMeta = {
       if (name) window.location.href = `/${encodeURIComponent(name)}`;
     });
   </script>
-</Base>
+</Layout>
