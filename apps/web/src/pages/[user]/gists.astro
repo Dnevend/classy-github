@@ -6,6 +6,8 @@ import { listGists } from '../../lib/github';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { loadConfig } from '../../lib/config-loader';
 
 export const prerender = false;
 
@@ -19,6 +21,8 @@ const { data, error } = await safeLoad(async () => {
   return { userinfo, gists: await listGists(user) };
 });
 
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
   Astro.response.headers.set('cache-control', 'no-store');
@@ -30,7 +34,10 @@ if (error) {
 const display = data?.userinfo.name || data?.userinfo.login || user;
 const gists = data?.gists ?? [];
 
-const parseDescription = createGistDescriptionParser();
+const parseDescription = createGistDescriptionParser({
+  prefix: config.gists.prefix,
+  split: config.gists.split,
+});
 
 /** 描述按 `classy.<type>.<title>` 解析，解析不出就用原描述，再退回首文件名 */
 const titleOf = (gist: (typeof gists)[number]) => {
@@ -44,6 +51,7 @@ const typeOf = (gist: (typeof gists)[number]) =>
 
 <Base
   {user}
+  links={config.links}
   brand={display}
   seo={{
     title: `${display} 的 Gist · ClassyGit`,

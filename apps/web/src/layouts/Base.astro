@@ -9,9 +9,11 @@ interface Props {
   /** 页头右侧的署名，通常是被访问者的显示名 */
   brand?: string;
   user?: string;
+  /** 来自 classy.config.json 的底部链接 */
+  links?: { title: string; href: string }[];
 }
 
-const { seo, brand, user } = Astro.props as Props;
+const { seo, brand, user, links = [] } = Astro.props as Props;
 ---
 
 <!doctype html>
@@ -53,7 +55,16 @@ const { seo, brand, user } = Astro.props as Props;
     </main>
 
     <footer class="site-footer">
-      <div class="container">
+      <div class="container site-footer__inner">
+        {links.length > 0 && (
+          <nav class="site-footer__links">
+            {links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.title}
+              </a>
+            ))}
+          </nav>
+        )}
         <span>
           Powered by <a href="https://github.com/Dnevend/classy-github">ClassyGit</a>
         </span>

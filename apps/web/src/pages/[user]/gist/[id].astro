@@ -6,6 +6,8 @@ import { getGist } from '../../../lib/github';
 import { createGistDescriptionParser } from '../../../lib/gist-rule';
 import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
+import { DEFAULT_CONFIG } from '../../../lib/config';
+import { loadConfig } from '../../../lib/config-loader';
 
 export const prerender = false;
 
@@ -33,6 +35,8 @@ const { data, error } = await safeLoad(async () => {
   return { gist, files, rendered };
 });
 
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
 if (error === 'not-found') {
   Astro.response.status = 404;
   Astro.response.headers.set('cache-control', 'no-store');
@@ -41,12 +45,16 @@ if (error === 'not-found') {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-const parsed = createGistDescriptionParser()(data?.gist.description);
+const parsed = createGistDescriptionParser({
+  prefix: config.gists.prefix,
+  split: config.gists.split,
+})(data?.gist.description);
 const title = parsed.title || data?.files[0]?.filename || 'Gist';
 ---
 
 <Base
   {user}
+  links={config.links}
   brand={title}
   seo={{
     title: `${title} · ${user} · ClassyGit`,

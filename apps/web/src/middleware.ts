@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { CACHED_AT_HEADER, cacheGet, cachePut, edgeCache } from './lib/edge-cache.ts';
 
 /**
  * 按路由决定缓存时长。顺序敏感：先匹配更具体的路径。
@@ -28,16 +29,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (ttl === undefined) return next();
 
-  const runtime = globalThis as unknown as { caches?: { default?: Cache } };
-  const store = runtime.caches?.default;
-
   // 缓存键去掉 query，避免 ?utm_source=... 这类参数把缓存打散
   const key = new Request(`${url.origin}${url.pathname}`, { method: 'GET' });
 
-  const hit = await store?.match(key);
+  const hit = await cacheGet(key, ttl);
 
   if (hit) {
     const response = new Response(hit.body, hit);
+    response.headers.delete(CACHED_AT_HEADER);
     response.headers.set('x-classy-cache', 'HIT');
     return response;
   }
@@ -46,17 +45,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const out = new Response(response.body, response);
   out.headers.set('x-classy-cache', 'MISS');
 
-  if (response.status === 200 && store) {
-    out.headers.set(
-      'cache-control',
-      `public, s-maxage=${ttl}, stale-while-revalidate=${ttl * 12}`
-    );
-
-    const copy = out.clone();
-    copy.headers.delete('x-classy-cache');
-
-    // 缓存失败不影响响应
-    await store.put(key, copy).catch(() => undefined);
+  if (response.status === 200 && edgeCache()) {
+    out.headers.set('cache-control', `public, s-maxage=${ttl}`);
+    await cachePut(key, out, ttl);
   } else if (response.status !== 200) {
     out.headers.set('cache-control', 'no-store');
   }

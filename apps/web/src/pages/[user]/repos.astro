@@ -6,6 +6,8 @@ import RepoCard from '../../components/RepoCard.astro';
 import { listRepos } from '../../lib/github';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { loadConfig } from '../../lib/config-loader';
 
 export const prerender = false;
 
@@ -18,6 +20,8 @@ const { data, error } = await safeLoad(async () => {
 
   return { userinfo, repos: await listRepos(user) };
 });
+
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -32,6 +36,7 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
 
 <Base
   {user}
+  links={config.links}
   brand={display}
   seo={{
     title: `${display} 的仓库 · ClassyGit`,

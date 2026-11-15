@@ -5,6 +5,8 @@ import ServiceError from '../../../components/ServiceError.astro';
 import { getRepo, getRepoReadme } from '../../../lib/github';
 import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
+import { DEFAULT_CONFIG } from '../../../lib/config';
+import { loadConfig } from '../../../lib/config-loader';
 
 export const prerender = false;
 
@@ -19,7 +21,13 @@ const { data, error } = await safeLoad(async () => {
   return { repo, readme };
 });
 
-if (error) {
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+// 仓库不存在是 404，不是 500
+if (error === 'not-found') {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
   Astro.response.headers.set('cache-control', 'no-store');
 }
@@ -32,6 +40,7 @@ const readmeHtml =
 
 <Base
   {user}
+  links={config.links}
   brand={data?.repo.name ?? user}
   seo={{
     title: data ? `${data.repo.name} · ${user} · ClassyGit` : `找不到仓库 ${repoName} · ClassyGit`,
@@ -41,7 +50,7 @@ const readmeHtml =
   }}
 >
   {
-    error ? (
+    error && error !== 'not-found' ? (
       <ServiceError kind={error} />
     ) : !data ? (
       <NotFound user={`${user}/${repoName}`} />

@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "deploy": "wrangler deploy",
-    "test": "node --experimental-strip-types scripts/markdown-smoke.ts"
+    "test": "node --experimental-strip-types scripts/markdown-smoke.ts && node --experimental-strip-types scripts/config-smoke.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.8",
@@ -23,7 +23,8 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "shiki": "^4.6.0",
-    "unified": "^11.0.5"
+    "unified": "^11.0.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",

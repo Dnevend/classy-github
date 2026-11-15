@@ -9,6 +9,8 @@ import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { loadConfig } from '../../lib/config-loader';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -36,22 +38,33 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
+// 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
 const readmeHtml =
   data?.readme
     ? await renderMarkdown(data.readme.source, { base: data.readme.base })
     : null;
 
-// 主页只放最近更新的 6 个仓库，完整列表在 /[user]/repos
-const topRepos = data?.repos.slice(0, 6) ?? [];
+// 展示多少个仓库由用户的 classy.config.json 决定
+const topRepos = data
+  ? data.repos.slice(0, config.profile.repos.showCount)
+  : [];
 const display = data?.userinfo.name || data?.userinfo.login || user;
 ---
 
 <Base
   {user}
+  links={config.links}
   brand={display}
   seo={
     data
-      ? seoForProfile({ user, userinfo: data.userinfo, origin })
+      ? seoForProfile({
+          user,
+          userinfo: data.userinfo,
+          origin,
+          indexable: config.seo.index,
+        })
       : {
           title: error ? '数据暂时取不到 · ClassyGit' : `找不到用户 ${user} · ClassyGit`,
           robots: 'noindex, follow',
@@ -77,7 +90,7 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
             </div>
           )}
 
-          {topRepos.length > 0 && (
+          {config.profile.repos.visible && topRepos.length > 0 && (
             <section class="section">
               <h2 class="section__title">最近更新</h2>
               <ul class="repo-grid">

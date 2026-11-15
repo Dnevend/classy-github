@@ -16,10 +16,13 @@ export const seoForProfile = ({
   user,
   userinfo,
   origin,
+  indexable = false,
 }: {
   user: string;
   userinfo: User;
   origin: string;
+  /** 由 classy.config.json 的 seo.index 决定 */
+  indexable?: boolean;
 }): SeoMeta => {
   const display = userinfo.name || userinfo.login || user;
   const description =
@@ -31,9 +34,9 @@ export const seoForProfile = ({
     description: description.slice(0, 160),
     canonical: `${origin}/${userinfo.login}`,
     image: userinfo.avatar_url,
-    // 主页默认不索引：无限、薄、高度重复的内容没有排名价值，
-    // 真正要收录的是 Gist 文章（M5 再开放 opt-in）。
-    robots: 'noindex, follow',
+    // 默认不索引：无限、薄、高度重复的内容没有排名价值。
+    // 用户在 classy.config.json 里设 `seo.index: true` 才放开。
+    robots: indexable ? 'index, follow' : 'noindex, follow',
     type: 'profile',
     jsonLd: {
       '@context': 'https://schema.org',

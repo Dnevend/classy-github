@@ -59,3 +59,24 @@
   color: var(--fg-muted);
   text-transform: lowercase;
 }
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-footer__links {
+  display: flex;
+  gap: 16px;
+}
+
+.site-footer__links a {
+  color: var(--fg);
+}
+
+.site-footer__links a:hover {
+  color: var(--accent);
+}

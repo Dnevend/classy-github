@@ -1,10 +1,10 @@
 import { GITHUB_TOKEN } from 'astro:env/server';
 import type { Follower, Gist, Repo, RepoContent, User } from '@classy/types/github';
 
-const API_ORIGIN = 'https://api.github.com';
+import { USER_AGENT } from './constants.ts';
+import { cacheGet, cachePut } from './edge-cache.ts';
 
-/** GitHub 要求提供能标识调用方的 User-Agent */
-const USER_AGENT = 'classy-github/2.0 (+https://github.com/Dnevend/classy-github)';
+const API_ORIGIN = 'https://api.github.com';
 
 const DEFAULT_TTL = 300;
 
@@ -28,14 +28,6 @@ const buildUrl = (path: string, query?: Query) => {
   }
 
   return url;
-};
-
-/**
- * Workers 的 Cache API。`astro dev` / 单元测试环境里可能不存在，因此按可选处理。
- */
-const edgeCache = (): Cache | undefined => {
-  const runtime = globalThis as unknown as { caches?: { default?: Cache } };
-  return runtime.caches?.default;
 };
 
 const buildHeaders = (): Record<string, string> => {
@@ -62,9 +54,8 @@ export async function ghFetch<T>(
   const { query, ttl = DEFAULT_TTL } = options;
   const url = buildUrl(path, query);
   const key = new Request(url.toString(), { method: 'GET' });
-  const cache = edgeCache();
 
-  const cached = await cache?.match(key);
+  const cached = await cacheGet(key, ttl);
   if (cached) return (await cached.json()) as T;
 
   const res = await fetch(url, { headers: buildHeaders() });
@@ -78,12 +69,9 @@ export async function ghFetch<T>(
   }
 
   const response = new Response(res.body, res);
-  response.headers.set('cache-control', `public, max-age=${ttl}`);
 
-  if (cache) {
-    // 失败不影响渲染：缓存只是优化
-    await cache.put(key, response.clone()).catch(() => undefined);
-  }
+  // 失败不影响渲染：缓存只是优化
+  await cachePut(key, response, ttl);
 
   return (await response.json()) as T;
 }
@@ -170,6 +158,22 @@ export const getRepo = (user: string, repo: string) =>
   ghFetch<Repo>(
     `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}`
   );
+
+/**
+ * 用户 fork 的默认分支。配置要从默认分支读，而不是死磕 main。
+ * 仓库不存在 / API 失败时返回 null，由调用方走兜底顺序。
+ */
+export const getDefaultBranch = async (user: string): Promise<string | null> => {
+  try {
+    const repo = await ghFetch<{ default_branch?: string }>(
+      `/repos/${encodeURIComponent(user)}/classy-github`,
+      { ttl: 600 }
+    );
+    return repo.default_branch ?? null;
+  } catch {
+    return null;
+  }
+};
 
 export const getGist = (gistId: string) =>
   ghFetch<Gist>(`/gists/${encodeURIComponent(gistId)}`, { ttl: 600 });
