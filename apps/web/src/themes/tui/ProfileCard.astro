@@ -33,9 +33,7 @@ const t = createTranslator(Astro.locals.locale);
       <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="eager" decoding="async" />
 
     <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
-    <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="eager" decoding="async" />
 
-    <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
       <ul class="tui-stats">
         <li><span>{t('profile.followers')}</span><b>{userinfo.followers}</b></li>
