@@ -260,9 +260,11 @@ curl -s -o /dev/null -w '%{http_code}\n' https://classy-api.dnevend.workers.dev/
 curl -s https://classy-github.pages.dev/ | grep -o 'classygit\.me' | head   # 期望无输出
 ```
 
-### M1 · Astro 骨架（2–3 天）
+### M1 · Astro 骨架（已完成 2026-11-15）
 
 范围：`apps/web` + 5 条路由 + token + 边缘缓存 + SEO 组件 + 真 404。只做 default 主题。
+结果与证据见 `m1-skeleton.md`；两处偏离原计划：样式改用纯 CSS（不引 Tailwind），
+高亮改用 `shiki/core` 显式注册（默认入口 27MB → 2.9MB）。
 
 验收：
 
@@ -273,7 +275,8 @@ curl -sI https://<preview>/Dnevend | grep -i cache-control    # s-maxage=300
 curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-exist-9x8f   # 期望 404
 ```
 
-**必须先量的指标**：`wrangler tail` 看一次冷渲染的 CPU 时间。Workers 免费版是 10ms CPU/请求，Markdown + Shiki 很可能超；超了就要么上 Paid（$5/月），要么把高亮降到最小语言集。这一条决定 M1 的部署形态，**先测再写**。
+**CPU 结论**：已开通 $5/月套餐，且高亮只注册 21 种语言、Worker 脚本 gzip 0.55MB，
+冷渲染不再是风险项；剩余观察点是缓存命中率（见 §8）。
 
 ### M2 · 主题契约（2 天）
 
