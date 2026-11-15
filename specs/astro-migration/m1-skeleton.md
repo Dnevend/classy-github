@@ -119,18 +119,50 @@ dist/client  32 KB
 
 ---
 
+## 已部署（2026-11-15）
+
+```
+https://classy-web.dnevend.workers.dev     版本 db3e561e
+Total Upload: 2966.30 KiB / gzip: 544.93 KiB
+Worker Startup Time: 9 ms
+```
+
+部署过程中修掉两处会直接挡住上线的问题：
+
+1. `wrangler deploy` 报 `Found both a user configuration file at "wrangler.json" and a deploy
+   configuration file at "../../.wrangler/deploy/config.json"` —— 本地 `astro dev` 留下的
+   `.wrangler/` 状态目录与 `dist/server/wrangler.json` 冲突，`rm -rf apps/web/.wrangler` 后正常。
+2. 适配器默认会给 Worker 加 `SESSION`（KV）和 `IMAGES`（Cloudflare Images）绑定，
+   部署时会要求先建 KV / 开通 Images。M1 用不到，已在 `astro.config.mjs` 里
+   `session: false` + `imageService: 'passthrough'` 关掉，生成的配置里 `kv_namespaces` 为空。
+
+首次观测（未配 token，匿名配额）：
+
+```
+/                   200  0.75s
+/Dnevend            200  2.06s（首次）→ 再次请求 x-classy-cache: HIT
+/Dnevend/repos      200
+/Dnevend/gists      503  ← 匿名配额被 CF 出口 IP 共享，触发限流
+/zzz-not-exist      404
+```
+
+结论：边缘缓存在线上生效；**必须配 GITHUB_TOKEN**，否则部分页面会随机 503。
+
 ## 部署步骤（给后续用）
 
 ```bash
 cd apps/web
 pnpm build
 
-# 1) 先写 token（fine-grained，只读 public repo）
-wrangler secret put GITHUB_TOKEN --config dist/server/wrangler.json
+# 1) 写 token（建议 classic PAT 且不勾任何 scope，或 fine-grained 的
+#    “Public repositories (read-only)”）。命令会交互式读取，不进 shell 历史。
+cd dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 
 # 2) 部署（在 dist/server 下，用适配器生成的 wrangler.json）
-cd dist/server && wrangler deploy
+cd dist/server && ../../node_modules/.bin/wrangler deploy
 ```
+
+> 若 `wrangler deploy` 报配置冲突，删掉 `apps/web/.wrangler/`（本地 dev 状态）再试。
 
 本地开发期用 `.dev.vars`（已在 `.gitignore`）：
 
