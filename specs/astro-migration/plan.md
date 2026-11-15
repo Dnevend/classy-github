@@ -278,9 +278,12 @@ curl -s -o /dev/null -w '%{http_code}\n' https://<preview>/this-user-does-not-ex
 **CPU 结论**：已开通 $5/月套餐，且高亮只注册 21 种语言、Worker 脚本 gzip 0.55MB，
 冷渲染不再是风险项；剩余观察点是缓存命中率（见 §8）。
 
-### M2 · 主题契约（2 天）
+### M2 · 配置层（已完成 2026-11-15）+ 主题契约（待做）
 
-范围：`themes/types.ts` + 注册表 + `?theme=` + default 迁进契约。
+**已完成（见 `m2-config.md`）**：`classy.config.json` 的 zod 校验、逐段降级、
+`seo.index` 索引开关、fork 默认分支解析，以及 Cache API TTL 不生效的线上 Bug。
+
+**待做**：`themes/types.ts` + 注册表 + `?theme=` + default 迁进契约 + 每主题 CSS 分包。
 验收：`?theme=default` 与不带参数渲染结果一致；构建产物里每套主题是独立 chunk。
 
 ### M3 · NES 主题（1–2 天）
