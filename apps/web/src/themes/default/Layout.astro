@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import type { ThemeLayoutProps } from '../types';
+import './theme.css';
+
+const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+---
+
+<Base {seo} {theme}>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="/">
+        <span class="brand__mark" aria-hidden="true">◍</span>
+        ClassyGit
+      </a>
+
+      {
+        userinfo && (
+          <nav class="site-nav">
+            <a href={`/${user}`} class="is-active">
+              主页
+            </a>
+            <a href={`/${user}/repos`}>Repos</a>
+            <a href={`/${user}/gists`}>Gists</a>
+          </nav>
+        )
+      }
+
+      {brand && <span class="site-header__brand">{brand}</span>}
+    </div>
+  </header>
+
+  <main class="container page">
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      {
+        config.links.length > 0 && (
+          <nav class="site-footer__links">
+            {config.links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.title}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <span>
+        Powered by <a href="https://github.com/Dnevend/classy-github">ClassyGit</a>
+      </span>
+    </div>
+  </footer>
+</Base>

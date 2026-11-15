@@ -1,0 +1,279 @@
+/* default 主题的组件样式。
+   只在本主题的页面里被引入，其他主题的访客不会下载这份 CSS。
+   类名保持语义化（.repo-card / .gist-item …），页面层只输出结构，不输出样式。 */
+
+/* ---------- header / footer ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand__mark {
+  color: var(--accent);
+}
+
+.site-nav {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+
+.site-nav a.is-active {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.site-header__brand {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.site-footer {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding-block: 20px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-footer__links {
+  display: flex;
+  gap: 16px;
+}
+
+.site-footer__links a {
+  color: var(--fg);
+}
+
+.site-footer__links a:hover {
+  color: var(--accent);
+}
+
+/* ---------- 主页布局 ---------- */
+
+.profile {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 860px) {
+  .profile {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+
+  .profile__aside {
+    position: sticky;
+    top: 80px;
+    order: 2;
+  }
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  padding: 16px;
+}
+
+.profile-card__head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.profile-card h1 {
+  font-size: 17px;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.profile-card .login {
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.bio {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+
+.stats {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.stats b {
+  color: var(--fg);
+}
+
+/* ---------- 列表页 ---------- */
+
+.page-title {
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 8px 0 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.page-title__count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.section__title {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0 0 12px;
+}
+
+.repo-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.repo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  padding: 14px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.repo-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.repo-card__name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.repo-card__desc {
+  color: var(--fg-muted);
+  font-size: 13px;
+  margin: 0;
+  flex: 1;
+}
+
+.repo-card__meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.dot::before {
+  content: '●';
+  margin-right: 4px;
+  font-size: 8px;
+  vertical-align: middle;
+}
+
+.gist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gist-item__title {
+  font-weight: 600;
+}
+
+.gist-item__meta {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  margin-right: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--fg-muted);
+  text-transform: lowercase;
+}
+
+/* ---------- 详情页 ---------- */
+
+.repo-detail {
+  margin-bottom: 20px;
+}
+
+.repo-detail .repo-card__meta {
+  margin-top: 8px;
+}

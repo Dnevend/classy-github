@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isThemeName } from './theme.ts';
 
 /**
  * 用户配置：`<user>/classy-github` 仓库根目录的 `classy.config.json`。
@@ -10,8 +11,6 @@ import { z } from 'zod';
  */
 
 export type ThemeName = 'default' | 'nes' | 'mac' | 'win95';
-
-const THEMES: ThemeName[] = ['default', 'nes', 'mac', 'win95'];
 
 export interface ResolvedConfig {
   theme: ThemeName;
@@ -143,8 +142,8 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
 
   let theme: ThemeName = DEFAULT_CONFIG.theme;
   if (raw.theme !== undefined) {
-    if (THEMES.includes(raw.theme as ThemeName)) {
-      theme = raw.theme as ThemeName;
+    if (isThemeName(raw.theme)) {
+      theme = raw.theme;
     } else {
       issues.push(`theme: 未知主题 "${raw.theme}"，已回退为 default`);
     }

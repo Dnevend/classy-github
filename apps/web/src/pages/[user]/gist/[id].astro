@@ -1,13 +1,13 @@
 ---
-import Base from '../../../layouts/Base.astro';
 import NotFound from '../../../components/NotFound.astro';
 import ServiceError from '../../../components/ServiceError.astro';
 import { getGist } from '../../../lib/github';
-import { createGistDescriptionParser } from '../../../lib/gist-rule';
 import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
 import { DEFAULT_CONFIG } from '../../../lib/config';
 import { loadConfig } from '../../../lib/config-loader';
+import { createGistDescriptionParser } from '../../../lib/gist-rule';
+import { resolveTheme } from '../../../themes';
 
 export const prerender = false;
 
@@ -37,6 +37,11 @@ const { data, error } = await safeLoad(async () => {
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
+const { name: themeName, components } = await resolveTheme(
+  Astro.url.searchParams.get('theme')
+);
+const { Layout, Markdown } = components;
+
 if (error === 'not-found') {
   Astro.response.status = 404;
   Astro.response.headers.set('cache-control', 'no-store');
@@ -49,12 +54,15 @@ const parsed = createGistDescriptionParser({
   prefix: config.gists.prefix,
   split: config.gists.split,
 })(data?.gist.description);
+
 const title = parsed.title || data?.files[0]?.filename || 'Gist';
 ---
 
-<Base
+<Layout
   {user}
-  links={config.links}
+  userinfo={null}
+  {config}
+  theme={themeName}
   brand={title}
   seo={{
     title: `${title} · ${user} · ClassyGit`,
@@ -84,13 +92,11 @@ const title = parsed.title || data?.files[0]?.filename || 'Gist';
 
         {data.rendered.map((file) => (
           <>
-            {data.rendered.length > 1 && (
-              <h2 class="section__title">{file.filename}</h2>
-            )}
-            <div class="prose" set:html={file.html} />
+            {data.rendered.length > 1 && <h2 class="section__title">{file.filename}</h2>}
+            <Markdown html={file.html} />
           </>
         ))}
       </>
     ) : null
   }
-</Base>
+</Layout>

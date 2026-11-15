@@ -1,5 +1,5 @@
-/* M1 骨架样式：纯 CSS + 设计变量，不引 Tailwind。
-   M2 起每套主题带自己的 CSS，这些变量就是主题与页面之间的边界。 */
+/* 全局基础层：重置 + 设计变量 + 通用排版。
+   主题专属的组件样式放各自 themes/<name>/theme.css。 */
 
 :root {
   --bg: #ffffff;
@@ -73,203 +73,12 @@ img {
   padding-inline: 20px;
 }
 
-/* ---------- header / footer ---------- */
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(8px);
-}
-
-.site-header__inner {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 56px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.brand__mark {
-  color: var(--accent);
-}
-
-.site-nav {
-  display: flex;
-  gap: 16px;
-  font-size: 14px;
-  color: var(--fg-muted);
-}
-
-.site-nav a.is-active {
-  color: var(--fg);
-  font-weight: 600;
-}
-
-.site-header__brand {
-  margin-left: auto;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.site-footer {
-  margin-top: 48px;
-  border-top: 1px solid var(--border);
-  padding-block: 20px;
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-
-/* ---------- page ---------- */
-
 .page {
   flex: 1;
   padding-block: 24px 0;
 }
 
-.profile {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-@media (min-width: 860px) {
-  .profile {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    align-items: start;
-  }
-
-  .profile__aside {
-    position: sticky;
-    top: 80px;
-    order: 2;
-  }
-}
-
-.card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-elevated);
-  padding: 16px;
-}
-
-.profile-card__head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  object-fit: cover;
-  border: 1px solid var(--border);
-}
-
-.profile-card h1 {
-  font-size: 17px;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.profile-card .login {
-  color: var(--fg-muted);
-  font-size: 13px;
-}
-
-.bio {
-  margin: 12px 0 0;
-  font-size: 14px;
-  color: var(--fg-muted);
-}
-
-.stats {
-  display: flex;
-  gap: 14px;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-
-.stats b {
-  color: var(--fg);
-}
-
-.section {
-  margin-top: 28px;
-}
-
-.section__title {
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  margin: 0 0 12px;
-}
-
-.repo-grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.repo-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  height: 100%;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-elevated);
-  padding: 14px;
-  transition: border-color 0.15s ease, transform 0.15s ease;
-}
-
-.repo-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-
-.repo-card__name {
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.repo-card__desc {
-  color: var(--fg-muted);
-  font-size: 13px;
-  margin: 0;
-  flex: 1;
-}
-
-.repo-card__meta {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--fg-muted);
-}
-
-.dot::before {
-  content: '●';
-  margin-right: 4px;
-  font-size: 8px;
-  vertical-align: middle;
-}
-
-/* ---------- markdown ---------- */
+/* ---------- markdown 排版（所有主题共用，可被主题覆盖） ---------- */
 
 .prose {
   font-size: 15px;
@@ -386,7 +195,22 @@ img {
   }
 }
 
-/* ---------- landing / 404 ---------- */
+/* ---------- 空状态 / 落地页（不属于任何主题） ---------- */
+
+.empty {
+  text-align: center;
+  padding: 64px 16px;
+}
+
+.empty h1 {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+
+.empty p {
+  color: var(--fg-muted);
+  margin: 0 0 20px;
+}
 
 .hero {
   max-width: 620px;
@@ -444,19 +268,4 @@ img {
 
 .hero button:hover {
   filter: brightness(1.05);
-}
-
-.empty {
-  text-align: center;
-  padding: 64px 16px;
-}
-
-.empty h1 {
-  font-size: 22px;
-  margin: 0 0 8px;
-}
-
-.empty p {
-  color: var(--fg-muted);
-  margin: 0 0 20px;
 }

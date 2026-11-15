@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 
 import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
 import { seoForProfile } from '../src/lib/seo.ts';
+import { THEME_NAMES, parseThemeParam } from '../src/lib/theme.ts';
 
 type Case = { name: string; run: () => void };
 
@@ -132,6 +133,45 @@ const cases: Case[] = [
         indexable: config.seo.index,
       });
       assert.equal(on.robots, 'index, follow');
+    },
+  },
+  {
+    name: '?theme= 解析：大小写/非法值/null',
+    run: () => {
+      assert.deepEqual([...THEME_NAMES], ['default', 'nes', 'mac', 'win95']);
+      assert.equal(parseThemeParam(undefined), 'default');
+      assert.equal(parseThemeParam(null), 'default');
+      assert.equal(parseThemeParam(''), 'default');
+      assert.equal(parseThemeParam('nes'), 'nes');
+      assert.equal(parseThemeParam(' NES '), 'nes');
+      assert.equal(parseThemeParam('amiga'), 'default');
+      assert.equal(parseThemeParam('win95'), 'win95');
+    },
+  },
+  {
+    name: '非默认主题永不索引（即使 seo.index=true）',
+    run: () => {
+      const userinfo = {
+        login: 'demo',
+        name: 'Demo',
+        bio: '',
+        avatar_url: 'https://avatars.githubusercontent.com/u/1',
+        html_url: 'https://github.com/demo',
+        company: '',
+        public_repos: 1,
+        public_gists: 0,
+      } as never;
+
+      const seo = seoForProfile({
+        user: 'demo',
+        userinfo,
+        origin: 'https://x.test',
+        indexable: true,
+        theme: 'nes',
+      });
+      assert.equal(seo.robots, 'noindex, follow');
+      // canonical 始终指回不带 theme 的干净地址
+      assert.equal(seo.canonical, 'https://x.test/demo');
     },
   },
   {

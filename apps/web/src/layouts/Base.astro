@@ -2,22 +2,18 @@
 import Seo from '../components/Seo.astro';
 import type { SeoMeta } from '../lib/seo';
 import '../styles/global.css';
-import '../styles/pages.css';
 
 interface Props {
   seo: SeoMeta;
-  /** 页头右侧的署名，通常是被访问者的显示名 */
-  brand?: string;
-  user?: string;
-  /** 来自 classy.config.json 的底部链接 */
-  links?: { title: string; href: string }[];
+  /** 当前主题名，写到 <html data-theme> 上，主题 CSS 可据此限定作用域 */
+  theme?: string;
 }
 
-const { seo, brand, user, links = [] } = Astro.props as Props;
+const { seo, theme = 'default' } = Astro.props as Props;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,48 +23,6 @@ const { seo, brand, user, links = [] } = Astro.props as Props;
   </head>
 
   <body>
-    <header class="site-header">
-      <div class="container site-header__inner">
-        <a class="brand" href="/">
-          <span class="brand__mark" aria-hidden="true">◍</span>
-          ClassyGit
-        </a>
-
-        {
-          user && (
-            <nav class="site-nav">
-              <a href={`/${user}`} class="is-active">
-                主页
-              </a>
-              <a href={`/${user}/repos`}>Repos</a>
-              <a href={`/${user}/gists`}>Gists</a>
-            </nav>
-          )
-        }
-
-        {brand && <span class="site-header__brand">{brand}</span>}
-      </div>
-    </header>
-
-    <main class="container page">
-      <slot />
-    </main>
-
-    <footer class="site-footer">
-      <div class="container site-footer__inner">
-        {links.length > 0 && (
-          <nav class="site-footer__links">
-            {links.map((link) => (
-              <a href={link.href} target="_blank" rel="noopener noreferrer">
-                {link.title}
-              </a>
-            ))}
-          </nav>
-        )}
-        <span>
-          Powered by <a href="https://github.com/Dnevend/classy-github">ClassyGit</a>
-        </span>
-      </div>
-    </footer>
+    <slot />
   </body>
 </html>

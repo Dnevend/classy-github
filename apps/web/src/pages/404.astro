@@ -13,5 +13,7 @@ Astro.response.headers.set('cache-control', 'no-store');
     canonical: new URL('/404', Astro.url).toString(),
   }}
 >
-  <NotFound />
+  <div class="container page">
+    <NotFound />
+  </div>
 </Base>

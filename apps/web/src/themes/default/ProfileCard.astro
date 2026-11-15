@@ -1,13 +1,7 @@
 ---
-import type { User } from '@classy/types/github';
+import type { ThemeProfileCardProps } from '../types';
 
-interface Props {
-  userinfo: User;
-  reposHref: string;
-  gistsHref: string;
-}
-
-const { userinfo, reposHref, gistsHref } = Astro.props as Props;
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
 ---
 
 <aside class="profile__aside">
@@ -37,14 +31,12 @@ const { userinfo, reposHref, gistsHref } = Astro.props as Props;
     {userinfo.location && <p class="bio">{userinfo.location}</p>}
 
     <div class="stats">
-      <a href={reposHref}><b>{userinfo.public_repos}</b> repos</a>
-      <a href={gistsHref}><b>{userinfo.public_gists}</b> gists</a>
+      <a href={links.repos}><b>{userinfo.public_repos}</b> repos</a>
+      <a href={links.gists}><b>{userinfo.public_gists}</b> gists</a>
     </div>
 
     <div class="stats">
-      <a href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-        GitHub ↗
-      </a>
+      <a href={userinfo.html_url} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
       {
         userinfo.blog && (
           <a href={userinfo.blog} target="_blank" rel="noopener noreferrer">

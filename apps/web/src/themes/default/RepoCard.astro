@@ -1,12 +1,7 @@
 ---
-import type { Repo } from '@classy/types/github';
+import type { ThemeRepoCardProps } from '../types';
 
-interface Props {
-  repo: Repo;
-  href: string;
-}
-
-const { repo, href } = Astro.props as Props;
+const { repo, href } = Astro.props as ThemeRepoCardProps;
 ---
 
 <li>

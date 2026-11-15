@@ -1,9 +1,6 @@
 ---
-import Base from '../../layouts/Base.astro';
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
-import ProfileCard from '../../components/ProfileCard.astro';
-import RepoCard from '../../components/RepoCard.astro';
 import { getUserReadme, listRepos } from '../../lib/github';
 import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
@@ -11,6 +8,7 @@ import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { resolveTheme } from '../../themes';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -22,10 +20,7 @@ const { data, error } = await safeLoad(async () => {
   const userinfo = await loadUser(user);
   if (!userinfo) return null;
 
-  const [repos, readme] = await Promise.all([
-    listRepos(user),
-    getUserReadme(user),
-  ]);
+  const [repos, readme] = await Promise.all([listRepos(user), getUserReadme(user)]);
 
   return { userinfo, repos, readme };
 });
@@ -41,36 +36,42 @@ if (error) {
 // 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
+const { name: themeName, components } = await resolveTheme(
+  Astro.url.searchParams.get('theme')
+);
+const { Layout, ProfileCard, RepoCard, Markdown } = components;
+
 const readmeHtml =
   data?.readme
     ? await renderMarkdown(data.readme.source, { base: data.readme.base })
     : null;
 
 // 展示多少个仓库由用户的 classy.config.json 决定
-const topRepos = data
-  ? data.repos.slice(0, config.profile.repos.showCount)
-  : [];
+const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
 const display = data?.userinfo.name || data?.userinfo.login || user;
+
+const seo = data
+  ? seoForProfile({
+      user,
+      userinfo: data.userinfo,
+      origin,
+      indexable: config.seo.index,
+      theme: themeName,
+    })
+  : {
+      title: error ? '数据暂时取不到 · ClassyGit' : `找不到用户 ${user} · ClassyGit`,
+      robots: 'noindex, follow',
+      canonical: `${origin}/${user}`,
+    };
 ---
 
-<Base
+<Layout
   {user}
-  links={config.links}
+  userinfo={data?.userinfo ?? null}
+  {config}
+  theme={themeName}
   brand={display}
-  seo={
-    data
-      ? seoForProfile({
-          user,
-          userinfo: data.userinfo,
-          origin,
-          indexable: config.seo.index,
-        })
-      : {
-          title: error ? '数据暂时取不到 · ClassyGit' : `找不到用户 ${user} · ClassyGit`,
-          robots: 'noindex, follow',
-          canonical: `${origin}/${user}`,
-        }
-  }
+  {seo}
 >
   {
     error ? (
@@ -81,7 +82,7 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
       <div class="profile">
         <div class="profile__main">
           {readmeHtml ? (
-            <div class="prose" set:html={readmeHtml} />
+            <Markdown html={readmeHtml} />
           ) : (
             <div class="card">
               <p class="bio" style="margin:0">
@@ -103,11 +104,12 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
         </div>
 
         <ProfileCard
+          user={user}
           userinfo={data.userinfo}
-          reposHref={`/${user}/repos`}
-          gistsHref={`/${user}/gists`}
+          {config}
+          links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
         />
       </div>
     )
   }
-</Base>
+</Layout>

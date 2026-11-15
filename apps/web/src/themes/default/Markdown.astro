@@ -1,0 +1,9 @@
+---
+import type { ThemeMarkdownProps } from '../types';
+
+// 这里的 html 已由 lib/markdown.ts 处理过（sanitize + shiki），是本项目
+// 唯一允许 set:html 的地方。
+const { html } = Astro.props as ThemeMarkdownProps;
+---
+
+<div class="prose" set:html={html} />

@@ -1,5 +1,5 @@
 import { GITHUB_TOKEN } from 'astro:env/server';
-import type { Follower, Gist, Repo, RepoContent, User } from '@classy/types/github';
+import type { Follower, Gist, Repo, User } from '@classy/types/github';
 
 import { USER_AGENT } from './constants.ts';
 import { cacheGet, cachePut } from './edge-cache.ts';
@@ -109,42 +109,72 @@ export interface ReadmeSource {
   base: string;
 }
 
-const downloadReadme = async (
-  contents: RepoContent[]
-): Promise<ReadmeSource | null> => {
-  const readme = contents.find((entry) => /^readme\.md$/i.test(entry.name));
-  if (!readme?.download_url) return null;
+/** README 接口返回的元数据（content 是 base64） */
+interface ReadmePayload {
+  name?: string;
+  path?: string;
+  content?: string;
+  encoding?: string;
+  download_url?: string;
+}
 
-  const res = await fetch(readme.download_url, {
-    headers: { 'user-agent': USER_AGENT },
-  });
-
-  if (!res.ok) return null;
-
-  return {
-    source: await res.text(),
-    base: readme.download_url.slice(0, readme.download_url.lastIndexOf('/') + 1),
-  };
+const decodeBase64 = (value: string) => {
+  const binary = atob(value.replace(/\s/g, ''));
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 };
 
-/** 读取仓库根目录的 README，仓库不存在 / 没有 README 时返回 null */
+/**
+ * 读取仓库根目录的 README。
+ *
+ * 走 `/repos/{owner}/{repo}/readme`（带 token、走 5000/h 配额）而不是
+ * `download_url` 指向的 raw.githubusercontent.com —— 后者会对 Cloudflare
+ * 出口 IP 返回 503（实测 antfu/antfu 在小文件上就复现），而且完全不受我们的
+ * 配额与缓存控制。
+ */
 export async function getRepoReadme(
   user: string,
   repo: string
 ): Promise<ReadmeSource | null> {
-  let contents: RepoContent[];
+  let payload: ReadmePayload;
 
   try {
-    contents = await ghFetch<RepoContent[]>(
-      `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}/contents`,
+    payload = await ghFetch<ReadmePayload>(
+      `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}/readme`,
       { ttl: 600 }
     );
   } catch (error) {
-    if (error instanceof GitHubError && error.status === 404) return null;
+    if (error instanceof GitHubError && error.status === 404) {
+      console.warn(`[classy] ${user}/${repo}: 没有 README`);
+      return null;
+    }
     throw error;
   }
 
-  return downloadReadme(contents);
+  // 相对图片要按文件所在目录展开；download_url 里带着分支名
+  const base = payload.download_url
+    ? payload.download_url.slice(0, payload.download_url.lastIndexOf('/') + 1)
+    : `https://raw.githubusercontent.com/${user}/${repo}/HEAD/`;
+
+  if (payload.content) {
+    return { source: decodeBase64(payload.content), base };
+  }
+
+  // 文件超过 1MB 时 GitHub 不返回 content，只能退回 CDN
+  if (!payload.download_url) return null;
+
+  const res = await fetch(payload.download_url, {
+    headers: { 'user-agent': USER_AGENT },
+  });
+
+  if (!res.ok) {
+    console.warn(
+      `[classy] ${user}/${repo}: README 过大且 CDN 拉取失败 ${res.status}`
+    );
+    return null;
+  }
+
+  return { source: await res.text(), base };
 }
 
 /**

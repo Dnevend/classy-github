@@ -29,8 +29,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (ttl === undefined) return next();
 
-  // 缓存键去掉 query，避免 ?utm_source=... 这类参数把缓存打散
-  const key = new Request(`${url.origin}${url.pathname}`, { method: 'GET' });
+  // 缓存键：丢掉无关 query（?utm_*），但保留 ?theme= —— 主题是服务端渲染的维度，
+  // 不进键的话 default 的 HTML 会被当成 nes 的返回出去。
+  const theme = url.searchParams.get('theme');
+  const key = new Request(
+    `${url.origin}${url.pathname}${theme ? `?theme=${encodeURIComponent(theme)}` : ''}`,
+    { method: 'GET' }
+  );
 
   const hit = await cacheGet(key, ttl);
 

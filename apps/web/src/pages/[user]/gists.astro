@@ -1,13 +1,13 @@
 ---
-import Base from '../../layouts/Base.astro';
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
 import { listGists } from '../../lib/github';
-import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { createGistDescriptionParser } from '../../lib/gist-rule';
+import { resolveTheme } from '../../themes';
 
 export const prerender = false;
 
@@ -21,8 +21,6 @@ const { data, error } = await safeLoad(async () => {
   return { userinfo, gists: await listGists(user) };
 });
 
-const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
-
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
   Astro.response.headers.set('cache-control', 'no-store');
@@ -31,6 +29,13 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+const { name: themeName, components } = await resolveTheme(
+  Astro.url.searchParams.get('theme')
+);
+const { Layout, GistCard } = components;
+
 const display = data?.userinfo.name || data?.userinfo.login || user;
 const gists = data?.gists ?? [];
 
@@ -38,20 +43,13 @@ const parseDescription = createGistDescriptionParser({
   prefix: config.gists.prefix,
   split: config.gists.split,
 });
-
-/** 描述按 `classy.<type>.<title>` 解析，解析不出就用原描述，再退回首文件名 */
-const titleOf = (gist: (typeof gists)[number]) => {
-  const parsed = parseDescription(gist.description);
-  return parsed.title || Object.keys(gist.files)[0] || '未命名 Gist';
-};
-
-const typeOf = (gist: (typeof gists)[number]) =>
-  parseDescription(gist.description).type;
 ---
 
-<Base
+<Layout
   {user}
-  links={config.links}
+  userinfo={data?.userinfo ?? null}
+  {config}
+  theme={themeName}
   brand={display}
   seo={{
     title: `${display} 的 Gist · ClassyGit`,
@@ -76,22 +74,20 @@ const typeOf = (gist: (typeof gists)[number]) =>
           <p class="bio">没有公开 Gist。</p>
         ) : (
           <ul class="gist-list">
-            {gists.map((gist) => (
-              <li>
-                <a class="gist-item" href={`/${user}/gist/${gist.id}`}>
-                  <span class="gist-item__title">{titleOf(gist)}</span>
-                  <span class="gist-item__meta">
-                    {typeOf(gist) && (
-                      <span class="tag">{typeOf(gist)}</span>
-                    )}
-                    {Object.keys(gist.files).length} 个文件 · {gist.created_at.slice(0, 10)}
-                  </span>
-                </a>
-              </li>
-            ))}
+            {gists.map((gist) => {
+              const parsed = parseDescription(gist.description);
+              return (
+                <GistCard
+                  gist={gist}
+                  href={`/${user}/gist/${gist.id}`}
+                  type={parsed.type}
+                  title={parsed.title || Object.keys(gist.files)[0] || '未命名 Gist'}
+                />
+              );
+            })}
           </ul>
         )}
       </>
     )
   }
-</Base>
+</Layout>
