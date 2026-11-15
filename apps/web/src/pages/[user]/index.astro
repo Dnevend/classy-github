@@ -61,12 +61,6 @@ const readmeHtml =
 // 展示多少个仓库由用户的 classy.config.json 决定
 const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
 
-// 资料卡下方的统计：星标总数与语言数，数据来自已拉取的仓库列表
-const repoNames = data?.repos ?? [];
-const stats = {
-  stars: repoNames.reduce((sum, repo) => sum + (repo.stargazers_count ?? 0), 0),
-  languages: new Set(repoNames.map((repo) => repo.language).filter(Boolean)).size,
-};
 const display = data?.userinfo.name || data?.userinfo.login || user;
 
 const seo = data
@@ -78,7 +72,7 @@ const seo = data
       theme: themeName,
     })
   : {
-      title: error ? '数据暂时取不到 · ClassyGit' : `找不到用户 ${user} · ClassyGit`,
+      title: error ? t('meta.error') : t('meta.notFoundUser', { user }),
       robots: 'noindex, follow',
       canonical: `${origin}/${user}`,
     };
@@ -119,7 +113,6 @@ const seo = data
           userinfo={data.userinfo}
           {config}
           links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
-          {stats}
         />
       </div>
     )

@@ -457,3 +457,21 @@
   background: #000;
   color: #fff;
 }
+
+/* 卡片等高，打开按钮统一贴底 */
+.mac-repo .mac-window {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mac-repo .mac-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mac-repo .mac-btn {
+  margin-top: auto;
+  align-self: flex-start;
+}

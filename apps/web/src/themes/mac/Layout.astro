@@ -49,8 +49,8 @@ const t = createTranslator(Astro.locals.locale);
         )
       }
 
-      <LanguageSwitcher current={Astro.locals.locale} />
       {brand && <a class="mac-clock" href={user ? `/${user}` : "/"}>{brand}</a>}
+      <LanguageSwitcher current={Astro.locals.locale} />
     </header>
 
     <main class="mac-main">

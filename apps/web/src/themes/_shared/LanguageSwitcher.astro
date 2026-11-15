@@ -7,26 +7,25 @@ interface Props {
 
 const { current } = Astro.props as Props;
 
-// 切换语言 = 一次导航，写进 cookie 后后续页面沿用
-const hrefFor = (locale: Locale) => {
-  const url = new URL(Astro.url);
-  url.searchParams.set('lang', locale);
-  return `${url.pathname}${url.search}`;
-};
+// 单个地球按钮：点一下切到另一种语言（双语站只有两种）
+const nextLocale: Locale = current === 'zh' ? 'en' : 'zh';
+const label = current === 'zh' ? 'Switch to English' : '切换到中文';
 
-const labels: Record<Locale, string> = { en: 'EN', zh: '中文' };
+const href = (() => {
+  const url = new URL(Astro.url);
+  url.searchParams.set('lang', nextLocale);
+  return `${url.pathname}${url.search}`;
+})();
 ---
 
-<nav class="lang-switcher" aria-label="Language">
-  {
-    LOCALES.map((locale) => (
-      <a
-        href={hrefFor(locale)}
-        class:list={{ 'is-current': locale === current }}
-        aria-current={locale === current ? 'true' : undefined}
-      >
-        {labels[locale]}
-      </a>
-    ))
-  }
-</nav>
+<a class="lang-toggle" href={href} aria-label={label} title={label}>
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M3 12h18 M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3Z"
+    />
+  </svg>
+  <span class="lang-toggle__code">{current === 'zh' ? '中' : 'EN'}</span>
+</a>

@@ -445,3 +445,21 @@
   filter: none;
   background: #00d000;
 }
+
+/* 卡片等高，OPEN 按钮统一贴底 */
+.tui-repo .tui-box {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tui-repo .tui-box__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tui-repo .tui-button {
+  margin-top: auto;
+  align-self: flex-start;
+}

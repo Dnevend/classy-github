@@ -35,8 +35,6 @@ export interface ThemeProfileCardProps {
   config: ResolvedConfig;
   /** 页面算好的路由，主题不要自己拼 */
   links: { repos: string; gists: string };
-  /** 资料卡下方的统计摘要（由页面算好） */
-  stats?: { stars: number; languages: number };
 }
 
 export interface ThemeRepoCardProps {

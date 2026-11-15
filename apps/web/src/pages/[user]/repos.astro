@@ -60,7 +60,7 @@ const hasPrev = page > 1;
   seo={{
     title: data ? t('repos.title', { name: display }) : `${display} · ClassyGit`,
     description: data
-      ? `${display} · ${data.userinfo.public_repos} public repositories`
+      ? t('repos.desc', { name: display, count: data.userinfo.public_repos })
       : undefined,
     canonical: `${origin}/${user}/repos${page > 1 ? `?page=${page}` : ''}`,
     robots: 'noindex, follow',

@@ -59,7 +59,7 @@ const parseDescription = createGistDescriptionParser({
   brand={display}
   seo={{
     title: `${t('gists.title', { name: display })} · ClassyGit`,
-    description: data ? `${display} 在 GitHub Gist 上公开的 ${gists.length} 条记录。` : undefined,
+    description: data ? t('gists.desc', { name: display, count: gists.length }) : undefined,
     canonical: `${origin}/${user}/gists`,
     robots: 'noindex, follow',
   }}
@@ -72,7 +72,7 @@ const parseDescription = createGistDescriptionParser({
     ) : (
       <>
         <h1 class="page-title">
-          {display} 的 Gist
+          {t('gists.title', { name: display })}
           <span class="page-title__count">{gists.length}</span>
         </h1>
 
@@ -87,7 +87,7 @@ const parseDescription = createGistDescriptionParser({
                   gist={gist}
                   href={`/${user}/gist/${gist.id}`}
                   type={parsed.type}
-                  title={parsed.title || Object.keys(gist.files)[0] || '未命名 Gist'}
+                  title={parsed.title || Object.keys(gist.files)[0] || t('gist.untitled')}
                 />
               );
             })}

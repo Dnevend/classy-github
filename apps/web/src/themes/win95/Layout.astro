@@ -53,8 +53,8 @@ const t = createTranslator(Astro.locals.locale);
         )
       }
 
-      <LanguageSwitcher current={Astro.locals.locale} />
       {brand && <a class="w95-clock" href={user ? `/${user}` : "/"}>{brand}</a>}
+      <LanguageSwitcher current={Astro.locals.locale} />
     </header>
 
     <main class="w95-main">

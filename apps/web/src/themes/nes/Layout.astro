@@ -54,8 +54,8 @@ const t = createTranslator(Astro.locals.locale);
         )
       }
 
-      <LanguageSwitcher current={Astro.locals.locale} />
       {brand && <a class="nes-brand" href={user ? `/${user}` : "/"}>{brand}</a>}
+      <LanguageSwitcher current={Astro.locals.locale} />
     </div>
   </header>
 

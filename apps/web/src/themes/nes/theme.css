@@ -446,3 +446,12 @@
   filter: none;
   background: #b4e05a;
 }
+
+/* 卡片等高，OPEN 按钮统一贴底 */
+.nes-repo .nes-container {
+  min-height: 150px;
+}
+
+.nes-repo .nes-btn {
+  margin-top: auto;
+}

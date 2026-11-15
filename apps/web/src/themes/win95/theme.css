@@ -442,3 +442,21 @@
   filter: none;
   background: #d4d4d4;
 }
+
+/* 卡片等高，Open 按钮统一贴底 */
+.w95-repo .window {
+  min-height: 152px;
+  display: flex;
+  flex-direction: column;
+}
+
+.w95-repo .window-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.w95-repo .w95-btn {
+  margin-top: auto;
+  align-self: flex-start;
+}

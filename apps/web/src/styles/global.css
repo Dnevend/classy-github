@@ -447,7 +447,30 @@ img {
 .lang-switcher {
   display: flex;
   gap: 6px;
-  margin-left: auto;
+}
+
+/* 单个地球按钮，放在用户名之后 */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  margin-left: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.75em;
+  color: var(--fg-muted);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.lang-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.lang-toggle__code {
+  letter-spacing: 0.02em;
 }
 
 /* 页脚主题切换器不需要再撑开 */
@@ -681,4 +704,35 @@ img {
 .stats-card__grid span {
   font-size: 0.72em;
   color: var(--fg-muted);
+}
+
+/* 统计卡（服务端渲染的 SVG，不依赖第三方） */
+.stats-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 14px;
+  border-radius: 10px;
+}
+
+/* ---------- 页脚贴底 ---------- */
+[data-theme] body {
+  min-height: 100dvh;
+}
+
+.nes-main,
+.w95-main,
+.mac-main,
+.tui-main,
+.page {
+  flex: 1 0 auto;
+}
+
+[data-theme] body > div:only-child,
+.w95-desktop,
+.mac-screen,
+.tui-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
 }

@@ -98,7 +98,7 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
             <span>{t('gist.files', { count: data.files.length })}</span>
             <span>{t('gist.created', { date: data.gist.created_at.slice(0, 10) })}</span>
             <a href={data.gist.html_url} target="_blank" rel="noopener noreferrer">
-              在 GitHub 打开 ↗
+              {t('repo.open')} ↗
             </a>
           </div>
         </header>

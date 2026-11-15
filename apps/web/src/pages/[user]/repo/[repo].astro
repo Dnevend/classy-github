@@ -61,7 +61,7 @@ const readmeHtml =
     url: `${origin}/${user}/repo/${repoName}`,
   } : undefined}
   seo={{
-    title: data ? `${data.repo.name} · ${user} · ClassyGit` : `找不到仓库 ${repoName} · ClassyGit`,
+    title: data ? `${data.repo.name} · ${user} · ClassyGit` : t('meta.notFoundRepo', { repo: repoName }),
     description: data?.repo.description ?? undefined,
     canonical: `${origin}/${user}/repo/${repoName}`,
     robots: 'noindex, follow',

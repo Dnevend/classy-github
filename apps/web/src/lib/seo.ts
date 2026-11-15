@@ -30,7 +30,7 @@ export const seoForProfile = ({
   const display = userinfo.name || userinfo.login || user;
   const description =
     userinfo.bio?.trim() ||
-    `${display} 的 GitHub 主页：${userinfo.public_repos} 个仓库、${userinfo.public_gists} 个 Gist。`;
+    `${display} · ${userinfo.public_repos} repositories · ${userinfo.public_gists} gists`;
 
   return {
     title: `${display} (@${userinfo.login}) · ${SITE_NAME}`,

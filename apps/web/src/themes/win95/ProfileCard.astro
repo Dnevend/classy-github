@@ -2,9 +2,8 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import StatsCard from '../_shared/StatsCard.astro';
 
-const { userinfo, links, stats } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -37,8 +36,8 @@ const t = createTranslator(Astro.locals.locale);
 
       {userinfo.bio && <p class="w95-bio">{userinfo.bio}</p>}
       <ProfileMeta userinfo={userinfo} />
-      <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
-    <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
+      <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="lazy" />
+    <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="lazy" />
 
       <fieldset class="w95-stats">
         <legend>stats</legend>
