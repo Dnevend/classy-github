@@ -13,7 +13,7 @@ const { seo, theme = 'default' } = Astro.props as Props;
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-theme={theme}>
+<html lang={Astro.locals.locale === 'zh' ? 'zh-CN' : 'en'} data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -1,7 +1,9 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <aside class="tui-aside">
@@ -27,17 +29,17 @@ const { userinfo, links } = Astro.props as ThemeProfileCardProps;
       {userinfo.bio && <p class="tui-bio">{userinfo.bio}</p>}
 
       <ul class="tui-stats">
-        <li><span>FOLLOWERS</span><b>{userinfo.followers}</b></li>
-        <li><span>FOLLOWING</span><b>{userinfo.following}</b></li>
-        <li><span>REPOS</span><b>{userinfo.public_repos}</b></li>
-        <li><span>GISTS</span><b>{userinfo.public_gists}</b></li>
+        <li><span>{t('profile.followers')}</span><b>{userinfo.followers}</b></li>
+        <li><span>{t('profile.following')}</span><b>{userinfo.following}</b></li>
+        <li><span>{t('profile.repos')}</span><b>{userinfo.public_repos}</b></li>
+        <li><span>{t('profile.gists')}</span><b>{userinfo.public_gists}</b></li>
       </ul>
 
       <div class="tui-actions">
-        <a class="tui-button" href={links.repos}>Repos</a>
-        <a class="tui-button" href={links.gists}>Gists</a>
+        <a class="tui-button" href={links.repos}>{t('profile.repos')}</a>
+        <a class="tui-button" href={links.gists}>{t('profile.gists')}</a>
         <a class="tui-button" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-          GitHub
+          {t('profile.github')}
         </a>
       </div>
     </div>

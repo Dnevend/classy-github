@@ -1,7 +1,9 @@
 ---
 import type { ThemeRepoCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { repo, href } = Astro.props as ThemeRepoCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <li class="nes-repo">

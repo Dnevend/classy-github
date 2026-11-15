@@ -2,11 +2,13 @@
 import { DEFAULT_CONFIG } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
 import { resolveTheme } from '../themes';
+import { createTranslator } from '../lib/i18n';
 
 // 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
 export const prerender = false;
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const t = createTranslator(Astro.locals.locale);
 const { Layout } = components;
 
 const seo: SeoMeta = {
@@ -20,21 +22,21 @@ const seo: SeoMeta = {
 
 <Layout user="" userinfo={null} config={DEFAULT_CONFIG} theme={themeName} {seo}>
   <section class="hero">
-    <h1>你的 GitHub，换一种打开方式</h1>
-    <p>输入用户名，即刻得到个人主页、代码片段和随笔集。无需部署，无需登录。</p>
+    <h1>{t('landing.title')}</h1>
+    <p>{t('landing.subtitle')}</p>
 
     <form id="lookup" method="get" action="/">
-      <label class="sr-only" for="username">GitHub 用户名</label>
+      <label class="sr-only" for="username">{t('landing.label')}</label>
       <input
         id="username"
         name="u"
-        placeholder="GitHub 用户名，如 Dnevend"
+        placeholder={t('landing.placeholder')}
         autocomplete="off"
         autocapitalize="none"
         spellcheck="false"
         required
       />
-      <button type="submit">查看</button>
+      <button type="submit">{t('landing.submit')}</button>
     </form>
   </section>
 

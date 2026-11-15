@@ -6,6 +6,7 @@ import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
 import { DEFAULT_CONFIG } from '../../../lib/config';
 import { loadConfig } from '../../../lib/config-loader';
+import { createTranslator, localeFromConfig } from '../../../lib/i18n';
 import { resolveTheme } from '../../../themes';
 
 export const prerender = false;
@@ -31,6 +32,12 @@ if (error === 'not-found') {
 }
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, Markdown } = components;
@@ -71,12 +78,12 @@ const readmeHtml =
             <span>⑂ {data.repo.forks_count}</span>
             {data.repo.language && <span class="dot">{data.repo.language}</span>}
             <a href={data.repo.html_url} target="_blank" rel="noopener noreferrer">
-              在 GitHub 打开 ↗
+              {t('repo.open')} ↗
             </a>
           </div>
         </header>
 
-        {readmeHtml ? <Markdown html={readmeHtml} /> : <p class="bio">这个仓库没有 README。</p>}
+        {readmeHtml ? <Markdown html={readmeHtml} /> : <p class="bio">{t('repo.noReadme')}</p>}
       </>
     )
   }

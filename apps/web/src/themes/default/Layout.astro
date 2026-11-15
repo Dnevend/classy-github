@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import LanguageSwitcher from '../_shared/LanguageSwitcher.astro';
+import { createTranslator } from '../../lib/i18n';
 import ShareCard from '../_shared/ShareCard.astro';
 import type { ThemeLayoutProps } from '../types';
 
@@ -10,6 +12,7 @@ import themeCss from './theme.css?url';
 const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
 
 const shareUrl = seo.canonical ?? Astro.url.href;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <Base {seo} {theme}>
@@ -27,16 +30,13 @@ const shareUrl = seo.canonical ?? Astro.url.href;
       {
         userinfo && (
           <nav class="site-nav">
-            <a href={`/${user}`} class="is-active">
-              主页
-            </a>
-            <a href={`/${user}/repos`}>Repos</a>
-            <a href={`/${user}/gists`}>Gists</a>
+            <a href={`/${user}/repos`}>{t('nav.repos')}</a>
+            <a href={`/${user}/gists`}>{t('nav.gists')}</a>
           </nav>
         )
       }
 
-      {brand && <span class="site-header__brand">{brand}</span>}
+      {brand && <a class="site-header__brand" href={user ? `/${user}` : "/"}>{brand}</a>}
     </div>
   </header>
 
@@ -69,7 +69,10 @@ const shareUrl = seo.canonical ?? Astro.url.href;
             theme={theme}
           />
         )}
-        <ThemeSwitcher current={theme} />
+        <div class="switchers">
+          <LanguageSwitcher current={Astro.locals.locale} />
+          <ThemeSwitcher current={theme} />
+        </div>
     </div>
   </footer>
 </Base>

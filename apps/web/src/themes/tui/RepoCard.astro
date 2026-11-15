@@ -1,7 +1,9 @@
 ---
 import type { ThemeRepoCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { repo, href } = Astro.props as ThemeRepoCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <li class="tui-repo">
@@ -16,7 +18,7 @@ const { repo, href } = Astro.props as ThemeRepoCardProps;
         {repo.language && <> · {repo.language}</>}
       </p>
 
-      <a class="tui-button" {href}>OPEN</a>
+      <a class="tui-button" {href}>{t('card.open')}</a>
     </div>
   </div>
 </li>

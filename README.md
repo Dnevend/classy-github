@@ -12,7 +12,8 @@
 
 - **五套主题**：`default` / `nes`（8-bit 像素）/ `win95` / `mac`（System 6）/ `tui`（DOS 字符界面）。
   主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
-- **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图。
+- **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图（带二维码），或一键分享到 X。
+- **双语**：English / 中文切换，默认英文，站点可在配置里设默认语言。
 - **服务端渲染**：HTML 直出，标题、OG、JSON-LD 都在首屏里，分享卡片和搜索收录都正常。
 - **边缘缓存**：Workers Cache API 分级缓存（主页 5 分钟 / 文章 1 小时），冷启动 < 2s，命中 ~0.3s。
 - **Gist 当 CMS**：Gist 描述写 `classy.<分类>.<标题>`，自动变成分类和标题。
@@ -41,6 +42,7 @@ pnpm dev            # http://localhost:4321
 ```json
 {
   "theme": "default",
+  "language": "en",
   "profile": {
     "repos": { "visible": true, "showCount": 6 },
     "cover": "https://picsum.photos/1024/576",
@@ -62,7 +64,8 @@ pnpm dev            # http://localhost:4321
 
 | 字段 | 说明 |
 |---|---|
-| `theme` | 默认主题名 |
+| `theme` | 默认主题名（default / nes / win95 / mac / tui） |
+| `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
 | `profile.cover` | 资料卡封面图 |
 | `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |

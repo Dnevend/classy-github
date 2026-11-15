@@ -6,6 +6,7 @@ import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { resolveTheme } from '../../themes';
 
@@ -31,6 +32,13 @@ if (error) {
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
+
+
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, GistCard } = components;
 
@@ -50,7 +58,7 @@ const parseDescription = createGistDescriptionParser({
   theme={themeName}
   brand={display}
   seo={{
-    title: `${display} 的 Gist · ClassyGit`,
+    title: `${t('gists.title', { name: display })} · ClassyGit`,
     description: data ? `${display} 在 GitHub Gist 上公开的 ${gists.length} 条记录。` : undefined,
     canonical: `${origin}/${user}/gists`,
     robots: 'noindex, follow',
@@ -69,7 +77,7 @@ const parseDescription = createGistDescriptionParser({
         </h1>
 
         {gists.length === 0 ? (
-          <p class="bio">没有公开 Gist。</p>
+          <p class="bio">{t('gists.empty')}</p>
         ) : (
           <ul class="gist-list">
             {gists.map((gist) => {

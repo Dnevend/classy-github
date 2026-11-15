@@ -1,7 +1,9 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <aside class="profile__aside">
@@ -24,23 +26,23 @@ const { userinfo, links } = Astro.props as ThemeProfileCardProps;
     {userinfo.bio && <p class="bio">{userinfo.bio}</p>}
 
     <div class="stats">
-      <span><b>{userinfo.followers}</b> followers</span>
-      <span><b>{userinfo.following}</b> following</span>
+      <span><b>{userinfo.followers}</b> {t('profile.followers')}</span>
+      <span><b>{userinfo.following}</b> {t('profile.following')}</span>
     </div>
 
     {userinfo.location && <p class="bio">{userinfo.location}</p>}
 
     <div class="stats">
-      <a href={links.repos}><b>{userinfo.public_repos}</b> repos</a>
-      <a href={links.gists}><b>{userinfo.public_gists}</b> gists</a>
+      <a href={links.repos}><b>{userinfo.public_repos}</b> {t('profile.repos')}</a>
+      <a href={links.gists}><b>{userinfo.public_gists}</b> {t('profile.gists')}</a>
     </div>
 
     <div class="stats">
-      <a href={userinfo.html_url} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <a href={userinfo.html_url} target="_blank" rel="noopener noreferrer">{t('profile.github')} ↗</a>
       {
         userinfo.blog && (
           <a href={userinfo.blog} target="_blank" rel="noopener noreferrer">
-            Website ↗
+            {t('profile.website')} ↗
           </a>
         )
       }

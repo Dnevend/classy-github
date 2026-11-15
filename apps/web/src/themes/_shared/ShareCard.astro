@@ -1,5 +1,6 @@
 ---
 import type { ThemeName } from '../../lib/config';
+import { createTranslator } from '../../lib/i18n';
 
 interface Props {
   user: string;
@@ -10,17 +11,36 @@ interface Props {
 }
 
 const { user, brand, avatar, url, theme } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
 
 const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(
+  t('share.tweet', { name: brand })
+)}`;
 ---
 
-<div class="share-card" data-share>
-  <button class="share-card__trigger" type="button" aria-expanded="false" data-share-toggle>
-    分享
+<div class="share-card" data-share data-brand={brand} data-handle={user}>
+  <button
+    class="share-card__trigger"
+    type="button"
+    aria-expanded="false"
+    aria-label={t('share.trigger')}
+    title={t('share.trigger')}
+    data-share-toggle
+  >
+    <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M11 1a4 4 0 0 1 3.9 3.1A4.5 4.5 0 0 1 18 8.5c0 2.5-2 4.5-4.5 4.5H5a4 4 0 0 1-.6-8 4 4 0 0 1 6.6-4Z"
+      ></path>
+    </svg>
+    <span class="share-card__trigger-text">{t('share.trigger')}</span>
   </button>
 
-  <div class="share-card__panel" role="dialog" aria-label="分享卡片" data-share-panel>
+  <div class="share-card__panel" role="dialog" aria-label={t('share.trigger')} data-share-panel>
     <div class="share-card__preview" data-share-preview>
+      <span class="share-card__watermark" aria-hidden="true">ClassyGit</span>
+
       <img
         class="share-card__avatar"
         src={avatar}
@@ -34,28 +54,85 @@ const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         <strong class="share-card__name">{brand}</strong>
         <span class="share-card__handle">@{user}</span>
       </div>
-      <span class="share-card__site">ClassyGit</span>
-      <span class="share-card__url">{host}</span>
+
+      <div class="share-card__meta">
+        <span class="share-card__site">ClassyGit</span>
+        <span class="share-card__url">{host}</span>
+      </div>
+
+      <canvas class="share-card__qr" width="84" height="84" data-share-qr aria-hidden="true"></canvas>
     </div>
 
     <div class="share-card__actions">
-      <button type="button" data-share-save>保存图片</button>
-      <button type="button" data-share-copy>复制链接</button>
+      <a
+        class="share-card__action"
+        href={tweetHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t('share.twitter')}
+        title={t('share.twitter')}
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M18.9 2H22l-7.2 8.2L23 22h-6.6l-5.2-6.8L5.3 22H2.2l7.7-8.8L1.6 2h6.8l4.7 6.2L18.9 2Zm-1.1 18h1.7L7.3 3.8H5.5L17.8 20Z"
+          ></path>
+        </svg>
+      </a>
+
+      <button
+        class="share-card__action"
+        type="button"
+        aria-label={t('share.save')}
+        title={t('share.save')}
+        data-share-save
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3"
+          ></path>
+        </svg>
+      </button>
+
+      <button
+        class="share-card__action"
+        type="button"
+        aria-label={t('share.copy')}
+        title={t('share.copy')}
+        data-share-copy
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7L11.5 7M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7L12.5 17"
+          ></path>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
 
-<script is:inline>
-  (() => {
-    const root = document.querySelector('[data-share]');
-    if (!root) return;
+<script>
+  import qrcode from 'qrcode-generator';
 
-    const toggle = root.querySelector('[data-share-toggle]');
-    const panel = root.querySelector('[data-share-panel]');
-    const saveBtn = root.querySelector('[data-share-save]');
-    const copyBtn = root.querySelector('[data-share-copy]');
+  const root = document.querySelector('[data-share]') as HTMLElement | null;
+  if (root) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-share-toggle]');
+    const panel = root.querySelector<HTMLElement>('[data-share-panel]');
+    const saveBtn = root.querySelector<HTMLButtonElement>('[data-share-save]');
+    const copyBtn = root.querySelector<HTMLButtonElement>('[data-share-copy]');
+    const qrCanvas = root.querySelector<HTMLCanvasElement>('[data-share-qr]');
+    const avatar = root.querySelector<HTMLImageElement>('[data-share-avatar]');
 
-    const open = (state) => {
+    const open = (state: boolean) => {
       if (!panel || !toggle) return;
       toggle.setAttribute('aria-expanded', String(state));
       if (state) root.setAttribute('data-open', '');
@@ -63,22 +140,46 @@ const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     };
 
     toggle?.addEventListener('click', () => open(!root.hasAttribute('data-open')));
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') open(false);
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && open(false));
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) open(false);
     });
 
-    document.addEventListener('click', (event) => {
-      if (!root.contains(event.target)) open(false);
-    });
+    /** 把当前页面地址画成二维码 */
+    const drawQr = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
+      const qr = qrcode(0, 'M');
+      qr.addData(location.href);
+      qr.make();
+
+      const count = qr.getModuleCount();
+      const cell = size / count;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(x - cell * 2, y - cell * 2, size + cell * 4, size + cell * 4);
+      ctx.fillStyle = '#000000';
+
+      for (let row = 0; row < count; row += 1) {
+        for (let col = 0; col < count; col += 1) {
+          if (qr.isDark(row, col)) {
+            ctx.fillRect(x + col * cell, y + row * cell, Math.ceil(cell), Math.ceil(cell));
+          }
+        }
+      }
+    };
+
+    // 预览里的小二维码
+    if (qrCanvas) {
+      const ctx = qrCanvas.getContext('2d');
+      if (ctx) drawQr(ctx, 0, 0, qrCanvas.width);
+    }
 
     copyBtn?.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(location.href);
-        copyBtn.textContent = '已复制';
-        setTimeout(() => (copyBtn.textContent = '复制链接'), 1500);
+        copyBtn.setAttribute('title', copyBtn.dataset.copied ?? 'Copied');
+        copyBtn.classList.add('is-done');
+        setTimeout(() => copyBtn.classList.remove('is-done'), 1200);
       } catch {
-        copyBtn.textContent = '复制失败';
+        /* 剪贴板不可用时静默失败 */
       }
     });
 
@@ -97,16 +198,22 @@ const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, 1200, 630);
-
-      // 顶部装饰条
       ctx.fillStyle = accent;
       ctx.fillRect(0, 0, 1200, 12);
 
       await document.fonts.ready.catch(() => {});
       const family = getComputedStyle(document.body).fontFamily || 'sans-serif';
 
-      // 头像
-      const avatar = root.querySelector('[data-share-avatar]');
+      // 右上角淡淡的品牌水印
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      ctx.fillStyle = fg;
+      ctx.font = `bold 110px ${family}`;
+      ctx.textAlign = 'right';
+      ctx.fillText('ClassyGit', 1160, 150);
+      ctx.restore();
+      ctx.textAlign = 'left';
+
       if (avatar && avatar.complete && avatar.naturalWidth) {
         ctx.save();
         ctx.beginPath();
@@ -124,28 +231,26 @@ const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
       ctx.fillStyle = fg;
       ctx.font = `bold 64px ${family}`;
-      ctx.fillText(brand, 320, 268, 780);
+      ctx.fillText(root.dataset.brand ?? '', 320, 268, 620);
 
       ctx.fillStyle = muted;
       ctx.font = `32px ${family}`;
-      ctx.fillText(`@${user}`, 320, 330);
-
-      ctx.fillStyle = fg;
-      ctx.font = `28px ${family}`;
-      ctx.fillText(host, 320, 420, 780);
+      ctx.fillText(root.dataset.handle ?? '', 320, 330);
 
       ctx.fillStyle = accent;
       ctx.font = `bold 30px ${family}`;
       ctx.fillText('ClassyGit', 90, 560);
 
+      drawQr(ctx, 960, 380, 180);
+
       canvas.toBlob((blob) => {
         if (!blob) return;
         const link = document.createElement('a');
-        link.download = `classy-${user}.png`;
+        link.download = `classy-${root.dataset.handle ?? 'card'}.png`;
         link.href = URL.createObjectURL(blob);
         link.click();
         setTimeout(() => URL.revokeObjectURL(link.href), 2000);
       }, 'image/png');
     });
-  })();
+  }
 </script>

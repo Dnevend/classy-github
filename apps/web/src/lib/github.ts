@@ -79,10 +79,16 @@ export async function ghFetch<T>(
 export const getUser = (user: string) =>
   ghFetch<User>(`/users/${encodeURIComponent(user)}`);
 
-export const listRepos = (user: string, perPage = 100) =>
-  ghFetch<Repo[]>(`/users/${encodeURIComponent(user)}/repos`, {
-    query: { sort: 'updated', per_page: perPage },
+export const listRepos = (
+  user: string,
+  options: { page?: number; perPage?: number } = {}
+) => {
+  const { page = 1, perPage = 30 } = options;
+
+  return ghFetch<Repo[]>(`/users/${encodeURIComponent(user)}/repos`, {
+    query: { sort: 'updated', per_page: perPage, page },
   });
+};
 
 export const listGists = (user: string, perPage = 100) =>
   ghFetch<Gist[]>(`/users/${encodeURIComponent(user)}/gists`, {

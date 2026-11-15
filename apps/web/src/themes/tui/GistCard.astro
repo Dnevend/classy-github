@@ -1,7 +1,9 @@
 ---
 import type { ThemeGistCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <li class="tui-gist">

@@ -8,6 +8,7 @@ import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { resolveTheme } from '../../themes';
 
@@ -36,6 +37,13 @@ if (error) {
 
 // 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
+
 
 // 只有显式开启 seo.index 的用户才进 sitemap
 if (data) {
@@ -90,14 +98,14 @@ const seo = data
           ) : (
             <div class="card">
               <p class="bio" style="margin:0">
-                这个用户没有设置 profile README。
+                {t('profile.noReadme')}
               </p>
             </div>
           )}
 
           {config.profile.repos.visible && topRepos.length > 0 && (
             <section class="section">
-              <h2 class="section__title">最近更新</h2>
+              <h2 class="section__title">{t('section.recent')}</h2>
               <ul class="repo-grid">
                 {topRepos.map((repo) => (
                   <RepoCard repo={repo} href={repo.html_url} />

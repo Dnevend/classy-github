@@ -1,7 +1,9 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <aside class="nes-aside">
@@ -26,17 +28,17 @@ const { userinfo, links } = Astro.props as ThemeProfileCardProps;
     {userinfo.bio && <p class="nes-bio">{userinfo.bio}</p>}
 
     <ul class="nes-stats">
-      <li><span>{userinfo.followers}</span> FOLLOWERS</li>
-      <li><span>{userinfo.following}</span> FOLLOWING</li>
-      <li><span>{userinfo.public_repos}</span> REPOS</li>
-      <li><span>{userinfo.public_gists}</span> GISTS</li>
+      <li><span>{userinfo.followers}</span> {t('profile.followers')}</li>
+      <li><span>{userinfo.following}</span> {t('profile.following')}</li>
+      <li><span>{userinfo.public_repos}</span> {t('profile.repos')}</li>
+      <li><span>{userinfo.public_gists}</span> {t('profile.gists')}</li>
     </ul>
 
     <div class="nes-actions">
-      <a class="nes-btn is-success" href={links.repos}>REPOS</a>
-      <a class="nes-btn is-warning" href={links.gists}>GISTS</a>
+      <a class="nes-btn is-success" href={links.repos}>{t('profile.repos')}</a>
+      <a class="nes-btn is-warning" href={links.gists}>{t('profile.gists')}</a>
       <a class="nes-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-        GITHUB
+        {t('profile.github')}
       </a>
     </div>
   </section>

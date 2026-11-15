@@ -1,0 +1,32 @@
+---
+import { LOCALES, type Locale } from '../../lib/i18n';
+
+interface Props {
+  current: Locale;
+}
+
+const { current } = Astro.props as Props;
+
+// 切换语言 = 一次导航，写进 cookie 后后续页面沿用
+const hrefFor = (locale: Locale) => {
+  const url = new URL(Astro.url);
+  url.searchParams.set('lang', locale);
+  return `${url.pathname}${url.search}`;
+};
+
+const labels: Record<Locale, string> = { en: 'EN', zh: '中文' };
+---
+
+<nav class="lang-switcher" aria-label="Language">
+  {
+    LOCALES.map((locale) => (
+      <a
+        href={hrefFor(locale)}
+        class:list={{ 'is-current': locale === current }}
+        aria-current={locale === current ? 'true' : undefined}
+      >
+        {labels[locale]}
+      </a>
+    ))
+  }
+</nav>

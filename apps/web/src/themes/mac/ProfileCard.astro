@@ -1,7 +1,9 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <aside class="mac-aside">
@@ -31,18 +33,18 @@ const { userinfo, links } = Astro.props as ThemeProfileCardProps;
 
       <table class="mac-stats">
         <tbody>
-          <tr><th>Followers</th><td>{userinfo.followers}</td></tr>
-          <tr><th>Following</th><td>{userinfo.following}</td></tr>
-          <tr><th>Repos</th><td>{userinfo.public_repos}</td></tr>
-          <tr><th>Gists</th><td>{userinfo.public_gists}</td></tr>
+          <tr><th>{t('profile.followers')}</th><td>{userinfo.followers}</td></tr>
+          <tr><th>{t('profile.following')}</th><td>{userinfo.following}</td></tr>
+          <tr><th>{t('profile.repos')}</th><td>{userinfo.public_repos}</td></tr>
+          <tr><th>{t('profile.gists')}</th><td>{userinfo.public_gists}</td></tr>
         </tbody>
       </table>
 
       <div class="mac-actions">
-        <a class="mac-btn" href={links.repos}>Repos</a>
-        <a class="mac-btn" href={links.gists}>Gists</a>
+        <a class="mac-btn" href={links.repos}>{t('profile.repos')}</a>
+        <a class="mac-btn" href={links.gists}>{t('profile.gists')}</a>
         <a class="mac-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-          GitHub
+          {t('profile.github')}
         </a>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { defineMiddleware } from 'astro:middleware';
 import { CACHED_AT_HEADER, cacheGet, cachePut, edgeCache } from './lib/edge-cache.ts';
 import { THEME_COOKIE, resolveThemeChoice } from './lib/theme.ts';
+import { DEFAULT_LOCALE, LOCALE_COOKIE, resolveLocale } from './lib/i18n.ts';
 
 /**
  * 按路由决定缓存时长。顺序敏感：先匹配更具体的路径。
- * 文章页（gist 详情）变化最少，缓存最久。
  */
 const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
   [/^\/$/, 3600],
@@ -17,31 +17,44 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
 
-const THEME_MAX_AGE = 60 * 60 * 24 * 365;
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /**
- * Workers 生成的响应不会被 Cloudflare 自动缓存，
- * 必须显式用 Cache API 存一份，否则每个请求都是冷渲染。
- *
- * 主题在这里解析：`?theme=` > cookie > default。
- * 缓存键必须带解析后的主题，否则 A 的 nes 页面会被发给 B。
+ * 主题与语言都在这里解析并参与缓存键：
+ *   theme  = ?theme= > cookie > default
+ *   locale = ?lang=  > cookie > auto（auto 由页面按用户配置决定）
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
 
-  const saved = context.cookies.get(THEME_COOKIE);
-  const { theme, persist } = resolveThemeChoice({
+  const savedTheme = context.cookies.get(THEME_COOKIE);
+  const { theme, persist: persistTheme } = resolveThemeChoice({
     param: url.searchParams.get('theme'),
-    cookie: saved ? saved.value : null,
+    cookie: savedTheme ? savedTheme.value : null,
   });
 
-  // 页面通过 locals 拿主题，不再各自解析一遍 URL
-  context.locals.theme = theme;
+  const savedLocale = context.cookies.get(LOCALE_COOKIE);
+  const locale = resolveLocale({
+    param: url.searchParams.get('lang'),
+    cookie: savedLocale ? savedLocale.value : null,
+  });
 
-  if (persist) {
+  context.locals.theme = theme;
+  context.locals.localeChoice = locale;
+  context.locals.locale = locale === 'auto' ? DEFAULT_LOCALE : locale;
+
+  if (persistTheme) {
     context.cookies.set(THEME_COOKIE, theme, {
       path: '/',
-      maxAge: THEME_MAX_AGE,
+      maxAge: COOKIE_MAX_AGE,
+      sameSite: 'lax',
+    });
+  }
+
+  if (locale !== 'auto') {
+    context.cookies.set(LOCALE_COOKIE, locale, {
+      path: '/',
+      maxAge: COOKIE_MAX_AGE,
       sameSite: 'lax',
     });
   }
@@ -51,9 +64,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (ttl === undefined) return next();
 
-  const key = new Request(`${url.origin}${url.pathname}?theme=${theme}`, {
-    method: 'GET',
-  });
+  // 分页参数要进缓存键
+  const page = url.searchParams.get('page');
+  const key = new Request(
+    `${url.origin}${url.pathname}?theme=${theme}&lang=${locale}${page ? `&page=${page}` : ''}`,
+    { method: 'GET' }
+  );
 
   const hit = await cacheGet(key, ttl);
 
@@ -71,7 +87,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (response.status === 200 && edgeCache()) {
     out.headers.set('cache-control', `public, s-maxage=${ttl}`);
 
-    // Set-Cookie 不能进缓存，否则会把「某人选的主题」发给所有人
+    // Set-Cookie 不能进缓存，否则会把「某人选的主题/语言」发给所有人
     const setCookie = out.headers.get('set-cookie');
     out.headers.delete('set-cookie');
 

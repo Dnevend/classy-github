@@ -4,20 +4,26 @@ import ServiceError from '../../components/ServiceError.astro';
 import { listRepos } from '../../lib/github';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
-import { DEFAULT_CONFIG } from '../../lib/config';
+import { DEFAULT_CONFIG, type ResolvedConfig } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { localeFromConfig, createTranslator } from '../../lib/i18n';
 import { resolveTheme } from '../../themes';
 
 export const prerender = false;
 
+const PER_PAGE = 30;
+
 const user = Astro.params.user as string;
 const origin = new URL(Astro.url).origin;
+
+const pageParam = Number(Astro.url.searchParams.get('page') ?? '1');
+const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
 const { data, error } = await safeLoad(async () => {
   const userinfo = await loadUser(user);
   if (!userinfo) return null;
 
-  return { userinfo, repos: await listRepos(user) };
+  return { userinfo, repos: await listRepos(user, { page, perPage: PER_PAGE }) };
 });
 
 if (error) {
@@ -28,12 +34,21 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+const config: ResolvedConfig = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+// 语言优先级：?lang= > cookie > 用户配置 > en
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, RepoCard } = components;
 
 const display = data?.userinfo.name || data?.userinfo.login || user;
+const hasNext = (data?.repos.length ?? 0) === PER_PAGE;
+const hasPrev = page > 1;
 ---
 
 <Layout
@@ -43,9 +58,11 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
   theme={themeName}
   brand={display}
   seo={{
-    title: `${display} 的仓库 · ClassyGit`,
-    description: data ? `${display} 在 GitHub 上的 ${data.repos.length} 个公开仓库。` : undefined,
-    canonical: `${origin}/${user}/repos`,
+    title: data ? t('repos.title', { name: display }) : `${display} · ClassyGit`,
+    description: data
+      ? `${display} · ${data.userinfo.public_repos} public repositories`
+      : undefined,
+    canonical: `${origin}/${user}/repos${page > 1 ? `?page=${page}` : ''}`,
     robots: 'noindex, follow',
   }}
 >
@@ -57,18 +74,38 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
     ) : (
       <>
         <h1 class="page-title">
-          {display} 的仓库
-          <span class="page-title__count">{data.repos.length}</span>
+          {t('repos.title', { name: display })}
+          <span class="page-title__count">{data.userinfo.public_repos}</span>
         </h1>
 
         {data.repos.length === 0 ? (
-          <p class="bio">没有公开仓库。</p>
+          <p class="bio">{t('repos.empty')}</p>
         ) : (
           <ul class="repo-grid">
             {data.repos.map((repo) => (
               <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
             ))}
           </ul>
+        )}
+
+        {(hasPrev || hasNext) && (
+          <nav class="pager" aria-label="pagination">
+            {hasPrev ? (
+              <a class="pager__link" href={`/${user}/repos${page === 2 ? '' : `?page=${page - 1}`}`}>
+                ← {t('repos.prev')}
+              </a>
+            ) : (
+              <span />
+            )}
+            <span class="pager__page">{t('repos.page', { page, total: page + (hasNext ? 1 : 0) })}</span>
+            {hasNext ? (
+              <a class="pager__link" href={`/${user}/repos?page=${page + 1}`}>
+                {t('repos.next')} →
+              </a>
+            ) : (
+              <span />
+            )}
+          </nav>
         )}
       </>
     )

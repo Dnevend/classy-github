@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { isThemeName } from './theme.ts';
+import { DEFAULT_LOCALE, LOCALES, type Locale } from './i18n.ts';
 
 /**
  * 用户配置：`<user>/classy-github` 仓库根目录的 `classy.config.json`。
@@ -14,6 +15,8 @@ export type ThemeName = 'default' | 'nes' | 'mac' | 'win95' | 'tui';
 
 export interface ResolvedConfig {
   theme: ThemeName;
+  /** 访客没有选择语言时的默认语言 */
+  language: Locale;
   profile: {
     cover: string | null;
     showFollowers: boolean;
@@ -38,6 +41,7 @@ export interface ResolvedConfig {
 
 export const DEFAULT_CONFIG: ResolvedConfig = {
   theme: 'default',
+  language: DEFAULT_LOCALE,
   profile: {
     cover: null,
     showFollowers: true,
@@ -90,9 +94,12 @@ const linkSchema = z.object({
 
 const seoSchema = z.object({ index: z.boolean() }).partial();
 
+const languageSchema = z.enum(LOCALES);
+
 const rootSchema = z
   .object({
     theme: z.string(),
+    language: z.string(),
     profile: z.unknown(),
     gists: z.unknown(),
     links: z.unknown(),
@@ -149,6 +156,11 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
     }
   }
 
+  const language = raw.language === undefined ? DEFAULT_LOCALE : pick(languageSchema, raw.language);
+  if (raw.language !== undefined && language === null) {
+    issues.push(`language: 不支持 "${raw.language}"，已回退为 ${DEFAULT_LOCALE}`);
+  }
+
   const profile = pick(profileSchema, raw.profile);
   if (raw.profile !== undefined && profile === null) {
     issues.push('profile: 结构不合法，已忽略该段');
@@ -185,6 +197,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
     issues,
     config: {
       theme,
+      language: language ?? DEFAULT_LOCALE,
       profile: {
         cover: parsedProfile.cover ?? DEFAULT_CONFIG.profile.cover,
         showFollowers:

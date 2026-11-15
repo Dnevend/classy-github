@@ -4,6 +4,10 @@ declare namespace App {
   interface Locals {
     /** 由 middleware 解析：?theme= > cookie > default */
     theme: import('./lib/config').ThemeName;
+    /** 由 middleware 解析：?lang= > cookie > auto */
+    localeChoice: import('./lib/i18n').Locale | 'auto';
+    /** 最终生效的语言（auto 时页面会用配置里的 language 覆盖） */
+    locale: import('./lib/i18n').Locale;
   }
 }
 

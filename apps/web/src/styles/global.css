@@ -323,12 +323,37 @@ img {
 }
 
 .share-card__preview {
+  position: relative;
   display: grid;
   gap: 6px;
   padding: 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg);
+  overflow: hidden;
+}
+
+.share-card__watermark {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.share-card__qr {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  background: #fff;
 }
 
 .share-card__avatar {
@@ -366,11 +391,12 @@ img {
   gap: 8px;
 }
 
-.share-card__actions button {
+.share-card__action {
   flex: 1;
-  font: inherit;
-  font-size: 0.8em;
-  padding: 6px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--border);
@@ -378,9 +404,20 @@ img {
   cursor: pointer;
 }
 
-.share-card__actions button:hover {
+.share-card__action:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.share-card__action.is-done {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.share-card__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 @media (max-width: 640px) {
@@ -391,4 +428,90 @@ img {
     bottom: 12px;
     width: auto;
   }
+}
+
+/* 移动端：资料卡放在内容最上面 */
+@media (max-width: 899px) {
+  .profile > aside {
+    order: -1;
+  }
+}
+
+.switchers {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 6px;
+}
+
+.lang-switcher a {
+  padding: 2px 8px;
+  font-size: 0.8em;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg-muted);
+}
+
+.lang-switcher a.is-current {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------- 分页 ---------- */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  font-size: 0.9em;
+}
+
+.pager__link {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.pager__link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pager__page {
+  color: var(--fg-muted);
+}
+
+/* GitHub 的统计卡（readme-stats / streak-stats 等）经常返回空白或透明图，
+   会把 README 卡片撑出一大块空白。限制它们的最大高度，减少所占版面。 */
+.prose img[src*='github-readme-stats'],
+.prose img[src*='github-stats'],
+.prose img[src*='streak-stats'],
+.prose img[src*='readme-stats'] {
+  max-height: 180px;
+  width: auto;
+}
+
+/* README 卡片不再被拉伸到整行高度 */
+[data-theme='win95'] .w95-readme,
+[data-theme='mac'] .mac-readme {
+  height: auto;
+}
+
+.share-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding-right: 64px;
+}
+
+.share-card__url {
+  word-break: break-all;
 }

@@ -6,6 +6,7 @@ import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
 import { DEFAULT_CONFIG } from '../../../lib/config';
 import { loadConfig } from '../../../lib/config-loader';
+import { createTranslator, localeFromConfig } from '../../../lib/i18n';
 import { createGistDescriptionParser } from '../../../lib/gist-rule';
 import { resolveTheme } from '../../../themes';
 
@@ -37,6 +38,12 @@ const { data, error } = await safeLoad(async () => {
 
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
 
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
+
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, Markdown } = components;
 
@@ -53,7 +60,7 @@ const parsed = createGistDescriptionParser({
   split: config.gists.split,
 })(data?.gist.description);
 
-const title = parsed.title || data?.files[0]?.filename || 'Gist';
+const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
 ---
 
 <Layout
@@ -80,8 +87,8 @@ const title = parsed.title || data?.files[0]?.filename || 'Gist';
           <h1 class="page-title">{title}</h1>
           <div class="repo-card__meta">
             {parsed.type && <span class="tag">{parsed.type}</span>}
-            <span>{data.files.length} 个文件</span>
-            <span>创建于 {data.gist.created_at.slice(0, 10)}</span>
+            <span>{t('gist.files', { count: data.files.length })}</span>
+            <span>{t('gist.created', { date: data.gist.created_at.slice(0, 10) })}</span>
             <a href={data.gist.html_url} target="_blank" rel="noopener noreferrer">
               在 GitHub 打开 ↗
             </a>

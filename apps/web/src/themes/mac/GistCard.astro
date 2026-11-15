@@ -1,7 +1,9 @@
 ---
 import type { ThemeGistCardProps } from '../types';
+import { createTranslator } from '../../lib/i18n';
 
 const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+const t = createTranslator(Astro.locals.locale);
 ---
 
 <li class="mac-gist">
@@ -9,7 +11,7 @@ const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
     <span class="mac-gist__title">{title}</span>
     <span class="mac-gist__meta">
       {type && <span class="mac-tag">{type}</span>}
-      {Object.keys(gist.files).length} 个文件 · {gist.created_at.slice(0, 10)}
+      {t('gists.files', { count: Object.keys(gist.files).length })} · {gist.created_at.slice(0, 10)}
     </span>
   </a>
 </li>
