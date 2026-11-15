@@ -1,0 +1,37 @@
+---
+import type { SeoMeta } from '../lib/seo';
+
+interface Props extends SeoMeta {}
+
+const {
+  title,
+  description,
+  canonical,
+  image,
+  robots = 'index, follow',
+  type = 'website',
+  jsonLd,
+} = Astro.props as Props;
+
+// JSON-LD 里的 `<` 必须转义，否则内容里出现 </script> 会提前闭合标签
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : null;
+---
+
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical ?? Astro.url.href} />
+<meta name="robots" content={robots} />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="ClassyGit" />
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonical ?? Astro.url.href} />
+{image && <meta property="og:image" content={image} />}
+
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+{image && <meta name="twitter:image" content={image} />}
+
+{jsonLdText && <script type="application/ld+json" set:html={jsonLdText} is:inline />}

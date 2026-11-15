@@ -34,6 +34,9 @@ dist-ssr
 .env.production.local
 .envrc
 
+# astro
+.astro
+
 # docs
 build
 

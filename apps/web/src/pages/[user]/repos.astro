@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import NotFound from '../../components/NotFound.astro';
+import ServiceError from '../../components/ServiceError.astro';
+import RepoCard from '../../components/RepoCard.astro';
+import { listRepos } from '../../lib/github';
+import { safeLoad } from '../../lib/errors';
+import { loadUser } from '../../lib/page';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const userinfo = await loadUser(user);
+  if (!userinfo) return null;
+
+  return { userinfo, repos: await listRepos(user) };
+});
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (!data) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const display = data?.userinfo.name || data?.userinfo.login || user;
+---
+
+<Base
+  {user}
+  brand={display}
+  seo={{
+    title: `${display} 的仓库 · ClassyGit`,
+    description: data ? `${display} 在 GitHub 上的 ${data.repos.length} 个公开仓库。` : undefined,
+    canonical: `${origin}/${user}/repos`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={user} />
+    ) : (
+      <>
+        <h1 class="page-title">
+          {display} 的仓库
+          <span class="page-title__count">{data.repos.length}</span>
+        </h1>
+
+        {data.repos.length === 0 ? (
+          <p class="bio">没有公开仓库。</p>
+        ) : (
+          <ul class="repo-grid">
+            {data.repos.map((repo) => (
+              <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
+            ))}
+          </ul>
+        )}
+      </>
+    )
+  }
+</Base>

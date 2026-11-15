@@ -1,0 +1,57 @@
+---
+import type { User } from '@classy/types/github';
+
+interface Props {
+  userinfo: User;
+  reposHref: string;
+  gistsHref: string;
+}
+
+const { userinfo, reposHref, gistsHref } = Astro.props as Props;
+---
+
+<aside class="profile__aside">
+  <div class="card profile-card">
+    <div class="profile-card__head">
+      <img
+        class="avatar"
+        src={userinfo.avatar_url}
+        alt={`${userinfo.login} 的头像`}
+        width="48"
+        height="48"
+        loading="lazy"
+      />
+      <div>
+        <h1>{userinfo.name || userinfo.login}</h1>
+        <div class="login">@{userinfo.login}</div>
+      </div>
+    </div>
+
+    {userinfo.bio && <p class="bio">{userinfo.bio}</p>}
+
+    <div class="stats">
+      <span><b>{userinfo.followers}</b> followers</span>
+      <span><b>{userinfo.following}</b> following</span>
+    </div>
+
+    {userinfo.location && <p class="bio">{userinfo.location}</p>}
+
+    <div class="stats">
+      <a href={reposHref}><b>{userinfo.public_repos}</b> repos</a>
+      <a href={gistsHref}><b>{userinfo.public_gists}</b> gists</a>
+    </div>
+
+    <div class="stats">
+      <a href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
+        GitHub ↗
+      </a>
+      {
+        userinfo.blog && (
+          <a href={userinfo.blog} target="_blank" rel="noopener noreferrer">
+            Website ↗
+          </a>
+        )
+      }
+    </div>
+  </div>
+</aside>

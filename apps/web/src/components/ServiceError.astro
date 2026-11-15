@@ -1,0 +1,31 @@
+---
+import type { LoadErrorKind } from '../lib/errors';
+
+interface Props {
+  kind: LoadErrorKind;
+}
+
+const { kind } = Astro.props as Props;
+
+// 'not-found' 通常由 NotFound 组件处理，这里保留文案只为让类型闭环
+const copy = {
+  'rate-limit': {
+    title: 'GitHub 接口暂时限流',
+    body: '公共接口每小时只允许少量匿名请求。稍后再试，或配置 GITHUB_TOKEN 后重试。',
+  },
+  'not-found': {
+    title: '没有找到这个内容',
+    body: '它在 GitHub 上不存在，或者属于私有仓库。',
+  },
+  unknown: {
+    title: '数据暂时取不到',
+    body: '请求 GitHub 时出错了。这不一定是你的问题，可以刷新重试。',
+  },
+}[kind];
+---
+
+<div class="empty">
+  <h1>{copy.title}</h1>
+  <p>{copy.body}</p>
+  <a href={Astro.url.pathname}>重试</a>
+</div>

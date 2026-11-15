@@ -1,0 +1,73 @@
+---
+import Base from '../../../layouts/Base.astro';
+import NotFound from '../../../components/NotFound.astro';
+import ServiceError from '../../../components/ServiceError.astro';
+import { getRepo, getRepoReadme } from '../../../lib/github';
+import { renderMarkdown } from '../../../lib/markdown';
+import { safeLoad } from '../../../lib/errors';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const repoName = Astro.params.repo as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const repo = await getRepo(user, repoName);
+  const readme = await getRepoReadme(user, repoName);
+
+  return { repo, readme };
+});
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const readmeHtml =
+  data?.readme
+    ? await renderMarkdown(data.readme.source, { base: data.readme.base })
+    : null;
+---
+
+<Base
+  {user}
+  brand={data?.repo.name ?? user}
+  seo={{
+    title: data ? `${data.repo.name} · ${user} · ClassyGit` : `找不到仓库 ${repoName} · ClassyGit`,
+    description: data?.repo.description ?? undefined,
+    canonical: `${origin}/${user}/repo/${repoName}`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={`${user}/${repoName}`} />
+    ) : (
+      <>
+        <header class="repo-detail">
+          <h1 class="page-title">
+            <a href={`/${user}`}>{user}</a> / {data.repo.name}
+          </h1>
+          {data.repo.description && <p class="bio">{data.repo.description}</p>}
+          <div class="repo-card__meta">
+            <span>★ {data.repo.stargazers_count}</span>
+            <span>⑂ {data.repo.forks_count}</span>
+            {data.repo.language && <span class="dot">{data.repo.language}</span>}
+            <a href={data.repo.html_url} target="_blank" rel="noopener noreferrer">
+              在 GitHub 打开 ↗
+            </a>
+          </div>
+        </header>
+
+        {readmeHtml ? (
+          <div class="prose" set:html={readmeHtml} />
+        ) : (
+          <p class="bio">这个仓库没有 README。</p>
+        )}
+      </>
+    )
+  }
+</Base>

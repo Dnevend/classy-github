@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import type { SeoMeta } from '../lib/seo';
+
+const seo: SeoMeta = {
+  title: 'ClassyGit · 你的 GitHub 主页、代码片段与博客',
+  description:
+    '输入 GitHub 用户名，即刻得到一个可分享的个人主页：仓库、关注、README、Gist 文章。无需部署，无需登录。',
+  canonical: new URL('/', Astro.url).toString(),
+  robots: 'index, follow',
+};
+---
+
+<Base {seo}>
+  <section class="hero">
+    <h1>你的 GitHub，换一种打开方式</h1>
+    <p>输入用户名，即刻得到个人主页、代码片段和随笔集。无需部署，无需登录。</p>
+
+    <form id="lookup" method="get" action="/">
+      <label class="sr-only" for="username">GitHub 用户名</label>
+      <input
+        id="username"
+        name="u"
+        placeholder="GitHub 用户名，如 Dnevend"
+        autocomplete="off"
+        autocapitalize="none"
+        spellcheck="false"
+        required
+      />
+      <button type="submit">查看</button>
+    </form>
+  </section>
+
+  <script is:inline>
+    const form = document.getElementById('lookup');
+    const input = document.getElementById('username');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = input?.value.trim().replace(/^@/, '');
+
+      if (name) window.location.href = `/${encodeURIComponent(name)}`;
+    });
+  </script>
+</Base>

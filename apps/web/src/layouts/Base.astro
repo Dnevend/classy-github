@@ -1,0 +1,63 @@
+---
+import Seo from '../components/Seo.astro';
+import type { SeoMeta } from '../lib/seo';
+import '../styles/global.css';
+import '../styles/pages.css';
+
+interface Props {
+  seo: SeoMeta;
+  /** 页头右侧的署名，通常是被访问者的显示名 */
+  brand?: string;
+  user?: string;
+}
+
+const { seo, brand, user } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/github.svg" />
+    <link rel="preconnect" href="https://avatars.githubusercontent.com" />
+    <Seo {...seo} />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="brand" href="/">
+          <span class="brand__mark" aria-hidden="true">◍</span>
+          ClassyGit
+        </a>
+
+        {
+          user && (
+            <nav class="site-nav">
+              <a href={`/${user}`} class="is-active">
+                主页
+              </a>
+              <a href={`/${user}/repos`}>Repos</a>
+              <a href={`/${user}/gists`}>Gists</a>
+            </nav>
+          )
+        }
+
+        {brand && <span class="site-header__brand">{brand}</span>}
+      </div>
+    </header>
+
+    <main class="container page">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>
+          Powered by <a href="https://github.com/Dnevend/classy-github">ClassyGit</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

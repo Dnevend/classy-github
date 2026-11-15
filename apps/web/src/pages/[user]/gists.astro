@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import NotFound from '../../components/NotFound.astro';
+import ServiceError from '../../components/ServiceError.astro';
+import { listGists } from '../../lib/github';
+import { createGistDescriptionParser } from '../../lib/gist-rule';
+import { safeLoad } from '../../lib/errors';
+import { loadUser } from '../../lib/page';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const userinfo = await loadUser(user);
+  if (!userinfo) return null;
+
+  return { userinfo, gists: await listGists(user) };
+});
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (!data) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const display = data?.userinfo.name || data?.userinfo.login || user;
+const gists = data?.gists ?? [];
+
+const parseDescription = createGistDescriptionParser();
+
+/** 描述按 `classy.<type>.<title>` 解析，解析不出就用原描述，再退回首文件名 */
+const titleOf = (gist: (typeof gists)[number]) => {
+  const parsed = parseDescription(gist.description);
+  return parsed.title || Object.keys(gist.files)[0] || '未命名 Gist';
+};
+
+const typeOf = (gist: (typeof gists)[number]) =>
+  parseDescription(gist.description).type;
+---
+
+<Base
+  {user}
+  brand={display}
+  seo={{
+    title: `${display} 的 Gist · ClassyGit`,
+    description: data ? `${display} 在 GitHub Gist 上公开的 ${gists.length} 条记录。` : undefined,
+    canonical: `${origin}/${user}/gists`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={user} />
+    ) : (
+      <>
+        <h1 class="page-title">
+          {display} 的 Gist
+          <span class="page-title__count">{gists.length}</span>
+        </h1>
+
+        {gists.length === 0 ? (
+          <p class="bio">没有公开 Gist。</p>
+        ) : (
+          <ul class="gist-list">
+            {gists.map((gist) => (
+              <li>
+                <a class="gist-item" href={`/${user}/gist/${gist.id}`}>
+                  <span class="gist-item__title">{titleOf(gist)}</span>
+                  <span class="gist-item__meta">
+                    {typeOf(gist) && (
+                      <span class="tag">{typeOf(gist)}</span>
+                    )}
+                    {Object.keys(gist.files).length} 个文件 · {gist.created_at.slice(0, 10)}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </>
+    )
+  }
+</Base>

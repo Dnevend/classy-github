@@ -1,0 +1,15 @@
+---
+interface Props {
+  user?: string;
+}
+
+const { user } = Astro.props as Props;
+---
+
+<div class="empty">
+  <h1>找不到这个用户</h1>
+  <p>
+    {user ? `GitHub 上不存在 “${user}”，或者同名用户没有公开数据。` : '这个页面不存在。'}
+  </p>
+  <a href="/">返回首页</a>
+</div>

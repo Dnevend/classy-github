@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import NotFound from '../components/NotFound.astro';
+
+Astro.response.status = 404;
+Astro.response.headers.set('cache-control', 'no-store');
+---
+
+<Base
+  seo={{
+    title: '404 · ClassyGit',
+    robots: 'noindex, follow',
+    canonical: new URL('/404', Astro.url).toString(),
+  }}
+>
+  <NotFound />
+</Base>

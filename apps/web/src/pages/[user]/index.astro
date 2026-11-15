@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import NotFound from '../../components/NotFound.astro';
+import ServiceError from '../../components/ServiceError.astro';
+import ProfileCard from '../../components/ProfileCard.astro';
+import RepoCard from '../../components/RepoCard.astro';
+import { getUserReadme, listRepos } from '../../lib/github';
+import { renderMarkdown } from '../../lib/markdown';
+import { safeLoad } from '../../lib/errors';
+import { loadUser } from '../../lib/page';
+import { seoForProfile } from '../../lib/seo';
+
+// 用户集合是无限的，这条路由只能按需渲染
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const userinfo = await loadUser(user);
+  if (!userinfo) return null;
+
+  const [repos, readme] = await Promise.all([
+    listRepos(user),
+    getUserReadme(user),
+  ]);
+
+  return { userinfo, repos, readme };
+});
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (!data) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const readmeHtml =
+  data?.readme
+    ? await renderMarkdown(data.readme.source, { base: data.readme.base })
+    : null;
+
+// 主页只放最近更新的 6 个仓库，完整列表在 /[user]/repos
+const topRepos = data?.repos.slice(0, 6) ?? [];
+const display = data?.userinfo.name || data?.userinfo.login || user;
+---
+
+<Base
+  {user}
+  brand={display}
+  seo={
+    data
+      ? seoForProfile({ user, userinfo: data.userinfo, origin })
+      : {
+          title: error ? '数据暂时取不到 · ClassyGit' : `找不到用户 ${user} · ClassyGit`,
+          robots: 'noindex, follow',
+          canonical: `${origin}/${user}`,
+        }
+  }
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={user} />
+    ) : (
+      <div class="profile">
+        <div class="profile__main">
+          {readmeHtml ? (
+            <div class="prose" set:html={readmeHtml} />
+          ) : (
+            <div class="card">
+              <p class="bio" style="margin:0">
+                这个用户没有设置 profile README。
+              </p>
+            </div>
+          )}
+
+          {topRepos.length > 0 && (
+            <section class="section">
+              <h2 class="section__title">最近更新</h2>
+              <ul class="repo-grid">
+                {topRepos.map((repo) => (
+                  <RepoCard repo={repo} href={repo.html_url} />
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+
+        <ProfileCard
+          userinfo={data.userinfo}
+          reposHref={`/${user}/repos`}
+          gistsHref={`/${user}/gists`}
+        />
+      </div>
+    )
+  }
+</Base>

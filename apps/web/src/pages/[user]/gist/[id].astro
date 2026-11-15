@@ -1,0 +1,88 @@
+---
+import Base from '../../../layouts/Base.astro';
+import NotFound from '../../../components/NotFound.astro';
+import ServiceError from '../../../components/ServiceError.astro';
+import { getGist } from '../../../lib/github';
+import { createGistDescriptionParser } from '../../../lib/gist-rule';
+import { renderMarkdown } from '../../../lib/markdown';
+import { safeLoad } from '../../../lib/errors';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const gistId = Astro.params.id as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const gist = await getGist(gistId);
+  const files = Object.values(gist.files);
+
+  const rendered = await Promise.all(
+    files.map(async (file) => {
+      const isMarkdown = /\.(md|markdown|mdx)$/i.test(file.filename);
+
+      // 非 markdown 文件包成代码块，交给同一条管线高亮
+      const source = isMarkdown
+        ? file.content
+        : ['```' + (file.language || 'text'), file.content, '```'].join('\n');
+
+      return { filename: file.filename, html: await renderMarkdown(source) };
+    })
+  );
+
+  return { gist, files, rendered };
+});
+
+if (error === 'not-found') {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const parsed = createGistDescriptionParser()(data?.gist.description);
+const title = parsed.title || data?.files[0]?.filename || 'Gist';
+---
+
+<Base
+  {user}
+  brand={title}
+  seo={{
+    title: `${title} · ${user} · ClassyGit`,
+    description: data?.gist.description ?? undefined,
+    canonical: `${origin}/${user}/gist/${gistId}`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error === 'not-found' ? (
+      <NotFound user={`gist ${gistId}`} />
+    ) : error ? (
+      <ServiceError kind={error} />
+    ) : data ? (
+      <>
+        <header class="repo-detail">
+          <h1 class="page-title">{title}</h1>
+          <div class="repo-card__meta">
+            {parsed.type && <span class="tag">{parsed.type}</span>}
+            <span>{data.files.length} 个文件</span>
+            <span>创建于 {data.gist.created_at.slice(0, 10)}</span>
+            <a href={data.gist.html_url} target="_blank" rel="noopener noreferrer">
+              在 GitHub 打开 ↗
+            </a>
+          </div>
+        </header>
+
+        {data.rendered.map((file) => (
+          <>
+            {data.rendered.length > 1 && (
+              <h2 class="section__title">{file.filename}</h2>
+            )}
+            <div class="prose" set:html={file.html} />
+          </>
+        ))}
+      </>
+    ) : null
+  }
+</Base>
