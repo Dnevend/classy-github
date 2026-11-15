@@ -1,7 +1,7 @@
 /* Windows 95 主题：98.css 提供控件外观，这里只补页面骨架与布局。
    设计变量借用 98.css 的银色/深蓝配色。 */
 
-:root[data-theme='win95'] {
+:root[data-theme='win98'] {
   --bg: #008080;
   --bg-subtle: #c0c0c0;
   --bg-elevated: #c0c0c0;
@@ -16,7 +16,7 @@
   color-scheme: light;
 }
 
-[data-theme='win95'] body {
+[data-theme='win98'] body {
   background: var(--bg);
   color: var(--fg);
   font-family: 'Pixelated MS Sans Serif', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -95,14 +95,14 @@
   padding-bottom: 24px;
 }
 
-[data-theme='win95'] .profile {
+[data-theme='win98'] .profile {
   display: grid;
   gap: 16px;
   grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 900px) {
-  [data-theme='win95'] .profile {
+  [data-theme='win98'] .profile {
     grid-template-columns: minmax(0, 1fr) 300px;
     align-items: start;
   }
@@ -110,11 +110,10 @@
   .w95-aside {
     position: sticky;
     top: 12px;
-    order: 2;
   }
 }
 
-[data-theme='win95'] .page-title {
+[data-theme='win98'] .page-title {
   font-size: 18px;
   margin: 4px 0 12px;
   display: flex;
@@ -123,16 +122,16 @@
   flex-wrap: wrap;
 }
 
-[data-theme='win95'] .page-title__count {
+[data-theme='win98'] .page-title__count {
   font-size: 12px;
   color: var(--fg-muted);
 }
 
-[data-theme='win95'] .section {
+[data-theme='win98'] .section {
   margin-top: 20px;
 }
 
-[data-theme='win95'] .section__title {
+[data-theme='win98'] .section__title {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -166,7 +165,7 @@
   color: var(--fg-muted);
 }
 
-[data-theme='win95'] .repo-grid {
+[data-theme='win98'] .repo-grid {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -254,7 +253,7 @@
 
 /* ---------- Gist 列表 ---------- */
 
-[data-theme='win95'] .gist-list {
+[data-theme='win98'] .gist-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -306,27 +305,27 @@
   background: #fff;
 }
 
-[data-theme='win95'] .prose {
+[data-theme='win98'] .prose {
   font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
   font-size: 13px;
   line-height: 1.7;
   color: #000;
 }
 
-[data-theme='win95'] .prose code,
-[data-theme='win95'] .prose pre {
+[data-theme='win98'] .prose code,
+[data-theme='win98'] .prose pre {
   font-family: 'Pixelated MS Sans Serif', Consolas, monospace;
 }
 
-[data-theme='win95'] .prose a {
+[data-theme='win98'] .prose a {
   color: var(--w95-navy);
 }
 
-[data-theme='win95'] .repo-detail .bio {
+[data-theme='win98'] .repo-detail .bio {
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
-[data-theme='win95'] .repo-card__meta {
+[data-theme='win98'] .repo-card__meta {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -335,7 +334,7 @@
   color: var(--fg-muted);
 }
 
-[data-theme='win95'] .tag {
+[data-theme='win98'] .tag {
   border: 1px solid var(--w95-navy);
   color: var(--w95-navy);
   padding: 0 6px;
@@ -396,7 +395,7 @@
 
 /* ---------- 首页 hero ---------- */
 
-[data-theme='win95'] .hero {
+[data-theme='win98'] .hero {
   background: var(--w95-gray);
   padding: 24px 20px;
   border-top: 2px solid #fff;
@@ -405,19 +404,19 @@
   border-bottom: 2px solid #404040;
 }
 
-[data-theme='win95'] .hero h1 {
+[data-theme='win98'] .hero h1 {
   font-size: 20px;
   line-height: 1.4;
   margin-bottom: 10px;
 }
 
-[data-theme='win95'] .hero p {
+[data-theme='win98'] .hero p {
   font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 13px;
   color: #000;
 }
 
-[data-theme='win95'] .hero input {
+[data-theme='win98'] .hero input {
   font-family: 'Pixelated MS Sans Serif', Arial, sans-serif;
   border: 2px inset #dfdfdf;
   background: #fff;
@@ -425,7 +424,7 @@
   padding: 4px 6px;
 }
 
-[data-theme='win95'] .hero button {
+[data-theme='win98'] .hero button {
   font-family: 'Pixelated MS Sans Serif', Arial, sans-serif;
   font-size: 12px;
   padding: 4px 12px;
@@ -438,7 +437,7 @@
   border-radius: 0;
 }
 
-[data-theme='win95'] .hero button:hover {
+[data-theme='win98'] .hero button:hover {
   filter: none;
   background: #d4d4d4;
 }
@@ -462,7 +461,15 @@
 }
 
 /* 分享面板的三个按钮在 win95 下要像原生按钮 */
-[data-theme='win95'] .share-card__action {
+[data-theme='win98'] .share-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0;
+  font: inherit;
+  text-decoration: none;
+  box-sizing: border-box;
   background: var(--w95-gray);
   color: #000;
   border-top: 2px solid #fff;
@@ -472,13 +479,13 @@
   border-radius: 0;
 }
 
-[data-theme='win95'] .share-card__action:hover {
+[data-theme='win98'] .share-card__action:hover {
   background: #d4d4d4;
   color: #000;
 }
 
-[data-theme='win95'] .share-card__trigger,
-[data-theme='win95'] .lang-toggle {
+[data-theme='win98'] .share-card__trigger,
+[data-theme='win98'] .lang-toggle {
   background: var(--w95-gray);
   color: #000;
   border-top: 2px solid #fff;

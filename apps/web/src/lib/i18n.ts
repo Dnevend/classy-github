@@ -38,6 +38,7 @@ const messages = {
     'profile.noReadme': 'This user has no profile README.',
 
     'section.recent': 'Recently updated',
+    'section.more': 'View all',
     'repos.title': "{name}'s repositories",
     'repos.empty': 'No public repositories.',
     'repos.desc': '{name} · {count} public repositories',
@@ -119,6 +120,7 @@ const messages = {
     'profile.noReadme': '这个用户没有设置 profile README。',
 
     'section.recent': '最近更新',
+    'section.more': '查看更多',
     'repos.title': '{name} 的仓库',
     'repos.empty': '没有公开仓库。',
     'repos.desc': '{name} · {count} 个公开仓库',

@@ -11,6 +11,7 @@ import { loadConfig } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { resolveTheme } from '../../themes';
+import ContribWall from '../../themes/_shared/ContribWall.astro';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -96,22 +97,14 @@ const seo = data
         <div class="profile__main">
           {readmeHtml && <Markdown html={readmeHtml} />}
 
-          <section class="section contrib">
-            <h2 class="section__title">{t('contrib.title')}</h2>
-            <img
-              class="contrib-wall"
-              src={`/contrib/${user}?theme=${themeName}`}
-              alt=""
-              width="795"
-              height="105"
-              loading="eager"
-              decoding="async"
-            />
-          </section>
+
 
           {config.profile.repos.visible && topRepos.length > 0 && (
             <section class="section">
-              <h2 class="section__title">{t('section.recent')}</h2>
+              <div class="section__head">
+                <h2 class="section__title">{t('section.recent')}</h2>
+                <a class="section__more" href={`/${user}/repos`}>{t('section.more')} →</a>
+              </div>
               <ul class="repo-grid">
                 {topRepos.map((repo) => (
                   <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
@@ -121,12 +114,19 @@ const seo = data
           )}
         </div>
 
-        <ProfileCard
-          user={user}
-          userinfo={data.userinfo}
-          {config}
-          links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
-        />
+        <div class="profile__aside-wrap">
+          <ProfileCard
+            user={user}
+            userinfo={data.userinfo}
+            {config}
+            links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
+          />
+
+          <section class="contrib">
+            <h2 class="section__title">{t('contrib.title')}</h2>
+            <ContribWall user={user} theme={themeName} />
+          </section>
+        </div>
       </div>
     )
   }

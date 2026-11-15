@@ -10,7 +10,7 @@
 
 ## 特性
 
-- **五套主题**：`default` / `nes`（8-bit 像素）/ `win95` / `mac`（System 6）/ `tui`（DOS 字符界面）。
+- **五套主题**：`default` / `nes`（8-bit 像素）/ `win98` / `mac`（System 6）/ `tui`（DOS 字符界面）。
   主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
 - **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图（带二维码），或一键分享到 X。
 - **双语**：English / 中文切换，默认英文，站点可在配置里设默认语言。
@@ -72,7 +72,7 @@ pnpm dev            # http://localhost:4321
 
 | 字段 | 说明 |
 |---|---|
-| `theme` | 默认主题名（mac / nes / win95 / tui；mac 为默认） |
+| `theme` | 默认主题名（mac / nes / win98 / tui；mac 为默认） |
 | `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
 | `profile.cover` | 资料卡封面图 |
@@ -91,7 +91,7 @@ pnpm dev            # http://localhost:4321
 |---|---|---|
 | `default` | ![default](./assets/classy-theme.png) | 干净的卡片式布局 |
 | `nes` | ![nes](./assets/nes-theme.png) | NES.css + 缝合像素字体（中英统一像素字形） |
-| `win95` | ![win95](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
+| `win98` | ![win98](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
 | `mac` | ![mac](./assets/mac-theme.png) | 手写 System 6：条纹标题栏、1px 硬阴影 |
 | `tui` | — | TuiCss：DOS 蓝屏、灰色标题条、绿色按钮 |
 
@@ -117,7 +117,7 @@ KV 命名空间 `USERS` 保存「显式开启 `seo.index` 的用户」，供 `/s
 apps/web/
   src/
     pages/            5 条路由 + 404 + robots.txt + sitemap.xml
-    themes/           契约（5 个槽位）+ default / nes / win95 / mac
+    themes/           契约（5 个槽位）+ default / nes / win98 / mac
     lib/              github 取数、markdown 管线、配置校验、边缘缓存
     middleware.ts     主题解析 + 按路由分级缓存
   wrangler.jsonc
@@ -136,6 +136,6 @@ specs/                重构计划与每个阶段的实现记录
 
 - **Fusion Pixel Font**（OFL-1.1）— `public/fonts/fusion-pixel-12px-zh_hans.woff2`
 - **Press Start 2P**（OFL-1.1）— `public/fonts/press-start-2p.woff2`
-- **98.css**（MIT）— `apps/web/src/themes/win95/vendor/98.css`
+- **98.css**（MIT）— `apps/web/src/themes/win98/vendor/98.css`
 - **NES.css**（MIT）— npm 依赖
 - **TuiCss**（MIT）— `apps/web/src/themes/tui/vendor/`，字体 Perfect DOS VGA 437 自托管

@@ -801,9 +801,13 @@ img {
 /* ---------- 贡献墙 ---------- */
 
 .contrib-wall {
-  display: block;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-columns: minmax(3px, 1fr);
+  gap: 2px;
   width: 100%;
-  aspect-ratio: 795 / 105;
+  overflow: hidden;
   max-width: 100%;
   height: auto;
   overflow-x: auto;
@@ -837,4 +841,73 @@ img {
   margin-top: 12px;
   font-size: 0.85em;
   color: var(--fg-muted);
+}
+
+.contrib-wall__cell {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 1px;
+  background: var(--border);
+}
+
+.contrib-wall__skeleton {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  display: block;
+  height: 68px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-subtle), var(--border), var(--bg-subtle));
+  background-size: 200% 100%;
+  animation: contrib-shimmer 1.2s linear infinite;
+}
+
+@keyframes contrib-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* 页头用户名后的头像 */
+.header-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  margin-left: 8px;
+}
+
+/* 区块标题行：左标题 + 右「查看更多」 */
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section__more {
+  font-size: 0.78em;
+  color: var(--fg-muted);
+}
+
+.section__more:hover {
+  color: var(--accent);
+}
+
+/* 搜索框靠右 */
+.list-search {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 资料卡 + 贡献墙容器 */
+.profile__aside-wrap {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+/* 首页 Fork 间距 */
+.hero-fork {
+  margin-top: 26px;
 }

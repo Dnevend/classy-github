@@ -2,7 +2,6 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import NowCard from '../_shared/NowCard.astro';
 
 const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -37,9 +36,7 @@ const t = createTranslator(Astro.locals.locale);
 
       {userinfo.bio && <p class="w95-bio">{userinfo.bio}</p>}
       <ProfileMeta userinfo={userinfo} />
-      <img class="stats-image" src={`/card/${userinfo.login}?theme=${Astro.locals.theme}&lang=${Astro.locals.locale}`} alt="" width="320" height="132" loading="eager" decoding="async" />
 
-    <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
 
       <fieldset class="w95-stats">

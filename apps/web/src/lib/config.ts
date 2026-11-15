@@ -11,7 +11,7 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from './i18n.ts';
  * 3. **不信任外部输入** —— href 只放行 http(s)，未知字段直接丢弃。
  */
 
-export type ThemeName = 'default' | 'nes' | 'mac' | 'win95' | 'tui';
+export type ThemeName = 'default' | 'nes' | 'mac' | 'win98' | 'tui';
 
 export interface ResolvedConfig {
   theme: ThemeName;

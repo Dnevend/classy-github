@@ -1,0 +1,51 @@
+---
+interface Props {
+  user: string;
+  theme: string;
+}
+
+const { user, theme } = Astro.props as Props;
+---
+
+<div class="contrib-wall" data-contrib={user} data-contrib-theme={theme}>
+  <span class="contrib-wall__skeleton"></span>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-contrib]').forEach(async (wall) => {
+    const user = wall.dataset.contrib;
+    const theme = wall.dataset.contribTheme ?? 'mac';
+    if (!user) return;
+
+    try {
+      const res = await fetch(`/contrib/${encodeURIComponent(user)}.json?theme=${theme}`);
+      if (!res.ok) throw new Error(String(res.status));
+
+      const { weeks, palette, max } = (await res.json()) as {
+        weeks: number[][];
+        palette: string[];
+        max: number;
+      };
+
+      if (!weeks?.length) throw new Error('empty');
+
+      const level = (count: number) => {
+        if (count === 0) return 0;
+        const ratio = count / Math.max(1, max);
+        return ratio > 0.75 ? 4 : ratio > 0.5 ? 3 : ratio > 0.25 ? 2 : 1;
+      };
+
+      const cells: string[] = [];
+      // 按列（周）优先排列，7 行
+      weeks.forEach((week) => {
+        week.forEach((count) => {
+          cells.push(`<i class="contrib-wall__cell" style="background:${palette[level(count)]}" title="${count}"></i>`);
+        });
+      });
+
+      wall.innerHTML = cells.join('');
+    } catch {
+      wall.remove();
+    }
+  });
+</script>

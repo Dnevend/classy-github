@@ -11,7 +11,7 @@ import type { ThemeComponents } from './types';
 const registry: Partial<Record<ThemeName, () => Promise<ThemeComponents>>> = {
   // default 已退役（代码保留在 ./default，不再注册）；mac 接管默认
   nes: () => import('./nes'),
-  win95: () => import('./win95'),
+  win98: () => import('./win95'),
   mac: () => import('./mac'),
   tui: () => import('./tui'),
 };

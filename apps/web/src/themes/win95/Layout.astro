@@ -54,6 +54,16 @@ const t = createTranslator(Astro.locals.locale);
       }
 
       {brand && <a class="w95-clock" href={user ? `/${user}` : "/"}>{brand}</a>}
+      {user && (
+        <img
+          class="header-avatar"
+          src={userinfo?.avatar_url ?? `https://github.com/${user}.png?size=64`}
+          alt=""
+          width="26"
+          height="26"
+          loading="lazy"
+        />
+      )}
     </header>
 
     <main class="w95-main">

@@ -4,7 +4,7 @@ import type { ThemeName } from './config';
  * 主题名的唯一来源。
  * config.ts（校验）、themes/index.ts（注册表）、页面（解析 URL）都从这里取。
  */
-export const THEME_NAMES = ['default', 'nes', 'mac', 'win95', 'tui'] as const;
+export const THEME_NAMES = ['default', 'nes', 'mac', 'win98', 'tui'] as const;
 
 export const isThemeName = (value: unknown): value is ThemeName =>
   typeof value === 'string' && (THEME_NAMES as readonly string[]).includes(value);
@@ -17,6 +17,8 @@ export const isThemeName = (value: unknown): value is ThemeName =>
 /** 严格解析：不是合法主题名就返回 null（用于区分「没选」和「选了 default」） */
 export const parseThemeName = (value?: string | null): ThemeName | null => {
   const normalized = value?.trim().toLowerCase();
+  // 兼容旧链接与旧 cookie：win95 现在叫 win98
+  if (normalized === 'win95') return 'win98';
   return isThemeName(normalized) ? normalized : null;
 };
 
