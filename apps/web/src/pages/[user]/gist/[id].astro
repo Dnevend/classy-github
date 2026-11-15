@@ -68,7 +68,14 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
   userinfo={null}
   {config}
   theme={themeName}
-  brand={title}
+  brand={user}
+  share={data ? {
+    title,
+    description: (data.rendered[0] ? data.files[0].content.replace(/\s+/g, ' ').slice(0, 50) : undefined),
+    handle: user,
+    avatar: `https://github.com/${user}.png?size=160`,
+    url: `${origin}/${user}/gist/${gistId}`,
+  } : undefined}
   seo={{
     title: `${title} · ${user} · ClassyGit`,
     description: data?.gist.description ?? undefined,
@@ -83,6 +90,8 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
       <ServiceError kind={error} />
     ) : data ? (
       <>
+        <a class="back-link" href={`/${user}/gists`}>← {t('gists.title', { name: user })}</a>
+
         <header class="repo-detail">
           <h1 class="page-title">{title}</h1>
           <div class="repo-card__meta">

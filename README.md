@@ -58,6 +58,9 @@ pnpm dev            # http://localhost:4321
   "links": [
     { "title": "GitHub", "href": "https://github.com/Dnevend/classy-github" }
   ],
+  "nav": {
+    "extra": [{ "title": "About", "href": "https://example.com/about" }]
+  },
   "seo": { "index": true }
 }
 ```
@@ -70,6 +73,7 @@ pnpm dev            # http://localhost:4321
 | `profile.cover` | 资料卡封面图 |
 | `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |
 | `links` | 页脚链接（只允许 http/https） |
+| `nav.extra` | 导航里追加的外链（最多 5 条，只允许 http/https） |
 | `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
 配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。

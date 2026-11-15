@@ -1,6 +1,7 @@
 ---
 import type { ThemeRepoCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
+import { langColor } from '../../lib/lang-color';
 
 const { repo, href } = Astro.props as ThemeRepoCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -15,7 +16,8 @@ const t = createTranslator(Astro.locals.locale);
 
       <p class="tui-repo__meta">
         STARS {repo.stargazers_count} · FORKS {repo.forks_count}
-        {repo.language && <> · {repo.language}</>}
+        {repo.language && <> · <i class="lang-dot" style={`background:${langColor(repo.language)}`}></i>{repo.language}</>}
+        {repo.updated_at && <> · {repo.updated_at.slice(0, 10)}</>}
       </p>
 
       <a class="tui-button" {href}>{t('card.open')}</a>

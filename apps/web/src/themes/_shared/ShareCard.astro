@@ -2,24 +2,37 @@
 import type { ThemeName } from '../../lib/config';
 import { createTranslator } from '../../lib/i18n';
 
-interface Props {
-  user: string;
-  brand: string;
-  avatar: string;
+export interface ShareCardData {
+  /** 卡片主标题：用户名 / 仓库名 / Gist 标题 */
+  title: string;
+  /** 副标题：简介、描述或截断后的正文 */
+  description?: string | null;
+  /** @handle，用于二维码下载文件名 */
+  handle: string;
+  avatar?: string | null;
   url: string;
+}
+
+interface Props extends ShareCardData {
   theme: ThemeName;
 }
 
-const { user, brand, avatar, url, theme } = Astro.props as Props;
+const { title, description, handle, avatar, url, theme } = Astro.props as Props;
 const t = createTranslator(Astro.locals.locale);
 
 const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(
-  t('share.tweet', { name: brand })
+  t('share.tweet', { name: title })
 )}`;
 ---
 
-<div class="share-card" data-share data-brand={brand} data-handle={user}>
+<div
+  class="share-card"
+  data-share
+  data-title={title}
+  data-handle={handle}
+  data-description={description ?? ''}
+>
   <button
     class="share-card__trigger"
     type="button"
@@ -41,19 +54,26 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     <div class="share-card__preview" data-share-preview>
       <span class="share-card__watermark" aria-hidden="true">ClassyGit</span>
 
-      <img
-        class="share-card__avatar"
-        src={avatar}
-        alt=""
-        width="120"
-        height="120"
-        crossorigin="anonymous"
-        data-share-avatar
-      />
+      {
+        avatar && (
+          <img
+            class="share-card__avatar"
+            src={avatar}
+            alt=""
+            width="120"
+            height="120"
+            crossorigin="anonymous"
+            data-share-avatar
+          />
+        )
+      }
+
       <div class="share-card__text">
-        <strong class="share-card__name">{brand}</strong>
-        <span class="share-card__handle">@{user}</span>
+        <strong class="share-card__name">{title}</strong>
+        <span class="share-card__handle">@{handle}</span>
       </div>
+
+      {description && <p class="share-card__desc">{description}</p>}
 
       <div class="share-card__meta">
         <span class="share-card__site">ClassyGit</span>
@@ -145,7 +165,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       if (!root.contains(e.target as Node)) open(false);
     });
 
-    /** 把当前页面地址画成二维码 */
     const drawQr = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
       const qr = qrcode(0, 'M');
       qr.addData(location.href);
@@ -166,7 +185,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       }
     };
 
-    // 预览里的小二维码
     if (qrCanvas) {
       const ctx = qrCanvas.getContext('2d');
       if (ctx) drawQr(ctx, 0, 0, qrCanvas.width);
@@ -175,7 +193,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     copyBtn?.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(location.href);
-        copyBtn.setAttribute('title', copyBtn.dataset.copied ?? 'Copied');
         copyBtn.classList.add('is-done');
         setTimeout(() => copyBtn.classList.remove('is-done'), 1200);
       } catch {
@@ -204,7 +221,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       await document.fonts.ready.catch(() => {});
       const family = getComputedStyle(document.body).fontFamily || 'sans-serif';
 
-      // 右上角淡淡的品牌水印
       ctx.save();
       ctx.globalAlpha = 0.08;
       ctx.fillStyle = fg;
@@ -217,25 +233,35 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       if (avatar && avatar.complete && avatar.naturalWidth) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(180, 300, 90, 0, Math.PI * 2);
+        ctx.arc(180, 260, 80, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(avatar, 90, 210, 180, 180);
+        ctx.drawImage(avatar, 100, 180, 160, 160);
         ctx.restore();
         ctx.strokeStyle = accent;
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.arc(180, 300, 92, 0, Math.PI * 2);
+        ctx.arc(180, 260, 82, 0, Math.PI * 2);
         ctx.stroke();
       }
 
+      const title = root.dataset.title ?? '';
+      const handle = root.dataset.handle ?? '';
+      const description = (root.dataset.description ?? '').slice(0, 50);
+
       ctx.fillStyle = fg;
-      ctx.font = `bold 64px ${family}`;
-      ctx.fillText(root.dataset.brand ?? '', 320, 268, 620);
+      ctx.font = `bold 56px ${family}`;
+      ctx.fillText(title, 320, 240, 600);
 
       ctx.fillStyle = muted;
-      ctx.font = `32px ${family}`;
-      ctx.fillText(root.dataset.handle ?? '', 320, 330);
+      ctx.font = `28px ${family}`;
+      ctx.fillText(handle.startsWith('@') ? handle : `@${handle}`, 320, 292);
+
+      if (description) {
+        ctx.fillStyle = fg;
+        ctx.font = `26px ${family}`;
+        ctx.fillText(description, 90, 430, 780);
+      }
 
       ctx.fillStyle = accent;
       ctx.font = `bold 30px ${family}`;
@@ -246,7 +272,7 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       canvas.toBlob((blob) => {
         if (!blob) return;
         const link = document.createElement('a');
-        link.download = `classy-${root.dataset.handle ?? 'card'}.png`;
+        link.download = `classy-${handle || 'card'}.png`;
         link.href = URL.createObjectURL(blob);
         link.click();
         setTimeout(() => URL.revokeObjectURL(link.href), 2000);

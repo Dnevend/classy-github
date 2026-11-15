@@ -5,6 +5,7 @@ import { getUserReadme, listRepos } from '../../lib/github';
 import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
+import { langColor } from '../../lib/lang-color';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
@@ -60,6 +61,17 @@ const readmeHtml =
 
 // 展示多少个仓库由用户的 classy.config.json 决定
 const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
+
+// 语言分布（按仓库数）——填满右侧资料卡下方的空白
+const languageCounts = new Map<string, number>();
+for (const repo of data?.repos ?? []) {
+  if (!repo.language) continue;
+  languageCounts.set(repo.language, (languageCounts.get(repo.language) ?? 0) + 1);
+}
+const languages = [...languageCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 4)
+  .map(([name, count]) => ({ name, count, color: langColor(name) }));
 const display = data?.userinfo.name || data?.userinfo.login || user;
 
 const seo = data
@@ -108,7 +120,7 @@ const seo = data
               <h2 class="section__title">{t('section.recent')}</h2>
               <ul class="repo-grid">
                 {topRepos.map((repo) => (
-                  <RepoCard repo={repo} href={repo.html_url} />
+                  <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
                 ))}
               </ul>
             </section>
@@ -120,6 +132,7 @@ const seo = data
           userinfo={data.userinfo}
           {config}
           links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
+          {languages}
         />
       </div>
     )

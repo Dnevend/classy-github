@@ -515,3 +515,119 @@ img {
 .share-card__url {
   word-break: break-all;
 }
+
+/* ---------- 详情页返回 ---------- */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 0.85em;
+  color: var(--fg-muted);
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* ---------- 资料卡元信息 ---------- */
+
+.profile-meta {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.8em;
+  color: var(--fg-muted);
+}
+
+.profile-meta li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.profile-meta a:hover {
+  color: var(--accent);
+}
+
+.profile-meta li > span,
+.profile-meta li > a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-meta__icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+/* 语言色点 */
+.lang-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* ---------- 语言分布 ---------- */
+
+.lang-stats {
+  margin-top: 12px;
+}
+
+.lang-stats__bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.lang-stats__bar span {
+  display: block;
+  height: 100%;
+}
+
+.lang-stats__legend {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 3px;
+  font-size: 0.75em;
+  color: var(--fg-muted);
+}
+
+.lang-stats__legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-stats__legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lang-stats__legend b {
+  margin-left: auto;
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* 仓库卡的 meta 允许换行，但每个片段保持完整 */
+.repo-card__meta {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.repo-card__meta > span {
+  white-space: nowrap;
+}

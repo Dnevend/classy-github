@@ -2,6 +2,7 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import type { Gist, Repo, User } from '@classy/types/github';
 import type { ResolvedConfig, ThemeName } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
+import type { ShareCardData } from './_shared/ShareCard.astro';
 
 /**
  * 主题契约（v1）：五个槽位。
@@ -22,8 +23,10 @@ export interface ThemeLayoutProps {
   config: ResolvedConfig;
   theme: ThemeName;
   seo: SeoMeta;
-  /** 页头右侧的署名 */
+  /** 页头右侧的署名（固定为用户显示名，切页面不变） */
   brand?: string;
+  /** 分享卡片内容；不传则用用户主页信息 */
+  share?: ShareCardData;
 }
 
 export interface ThemeProfileCardProps {
@@ -32,6 +35,8 @@ export interface ThemeProfileCardProps {
   config: ResolvedConfig;
   /** 页面算好的路由，主题不要自己拼 */
   links: { repos: string; gists: string };
+  /** 语言分布（按仓库数），用于资料卡下方的迷你条形图 */
+  languages?: { name: string; count: number; color: string }[];
 }
 
 export interface ThemeRepoCardProps {

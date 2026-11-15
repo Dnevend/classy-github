@@ -1,0 +1,83 @@
+---
+import type { User } from '@classy/types/github';
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  userinfo: User;
+}
+
+const { userinfo } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+
+const joined = userinfo.created_at ? userinfo.created_at.slice(0, 7) : null;
+const items = [
+  { key: 'location', value: userinfo.location, icon: 'pin' },
+  { key: 'company', value: userinfo.company, icon: 'building' },
+  { key: 'email', value: userinfo.email, icon: 'mail', href: userinfo.email ? `mailto:${userinfo.email}` : null },
+  {
+    key: 'twitter',
+    value: userinfo.twitter_username ? `@${userinfo.twitter_username}` : null,
+    icon: 'x',
+    href: userinfo.twitter_username ? `https://twitter.com/${userinfo.twitter_username}` : null,
+  },
+  { key: 'joined', value: joined, icon: 'calendar' },
+].filter((item) => Boolean(item.value));
+---
+
+{
+  items.length > 0 && (
+    <ul class="profile-meta">
+      {items.map((item) => (
+        <li>
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" class="profile-meta__icon">
+            {item.icon === 'pin' && (
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z M12 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+              />
+            )}
+            {item.icon === 'building' && (
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                d="M4 21V5h10v16M14 10h6v11M7 8h4M7 12h4M7 16h4"
+              />
+            )}
+            {item.icon === 'mail' && (
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                d="M3 6h18v12H3z M3 7l9 6 9-6"
+              />
+            )}
+            {item.icon === 'x' && (
+              <path
+                fill="currentColor"
+                d="M18.9 2H22l-7.2 8.2L23 22h-6.6l-5.2-6.8L5.3 22H2.2l7.7-8.8L1.6 2h6.8l4.7 6.2L18.9 2Z"
+              />
+            )}
+            {item.icon === 'calendar' && (
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                d="M4 6h16v14H4z M8 3v4M16 3v4M4 11h16"
+              />
+            )}
+          </svg>
+          {item.href ? (
+            <a href={item.href} target="_blank" rel="noopener noreferrer">
+              {item.value}
+            </a>
+          ) : (
+            <span>{item.value}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}

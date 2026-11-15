@@ -9,9 +9,20 @@ import type { ThemeLayoutProps } from '../types';
 import winCss from './vendor/98.css?url';
 import themeCss from './theme.css?url';
 
-const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+const { user, userinfo, config, theme, seo, brand, share } = Astro.props as ThemeLayoutProps;
 
 const shareUrl = seo.canonical ?? Astro.url.href;
+const shareData =
+  share ??
+  (userinfo
+    ? {
+        title: brand || userinfo.login,
+        description: userinfo.bio,
+        handle: userinfo.login,
+        avatar: userinfo.avatar_url,
+        url: shareUrl,
+      }
+    : null);
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -33,6 +44,11 @@ const t = createTranslator(Astro.locals.locale);
           <nav class="w95-menu">
             <a href={`/${user}/repos`}>{t('nav.repos')}</a>
             <a href={`/${user}/gists`}>{t('nav.gists')}</a>
+        {config.nav.extra.map((item) => (
+          <a href={item.href} target="_blank" rel="noopener noreferrer">
+            {item.title}
+          </a>
+        ))}
           </nav>
         )
       }
@@ -58,15 +74,7 @@ const t = createTranslator(Astro.locals.locale);
       }
       <div class="w95-footer__row">
         <span>Powered by ClassyGit</span>
-        {userinfo && (
-          <ShareCard
-            user={userinfo.login}
-            brand={brand ?? userinfo.login}
-            avatar={userinfo.avatar_url}
-            url={shareUrl}
-            theme={theme}
-          />
-        )}
+        {shareData && <ShareCard {...shareData} theme={theme} />}
         <div class="switchers">
           <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />

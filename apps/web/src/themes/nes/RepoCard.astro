@@ -1,6 +1,7 @@
 ---
 import type { ThemeRepoCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
+import { langColor } from '../../lib/lang-color';
 
 const { repo, href } = Astro.props as ThemeRepoCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -16,7 +17,7 @@ const t = createTranslator(Astro.locals.locale);
       ★ {repo.stargazers_count}
       <span class="nes-sep">/</span>
       ⑂ {repo.forks_count}
-      {repo.language && <><span class="nes-sep">/</span>{repo.language}</>}
+      {repo.language && <><span class="nes-sep">/</span><i class="lang-dot" style={`background:${langColor(repo.language)}`}></i>{repo.language}</>}
     </p>
 
     <a class="nes-btn is-primary is-small" {href}>OPEN</a>

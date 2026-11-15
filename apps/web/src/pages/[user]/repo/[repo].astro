@@ -53,7 +53,14 @@ const readmeHtml =
   userinfo={null}
   {config}
   theme={themeName}
-  brand={data?.repo.name ?? user}
+  brand={user}
+  share={data ? {
+    title: data.repo.name,
+    description: data.repo.description,
+    handle: user,
+    avatar: `https://github.com/${user}.png?size=160`,
+    url: `${origin}/${user}/repo/${repoName}`,
+  } : undefined}
   seo={{
     title: data ? `${data.repo.name} · ${user} · ClassyGit` : `找不到仓库 ${repoName} · ClassyGit`,
     description: data?.repo.description ?? undefined,
@@ -68,6 +75,8 @@ const readmeHtml =
       <NotFound user={`${user}/${repoName}`} />
     ) : (
       <>
+        <a class="back-link" href={`/${user}/repos`}>← {t('repos.title', { name: user })}</a>
+
         <header class="repo-detail">
           <h1 class="page-title">
             <a href={`/${user}`}>{user}</a> / {data.repo.name}

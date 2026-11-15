@@ -1,8 +1,10 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
+import ProfileMeta from '../_shared/ProfileMeta.astro';
+import LanguageStats from '../_shared/LanguageStats.astro';
 
-const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links, languages } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -30,6 +32,9 @@ const t = createTranslator(Astro.locals.locale);
       </div>
 
       {userinfo.bio && <p class="mac-bio">{userinfo.bio}</p>}
+      <ProfileMeta userinfo={userinfo} />
+      <LanguageStats languages={languages} />
+    <LanguageStats languages={languages} />
 
       <table class="mac-stats">
         <tbody>

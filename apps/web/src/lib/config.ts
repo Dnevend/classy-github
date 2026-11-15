@@ -33,6 +33,10 @@ export interface ResolvedConfig {
     type: { name: string }[];
   };
   links: { title: string; href: string }[];
+  nav: {
+    /** 额外导航项（外链），追加在 Repos / Gists 之后 */
+    extra: { title: string; href: string }[];
+  };
   seo: {
     /** 是否允许搜索引擎收录这个人的主页 */
     index: boolean;
@@ -55,6 +59,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
     type: [{ name: 'blog' }, { name: 'code' }],
   },
   links: [],
+  nav: { extra: [] },
   seo: { index: false },
 };
 
@@ -94,6 +99,12 @@ const linkSchema = z.object({
 
 const seoSchema = z.object({ index: z.boolean() }).partial();
 
+const navSchema = z
+  .object({
+    extra: z.array(linkSchema).max(5),
+  })
+  .partial();
+
 const languageSchema = z.enum(LOCALES);
 
 const rootSchema = z
@@ -103,6 +114,7 @@ const rootSchema = z
     profile: z.unknown(),
     gists: z.unknown(),
     links: z.unknown(),
+    nav: z.unknown(),
     seo: z.unknown(),
   })
   .partial();
@@ -171,6 +183,11 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
     issues.push('gists: 结构不合法，已忽略该段');
   }
 
+  const nav = pick(navSchema, raw.nav);
+  if (raw.nav !== undefined && nav === null) {
+    issues.push('nav: 结构不合法，已忽略该段');
+  }
+
   const seo = pick(seoSchema, raw.seo);
   if (raw.seo !== undefined && seo === null) {
     issues.push('seo: 结构不合法，已忽略该段');
@@ -216,6 +233,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
         type: gists?.type ?? DEFAULT_CONFIG.gists.type,
       },
       links,
+      nav: { extra: nav?.extra ?? DEFAULT_CONFIG.nav.extra },
       seo: { index: seo?.index ?? DEFAULT_CONFIG.seo.index },
     },
   };
