@@ -73,7 +73,6 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
     title,
     description: (data.rendered[0] ? data.files[0].content.replace(/\s+/g, ' ').slice(0, 50) : undefined),
     handle: user,
-    avatar: `https://github.com/${user}.png?size=160`,
     url: `${origin}/${user}/gist/${gistId}`,
   } : undefined}
   seo={{

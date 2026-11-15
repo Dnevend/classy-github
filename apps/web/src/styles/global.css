@@ -447,6 +447,16 @@ img {
 .lang-switcher {
   display: flex;
   gap: 6px;
+  margin-left: auto;
+}
+
+/* 页脚主题切换器不需要再撑开 */
+.site-footer .switchers,
+.w95-footer .switchers,
+.mac-footer .switchers,
+.tui-footer .switchers,
+.nes-footer__row .switchers {
+  margin-left: auto;
 }
 
 .lang-switcher a {
@@ -630,4 +640,45 @@ img {
 
 .repo-card__meta > span {
   white-space: nowrap;
+}
+
+/* ---------- 统计卡 ---------- */
+
+.stats-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.stats-card__title {
+  margin: 0 0 8px;
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.stats-card__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.stats-card__grid li {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.stats-card__grid b {
+  font-size: 1.15em;
+  color: var(--fg);
+}
+
+.stats-card__grid span {
+  font-size: 0.72em;
+  color: var(--fg-muted);
 }

@@ -2,9 +2,9 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import LanguageStats from '../_shared/LanguageStats.astro';
+import StatsCard from '../_shared/StatsCard.astro';
 
-const { userinfo, links, languages } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links, stats } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -27,7 +27,7 @@ const t = createTranslator(Astro.locals.locale);
 
     {userinfo.bio && <p class="bio">{userinfo.bio}</p>}
     <ProfileMeta userinfo={userinfo} />
-    <LanguageStats languages={languages} />
+    <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
 
     <div class="stats">
       <span><b>{userinfo.followers}</b> {t('profile.followers')}</span>
@@ -35,8 +35,8 @@ const t = createTranslator(Astro.locals.locale);
     </div>
 
     <div class="stats">
-      <a href={links.repos}><b>{userinfo.public_repos}</b> {t('profile.repos')}</a>
-      <a href={links.gists}><b>{userinfo.public_gists}</b> {t('profile.gists')}</a>
+      <a href={links.repos}><b>{userinfo.public_repos}</b> {t('profile.reposTitle')}</a>
+      <a href={links.gists}><b>{userinfo.public_gists}</b> {t('profile.gistsTitle')}</a>
     </div>
 
     <div class="stats">

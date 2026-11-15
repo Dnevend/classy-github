@@ -80,7 +80,7 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
         <span class="share-card__url">{host}</span>
       </div>
 
-      <canvas class="share-card__qr" width="84" height="84" data-share-qr aria-hidden="true"></canvas>
+      <img class="share-card__qr" alt="" width="84" height="84" data-share-qr />
     </div>
 
     <div class="share-card__actions">
@@ -149,7 +149,8 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     const panel = root.querySelector<HTMLElement>('[data-share-panel]');
     const saveBtn = root.querySelector<HTMLButtonElement>('[data-share-save]');
     const copyBtn = root.querySelector<HTMLButtonElement>('[data-share-copy]');
-    const qrCanvas = root.querySelector<HTMLCanvasElement>('[data-share-qr]');
+    const qrImg = root.querySelector<HTMLImageElement>('[data-share-qr]');
+    const preview = root.querySelector<HTMLElement>('[data-share-preview]');
     const avatar = root.querySelector<HTMLImageElement>('[data-share-avatar]');
 
     const open = (state: boolean) => {
@@ -185,9 +186,12 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       }
     };
 
-    if (qrCanvas) {
-      const ctx = qrCanvas.getContext('2d');
-      if (ctx) drawQr(ctx, 0, 0, qrCanvas.width);
+    // 预览里的二维码用 <img>（data URL），这样截图库能把它一起截进去
+    if (qrImg) {
+      const qr = qrcode(0, 'M');
+      qr.addData(location.href);
+      qr.make();
+      qrImg.src = qr.createDataURL(4, 0);
     }
 
     copyBtn?.addEventListener('click', async () => {
@@ -201,82 +205,28 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     });
 
     saveBtn?.addEventListener('click', async () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 630;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!preview) return;
 
-      const styles = getComputedStyle(document.documentElement);
-      const bg = styles.getPropertyValue('--bg').trim() || '#0b0b0f';
-      const fg = styles.getPropertyValue('--fg').trim() || '#ffffff';
-      const muted = styles.getPropertyValue('--fg-muted').trim() || '#9ca3af';
-      const accent = styles.getPropertyValue('--accent').trim() || '#2563eb';
+      try {
+        // 直接截取用户看到的那张卡，缩放到 1200 宽，所见即所得
+        const { domToCanvas } = await import('modern-screenshot');
+        await document.fonts.ready.catch(() => {});
+        const canvas = await domToCanvas(preview, {
+          scale: 1200 / preview.offsetWidth,
+          backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#ffffff',
+        });
 
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, 1200, 630);
-      ctx.fillStyle = accent;
-      ctx.fillRect(0, 0, 1200, 12);
-
-      await document.fonts.ready.catch(() => {});
-      const family = getComputedStyle(document.body).fontFamily || 'sans-serif';
-
-      ctx.save();
-      ctx.globalAlpha = 0.08;
-      ctx.fillStyle = fg;
-      ctx.font = `bold 110px ${family}`;
-      ctx.textAlign = 'right';
-      ctx.fillText('ClassyGit', 1160, 150);
-      ctx.restore();
-      ctx.textAlign = 'left';
-
-      if (avatar && avatar.complete && avatar.naturalWidth) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(180, 260, 80, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(avatar, 100, 180, 160, 160);
-        ctx.restore();
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(180, 260, 82, 0, Math.PI * 2);
-        ctx.stroke();
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          const link = document.createElement('a');
+          link.download = `classy-${root.dataset.handle ?? 'card'}.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+        }, 'image/png');
+      } catch (error) {
+        console.warn('[classy] 分享图生成失败', error);
       }
-
-      const title = root.dataset.title ?? '';
-      const handle = root.dataset.handle ?? '';
-      const description = (root.dataset.description ?? '').slice(0, 50);
-
-      ctx.fillStyle = fg;
-      ctx.font = `bold 56px ${family}`;
-      ctx.fillText(title, 320, 240, 600);
-
-      ctx.fillStyle = muted;
-      ctx.font = `28px ${family}`;
-      ctx.fillText(handle.startsWith('@') ? handle : `@${handle}`, 320, 292);
-
-      if (description) {
-        ctx.fillStyle = fg;
-        ctx.font = `26px ${family}`;
-        ctx.fillText(description, 90, 430, 780);
-      }
-
-      ctx.fillStyle = accent;
-      ctx.font = `bold 30px ${family}`;
-      ctx.fillText('ClassyGit', 90, 560);
-
-      drawQr(ctx, 960, 380, 180);
-
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const link = document.createElement('a');
-        link.download = `classy-${handle || 'card'}.png`;
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        setTimeout(() => URL.revokeObjectURL(link.href), 2000);
-      }, 'image/png');
     });
   }
 </script>

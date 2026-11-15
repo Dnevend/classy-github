@@ -20,6 +20,7 @@ const items = [
     icon: 'x',
     href: userinfo.twitter_username ? `https://twitter.com/${userinfo.twitter_username}` : null,
   },
+  { key: 'blog', value: userinfo.blog, icon: 'globe', href: userinfo.blog || null },
   { key: 'joined', value: joined, icon: 'calendar' },
 ].filter((item) => Boolean(item.value));
 ---
@@ -58,6 +59,14 @@ const items = [
               <path
                 fill="currentColor"
                 d="M18.9 2H22l-7.2 8.2L23 22h-6.6l-5.2-6.8L5.3 22H2.2l7.7-8.8L1.6 2h6.8l4.7 6.2L18.9 2Z"
+              />
+            )}
+            {item.icon === 'globe' && (
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z M3 12h18 M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"
               />
             )}
             {item.icon === 'calendar' && (

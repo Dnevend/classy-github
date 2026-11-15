@@ -2,9 +2,9 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import LanguageStats from '../_shared/LanguageStats.astro';
+import StatsCard from '../_shared/StatsCard.astro';
 
-const { userinfo, links, languages } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links, stats } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -33,21 +33,21 @@ const t = createTranslator(Astro.locals.locale);
 
       {userinfo.bio && <p class="mac-bio">{userinfo.bio}</p>}
       <ProfileMeta userinfo={userinfo} />
-      <LanguageStats languages={languages} />
-    <LanguageStats languages={languages} />
+      <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
+    <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
 
       <table class="mac-stats">
         <tbody>
           <tr><th>{t('profile.followers')}</th><td>{userinfo.followers}</td></tr>
           <tr><th>{t('profile.following')}</th><td>{userinfo.following}</td></tr>
-          <tr><th>{t('profile.repos')}</th><td>{userinfo.public_repos}</td></tr>
-          <tr><th>{t('profile.gists')}</th><td>{userinfo.public_gists}</td></tr>
+          <tr><th>{t('profile.reposTitle')}</th><td>{userinfo.public_repos}</td></tr>
+          <tr><th>{t('profile.gistsTitle')}</th><td>{userinfo.public_gists}</td></tr>
         </tbody>
       </table>
 
       <div class="mac-actions">
-        <a class="mac-btn" href={links.repos}>{t('profile.repos')}</a>
-        <a class="mac-btn" href={links.gists}>{t('profile.gists')}</a>
+        <a class="mac-btn" href={links.repos}>{t('profile.reposTitle')}</a>
+        <a class="mac-btn" href={links.gists}>{t('profile.gistsTitle')}</a>
         <a class="mac-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
           {t('profile.github')}
         </a>

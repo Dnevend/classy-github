@@ -49,6 +49,7 @@ const t = createTranslator(Astro.locals.locale);
         )
       }
 
+      <LanguageSwitcher current={Astro.locals.locale} />
       {brand && <a class="mac-clock" href={user ? `/${user}` : "/"}>{brand}</a>}
     </header>
 
@@ -72,7 +73,6 @@ const t = createTranslator(Astro.locals.locale);
         <span>Powered by ClassyGit · 1984</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}
         <div class="switchers">
-          <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />
         </div>
       </div>

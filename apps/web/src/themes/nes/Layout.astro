@@ -54,6 +54,7 @@ const t = createTranslator(Astro.locals.locale);
         )
       }
 
+      <LanguageSwitcher current={Astro.locals.locale} />
       {brand && <a class="nes-brand" href={user ? `/${user}` : "/"}>{brand}</a>}
     </div>
   </header>
@@ -79,7 +80,6 @@ const t = createTranslator(Astro.locals.locale);
         <span>POWERED BY CLASSYGIT</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}
         <div class="switchers">
-          <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />
         </div>
       </div>

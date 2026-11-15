@@ -17,6 +17,7 @@
     "@classy/types": "workspace:^",
     "@shikijs/rehype": "^4.6.0",
     "astro": "^7.4.12",
+    "modern-screenshot": "^4.7.0",
     "nes.css": "^2.3.0",
     "qrcode-generator": "^2.0.4",
     "rehype-raw": "^7.0.0",

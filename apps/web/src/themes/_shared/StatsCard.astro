@@ -1,0 +1,38 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  repos: number;
+  stars: number;
+  gists: number;
+  followers: number;
+  languages: number;
+}
+
+const { repos, stars, gists, followers, languages } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+
+const items = [
+  { value: repos, label: t('stats.repos') },
+  { value: stars, label: t('stats.stars') },
+  { value: gists, label: t('stats.gists') },
+  { value: followers, label: t('stats.followers') },
+  { value: languages, label: t('stats.languages') },
+].filter((item) => Number.isFinite(item.value));
+---
+
+{
+  items.length > 0 && (
+    <div class="stats-card">
+      <p class="stats-card__title">{t('stats.title')}</p>
+      <ul class="stats-card__grid">
+        {items.map((item) => (
+          <li>
+            <b>{item.value}</b>
+            <span>{item.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

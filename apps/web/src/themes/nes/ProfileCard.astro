@@ -2,9 +2,9 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import LanguageStats from '../_shared/LanguageStats.astro';
+import StatsCard from '../_shared/StatsCard.astro';
 
-const { userinfo, links, languages } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links, stats } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -29,18 +29,18 @@ const t = createTranslator(Astro.locals.locale);
 
     {userinfo.bio && <p class="nes-bio">{userinfo.bio}</p>}
     <ProfileMeta userinfo={userinfo} />
-    <LanguageStats languages={languages} />
+    <StatsCard repos={userinfo.public_repos} stars={stats?.stars ?? 0} gists={userinfo.public_gists} followers={userinfo.followers} languages={stats?.languages ?? 0} />
 
     <ul class="nes-stats">
       <li><span>{userinfo.followers}</span> {t('profile.followers')}</li>
       <li><span>{userinfo.following}</span> {t('profile.following')}</li>
-      <li><span>{userinfo.public_repos}</span> {t('profile.repos')}</li>
-      <li><span>{userinfo.public_gists}</span> {t('profile.gists')}</li>
+      <li><span>{userinfo.public_repos}</span> {t('profile.reposTitle')}</li>
+      <li><span>{userinfo.public_gists}</span> {t('profile.gistsTitle')}</li>
     </ul>
 
     <div class="nes-actions">
-      <a class="nes-btn is-success" href={links.repos}>{t('profile.repos')}</a>
-      <a class="nes-btn is-warning" href={links.gists}>{t('profile.gists')}</a>
+      <a class="nes-btn is-success" href={links.repos}>{t('profile.reposTitle')}</a>
+      <a class="nes-btn is-warning" href={links.gists}>{t('profile.gistsTitle')}</a>
       <a class="nes-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
         {t('profile.github')}
       </a>

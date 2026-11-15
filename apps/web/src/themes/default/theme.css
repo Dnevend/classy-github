@@ -298,3 +298,64 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* ---------- 现代化刷新（2026） ----------
+   更大的圆角、柔和的双层阴影、渐变描边，保持克制的排版。 */
+
+[data-theme='default'] {
+  --radius: 14px;
+}
+
+[data-theme='default'] .card,
+[data-theme='default'] .repo-card {
+  border-radius: 14px;
+  border-color: color-mix(in srgb, var(--border) 70%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px -12px rgb(0 0 0 / 12%);
+}
+
+[data-theme='default'] .repo-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 5%),
+    0 16px 36px -18px rgb(37 99 235 / 35%);
+  transform: translateY(-2px);
+}
+
+[data-theme='default'] .profile-card {
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent 40%),
+    var(--bg-elevated);
+}
+
+[data-theme='default'] .site-header {
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom-color: color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+[data-theme='default'] .site-nav a {
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+[data-theme='default'] .site-nav a:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+}
+
+[data-theme='default'] .site-nav a.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+[data-theme='default'] .page-title {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+[data-theme='default'] .section__title {
+  letter-spacing: 0.12em;
+}
