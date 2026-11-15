@@ -1,0 +1,16 @@
+---
+import type { ThemeGistCardProps } from '../types';
+
+const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+---
+
+<li class="tui-gist">
+  <a href={href}>
+    <span class="tui-gist__mark">▸</span>
+    <span class="tui-gist__title">{title}</span>
+    <span class="tui-gist__meta">
+      {type && <span class="tui-tag">[{type}]</span>}
+      {Object.keys(gist.files).length}F {gist.created_at.slice(0, 10)}
+    </span>
+  </a>
+</li>

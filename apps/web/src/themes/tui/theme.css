@@ -1,0 +1,447 @@
+/* TuiCss 主题：DOS / Turbo Vision 风格。
+   TuiCss 提供 .tui-panel / .tui-button / .tui-input 等控件外观，
+   这里补布局、配色变量与中文回退。 */
+
+:root[data-theme='tui'] {
+  --bg: #0000a8;
+  --bg-subtle: #000080;
+  --bg-elevated: #0000a8;
+  --fg: #ffffff;
+  --fg-muted: #a8a8a8;
+  --border: #ffffff;
+  --accent: #00a800;
+  --radius: 0px;
+  --tui-cjk: 'Fusion Pixel', 'PingFang SC', 'Microsoft YaHei', monospace;
+  color-scheme: dark;
+}
+
+[data-theme='tui'] body {
+  background: #0000a8;
+  color: #fff;
+  /* DOS 位图字体只有拉丁字形，中文回退到已自托管的像素字体 */
+  font-family: 'DOS', 'Fusion Pixel', var(--tui-cjk);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* TuiCss 对原生 nav 元素做了 position:fixed 的全局样式（它的导航组件），
+   会把我们的页头/页脚导航从文档流里拽出去，这里还原成普通块级元素。 */
+[data-theme='tui'] nav {
+  position: static;
+  width: auto;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.tui-screen {
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
+  padding: 12px;
+}
+
+/* ---------- 顶栏 ---------- */
+
+.tui-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 10px;
+  margin-bottom: 14px;
+  background: #a8a8a8;
+  color: #000;
+  box-shadow: 6px 6px #000;
+  flex-wrap: wrap;
+}
+
+.tui-logo {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.tui-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.tui-nav a:hover {
+  background: #0000a8;
+  color: #fff;
+}
+
+.tui-brand {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* ---------- 面板 ---------- */
+
+.tui-box {
+  display: block;
+  padding: 0;
+  background: #0000a8;
+  box-shadow: 6px 6px #000;
+  color: #fff;
+}
+
+.tui-box__head {
+  background: #a8a8a8;
+  color: #000;
+  padding: 2px 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tui-box__body {
+  padding: 10px 12px;
+}
+
+.tui-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 28px;
+}
+
+[data-theme='tui'] .profile {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  [data-theme='tui'] .profile {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+
+  .tui-aside {
+    position: sticky;
+    top: 12px;
+    order: 2;
+  }
+}
+
+[data-theme='tui'] .page-title {
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 20px;
+  margin: 0 0 12px;
+  color: #ffff55;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-theme='tui'] .page-title__count {
+  font-size: 14px;
+  color: #a8a8a8;
+}
+
+[data-theme='tui'] .section {
+  margin-top: 18px;
+}
+
+[data-theme='tui'] .section__title {
+  font-size: 14px;
+  color: #55ffff;
+  margin: 0 0 8px;
+}
+
+/* ---------- 卡片的排版 ---------- */
+
+.tui-profile {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tui-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 2px solid #a8a8a8;
+  image-rendering: pixelated;
+}
+
+.tui-name {
+  margin: 0;
+  font-weight: 700;
+  color: #ffff55;
+}
+
+.tui-handle {
+  margin: 2px 0 0;
+  color: #a8a8a8;
+}
+
+.tui-bio {
+  margin: 0 0 10px;
+  font-family: var(--tui-cjk);
+  font-size: 13px;
+  color: #fff;
+}
+
+.tui-stats {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  font-size: 13px;
+}
+
+.tui-stats li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tui-stats span {
+  color: #a8a8a8;
+}
+
+.tui-stats b {
+  color: #55ff55;
+}
+
+.tui-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* TuiCss 的 .tui-button 自带 10px 阴影，这里收一点并统一配色 */
+[data-theme='tui'] .tui-button,
+.tui-actions .tui-button,
+.tui-repo .tui-button {
+  box-shadow: 4px 4px #000;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* ---------- 列表 ---------- */
+
+[data-theme='tui'] .repo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.tui-repo .tui-box {
+  height: 100%;
+}
+
+.tui-repo__desc {
+  margin: 0 0 8px;
+  font-family: var(--tui-cjk);
+  font-size: 13px;
+  line-height: 1.8;
+  color: #dedede;
+}
+
+.tui-repo__meta {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #a8a8a8;
+}
+
+[data-theme='tui'] .gist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tui-gist a {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 4px;
+  border-bottom: 1px dotted #a8a8a8;
+}
+
+.tui-gist a:hover {
+  background: #a8a8a8;
+  color: #000;
+}
+
+.tui-gist__mark {
+  color: #ffff55;
+}
+
+.tui-gist__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--tui-cjk);
+}
+
+.tui-gist__meta {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #a8a8a8;
+}
+
+.tui-gist a:hover .tui-gist__meta {
+  color: #000;
+}
+
+.tui-tag {
+  color: #55ff55;
+  margin-right: 8px;
+}
+
+/* ---------- 正文 ---------- */
+
+.tui-readme .prose {
+  font-family: var(--tui-cjk);
+  font-size: 13px;
+  line-height: 1.9;
+  color: #e8e8e8;
+}
+
+.tui-readme .prose h1,
+.tui-readme .prose h2,
+.tui-readme .prose h3 {
+  font-family: var(--tui-cjk);
+  color: #ffff55;
+}
+
+[data-theme='tui'] .prose a {
+  color: #55ffff;
+}
+
+[data-theme='tui'] .prose code {
+  background: #000080;
+  border-color: #a8a8a8;
+  color: #55ff55;
+}
+
+[data-theme='tui'] .prose pre {
+  background: #000060;
+  border-color: #a8a8a8;
+}
+
+[data-theme='tui'] .repo-detail .bio {
+  font-family: var(--tui-cjk);
+  color: #dedede;
+}
+
+[data-theme='tui'] .repo-card__meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: #a8a8a8;
+}
+
+[data-theme='tui'] .tag {
+  border: 1px solid #55ff55;
+  color: #55ff55;
+  padding: 0 6px;
+}
+
+/* ---------- 页脚 ---------- */
+
+.tui-footer {
+  margin-top: 24px;
+  padding: 8px 10px;
+  background: #a8a8a8;
+  color: #000;
+  box-shadow: 6px 6px #000;
+}
+
+.tui-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.tui-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+/* ---------- 主题切换 ---------- */
+
+.theme-switcher {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.theme-switcher a {
+  padding: 1px 8px;
+  background: #0000a8;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.theme-switcher a.is-current {
+  background: #00a800;
+  color: #000;
+}
+
+/* ---------- 首页 ---------- */
+
+[data-theme='tui'] .hero {
+  background: #0000a8;
+  box-shadow: 6px 6px #000;
+  padding: 24px 20px;
+  margin-top: 8vh;
+}
+
+[data-theme='tui'] .hero h1 {
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 22px;
+  color: #ffff55;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+[data-theme='tui'] .hero p {
+  font-family: var(--tui-cjk);
+  font-size: 13px;
+  color: #dedede;
+}
+
+[data-theme='tui'] .hero input {
+  font-family: var(--tui-cjk);
+  background: #000080;
+  border: 2px solid #a8a8a8;
+  color: #fff;
+  border-radius: 0;
+  padding: 6px 8px;
+}
+
+[data-theme='tui'] .hero button {
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 14px;
+  padding: 6px 14px;
+  background: #00a800;
+  color: #000;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 4px 4px #000;
+}
+
+[data-theme='tui'] .hero button:hover {
+  filter: none;
+  background: #00d000;
+}

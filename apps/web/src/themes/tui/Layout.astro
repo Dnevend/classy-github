@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import ShareCard from '../_shared/ShareCard.astro';
+import type { ThemeLayoutProps } from '../types';
+
+import vendorCss from './vendor/tuicss.min.css?url';
+import themeCss from './theme.css?url';
+
+const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+
+const shareUrl = seo.canonical ?? Astro.url.href;
+---
+
+<Base {seo} {theme}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={vendorCss} />
+    <link rel="stylesheet" href={themeCss} />
+  </Fragment>
+
+  <div class="tui-screen">
+    <header class="tui-bar">
+      <a class="tui-logo" href="/">CLASSYGIT</a>
+
+      {
+        userinfo && (
+          <nav class="tui-nav">
+            <a href={`/${user}`}>[主页]</a>
+            <a href={`/${user}/repos`}>[REPOS]</a>
+            <a href={`/${user}/gists`}>[GISTS]</a>
+          </nav>
+        )
+      }
+
+      {brand && <span class="tui-brand">{brand}</span>}
+    </header>
+
+    <main class="tui-main">
+      <slot />
+    </main>
+
+    <footer class="tui-footer">
+      {
+        config.links.length > 0 && (
+          <nav class="tui-links">
+            {config.links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.title} ↗
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <div class="tui-footer__row">
+        <span>F1=HELP  F10=MENU  © CLASSYGIT</span>
+        {userinfo && (
+          <ShareCard
+            user={userinfo.login}
+            brand={brand ?? userinfo.login}
+            avatar={userinfo.avatar_url}
+            url={shareUrl}
+            theme={theme}
+          />
+        )}
+        <ThemeSwitcher current={theme} />
+      </div>
+    </footer>
+  </div>
+</Base>

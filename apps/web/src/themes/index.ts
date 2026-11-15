@@ -13,6 +13,7 @@ const registry: Partial<Record<ThemeName, () => Promise<ThemeComponents>>> = {
   nes: () => import('./nes'),
   win95: () => import('./win95'),
   mac: () => import('./mac'),
+  tui: () => import('./tui'),
 };
 
 export const availableThemes = Object.keys(registry) as ThemeName[];

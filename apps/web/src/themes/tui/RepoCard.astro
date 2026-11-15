@@ -1,0 +1,22 @@
+---
+import type { ThemeRepoCardProps } from '../types';
+
+const { repo, href } = Astro.props as ThemeRepoCardProps;
+---
+
+<li class="tui-repo">
+  <div class="tui-panel tui-box">
+    <div class="tui-box__head">{repo.name}</div>
+
+    <div class="tui-box__body">
+      {repo.description && <p class="tui-repo__desc">{repo.description}</p>}
+
+      <p class="tui-repo__meta">
+        STARS {repo.stargazers_count} · FORKS {repo.forks_count}
+        {repo.language && <> · {repo.language}</>}
+      </p>
+
+      <a class="tui-button" {href}>OPEN</a>
+    </div>
+  </div>
+</li>

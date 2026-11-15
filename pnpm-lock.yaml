@@ -49,6 +49,9 @@ importers:
       shiki:
         specifier: ^4.6.0
         version: 4.6.0
+      tuicss:
+        specifier: ^2.1.2
+        version: 2.1.2
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -1856,6 +1859,9 @@ packages:
 
   tslib@2.9.1:
     resolution: {integrity: sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA==}
+
+  tuicss@2.1.2:
+    resolution: {integrity: sha512-bqsV0FPyargcF3s5wXAyFaZsQPf9a1jLeHqSURohQMXS06PkTfIuZwILE5bFoZouLhPjvhvNQanHaqMBU4/amA==}
 
   typesafe-path@0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
@@ -4194,6 +4200,8 @@ snapshots:
   trough@2.2.0: {}
 
   tslib@2.9.1: {}
+
+  tuicss@2.1.2: {}
 
   typesafe-path@0.2.2: {}
 

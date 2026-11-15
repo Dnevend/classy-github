@@ -3,30 +3,21 @@ import { listIndexableUsers, usersKv } from '../lib/users-kv';
 
 export const prerender = false;
 
-const SITE = 'https://classy-web.dnevend.workers.dev';
+/** 每个分片最多 5000 条（sitemap 协议上限是 5 万条/文件，这里留足余量） */
+export const PAGE_SIZE = 5000;
 
 export const GET: APIRoute = async ({ url }) => {
-  const origin = url.origin || SITE;
+  const origin = url.origin;
   const users = await listIndexableUsers(usersKv());
 
-  const urls = [
-    { loc: `${origin}/`, changefreq: 'weekly', priority: '1.0' },
-    ...users.map((login) => ({
-      loc: `${origin}/${login}`,
-      changefreq: 'daily' as const,
-      priority: '0.6',
-    })),
-  ];
+  // 首页 + 用户页，第一页固定给首页
+  const total = 1 + users.length;
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-  .map(
-    (entry) =>
-      `  <url><loc>${entry.loc}</loc><changefreq>${entry.changefreq}</changefreq><priority>${entry.priority}</priority></url>`
-  )
-  .join('\n')}
-</urlset>`;
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${Array.from({ length: pages }, (_, index) => `  <sitemap><loc>${origin}/sitemap/${index + 1}.xml</loc></sitemap>`).join('\n')}
+</sitemapindex>`;
 
   return new Response(body, {
     headers: {

@@ -25,6 +25,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "shiki": "^4.6.0",
+    "tuicss": "^2.1.2",
     "unified": "^11.0.5",
     "zod": "^4.6.7"
   },

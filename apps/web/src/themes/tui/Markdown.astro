@@ -1,0 +1,12 @@
+---
+import type { ThemeMarkdownProps } from '../types';
+
+const { html } = Astro.props as ThemeMarkdownProps;
+---
+
+<div class="tui-panel tui-box tui-readme">
+  <div class="tui-box__head">README.TXT</div>
+  <div class="tui-box__body">
+    <div class="prose" set:html={html} />
+  </div>
+</div>

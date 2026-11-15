@@ -1,0 +1,151 @@
+---
+import type { ThemeName } from '../../lib/config';
+
+interface Props {
+  user: string;
+  brand: string;
+  avatar: string;
+  url: string;
+  theme: ThemeName;
+}
+
+const { user, brand, avatar, url, theme } = Astro.props as Props;
+
+const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<div class="share-card" data-share>
+  <button class="share-card__trigger" type="button" aria-expanded="false" data-share-toggle>
+    分享
+  </button>
+
+  <div class="share-card__panel" role="dialog" aria-label="分享卡片" data-share-panel>
+    <div class="share-card__preview" data-share-preview>
+      <img
+        class="share-card__avatar"
+        src={avatar}
+        alt=""
+        width="120"
+        height="120"
+        crossorigin="anonymous"
+        data-share-avatar
+      />
+      <div class="share-card__text">
+        <strong class="share-card__name">{brand}</strong>
+        <span class="share-card__handle">@{user}</span>
+      </div>
+      <span class="share-card__site">ClassyGit</span>
+      <span class="share-card__url">{host}</span>
+    </div>
+
+    <div class="share-card__actions">
+      <button type="button" data-share-save>保存图片</button>
+      <button type="button" data-share-copy>复制链接</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-share]');
+    if (!root) return;
+
+    const toggle = root.querySelector('[data-share-toggle]');
+    const panel = root.querySelector('[data-share-panel]');
+    const saveBtn = root.querySelector('[data-share-save]');
+    const copyBtn = root.querySelector('[data-share-copy]');
+
+    const open = (state) => {
+      if (!panel || !toggle) return;
+      toggle.setAttribute('aria-expanded', String(state));
+      if (state) root.setAttribute('data-open', '');
+      else root.removeAttribute('data-open');
+    };
+
+    toggle?.addEventListener('click', () => open(!root.hasAttribute('data-open')));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') open(false);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!root.contains(event.target)) open(false);
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        copyBtn.textContent = '已复制';
+        setTimeout(() => (copyBtn.textContent = '复制链接'), 1500);
+      } catch {
+        copyBtn.textContent = '复制失败';
+      }
+    });
+
+    saveBtn?.addEventListener('click', async () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 630;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const styles = getComputedStyle(document.documentElement);
+      const bg = styles.getPropertyValue('--bg').trim() || '#0b0b0f';
+      const fg = styles.getPropertyValue('--fg').trim() || '#ffffff';
+      const muted = styles.getPropertyValue('--fg-muted').trim() || '#9ca3af';
+      const accent = styles.getPropertyValue('--accent').trim() || '#2563eb';
+
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, 1200, 630);
+
+      // 顶部装饰条
+      ctx.fillStyle = accent;
+      ctx.fillRect(0, 0, 1200, 12);
+
+      await document.fonts.ready.catch(() => {});
+      const family = getComputedStyle(document.body).fontFamily || 'sans-serif';
+
+      // 头像
+      const avatar = root.querySelector('[data-share-avatar]');
+      if (avatar && avatar.complete && avatar.naturalWidth) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(180, 300, 90, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(avatar, 90, 210, 180, 180);
+        ctx.restore();
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(180, 300, 92, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = fg;
+      ctx.font = `bold 64px ${family}`;
+      ctx.fillText(brand, 320, 268, 780);
+
+      ctx.fillStyle = muted;
+      ctx.font = `32px ${family}`;
+      ctx.fillText(`@${user}`, 320, 330);
+
+      ctx.fillStyle = fg;
+      ctx.font = `28px ${family}`;
+      ctx.fillText(host, 320, 420, 780);
+
+      ctx.fillStyle = accent;
+      ctx.font = `bold 30px ${family}`;
+      ctx.fillText('ClassyGit', 90, 560);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement('a');
+        link.download = `classy-${user}.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 2000);
+      }, 'image/png');
+    });
+  })();
+</script>

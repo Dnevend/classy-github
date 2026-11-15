@@ -10,7 +10,7 @@ import { isThemeName } from './theme.ts';
  * 3. **不信任外部输入** —— href 只放行 http(s)，未知字段直接丢弃。
  */
 
-export type ThemeName = 'default' | 'nes' | 'mac' | 'win95';
+export type ThemeName = 'default' | 'nes' | 'mac' | 'win95' | 'tui';
 
 export interface ResolvedConfig {
   theme: ThemeName;

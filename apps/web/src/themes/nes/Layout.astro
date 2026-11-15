@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import ShareCard from '../_shared/ShareCard.astro';
 import type { ThemeLayoutProps } from '../types';
 
 // 主题 CSS 用 ?url 显式引用：Layout 是被动态 import 的，
@@ -9,6 +10,8 @@ import nesCss from 'nes.css/css/nes.min.css?url';
 import themeCss from './theme.css?url';
 
 const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+
+const shareUrl = seo.canonical ?? Astro.url.href;
 ---
 
 <Base {seo} {theme}>
@@ -63,6 +66,15 @@ const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayout
       }
       <div class="nes-footer__row">
         <span>POWERED BY CLASSYGIT</span>
+        {userinfo && (
+          <ShareCard
+            user={userinfo.login}
+            brand={brand ?? userinfo.login}
+            avatar={userinfo.avatar_url}
+            url={shareUrl}
+            theme={theme}
+          />
+        )}
         <ThemeSwitcher current={theme} />
       </div>
     </div>

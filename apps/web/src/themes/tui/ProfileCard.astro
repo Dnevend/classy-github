@@ -1,0 +1,45 @@
+---
+import type { ThemeProfileCardProps } from '../types';
+
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+---
+
+<aside class="tui-aside">
+  <div class="tui-panel tui-box">
+    <div class="tui-box__head">USER INFO</div>
+
+    <div class="tui-box__body">
+      <div class="tui-profile">
+        <img
+          class="tui-avatar"
+          src={userinfo.avatar_url}
+          alt={`${userinfo.login} 的头像`}
+          width="64"
+          height="64"
+          loading="lazy"
+        />
+        <div>
+          <p class="tui-name">{userinfo.name || userinfo.login}</p>
+          <p class="tui-handle">@{userinfo.login}</p>
+        </div>
+      </div>
+
+      {userinfo.bio && <p class="tui-bio">{userinfo.bio}</p>}
+
+      <ul class="tui-stats">
+        <li><span>FOLLOWERS</span><b>{userinfo.followers}</b></li>
+        <li><span>FOLLOWING</span><b>{userinfo.following}</b></li>
+        <li><span>REPOS</span><b>{userinfo.public_repos}</b></li>
+        <li><span>GISTS</span><b>{userinfo.public_gists}</b></li>
+      </ul>
+
+      <div class="tui-actions">
+        <a class="tui-button" href={links.repos}>Repos</a>
+        <a class="tui-button" href={links.gists}>Gists</a>
+        <a class="tui-button" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>

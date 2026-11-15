@@ -10,8 +10,9 @@
 
 ## 特性
 
-- **四套主题**：`default` / `nes`（8-bit 像素）/ `win95` / `mac`（System 6）。
+- **五套主题**：`default` / `nes`（8-bit 像素）/ `win95` / `mac`（System 6）/ `tui`（DOS 字符界面）。
   主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
+- **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图。
 - **服务端渲染**：HTML 直出，标题、OG、JSON-LD 都在首屏里，分享卡片和搜索收录都正常。
 - **边缘缓存**：Workers Cache API 分级缓存（主页 5 分钟 / 文章 1 小时），冷启动 < 2s，命中 ~0.3s。
 - **Gist 当 CMS**：Gist 描述写 `classy.<分类>.<标题>`，自动变成分类和标题。
@@ -78,8 +79,9 @@ pnpm dev            # http://localhost:4321
 | `nes` | ![nes](./assets/nes-theme.png) | NES.css + 缝合像素字体（中英统一像素字形） |
 | `win95` | ![win95](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
 | `mac` | ![mac](./assets/mac-theme.png) | 手写 System 6：条纹标题栏、1px 硬阴影 |
+| `tui` | — | TuiCss：DOS 蓝屏、灰色标题条、绿色按钮 |
 
-切换方式：任意页面页脚的 `DEFAULT / NES / WIN95 / MAC`，或直接加 `?theme=nes`。
+切换方式：任意页面页脚的 `DEFAULT / NES / WIN95 / MAC / TUI`，或直接加 `?theme=nes`。
 每套主题的 CSS 独立打包，访问 `default` 的访客不会下载 NES 那 279KB。
 
 ## 部署
@@ -122,3 +124,4 @@ specs/                重构计划与每个阶段的实现记录
 - **Press Start 2P**（OFL-1.1）— `public/fonts/press-start-2p.woff2`
 - **98.css**（MIT）— `apps/web/src/themes/win95/vendor/98.css`
 - **NES.css**（MIT）— npm 依赖
+- **TuiCss**（MIT）— `apps/web/src/themes/tui/vendor/`，字体 Perfect DOS VGA 437 自托管

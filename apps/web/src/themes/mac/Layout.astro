@@ -1,11 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import ShareCard from '../_shared/ShareCard.astro';
 import type { ThemeLayoutProps } from '../types';
 
 import themeCss from './theme.css?url';
 
 const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+
+const shareUrl = seo.canonical ?? Astro.url.href;
 ---
 
 <Base {seo} {theme}>
@@ -49,6 +52,15 @@ const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayout
       }
       <div class="mac-footer__row">
         <span>Powered by ClassyGit · 1984</span>
+        {userinfo && (
+          <ShareCard
+            user={userinfo.login}
+            brand={brand ?? userinfo.login}
+            avatar={userinfo.avatar_url}
+            url={shareUrl}
+            theme={theme}
+          />
+        )}
         <ThemeSwitcher current={theme} />
       </div>
     </footer>
