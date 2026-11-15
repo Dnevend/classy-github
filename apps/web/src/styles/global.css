@@ -894,10 +894,24 @@ img {
   color: var(--accent);
 }
 
-/* 搜索框靠右 */
+/* 搜索框靠右，与标题同一行 */
+.list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.list-head .page-title {
+  margin-bottom: 0;
+}
+
 .list-search {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 0;
 }
 
 /* 资料卡 + 贡献墙容器 */

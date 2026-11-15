@@ -511,3 +511,16 @@
   height: auto;
   align-self: start;
 }
+
+[data-theme='tui'] .contrib {
+  background: #0000a8;
+  padding: 12px;
+  box-shadow: 6px 6px #000;
+  border: 1px solid #a8a8a8;
+}
+
+@keyframes tui-blink { 50% { opacity: 0.3; } }
+[data-theme='tui'] .contrib-wall__skeleton {
+  background: repeating-linear-gradient(90deg, #55ff55 0 6px, transparent 6px 12px);
+  animation: tui-blink 0.7s steps(2, end) infinite;
+}

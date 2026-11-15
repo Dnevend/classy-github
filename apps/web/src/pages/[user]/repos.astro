@@ -74,16 +74,18 @@ const hasPrev = page > 1;
       <NotFound user={user} />
     ) : (
       <>
-        <h1 class="page-title">
-          {t('repos.title', { name: display })}
-          <span class="page-title__count">{data.userinfo.public_repos}</span>
-        </h1>
+        <div class="list-head">
+          <h1 class="page-title">
+            {t('repos.title', { name: display })}
+            <span class="page-title__count">{data.userinfo.public_repos}</span>
+          </h1>
+          <ListSearch target="#repo-list" />
+        </div>
 
         {data.repos.length === 0 ? (
           <p class="bio">{t('repos.empty')}</p>
         ) : (
           <>
-            <ListSearch target="#repo-list" />
             <ul class="repo-grid" id="repo-list">
               {data.repos.map((repo) => (
                 <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />

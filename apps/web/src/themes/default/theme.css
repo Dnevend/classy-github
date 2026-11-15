@@ -387,3 +387,17 @@
     animation: classy-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
   }
 }
+
+[data-theme='default'] .contrib {
+  background: var(--bg-elevated);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px -12px rgb(0 0 0 / 12%);
+}
+
+[data-theme='default'] .contrib-wall__skeleton {
+  background: linear-gradient(90deg, var(--bg-subtle), var(--border), var(--bg-subtle));
+  background-size: 200% 100%;
+  animation: contrib-shimmer 1.2s linear infinite;
+}

@@ -460,3 +460,15 @@
   height: auto;
   align-self: start;
 }
+
+[data-theme='nes'] .contrib {
+  background: #212529;
+  border: 4px dashed #6c757d;
+  padding: 12px;
+}
+
+@keyframes nes-blink { 50% { opacity: 0.35; } }
+[data-theme='nes'] .contrib-wall__skeleton {
+  background: repeating-linear-gradient(90deg, #3d6b2f 0 8px, #2b3035 8px 16px);
+  animation: nes-blink 0.8s steps(2, end) infinite;
+}

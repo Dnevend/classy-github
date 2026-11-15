@@ -72,16 +72,18 @@ const parseDescription = createGistDescriptionParser({
       <NotFound user={user} />
     ) : (
       <>
-        <h1 class="page-title">
-          {t('gists.title', { name: display })}
-          <span class="page-title__count">{gists.length}</span>
-        </h1>
+        <div class="list-head">
+          <h1 class="page-title">
+            {t('gists.title', { name: display })}
+            <span class="page-title__count">{gists.length}</span>
+          </h1>
+          <ListSearch target="#gist-list" />
+        </div>
 
         {gists.length === 0 ? (
           <p class="bio">{t('gists.empty')}</p>
         ) : (
           <>
-            <ListSearch target="#gist-list" />
             <ul class="gist-list" id="gist-list">
             {gists.map((gist) => {
               const parsed = parseDescription(gist.description);

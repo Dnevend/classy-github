@@ -472,11 +472,22 @@
   box-sizing: border-box;
   background: var(--w95-gray);
   color: #000;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
+  border: 0;
   border-radius: 0;
+  /* 98.css 用 box-shadow 做立体感；<a> 不会被它命中，这里显式补齐 */
+  box-shadow:
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #fff,
+    inset -2px -2px grey,
+    inset 2px 2px #dfdfdf;
+}
+
+[data-theme='win98'] .share-card__action:active {
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #0a0a0a,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px grey;
 }
 
 [data-theme='win98'] .share-card__action:hover {
@@ -499,4 +510,23 @@
 .w95-aside .window {
   height: auto;
   align-self: start;
+}
+
+[data-theme='win98'] .contrib {
+  background: var(--w95-gray);
+  padding: 12px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+@keyframes w98-progress {
+  0% { background-position: 0 0; }
+  100% { background-position: 36px 0; }
+}
+[data-theme='win98'] .contrib-wall__skeleton {
+  background: repeating-linear-gradient(90deg, #000080 0 18px, #c0c0c0 18px 36px);
+  border: 2px inset #dfdfdf;
+  animation: w98-progress 0.9s steps(2, end) infinite;
 }
