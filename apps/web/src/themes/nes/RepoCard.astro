@@ -1,0 +1,22 @@
+---
+import type { ThemeRepoCardProps } from '../types';
+
+const { repo, href } = Astro.props as ThemeRepoCardProps;
+---
+
+<li class="nes-repo">
+  <section class="nes-container with-title is-rounded is-dark">
+    <p class="title nes-repo__name">{repo.name}</p>
+
+    {repo.description && <p class="nes-repo__desc">{repo.description}</p>}
+
+    <p class="nes-repo__meta">
+      ★ {repo.stargazers_count}
+      <span class="nes-sep">/</span>
+      ⑂ {repo.forks_count}
+      {repo.language && <><span class="nes-sep">/</span>{repo.language}</>}
+    </p>
+
+    <a class="nes-btn is-primary is-small" {href}>OPEN</a>
+  </section>
+</li>

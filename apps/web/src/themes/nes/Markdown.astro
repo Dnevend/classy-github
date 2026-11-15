@@ -1,0 +1,10 @@
+---
+import type { ThemeMarkdownProps } from '../types';
+
+// html 已由 lib/markdown.ts 处理过（sanitize + shiki）
+const { html } = Astro.props as ThemeMarkdownProps;
+---
+
+<section class="nes-container is-rounded is-dark nes-prose">
+  <div class="prose" set:html={html} />
+</section>

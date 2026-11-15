@@ -1,0 +1,43 @@
+---
+import type { ThemeProfileCardProps } from '../types';
+
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+---
+
+<aside class="nes-aside">
+  <section class="nes-container with-title is-rounded is-dark">
+    <p class="title">PLAYER</p>
+
+    <div class="nes-profile">
+      <img
+        class="nes-avatar"
+        src={userinfo.avatar_url}
+        alt={`${userinfo.login} 的头像`}
+        width="64"
+        height="64"
+        loading="lazy"
+      />
+      <div>
+        <p class="nes-name">{userinfo.name || userinfo.login}</p>
+        <p class="nes-handle">@{userinfo.login}</p>
+      </div>
+    </div>
+
+    {userinfo.bio && <p class="nes-bio">{userinfo.bio}</p>}
+
+    <ul class="nes-stats">
+      <li><span>{userinfo.followers}</span> FOLLOWERS</li>
+      <li><span>{userinfo.following}</span> FOLLOWING</li>
+      <li><span>{userinfo.public_repos}</span> REPOS</li>
+      <li><span>{userinfo.public_gists}</span> GISTS</li>
+    </ul>
+
+    <div class="nes-actions">
+      <a class="nes-btn is-success" href={links.repos}>REPOS</a>
+      <a class="nes-btn is-warning" href={links.gists}>GISTS</a>
+      <a class="nes-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
+        GITHUB
+      </a>
+    </div>
+  </section>
+</aside>

@@ -1,0 +1,393 @@
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/press-start-2p.woff2') format('woff2');
+}
+
+/* NES 主题。只在 ?theme=nes 的页面里加载。
+   nes.css 自带 .nes-container / .nes-btn / .nes-icon 等组件样式；
+   这里只补三件事：设计变量、布局、以及「像素字体没有中文字形」的兜底。 */
+
+:root[data-theme='nes'] {
+  /* 用 :root[data-theme] 而不是 [data-theme]：
+     global.css 里的 :root 变量是内联 <style>，在 Theme CSS 之后注入，
+     同等特异性下会盖掉这里的覆盖。加上 :root 提高一级特异性。 */
+  --bg: #212529;
+  --bg-subtle: #2b3035;
+  --bg-elevated: #212529;
+  --fg: #f8f9fa;
+  --fg-muted: #adb5bd;
+  --border: #6c757d;
+  --accent: #92cc41;
+  --radius: 0px;
+
+  /* Press Start 2P 只有拉丁字形，中文必须显式回退到系统字体 */
+  --nes-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+    sans-serif;
+
+  color-scheme: dark;
+}
+
+[data-theme='nes'] body {
+  background: #212529;
+  color: var(--fg);
+  font-family: 'Press Start 2P', var(--nes-cjk);
+  font-size: 11px;
+  line-height: 2;
+}
+
+/* 注意不要写 `[data-theme='nes'] a { color: inherit }`：
+   它的特异性(0,1,1)会盖掉 nes.css 的 .nes-btn（白底黑字），
+   按钮里的文字会变成白底白字。只给正文链接上色。 */
+[data-theme='nes'] .prose a,
+[data-theme='nes'] .nes-links a {
+  color: var(--accent);
+}
+
+.nes-wrap {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+/* ---------- header / footer ---------- */
+
+.nes-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #212529;
+  border-bottom: 4px solid #495057;
+}
+
+.nes-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  flex-wrap: wrap;
+}
+
+.nes-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fg);
+}
+
+.nes-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nes-nav .nes-btn {
+  padding: 6px 10px;
+  font-size: 9px;
+}
+
+.nes-brand {
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 10px;
+}
+
+.nes-main {
+  padding-block: 24px;
+}
+
+.nes-footer {
+  margin-top: 32px;
+  border-top: 4px solid #495057;
+  padding-block: 16px;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.nes-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.nes-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ---------- 布局 ---------- */
+
+[data-theme='nes'] .profile {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  [data-theme='nes'] .profile {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+  }
+
+  .nes-aside {
+    position: sticky;
+    top: 88px;
+    order: 2;
+  }
+}
+
+/* 标题里中英混排：像素字体没有中文字形，回退后字号观感差异很大，
+   所以标题整体走可读的中文字体，像素字体留给导航/按钮/徽标。 */
+[data-theme='nes'] .page-title {
+  font-family: var(--nes-cjk);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  margin: 8px 0 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+[data-theme='nes'] .page-title__count {
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+[data-theme='nes'] .section {
+  margin-top: 28px;
+}
+
+[data-theme='nes'] .section__title {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+
+/* ---------- 资料卡 ---------- */
+
+.nes-profile {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.nes-avatar {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  border: 3px solid #495057;
+}
+
+.nes-name {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fg);
+}
+
+.nes-handle {
+  margin: 4px 0 0;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.nes-bio {
+  font-family: var(--nes-cjk);
+  font-size: 12px;
+  line-height: 1.7;
+  color: #ced4da;
+  margin: 0 0 12px;
+}
+
+.nes-stats {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.nes-stats span {
+  color: var(--accent);
+}
+
+.nes-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nes-actions .nes-btn {
+  padding: 6px 8px;
+  font-size: 8px;
+}
+
+/* ---------- 仓库卡 ---------- */
+
+[data-theme='nes'] .repo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.nes-repo .nes-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 28px;
+}
+
+.nes-repo__name {
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.nes-repo__desc {
+  font-family: var(--nes-cjk);
+  font-size: 12px;
+  line-height: 1.7;
+  color: #ced4da;
+  margin: 0;
+  flex: 1;
+}
+
+.nes-repo__meta {
+  margin: 0;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.nes-sep {
+  margin-inline: 6px;
+  color: #495057;
+}
+
+.nes-repo .nes-btn {
+  align-self: flex-start;
+  padding: 6px 10px;
+  font-size: 9px;
+}
+
+/* ---------- Gist 列表 ---------- */
+
+[data-theme='nes'] .gist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nes-gist a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 6px;
+  border-bottom: 3px dashed #495057;
+  color: var(--fg);
+}
+
+.nes-gist__title {
+  font-size: 10px;
+  font-family: var(--nes-cjk);
+}
+
+.nes-gist__meta {
+  flex-shrink: 0;
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.nes-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-right: 8px;
+  background: var(--accent);
+  color: #212529;
+  font-size: 8px;
+}
+
+/* ---------- 正文 ---------- */
+
+.nes-prose .prose {
+  font-family: var(--nes-cjk);
+  font-size: 14px;
+  line-height: 1.85;
+  color: #dee2e6;
+}
+
+.nes-prose .prose h1,
+.nes-prose .prose h2,
+.nes-prose .prose h3 {
+  font-family: var(--nes-cjk);
+  color: var(--fg);
+}
+
+.nes-prose .prose a {
+  color: var(--accent);
+}
+
+[data-theme='nes'] .repo-detail .bio {
+  font-family: var(--nes-cjk);
+  font-size: 12px;
+  color: #ced4da;
+}
+
+[data-theme='nes'] .repo-card__meta {
+  display: flex;
+  gap: 12px;
+  font-size: 9px;
+  color: var(--fg-muted);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+[data-theme='nes'] .tag {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  padding: 2px 6px;
+  font-size: 8px;
+}
+
+/* ---------- 主题切换 ---------- */
+
+.theme-switcher {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-switcher a {
+  padding: 5px 9px;
+  border: 3px solid #6c757d;
+  color: var(--fg-muted);
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.theme-switcher a.is-current {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #212529;
+}

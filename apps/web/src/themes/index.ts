@@ -10,6 +10,7 @@ import type { ThemeComponents } from './types';
  */
 const registry: Partial<Record<ThemeName, () => Promise<ThemeComponents>>> = {
   default: () => import('./default'),
+  nes: () => import('./nes'),
 };
 
 export const availableThemes = Object.keys(registry) as ThemeName[];

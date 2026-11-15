@@ -20,6 +20,7 @@ const { seo, theme = 'default' } = Astro.props as Props;
     <link rel="icon" type="image/svg+xml" href="/github.svg" />
     <link rel="preconnect" href="https://avatars.githubusercontent.com" />
     <Seo {...seo} />
+    <slot name="head" />
   </head>
 
   <body>

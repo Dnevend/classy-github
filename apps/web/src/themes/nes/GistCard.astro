@@ -1,0 +1,15 @@
+---
+import type { ThemeGistCardProps } from '../types';
+
+const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+---
+
+<li class="nes-gist">
+  <a href={href}>
+    <span class="nes-gist__title">{title}</span>
+    <span class="nes-gist__meta">
+      {type && <span class="nes-tag">{type}</span>}
+      {Object.keys(gist.files).length}F · {gist.created_at.slice(0, 10)}
+    </span>
+  </a>
+</li>

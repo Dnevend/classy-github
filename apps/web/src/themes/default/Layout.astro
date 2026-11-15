@@ -1,12 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
+import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
 import type { ThemeLayoutProps } from '../types';
-import './theme.css';
+
+// 动态 import 的模块里直接 import CSS 不会被 Astro 收集，用 ?url 显式注入
+import themeCss from './theme.css?url';
 
 const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
 ---
 
 <Base {seo} {theme}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={themeCss} />
+  </Fragment>
+
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="brand" href="/">
@@ -50,6 +57,7 @@ const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayout
       <span>
         Powered by <a href="https://github.com/Dnevend/classy-github">ClassyGit</a>
       </span>
+      <ThemeSwitcher current={theme} />
     </div>
   </footer>
 </Base>

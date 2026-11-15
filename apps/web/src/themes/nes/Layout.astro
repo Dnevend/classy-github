@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
+import type { ThemeLayoutProps } from '../types';
+
+// 主题 CSS 用 ?url 显式引用：Layout 是被动态 import 的，
+// 直接 `import './theme.css'` 的话 Astro 收集不到，页面会没有样式。
+import nesCss from 'nes.css/css/nes.min.css?url';
+import themeCss from './theme.css?url';
+
+const { user, userinfo, config, theme, seo, brand } = Astro.props as ThemeLayoutProps;
+---
+
+<Base {seo} {theme}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={nesCss} />
+    <link rel="stylesheet" href={themeCss} />
+  </Fragment>
+
+  <header class="nes-header">
+    <div class="nes-wrap nes-header__inner">
+      <a class="nes-title" href="/">
+        <i class="nes-icon is-small star" aria-hidden="true"></i>
+        ClassyGit
+      </a>
+
+      {
+        userinfo && (
+          <nav class="nes-nav">
+            <a class="nes-btn is-primary" href={`/${user}`}>
+              主页
+            </a>
+            <a class="nes-btn" href={`/${user}/repos`}>
+              REPOS
+            </a>
+            <a class="nes-btn" href={`/${user}/gists`}>
+              GISTS
+            </a>
+          </nav>
+        )
+      }
+
+      {brand && <span class="nes-brand">{brand}</span>}
+    </div>
+  </header>
+
+  <main class="nes-wrap nes-main">
+    <slot />
+  </main>
+
+  <footer class="nes-footer">
+    <div class="nes-wrap">
+      {
+        config.links.length > 0 && (
+          <nav class="nes-links">
+            {config.links.map((link) => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                {link.title} ↗
+              </a>
+            ))}
+          </nav>
+        )
+      }
+      <div class="nes-footer__row">
+        <span>POWERED BY CLASSYGIT</span>
+        <ThemeSwitcher current={theme} />
+      </div>
+    </div>
+  </footer>
+</Base>

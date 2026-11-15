@@ -1,0 +1,32 @@
+---
+import { availableThemes } from '../../themes';
+
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props as Props;
+
+// 切换主题 = 一次导航。四套主题的 DOM 结构不同，浏览器端换 class 做不到。
+const hrefFor = (theme: string) => {
+  const url = new URL(Astro.url);
+  url.searchParams.set('theme', theme);
+  return `${url.pathname}${url.search}`;
+};
+---
+
+{
+  availableThemes.length > 1 && (
+    <nav class="theme-switcher" aria-label="切换主题">
+      {availableThemes.map((theme) => (
+        <a
+          href={hrefFor(theme)}
+          class:list={{ 'is-current': theme === current }}
+          aria-current={theme === current ? 'true' : undefined}
+        >
+          {theme}
+        </a>
+      ))}
+    </nav>
+  )
+}

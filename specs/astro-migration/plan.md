@@ -291,12 +291,16 @@ Base 退回纯壳、default 迁入契约、主题 CSS/JS 独立成块、缓存�
 验收已达成：`?theme=default` 与无参数 canonical 一致；`default.css` / `default_*.mjs`
 各自独立 chunk。
 
-### M3 · NES 主题（1–2 天）
+### M3 · NES 主题（已完成 2026-11-15）
 
-范围：`themes/nes/**`。契约的第一次实战。
-验收：`?theme=nes` 下主页/仓库/Gist 三页可用；不加载任何 `default` 主题的 CSS。
+范围：`themes/nes/**`、`_shared/ThemeSwitcher.astro`、字体自托管。
+结果与三个坑见 `m3-nes.md`。
 
-**卡点**：如果 NES 逼出契约改动（大概率会，比如需要「容器」槽位），此时改只影响 2 套；等 4 套都写完再改就是 4 倍返工。
+验收达成：5 条路由在 `?theme=nes` 下全部 200；default 页面只加载 3.5KB 自己的 CSS，
+NES 页面加载 279KB nes.css + 4.7KB 主题样式 —— 分包是真的成立。
+
+**契约是否被逼改**：没有。五个槽位够用，只在实现上补了两处基础设施：
+`Base` 开放 `head` 插槽（主题自注入样式表），以及主题变量必须用 `:root[data-theme=x]` 提权。
 
 ### M4 · Mac + Win95（4–5 天）
 
