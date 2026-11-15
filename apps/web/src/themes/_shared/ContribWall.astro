@@ -17,6 +17,9 @@ const { user, theme } = Astro.props as Props;
     const theme = wall.dataset.contribTheme ?? 'mac';
     if (!user) return;
 
+    // 骨架屏至少展示 700ms，避免一闪而过
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 700));
+
     try {
       const res = await fetch(`/contrib/${encodeURIComponent(user)}.json?theme=${theme}`);
       if (!res.ok) throw new Error(String(res.status));
@@ -27,6 +30,7 @@ const { user, theme } = Astro.props as Props;
         max: number;
       };
 
+      await minDelay;
       if (!weeks?.length) throw new Error('empty');
 
       const level = (count: number) => {
@@ -36,8 +40,9 @@ const { user, theme } = Astro.props as Props;
       };
 
       const cells: string[] = [];
-      // 按列（周）优先排列，7 行
-      weeks.forEach((week) => {
+      // 只展示最近 26 周（半年），格子更大更接近 GitHub 观感
+      const recentWeeks = weeks.slice(-26);
+      recentWeeks.forEach((week) => {
         week.forEach((count) => {
           cells.push(`<i class="contrib-wall__cell" style="background:${palette[level(count)]}" title="${count}"></i>`);
         });

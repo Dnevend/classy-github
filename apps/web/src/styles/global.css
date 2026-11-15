@@ -430,10 +430,18 @@ img {
   }
 }
 
-/* 移动端：资料卡放在内容最上面 */
+/* 移动端：资料卡（含贡献墙）放在内容最上面 */
 @media (max-width: 899px) {
   .profile > aside {
     order: -1;
+  }
+
+  .profile__aside-wrap {
+    order: -1;
+  }
+
+  .profile__main {
+    order: 2;
   }
 }
 
@@ -804,8 +812,8 @@ img {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(7, 1fr);
-  grid-auto-columns: minmax(3px, 1fr);
-  gap: 2px;
+  grid-auto-columns: minmax(6px, 1fr);
+  gap: 4px;
   width: 100%;
   overflow: hidden;
   max-width: 100%;
@@ -919,6 +927,18 @@ img {
   display: grid;
   gap: 16px;
   align-content: start;
+}
+
+/* 资料卡 + 贡献卡整体固定在右侧，不随页面滚动 */
+@media (min-width: 900px) {
+  .profile__aside-wrap {
+    position: sticky;
+    top: 84px;
+    align-self: start;
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 /* 首页 Fork 间距 */
