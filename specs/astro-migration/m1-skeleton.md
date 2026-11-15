@@ -136,7 +136,7 @@ Worker Startup Time: 9 ms
    部署时会要求先建 KV / 开通 Images。M1 用不到，已在 `astro.config.mjs` 里
    `session: false` + `imageService: 'passthrough'` 关掉，生成的配置里 `kv_namespaces` 为空。
 
-首次观测（未配 token，匿名配额）：
+### 配 token 前（匿名配额）
 
 ```
 /                   200  0.75s
@@ -146,7 +146,24 @@ Worker Startup Time: 9 ms
 /zzz-not-exist      404
 ```
 
-结论：边缘缓存在线上生效；**必须配 GITHUB_TOKEN**，否则部分页面会随机 503。
+### 配 token 后（`wrangler secret put GITHUB_TOKEN`）
+
+```
+wrangler secret list → [{ name: "GITHUB_TOKEN", type: "secret_text" }]
+
+/Dnevend                 200  0.30s  HIT   title/OG/JSON-LD 齐全，6 个仓库卡，README 渲染
+/Dnevend/repos           200  0.25s  HIT   47 个仓库链接
+/Dnevend/gists           200  0.38s  HIT   9 条 Gist，标题已剥离前缀（axios / EIP / Uniswap）
+/Dnevend/gist/<id>       200  0.95s  HIT   s-maxage=3600，1 个 shiki 代码块
+/Dnevend/repo/classy-github 200 1.64s      2 个 shiki 代码块，README prose
+/zzz-not-exist-9x8f      404
+
+冷启动用户（连打 6 个账号 × 2 次，共 12 次）：
+  首次渲染 1.45–2.28s，命中缓存 0.30–1.04s，无一例 503  ← token 生效
+```
+
+结论：边缘缓存在线上生效；token 配好后不再出现 503。冷渲染 1.5–2.3s 是当前的主要体感问题，
+M5 可以考虑：热门用户预热、或把 `getUser` 与 `listRepos` 的串行依赖拆掉。
 
 ## 部署步骤（给后续用）
 
