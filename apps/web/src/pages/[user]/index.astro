@@ -8,6 +8,7 @@ import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
+import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { resolveTheme } from '../../themes';
 
 // 用户集合是无限的，这条路由只能按需渲染
@@ -35,6 +36,11 @@ if (error) {
 
 // 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
 const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+// 只有显式开启 seo.index 的用户才进 sitemap
+if (data) {
+  await syncIndexableUser(usersKv(), data.userinfo.login, config.seo.index);
+}
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, ProfileCard, RepoCard, Markdown } = components;

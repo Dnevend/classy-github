@@ -1,151 +1,124 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Dnevend/classy-github/refs/heads/main/apps/classy/public/github.svg?sanitize=true" height="60">
-</p>
+# ClassyGithub v2
 
-<h2 align="center">ClassyGithub</h2>
+> 无需部署、无需登录，把你的 GitHub 变成一个可分享的个人主页 + Gist 博客，附带四套复古主题。
 
-<p align="center">
-    <img src="https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge" alt="Vite">
-    <img src="https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge" alt="ReactJs">
-    <img src="https://img.shields.io/badge/-Cloudflare-F36F27?logo=cloudflare&logoColor=white&style=for-the-badge" alt="Cloudflare">
-    <img src="https://img.shields.io/badge/-Hono-000000?logo=hono&logoColor=white&style=for-the-badge" alt="Hono">
-</p>
+**在线示例**：<https://classy-web.dnevend.workers.dev/Dnevend>
 
 <p align="center">
-    无需部署登录，<a href="https://classy-github.pages.dev/" target="_blank">即刻访问</a>你的定制 Github 主页、代码片段、个人博客、随笔集。
+  <img src="./assets/classy-theme.png" width="80%" alt="默认主题" />
 </p>
 
-<p align="center">
-    <img src="./assets/demo.gif" alt="ClassyGithub" width="61.8%" />
-</p>
+## 特性
 
-<table width="100%">
-  <thead>
-    <tr>
-      <th width="33%" style="text-align: center"><a href="https://nostalgic-css.github.io/NES.css/" target="_blank">NES(Building)</a></th>
-      <th width="33%"  style="text-align: center"><a href="https://react95.github.io/React95/" target="_blank">Win 95(Todo)</a></th>
-      <th width="33%"  style="text-align: center"><a href="https://sakofchit.github.io/system.css/" target="_blank">Mac(Todo)</a></th>
-    </tr>
-  </thead>
+- **四套主题**：`default` / `nes`（8-bit 像素）/ `win95` / `mac`（System 6）。
+  主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
+- **服务端渲染**：HTML 直出，标题、OG、JSON-LD 都在首屏里，分享卡片和搜索收录都正常。
+- **边缘缓存**：Workers Cache API 分级缓存（主页 5 分钟 / 文章 1 小时），冷启动 < 2s，命中 ~0.3s。
+- **Gist 当 CMS**：Gist 描述写 `classy.<分类>.<标题>`，自动变成分类和标题。
+- **配置即代码**：fork 本仓库，改根目录 `classy.config.json` 即可。
+- **安全**：README / Gist 内容走 `rehype-sanitize` 白名单，`javascript:` 链接被丢弃。
 
-  <tbody>
-    <tr>
-      <td><img src="./assets/nes-theme.png"/></td>
-      <td><img src="./assets/win-theme.png"/></td>
-      <td><img src="./assets/mac-theme.png"/></td>
-    </tr>
-  </tbody>
-</table>
-
-### 项目实现
-
-- 项目基于 [Github 公共 API](https://docs.github.com/en/rest)，获取公开数据，生成你的多种主题可配置的个性主页。
-
-- 随笔/博客或者任何其他记录性质的文档，依赖于 [Github Gist](https://gist.github.com/)，通过自定义规则配置以实现分类展示。
-
-- 项目仅依赖于 Github 并部署在 Cloudflare，同时通过 Cloudflare 的边缘服务处理了 Github API 的限流问题。
-
-### 主要技术
-
-- 前端：Vite + Monorepo + React + Tailwind CSS
-
-- 服务：Github API + Hono
-
-- 部署：Cloudflare
-
-## 本地运行
+## 快速开始
 
 ```bash
-git clone https://github.com/Dnevend/classy-github.git # 克隆项目
+git clone https://github.com/Dnevend/classy-github.git
+cd classy-github
+pnpm install
 
-pnpm install # 安装依赖
-
-pnpm run dev # 运行默认主题
-
-pnpm run dev:[other] # 运行其他主题
+# 本地开发（可选：配置 GITHUB_TOKEN 提高 API 配额）
+echo 'GITHUB_TOKEN=github_pat_xxx' > apps/web/.dev.vars
+pnpm dev            # http://localhost:4321
 ```
+
+`GITHUB_TOKEN` 只读 public repo 即可（classic PAT 不勾任何 scope 也行）。
+不配也能跑，但匿名配额是 60 次/小时，容易触发限流提示。
 
 ## 自定义配置
 
-### 项目配置 `classy.config.json`
+在你自己的 fork 里改根目录 `classy.config.json`（读的是**默认分支**，`main` / `master` / 其他都行）：
 
 ```json
 {
   "theme": "default",
-  // 个人主页配置
   "profile": {
-    "repos": {
-      "visible": true,
-      "showCount": 6
-    },
+    "repos": { "visible": true, "showCount": 6 },
     "cover": "https://picsum.photos/1024/576",
     "showFollowers": true,
     "showFollowing": true
   },
-  // Gist 页配置
   "gists": {
     "prefix": "classy",
     "split": ".",
     "default": null,
-    "type": [
-      {
-        "name": "blog"
-      },
-      {
-        "name": "code"
-      }
-    ]
+    "type": [{ "name": "blog" }, { "name": "code" }]
   },
-  // 底部链接
   "links": [
-    {
-      "title": "Github",
-      "href": "https://github.com/Dnevend/classy-github"
-    },
-    {
-      "title": "配置说明",
-      "href": "https://github.com/Dnevend/classy-github#自定义配置"
-    }
-  ]
+    { "title": "GitHub", "href": "https://github.com/Dnevend/classy-github" }
+  ],
+  "seo": { "index": true }
 }
 ```
 
-### 第三方配置
+| 字段 | 说明 |
+|---|---|
+| `theme` | 默认主题名 |
+| `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
+| `profile.cover` | 资料卡封面图 |
+| `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |
+| `links` | 页脚链接（只允许 http/https） |
+| `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
-- [Metrics](https://github.com/lowlighter/metrics)
+配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。
 
-- [Github Readme Stats](https://github.com/anuraghazra/github-readme-stats)
+## 主题
 
-- [Awesome Github Profile Readme](https://github.com/abhisheknaiidu/awesome-github-profile-readme)
+| 主题 | 预览 | 说明 |
+|---|---|---|
+| `default` | ![default](./assets/classy-theme.png) | 干净的卡片式布局 |
+| `nes` | ![nes](./assets/nes-theme.png) | NES.css + 缝合像素字体（中英统一像素字形） |
+| `win95` | ![win95](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
+| `mac` | ![mac](./assets/mac-theme.png) | 手写 System 6：条纹标题栏、1px 硬阴影 |
 
-## 常见问题
+切换方式：任意页面页脚的 `DEFAULT / NES / WIN95 / MAC`，或直接加 `?theme=nes`。
+每套主题的 CSS 独立打包，访问 `default` 的访客不会下载 NES 那 279KB。
 
-- 如何实现自定义配置？
+## 部署
 
-  > 如需实现自定义主页配置，请先 [Fork 本仓库](https://github.com/Dnevend/classy-github/fork)，再修改根目录下 `classy.config.json` 配置文件。
+```bash
+# 1) 写入 GitHub token（只读 public repo）
+cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 
-- 为什么我的 Gist 没有按分类展示？
+# 2) 构建 + 发布（仓库根目录一条命令）
+pnpm deploy:web
+```
 
-  > 请检查你的 Gist 描述是否符合规则，默认规则为 `classy.[类型].[标题]`，例：`classy.blog.title`。
+生产环境是 Cloudflare Workers（`wrangler.jsonc` 已配好 Assets + KV）。
+KV 命名空间 `USERS` 保存「显式开启 `seo.index` 的用户」，供 `/sitemap.xml` 使用。
 
-- 为什么数据没有及时更新？
+## 项目结构
 
-  > 首先是 Github 接口的数据同步存在略微延迟。
-  > 其次，本项目使用了缓存以减少请求次数以获取更快的数据渲染，缓存时效为 3 分钟。
+```
+apps/web/
+  src/
+    pages/            5 条路由 + 404 + robots.txt + sitemap.xml
+    themes/           契约（5 个槽位）+ default / nes / win95 / mac
+    lib/              github 取数、markdown 管线、配置校验、边缘缓存
+    middleware.ts     主题解析 + 按路由分级缓存
+  wrangler.jsonc
+packages/types/       GitHub 数据类型
+specs/                重构计划与每个阶段的实现记录
+```
 
-## TODO
+## 分支
 
-- [x] 暗色模式
-- [x] 移动端适配
-- [ ] 使用 Next.js 重构，带来更好的 SEO 效果
+- `main`：v1（Vite + React SPA），已冻结
+- `v2`：当前版本，所有改动进这里
 
-- 多主题
-  - [x] 经典主题
-  - [ ] [NES 像素主题(Building...)](https://nostalgic-css.github.io/NES.css/)
-  - [ ] [Mac 复古主题](https://sakofchit.github.io/system.css/)
-  - [ ] [Windows 95 主题](https://react95.github.io/React95/)
-  - [ ] 更多主题...
+## 许可
 
-## 项目共建
+代码 MIT。字体与第三方样式：
 
-[提出想法&反馈问题](https://github.com/Dnevend/classy-github/issues/new) • [共建项目](https://github.com/Dnevend/classy-github/fork)
+- **Fusion Pixel Font**（OFL-1.1）— `public/fonts/fusion-pixel-12px-zh_hans.woff2`
+- **Press Start 2P**（OFL-1.1）— `public/fonts/press-start-2p.woff2`
+- **98.css**（MIT）— `apps/web/src/themes/win95/vendor/98.css`
+- **NES.css**（MIT）— npm 依赖

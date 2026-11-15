@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [v2]
+  pull_request:
+    branches: [v2, main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check（astro check）
+        run: pnpm --filter @classy/web check
+
+      - name: Unit smoke（markdown 管线 + 配置解析）
+        run: pnpm --filter @classy/web test
+
+      - name: Build
+        run: pnpm --filter @classy/web build
+
+      - name: Worker bundle size guard
+        run: |
+          size=$(du -sk apps/web/dist/server | cut -f1)
+          echo "dist/server = ${size}KB"
+          if [ "$size" -gt 12000 ]; then
+            echo "::error::Worker 目录超过 12MB（压缩后接近 10MB 上限），请检查依赖"
+            exit 1
+          fi

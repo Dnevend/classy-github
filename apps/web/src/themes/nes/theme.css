@@ -1,3 +1,13 @@
+/* Fusion Pixel 12px（OFL-1.1，含简体中文）：中英统一的像素字形。
+   Press Start 2P 只留给少数纯拉丁的品牌/标签，避免中英字号观感不一致。 */
+@font-face {
+  font-family: 'Fusion Pixel';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2');
+}
+
 @font-face {
   font-family: 'Press Start 2P';
   font-style: normal;
@@ -33,8 +43,8 @@
 [data-theme='nes'] body {
   background: #212529;
   color: var(--fg);
-  font-family: 'Press Start 2P', var(--nes-cjk);
-  font-size: 11px;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 12px;
   line-height: 2;
 }
 
@@ -147,10 +157,10 @@
 /* 标题里中英混排：像素字体没有中文字形，回退后字号观感差异很大，
    所以标题整体走可读的中文字体，像素字体留给导航/按钮/徽标。 */
 [data-theme='nes'] .page-title {
-  font-family: var(--nes-cjk);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
   line-height: 1.6;
   margin: 8px 0 20px;
   display: flex;
@@ -160,7 +170,7 @@
 }
 
 [data-theme='nes'] .page-title__count {
-  font-size: 9px;
+  font-size: 12px;
   color: var(--fg-muted);
 }
 
@@ -204,9 +214,9 @@
 }
 
 .nes-bio {
-  font-family: var(--nes-cjk);
+  font-family: 'Fusion Pixel', var(--nes-cjk);
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 1.9;
   color: #ced4da;
   margin: 0 0 12px;
 }
@@ -265,9 +275,9 @@
 }
 
 .nes-repo__desc {
-  font-family: var(--nes-cjk);
+  font-family: 'Fusion Pixel', var(--nes-cjk);
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 1.9;
   color: #ced4da;
   margin: 0;
   flex: 1;
@@ -309,8 +319,8 @@
 }
 
 .nes-gist__title {
-  font-size: 10px;
-  font-family: var(--nes-cjk);
+  font-size: 12px;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
 }
 
 .nes-gist__meta {
@@ -331,16 +341,17 @@
 /* ---------- 正文 ---------- */
 
 .nes-prose .prose {
-  font-family: var(--nes-cjk);
-  font-size: 14px;
-  line-height: 1.85;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 12px;
+  line-height: 1.95;
   color: #dee2e6;
 }
 
 .nes-prose .prose h1,
 .nes-prose .prose h2,
 .nes-prose .prose h3 {
-  font-family: var(--nes-cjk);
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-weight: 400;
   color: var(--fg);
 }
 
@@ -349,8 +360,9 @@
 }
 
 [data-theme='nes'] .repo-detail .bio {
-  font-family: var(--nes-cjk);
+  font-family: 'Fusion Pixel', var(--nes-cjk);
   font-size: 12px;
+  line-height: 1.9;
   color: #ced4da;
 }
 
@@ -395,22 +407,22 @@
 /* ---------- 首页 hero ---------- */
 
 [data-theme='nes'] .hero h1 {
-  font-family: var(--nes-cjk);
-  font-size: clamp(24px, 4vw, 34px);
-  line-height: 1.4;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 24px;
+  line-height: 1.6;
   color: var(--fg);
 }
 
 [data-theme='nes'] .hero p {
-  font-family: var(--nes-cjk);
-  font-size: 14px;
-  line-height: 1.8;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 12px;
+  line-height: 1.9;
   color: #ced4da;
 }
 
 [data-theme='nes'] .hero input {
-  font-family: var(--nes-cjk);
-  font-size: 14px;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 12px;
   padding: 12px;
   color: #212529;
   background: #fff;
@@ -420,8 +432,8 @@
 }
 
 [data-theme='nes'] .hero button {
-  font-family: 'Press Start 2P', var(--nes-cjk);
-  font-size: 10px;
+  font-family: 'Fusion Pixel', var(--nes-cjk);
+  font-size: 12px;
   padding: 12px 18px;
   color: #212529;
   background: var(--accent);

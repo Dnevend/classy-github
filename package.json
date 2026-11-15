@@ -1,40 +1,15 @@
 {
+  "name": "classy-github",
   "private": true,
-  "version": "1.0.0",
-  "description": "Classy access your github profile.",
-  "main": "index.js",
   "type": "module",
+  "version": "2.0.0",
+  "description": "无需部署的 GitHub 个人主页 / Gist 博客，四套复古主题",
+  "license": "MIT",
   "scripts": {
-    "docs": "pnpm --filter classy-docs start",
-    "dev": "pnpm --filter classy-github dev",
-    "dev:nes": "pnpm --filter nes-github dev",
-    "build": "pnpm run -r --filter \"./apps/**\" build",
-    "build:classy": "pnpm run -r --filter classy-github build",
-    "build:nes": "pnpm run -r --filter nes-github build",
-    "build:docs": "pnpm run -r --filter classy-docs build",
-    "dev:web": "pnpm --filter @classy/web dev",
-    "build:web": "pnpm --filter @classy/web build",
-    "test:web": "pnpm --filter @classy/web test",
-    "deploy:web": "pnpm run build:web && pnpm --filter @classy/web exec wrangler deploy --config dist/server/wrangler.json"
-  },
-  "keywords": [],
-  "author": "Dnevend",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tailwindcss-animate": "^1.0.7"
-  },
-  "devDependencies": {
-    "@emnapi/core": "^1.11.3",
-    "@emnapi/runtime": "^1.11.3",
-    "@types/node": "^20.12.7",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
-    "vite": "^5.2.0"
+    "dev": "pnpm --filter @classy/web dev",
+    "build": "pnpm --filter @classy/web build",
+    "check": "pnpm --filter @classy/web check",
+    "test": "pnpm --filter @classy/web test",
+    "deploy:web": "pnpm run build && pnpm --filter @classy/web exec wrangler deploy --config dist/server/wrangler.json"
   }
 }

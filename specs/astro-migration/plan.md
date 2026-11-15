@@ -313,14 +313,15 @@ NES 页面加载 279KB nes.css + 4.7KB 主题样式 —— 分包是真的成立
 
 `?theme=` 写入 cookie，缓存键带解析后的主题，Set-Cookie 不进缓存。详见 `m4-themes-mobile.md`。
 
-### M5 · 收尾
+### M5 · 收尾（已完成 2026-11-15）
 
-- sitemap / robots / JSON-LD / OG 图
-- 删 `packages/service`、`packages/components`、`apps/classy`、`apps/nes`、`docs/`（Docusaurus 模板）
-- 重写 README（说清楚现在怎么部署）
-- 加 CI（`astro check` + build + 一个 curl 冒烟脚本）
+- `/robots.txt` + `/sitemap.xml`：KV `USERS` 记录显式开启 `seo.index` 的用户
+- 删除 v1 全部残留：apps/classy、apps/nes、packages/{components,lib,shared,service}、docs/
+- 根配置收敛（只留 apps/web + packages/types），锁文件 18k 行 → 4k 行
+- GitHub Actions CI：check + test + build + Worker 体积守卫
+- README 重写
 
----
+详见 `m5-wrapup.md`。OG 图（动态分享卡片）作为独立特性留下，未做。
 
 ## 8. 风险
 
