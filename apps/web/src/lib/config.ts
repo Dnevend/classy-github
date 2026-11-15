@@ -21,6 +21,8 @@ export interface ResolvedConfig {
     cover: string | null;
     showFollowers: boolean;
     showFollowing: boolean;
+    /** 可选：嵌入任意第三方统计卡图片（http/https） */
+    cardUrl: string | null;
     repos: {
       visible: boolean;
       showCount: number;
@@ -37,6 +39,12 @@ export interface ResolvedConfig {
     /** 额外导航项（外链），追加在 Repos / Gists 之后 */
     extra: { title: string; href: string }[];
   };
+  /** 资料卡下方的「近况」：在读 / 在听 / 在看 */
+  now: {
+    books: string[];
+    music: string[];
+    watching: string[];
+  };
   seo: {
     /** 是否允许搜索引擎收录这个人的主页 */
     index: boolean;
@@ -44,12 +52,13 @@ export interface ResolvedConfig {
 }
 
 export const DEFAULT_CONFIG: ResolvedConfig = {
-  theme: 'default',
+  theme: 'mac',
   language: DEFAULT_LOCALE,
   profile: {
     cover: null,
     showFollowers: true,
     showFollowing: true,
+    cardUrl: null,
     repos: { visible: true, showCount: 6 },
   },
   gists: {
@@ -60,6 +69,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   },
   links: [],
   nav: { extra: [] },
+  now: { books: [], music: [], watching: [] },
   seo: { index: false },
 };
 
@@ -79,6 +89,7 @@ const profileSchema = z
     cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL'),
     showFollowers: z.boolean(),
     showFollowing: z.boolean(),
+    cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL'),
     repos: reposSchema,
   })
   .partial();
@@ -99,6 +110,16 @@ const linkSchema = z.object({
 
 const seoSchema = z.object({ index: z.boolean() }).partial();
 
+const stringList = z.array(z.string().min(1).max(80)).max(8);
+
+const nowSchema = z
+  .object({
+    books: stringList,
+    music: stringList,
+    watching: stringList,
+  })
+  .partial();
+
 const navSchema = z
   .object({
     extra: z.array(linkSchema).max(5),
@@ -115,6 +136,7 @@ const rootSchema = z
     gists: z.unknown(),
     links: z.unknown(),
     nav: z.unknown(),
+    now: z.unknown(),
     seo: z.unknown(),
   })
   .partial();
@@ -188,6 +210,11 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
     issues.push('nav: 结构不合法，已忽略该段');
   }
 
+  const now = pick(nowSchema, raw.now);
+  if (raw.now !== undefined && now === null) {
+    issues.push('now: 结构不合法，已忽略该段');
+  }
+
   const seo = pick(seoSchema, raw.seo);
   if (raw.seo !== undefined && seo === null) {
     issues.push('seo: 结构不合法，已忽略该段');
@@ -221,6 +248,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
           parsedProfile.showFollowers ?? DEFAULT_CONFIG.profile.showFollowers,
         showFollowing:
           parsedProfile.showFollowing ?? DEFAULT_CONFIG.profile.showFollowing,
+        cardUrl: parsedProfile.cardUrl ?? DEFAULT_CONFIG.profile.cardUrl,
         repos: {
           visible: parsedRepos.visible ?? DEFAULT_CONFIG.profile.repos.visible,
           showCount: clampCount(parsedRepos.showCount),
@@ -234,6 +262,11 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
       },
       links,
       nav: { extra: nav?.extra ?? DEFAULT_CONFIG.nav.extra },
+      now: {
+        books: now?.books ?? [],
+        music: now?.music ?? [],
+        watching: now?.watching ?? [],
+      },
       seo: { index: seo?.index ?? DEFAULT_CONFIG.seo.index },
     },
   };

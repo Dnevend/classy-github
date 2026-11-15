@@ -21,7 +21,7 @@ export const parseThemeName = (value?: string | null): ThemeName | null => {
 };
 
 export const parseThemeParam = (value?: string | null): ThemeName =>
-  parseThemeName(value) ?? 'default';
+  parseThemeName(value) ?? 'mac';
 
 export const THEME_COOKIE = 'classy_theme';
 
@@ -50,5 +50,5 @@ export const resolveThemeChoice = ({
   const fromCookie = parseThemeName(cookie);
   if (fromCookie) return { theme: fromCookie, persist: false };
 
-  return { theme: 'default', persist: false };
+  return { theme: 'mac', persist: false };
 };

@@ -736,3 +736,75 @@ img {
   flex-direction: column;
   min-height: 100dvh;
 }
+
+/* ---------- 近况（在读/在听/在看 + 可选第三方卡片） ---------- */
+
+.now-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.now-card__group {
+  display: grid;
+  gap: 2px;
+}
+
+.now-card__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.now-card__group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  font-size: 0.82em;
+}
+
+.now-card__group li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.now-card__external {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* ---------- 首页示例 ---------- */
+
+.hero-samples {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85em;
+  color: var(--fg-muted);
+}
+
+.hero-chip {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.hero-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}

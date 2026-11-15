@@ -37,6 +37,15 @@ const seo: SeoMeta = {
       />
       <button type="submit">{t('landing.submit')}</button>
     </form>
+
+    <div class="hero-samples">
+      <span>{t('landing.try')}</span>
+      {['Dnevend', 'antfu', 'sindresorhus'].map((name) => (
+        <a class="hero-chip" href={`/${name}`}>
+          {name}
+        </a>
+      ))}
+    </div>
   </section>
 
   <script is:inline>

@@ -460,3 +460,30 @@
   margin-top: auto;
   align-self: flex-start;
 }
+
+/* 分享面板的三个按钮在 win95 下要像原生按钮 */
+[data-theme='win95'] .share-card__action {
+  background: var(--w95-gray);
+  color: #000;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  border-radius: 0;
+}
+
+[data-theme='win95'] .share-card__action:hover {
+  background: #d4d4d4;
+  color: #000;
+}
+
+[data-theme='win95'] .share-card__trigger,
+[data-theme='win95'] .lang-toggle {
+  background: var(--w95-gray);
+  color: #000;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  border-radius: 0;
+}

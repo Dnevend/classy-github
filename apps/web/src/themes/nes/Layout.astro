@@ -42,7 +42,7 @@ const t = createTranslator(Astro.locals.locale);
       </a>
 
       {
-        userinfo && (
+        user && (
           <nav class="nes-nav">
             <a class="nes-btn" href={`/${user}/repos`}>
               REPOS
@@ -55,7 +55,6 @@ const t = createTranslator(Astro.locals.locale);
       }
 
       {brand && <a class="nes-brand" href={user ? `/${user}` : "/"}>{brand}</a>}
-      <LanguageSwitcher current={Astro.locals.locale} />
     </div>
   </header>
 
@@ -80,6 +79,7 @@ const t = createTranslator(Astro.locals.locale);
         <span>POWERED BY CLASSYGIT</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}
         <div class="switchers">
+          <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />
         </div>
       </div>

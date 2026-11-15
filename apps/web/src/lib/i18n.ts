@@ -23,6 +23,10 @@ const messages = {
     'profile.gistsTitle': 'Gists',
     'profile.blog': 'Blog',
     'stats.title': 'At a glance',
+    'now.title': 'Now',
+    'now.reading': 'Reading',
+    'now.listening': 'Listening',
+    'now.watching': 'Watching',
     'stats.stars': 'stars',
     'stats.repos': 'repos',
     'stats.gists': 'gists',
@@ -80,6 +84,7 @@ const messages = {
     'landing.placeholder': 'GitHub username, e.g. Dnevend',
     'landing.submit': 'View',
     'landing.label': 'GitHub username',
+    'landing.try': 'Try:',
   },
   zh: {
     'nav.repos': '仓库',
@@ -96,6 +101,10 @@ const messages = {
     'profile.gistsTitle': '片段',
     'profile.blog': '博客',
     'stats.title': '数据一览',
+    'now.title': '近况',
+    'now.reading': '在读',
+    'now.listening': '在听',
+    'now.watching': '在看',
     'stats.stars': '星标',
     'stats.repos': '仓库',
     'stats.gists': '片段',
@@ -153,6 +162,7 @@ const messages = {
     'landing.placeholder': 'GitHub 用户名，如 Dnevend',
     'landing.submit': '查看',
     'landing.label': 'GitHub 用户名',
+    'landing.try': '试试：',
   },
 } as const;
 

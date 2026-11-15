@@ -37,7 +37,7 @@ const t = createTranslator(Astro.locals.locale);
       <a class="tui-logo" href="/">CLASSYGIT</a>
 
       {
-        userinfo && (
+        user && (
           <nav class="tui-nav">
             <a href={`/${user}/repos`}>{t('nav.repos')}</a>
             <a href={`/${user}/gists`}>{t('nav.gists')}</a>
@@ -46,7 +46,6 @@ const t = createTranslator(Astro.locals.locale);
       }
 
       {brand && <a class="tui-brand" href={user ? `/${user}` : "/"}>{brand}</a>}
-      <LanguageSwitcher current={Astro.locals.locale} />
     </header>
 
     <main class="tui-main">
@@ -69,6 +68,7 @@ const t = createTranslator(Astro.locals.locale);
         <span>F1=HELP  F10=MENU  © CLASSYGIT</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}
         <div class="switchers">
+          <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />
         </div>
       </div>

@@ -9,7 +9,7 @@ import type { ThemeComponents } from './types';
  * 用变量拼路径（`import(\`./${name}\`)`）会让所有主题打进同一个 chunk。
  */
 const registry: Partial<Record<ThemeName, () => Promise<ThemeComponents>>> = {
-  default: () => import('./default'),
+  // default 已退役（代码保留在 ./default，不再注册）；mac 接管默认
   nes: () => import('./nes'),
   win95: () => import('./win95'),
   mac: () => import('./mac'),
@@ -28,11 +28,11 @@ export async function resolveTheme(param?: string | null): Promise<{
   components: ThemeComponents;
 }> {
   const requested = parseThemeParam(param);
-  const name = isThemeAvailable(requested) ? requested : 'default';
-  const loader = registry[name] ?? registry.default;
+  const name = isThemeAvailable(requested) ? requested : 'mac';
+  const loader = registry[name] ?? registry.mac;
 
   if (!loader) {
-    throw new Error('主题注册表里缺少 default 主题');
+    throw new Error('主题注册表里缺少 mac 主题');
   }
 
   return { name, components: await loader() };

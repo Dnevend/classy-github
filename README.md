@@ -61,19 +61,26 @@ pnpm dev            # http://localhost:4321
   "nav": {
     "extra": [{ "title": "About", "href": "https://example.com/about" }]
   },
+  "now": {
+    "books": ["《置身事内》"],
+    "music": ["坂本龍一 - async"],
+    "watching": []
+  },
   "seo": { "index": true }
 }
 ```
 
 | 字段 | 说明 |
 |---|---|
-| `theme` | 默认主题名（default / nes / win95 / mac / tui） |
+| `theme` | 默认主题名（mac / nes / win95 / tui；mac 为默认） |
 | `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
 | `profile.cover` | 资料卡封面图 |
 | `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |
 | `links` | 页脚链接（只允许 http/https） |
 | `nav.extra` | 导航里追加的外链（最多 5 条，只允许 http/https） |
+| `now` | 资料卡下方的「近况」：`books` / `music` / `watching` |
+| `profile.cardUrl` | 可选，嵌入第三方统计卡图片（如 Action 生成的 SVG） |
 | `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
 配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。
