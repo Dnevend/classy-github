@@ -5,6 +5,12 @@ import type { ThemeMarkdownProps } from '../types';
 const { html } = Astro.props as ThemeMarkdownProps;
 ---
 
-<section class="nes-container is-rounded is-dark nes-prose">
+<section class="nes-container with-title is-rounded is-dark nes-prose">
+  <p class="title">README</p>
+  <div class="nes-window__controls" aria-hidden="true">
+    <span class="nes-control">−</span>
+    <span class="nes-control">□</span>
+    <span class="nes-control">×</span>
+  </div>
   <div class="prose" set:html={html} />
 </section>

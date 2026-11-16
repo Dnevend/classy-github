@@ -96,7 +96,7 @@ pnpm dev            # http://localhost:4321
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
 | `profile.gists.visible` | 是否在主页展示最近 Gists 列表 |
 | `profile.gists.showCount` | 主页展示多少条 Gist（0–100，默认 6） |
-| `profile.cover` | 资料卡封面图 |
+| `profile.cover` | 资料卡封面图，显示在头像上方（http/https） |
 | `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |
 | `links` | 页脚链接（只允许 http/https） |
 | `nav.extra` | 导航里追加的外链（最多 5 条，只允许 http/https） |

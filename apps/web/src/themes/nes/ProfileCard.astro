@@ -3,15 +3,24 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo } = Astro.props as ThemeProfileCardProps;
+const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
 <aside class="nes-aside">
   <section class="nes-container with-title is-rounded is-dark">
     <p class="title">PLAYER</p>
+    <div class="nes-window__controls" aria-hidden="true">
+      <span class="nes-control">?</span>
+    </div>
 
-    <div class="nes-profile">
+    {config.profile.cover && (
+      <div class="profile-cover">
+        <img src={config.profile.cover} alt="" loading="lazy" />
+      </div>
+    )}
+
+    <div class:list={['nes-profile', { 'has-cover': !!config.profile.cover }]}>
       <img
         class="nes-avatar"
         src={userinfo.avatar_url}

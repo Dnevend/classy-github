@@ -48,6 +48,8 @@ export interface ThemeGistCardProps {
   /** 分类名（来自 `classy.<type>.<title>` 规则），未匹配时为 undefined */
   type?: string;
   title: string;
+  /** 主页「最近片段」预览：只显示标题和日期 */
+  compact?: boolean;
 }
 
 export interface ThemeMarkdownProps {

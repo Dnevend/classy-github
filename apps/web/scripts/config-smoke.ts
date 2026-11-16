@@ -66,6 +66,18 @@ const cases: Case[] = [
     },
   },
   {
+    name: '合法 cover 透传',
+    run: () => {
+      const { config } = parseConfig({
+        profile: { cover: 'https://images.example.com/cover.jpg' },
+      });
+      assert.equal(
+        config.profile.cover,
+        'https://images.example.com/cover.jpg'
+      );
+    },
+  },
+  {
     name: 'owner：合法值透传，非法值忽略',
     run: () => {
       assert.equal(parseConfig({ owner: 'demo' }).config.owner, 'demo');

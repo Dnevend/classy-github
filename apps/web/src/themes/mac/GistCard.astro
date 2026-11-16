@@ -2,7 +2,7 @@
 import type { ThemeGistCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 
-const { gist, href, type, title } = Astro.props as ThemeGistCardProps;
+const { gist, href, type, title, compact = false } = Astro.props as ThemeGistCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -10,8 +10,9 @@ const t = createTranslator(Astro.locals.locale);
   <a href={href}>
     <span class="mac-gist__title">{title}</span>
     <span class="mac-gist__meta">
-      {type && <span class="mac-tag">{type}</span>}
-      {t('gists.files', { count: Object.keys(gist.files).length })} · {gist.created_at.slice(0, 10)}
+      {!compact && type && <span class="mac-tag">{type}</span>}
+      {!compact && `${t('gists.files', { count: Object.keys(gist.files).length })} · `}
+      {gist.created_at.slice(0, 10)}
     </span>
   </a>
 </li>

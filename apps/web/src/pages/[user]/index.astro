@@ -212,6 +212,7 @@ const seo = data
                     gist={gist}
                     href={`/${user}/gist/${gist.id}`}
                     type={parsed.type}
+                    compact
                     title={
                       parsed.title ||
                       Object.keys(gist.files)[0] ||

@@ -100,6 +100,25 @@
   white-space: nowrap;
 }
 
+.tui-box__head--controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tui-box__head--controls > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tui-controls {
+  flex: none;
+  color: #000;
+  letter-spacing: 0.04em;
+}
+
 .tui-box__body {
   padding: 10px 12px;
 }
@@ -168,6 +187,19 @@
   object-fit: cover;
   border: 2px solid #a8a8a8;
   image-rendering: pixelated;
+}
+
+[data-theme='tui'] .profile-cover {
+  border-bottom: 1px solid #a8a8a8;
+}
+
+[data-theme='tui'] .tui-profile.has-cover {
+  position: relative;
+  margin-top: -34px;
+}
+
+[data-theme='tui'] .tui-profile.has-cover .tui-avatar {
+  border-color: #55ff55;
 }
 
 .tui-name {

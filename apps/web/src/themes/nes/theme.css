@@ -198,6 +198,21 @@
   border: 3px solid #495057;
 }
 
+[data-theme='nes'] .profile-cover {
+  width: auto;
+  margin: 0 -1.5rem;
+  border-bottom: 4px solid #fff;
+}
+
+[data-theme='nes'] .nes-profile.has-cover {
+  position: relative;
+  margin-top: -34px;
+}
+
+[data-theme='nes'] .nes-profile.has-cover .nes-avatar {
+  border-color: #fff;
+}
+
 .nes-name {
   margin: 0;
   font-size: 12px;
@@ -521,4 +536,28 @@
 
 [data-theme='nes'] .now-card__external {
   border-radius: 0;
+}
+
+/* ---------- 容器右上角装饰按钮 ---------- */
+
+[data-theme='nes'] .nes-window__controls {
+  position: absolute;
+  top: 2px;
+  right: 0.6rem;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+}
+
+[data-theme='nes'] .nes-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  background: #212529;
+  color: #fff;
+  font-size: 8px;
+  line-height: 1;
 }

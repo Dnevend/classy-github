@@ -175,6 +175,16 @@ const display = userinfo?.name || userinfo?.login || user;
 
             <section class="setup-section">
               <h2>{t('setup.profile')}</h2>
+              <div class="setup-row">
+                <label for="setup-cover">{t('setup.cover')}</label>
+                <input
+                  id="setup-cover"
+                  name="cover"
+                  type="url"
+                  value={initialConfig.profile.cover ?? ''}
+                  placeholder="https://…"
+                />
+              </div>
               <label class="setup-check">
                 <input
                   type="checkbox"
@@ -378,6 +388,9 @@ const display = userinfo?.name || userinfo?.login || user;
               .filter(Boolean)
               .slice(0, 8);
 
+          const optionalUrl = (value) =>
+            /^https?:\/\/\S+$/i.test(value.trim()) ? value.trim() : null;
+
           const readLinks = () =>
             [...links.querySelectorAll('.setup-link-row')]
               .map((row) => ({
@@ -394,6 +407,7 @@ const display = userinfo?.name || userinfo?.login || user;
               language: form.language.value,
               profile: {
                 ...initial.profile,
+                cover: optionalUrl(form.cover.value),
                 contrib: {
                   ...initial.profile.contrib,
                   visible: form.showContrib.checked,

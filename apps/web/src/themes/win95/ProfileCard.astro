@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo } = Astro.props as ThemeProfileCardProps;
+const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -12,14 +12,18 @@ const t = createTranslator(Astro.locals.locale);
     <div class="title-bar">
       <div class="title-bar-text">{userinfo.login}.exe</div>
       <div class="title-bar-controls">
-        <button aria-label="Minimize"></button>
-        <button aria-label="Maximize"></button>
-        <button aria-label="Close"></button>
+        <button aria-label="Help"></button>
       </div>
     </div>
 
+    {config.profile.cover && (
+      <div class="profile-cover">
+        <img src={config.profile.cover} alt="" loading="lazy" />
+      </div>
+    )}
+
     <div class="window-body">
-      <div class="w95-profile">
+      <div class:list={['w95-profile', { 'has-cover': !!config.profile.cover }]}>
         <img
           class="w95-avatar"
           src={userinfo.avatar_url}

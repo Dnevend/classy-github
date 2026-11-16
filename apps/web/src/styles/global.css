@@ -813,6 +813,21 @@ img {
   border-radius: 8px;
 }
 
+/* ---------- 资料卡封面 ---------- */
+
+.profile-cover {
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+
+.profile-cover img {
+  display: block;
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+}
+
 /* ---------- 右侧通用卡片（贡献墙 / 最近 Gists） ---------- */
 
 .side-card {

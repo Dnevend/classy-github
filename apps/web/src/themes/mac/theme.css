@@ -127,10 +127,37 @@
   position: absolute;
   left: 3px;
   top: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 11px;
   height: 11px;
   background: #fff;
   border: 1px solid #000;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mac-controls {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  display: flex;
+  gap: 2px;
+}
+
+.mac-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #000;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .mac-title {
@@ -266,6 +293,21 @@
   object-fit: cover;
   border: 1px solid #000;
   image-rendering: auto;
+}
+
+[data-theme='mac'] .profile-cover {
+  border-bottom: 1px solid #000;
+}
+
+[data-theme='mac'] .mac-profile.has-cover {
+  position: relative;
+  margin-top: -34px;
+}
+
+[data-theme='mac'] .mac-profile.has-cover .mac-avatar {
+  border: 2px solid #fff;
+  background: #fff;
+  box-shadow: 0 0 0 1px #000;
 }
 
 .mac-name {

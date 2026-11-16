@@ -221,6 +221,21 @@
   border: 2px solid #808080;
 }
 
+[data-theme='win98'] .profile-cover {
+  border-bottom: 1px solid #808080;
+}
+
+[data-theme='win98'] .w95-profile.has-cover {
+  position: relative;
+  margin-top: -34px;
+}
+
+[data-theme='win98'] .w95-profile.has-cover .w95-avatar {
+  border: 2px solid #fff;
+  background: #fff;
+  box-shadow: 0 0 0 1px #000;
+}
+
 .w95-name {
   margin: 0;
   font-weight: 700;

@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo } = Astro.props as ThemeProfileCardProps;
+const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 
 const stats = [
@@ -17,12 +17,20 @@ const stats = [
 <aside class="mac-aside">
   <div class="mac-window">
     <div class="mac-titlebar">
-      <span class="mac-close" aria-hidden="true"></span>
       <span class="mac-title">About This User</span>
+      <span class="mac-controls" aria-hidden="true">
+        <span class="mac-control">?</span>
+      </span>
     </div>
 
+    {config.profile.cover && (
+      <div class="profile-cover">
+        <img src={config.profile.cover} alt="" loading="lazy" />
+      </div>
+    )}
+
     <div class="mac-body">
-      <div class="mac-profile">
+      <div class:list={['mac-profile', { 'has-cover': !!config.profile.cover }]}>
         <img
           class="mac-avatar"
           src={userinfo.avatar_url}
