@@ -57,12 +57,19 @@ type Case = { name: string; run: () => void | Promise<void> };
 
 const cases: Case[] = [
   {
-    name: '社区配置：默认关闭',
+    name: '社区配置：webring/discover 默认开启，guestbook 默认关闭',
     run: () => {
       const { config } = parseConfig({});
       assert.equal(config.guestbook.gistId, null);
-      assert.equal(config.webring.enabled, false);
-      assert.equal(config.discover.enabled, false);
+      assert.equal(config.webring.enabled, true);
+      assert.equal(config.discover.enabled, true);
+
+      const off = parseConfig({
+        webring: { enabled: false },
+        discover: { enabled: false },
+      });
+      assert.equal(off.config.webring.enabled, false);
+      assert.equal(off.config.discover.enabled, false);
     },
   },
   {

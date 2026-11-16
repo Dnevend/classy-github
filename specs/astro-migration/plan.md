@@ -394,6 +394,11 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 `owner` 字段防止 fork 继承作者配置；无 profile README 时渲染中英模板；
 桌面端右栏按真实 header 高度 sticky，与左栏同一 top。详见 `m17-fork-guard.md`。
 
+### M18 · 社区默认开启 + setup owner（已完成 2026-11-16）
+
+`webring.enabled` / `discover.enabled` 默认 true；`/setup` 客户端生成的 JSON
+补回 owner。详见 `m18-defaults.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

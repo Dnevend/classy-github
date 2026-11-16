@@ -370,6 +370,7 @@ const display = userinfo?.name || userinfo?.login || user;
 
           const build = () => {
             const config = {
+              owner: initial.owner || user,
               theme: form.theme.value,
               language: form.language.value,
               profile: {

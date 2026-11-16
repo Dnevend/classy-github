@@ -96,8 +96,8 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   nav: { extra: [] },
   now: { books: [], music: [], watching: [] },
   guestbook: { gistId: null },
-  webring: { enabled: false },
-  discover: { enabled: false },
+  webring: { enabled: true },
+  discover: { enabled: true },
   seo: { index: false },
 };
 

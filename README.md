@@ -25,7 +25,7 @@
 - **配置即代码**：fork 本仓库，改根目录 `classy.config.json` 即可；也可以用 `/setup` 填表生成。
 - **访问计数器**：页脚显示复古访客数，Durable Object 原子计数，不存 IP。
 - **留言簿**：用一条公开 Gist 的评论做留言簿，零后端、零审核后台。
-- **网站环**：opt-in 的复古个人主页环，页脚「上一站 / 随机 / 下一站」。
+- **网站环**：默认开启的复古个人主页环，页脚「上一站 / 随机 / 下一站」。
 - **88×31 徽章**：每人生成主题化小徽章，可放到 README、博客或友情链接。
 - **安全**：README / Gist / 留言内容走 `rehype-sanitize` 白名单，`javascript:` 链接被丢弃。
 
@@ -80,8 +80,8 @@ pnpm dev            # http://localhost:4321
     "watching": []
   },
   "guestbook": { "gistId": null },
-  "webring": { "enabled": false },
-  "discover": { "enabled": false },
+  "webring": { "enabled": true },
+  "discover": { "enabled": true },
   "seo": { "index": true }
 }
 ```
@@ -99,8 +99,8 @@ pnpm dev            # http://localhost:4321
 | `now` | 资料卡下方的「近况」：`books` / `music` / `watching` |
 | `profile.cardUrl` | 可选，嵌入第三方统计卡图片（如 Action 生成的 SVG） |
 | `guestbook.gistId` | 公开 Gist 的 ID，用它的评论做留言簿；`null` 关闭 |
-| `webring.enabled` | 是否加入 ClassyGit 网站环，默认 `false` |
-| `discover.enabled` | 是否允许出现在 `/random` 随机推荐，默认 `false` |
+| `webring.enabled` | 是否加入 ClassyGit 网站环，默认 `true` |
+| `discover.enabled` | 是否允许出现在 `/random` 随机推荐，默认 `true` |
 | `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
 配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。
@@ -138,7 +138,7 @@ pnpm dev            # http://localhost:4321
 - `webring`：加入 `/webring` 目录，页脚出现「← 上一站 / 🎲 / 下一站 →」。
   成员少于 3 个时页脚不显示，避免一个只有自己的环。
 - `discover`：允许 `/random` 随机跳到你的主页。
-- 两者都是 opt-in，默认关闭；改配置后最多 1 小时同步到注册表（主页本身 5 分钟内刷新）。
+- 两者默认开启；不想参加就把对应 `enabled` 设为 `false`。改配置后最多 1 小时同步到注册表（主页本身 5 分钟内刷新）。
 
 ### 88×31 徽章
 
