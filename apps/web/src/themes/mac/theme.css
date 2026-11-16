@@ -196,9 +196,12 @@
 }
 
 .mac-repo .mac-window,
-.mac-aside .mac-window,
-.mac-readme {
+.mac-aside .mac-window {
   height: 100%;
+}
+
+.mac-readme {
+  height: auto;
 }
 
 .mac-repo__name {

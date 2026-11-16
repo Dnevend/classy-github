@@ -34,6 +34,9 @@
 /* ---------- 顶部任务栏 ---------- */
 
 .w95-taskbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -139,9 +142,13 @@
 
 /* 98.css 的 .window 自带阴影边框，这里只控制布局 */
 .w95-repo .window,
-.w95-aside .window,
-.w95-readme {
+.w95-aside .window {
   height: 100%;
+}
+
+/* README 卡片按内容高度，避免被网格行高拉出一大块空白 */
+.w95-readme {
+  height: auto;
 }
 
 .w95-repo__name {

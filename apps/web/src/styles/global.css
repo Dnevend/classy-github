@@ -812,9 +812,10 @@ img {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(7, 1fr);
-  grid-auto-columns: minmax(6px, 1fr);
+  grid-auto-columns: minmax(0, 1fr);
   gap: 4px;
   width: 100%;
+  min-width: 0;
   overflow: hidden;
   max-width: 100%;
   height: auto;
@@ -864,7 +865,7 @@ img {
   grid-row: 1 / -1;
   display: block;
   height: 68px;
-  border-radius: 6px;
+  border-radius: 0;
   background: linear-gradient(90deg, var(--bg-subtle), var(--border), var(--bg-subtle));
   background-size: 200% 100%;
   animation: contrib-shimmer 1.2s linear infinite;
@@ -944,4 +945,17 @@ img {
 /* 首页 Fork 间距 */
 .hero-fork {
   margin-top: 26px;
+}
+
+@media (max-width: 700px) {
+  .prose img[src*='github-readme-stats'],
+  .prose img[src*='github-stats'],
+  .prose img[src*='streak-stats'],
+  .prose img[src*='readme-stats'] {
+    max-height: 110px;
+  }
+
+  .profile__main {
+    min-width: 0;
+  }
 }
