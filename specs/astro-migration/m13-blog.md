@@ -37,4 +37,7 @@ curl -s http://localhost:4321/Dnevend/gist/9ec0af... | grep -E 'min read|分钟'
   Gist 详情显示 `min read`。
 - `pnpm test`：community smoke 12 项，新增标签解析 / 统计筛选 / 阅读时间 /
   Feed 多标签；`pnpm check` / `pnpm build` 通过。
-- 生产部署与 CI 结果待上线后补。
+- 生产部署（2026-11-16，Worker version `7a502c7f-5284-4296-9239-4d924e2812ff`）：
+  `/Dnevend/archive` 200、`cache-control: s-maxage=300`、`x-classy-cache: HIT`；
+  `/Dnevend/gists?tag=foo` 与 `?tag=bar` 分别显示对应空状态（缓存键未串）；
+  `/Dnevend/gist/9ec0af...` 显示 `2 min read`；CI run `43837617797` 通过。
