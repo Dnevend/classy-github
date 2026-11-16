@@ -409,6 +409,11 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 去掉 88×31 徽章的 `textLength` 强制拉伸，超长 login 用省略号。
 详见 `m20-badge-text.md`。
 
+### M21 · 仓库分页只显示当前页（已完成 2026-11-16）
+
+GitHub 拿不到总页数，文案改为只显示 `Page {page}` / `第 {page} 页`。
+详见 `m21-pager.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

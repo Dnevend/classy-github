@@ -146,7 +146,7 @@ const messages = {
     'search.empty': 'Nothing matches.',
     'repos.prev': 'Previous',
     'repos.next': 'Next',
-    'repos.page': 'Page {page} / {total}',
+    'repos.page': 'Page {page}',
 
     'gists.title': "{name}'s gists",
     'gists.empty': 'No public gists.',
@@ -336,7 +336,7 @@ const messages = {
     'search.empty': '没有匹配项。',
     'repos.prev': '上一页',
     'repos.next': '下一页',
-    'repos.page': '第 {page} / {total} 页',
+    'repos.page': '第 {page} 页',
 
     'gists.title': '{name} 的 Gist',
     'gists.empty': '没有公开 Gist。',

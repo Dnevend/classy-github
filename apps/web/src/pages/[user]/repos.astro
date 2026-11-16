@@ -104,7 +104,7 @@ const hasPrev = page > 1;
             ) : (
               <span />
             )}
-            <span class="pager__page">{t('repos.page', { page, total: page + (hasNext ? 1 : 0) })}</span>
+            <span class="pager__page">{t('repos.page', { page })}</span>
             {hasNext ? (
               <a class="pager__link" href={`/${user}/repos?page=${page + 1}`}>
                 {t('repos.next')} →
