@@ -26,4 +26,8 @@
   - `/setup?u=Dnevend` 输出 `owner=Dnevend`、webring/discover 勾选且 JSON `true`；
   - `/setup?u=antfu` 输出 `owner=antfu`、webring/discover 默认 `true`；
   - `/claim/antfu` starter 的 owner=antfu、webring/discover 为 true。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `6a4b7e9f-14c9-4002-a174-c833e07a2c19`）：
+  `/setup?u=Dnevend` → owner=Dnevend、webring/discover=true；
+  `/setup?u=antfu` → owner=antfu、webring/discover=true；
+  `/claim/antfu` starter 同样含 owner + true；Dnevend ring 仍 `member:true,count:1`。
+- CI run `43887989490` 通过。
