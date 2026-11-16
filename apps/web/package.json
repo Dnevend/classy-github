@@ -29,6 +29,7 @@
     "shiki": "^4.6.0",
     "tuicss": "^2.1.2",
     "unified": "^11.0.5",
+    "workers-og": "^0.0.27",
     "zod": "^4.6.7"
   },
   "devDependencies": {

@@ -176,7 +176,7 @@ const cases: Case[] = [
     },
   },
   {
-    name: '非默认主题永不索引（即使 seo.index=true）',
+    name: 'SEO：只有站主默认主题可索引',
     run: () => {
       const userinfo = {
         login: 'demo',
@@ -189,16 +189,38 @@ const cases: Case[] = [
         public_gists: 0,
       } as never;
 
-      const seo = seoForProfile({
+      const base = {
         user: 'demo',
         userinfo,
         origin: 'https://x.test',
         indexable: true,
-        theme: 'nes',
-      });
-      assert.equal(seo.robots, 'noindex, follow');
+      };
+
+      // 默认主题（mac 接管 default）可以索引
+      assert.equal(
+        seoForProfile({ ...base, theme: 'mac', defaultTheme: 'mac' }).robots,
+        'index, follow'
+      );
+      // 访客切到别的主题，即使 seo.index=true 也不索引
+      assert.equal(
+        seoForProfile({ ...base, theme: 'nes', defaultTheme: 'mac' }).robots,
+        'noindex, follow'
+      );
+      // 站主自己选了 nes，则 nes 就是默认主题，可以索引
+      assert.equal(
+        seoForProfile({ ...base, theme: 'nes', defaultTheme: 'nes' }).robots,
+        'index, follow'
+      );
       // canonical 始终指回不带 theme 的干净地址
-      assert.equal(seo.canonical, 'https://x.test/demo');
+      assert.equal(
+        seoForProfile({ ...base, theme: 'nes', defaultTheme: 'mac' }).canonical,
+        'https://x.test/demo'
+      );
+      // OG 图跟随访客主题
+      assert.equal(
+        seoForProfile({ ...base, theme: 'mac', defaultTheme: 'mac' }).image,
+        'https://x.test/og/demo.png?theme=mac'
+      );
     },
   },
   {

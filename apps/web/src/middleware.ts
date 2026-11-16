@@ -15,6 +15,7 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
   [/^\/$/, 3600],
   [/^\/webring\/?$/, 300],
   [/^\/badge\/[^/]+\.svg$/, 86400],
+  [/^\/og\/[^/]+\.png$/, 86400],
   [/^\/[^/]+\/gist\/[^/]+\/?$/, 3600],
   [/^\/[^/]+\/rss\.xml$/, 3600],
   [/^\/[^/]+\/guestbook\/?$/, 300],

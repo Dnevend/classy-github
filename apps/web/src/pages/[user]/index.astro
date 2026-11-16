@@ -86,6 +86,7 @@ const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : []
 
 const display = data?.userinfo.name || data?.userinfo.login || user;
 
+const defaultTheme = config.theme === 'default' ? 'mac' : config.theme;
 const seo = data
   ? {
       ...seoForProfile({
@@ -94,6 +95,7 @@ const seo = data
         origin,
         indexable: config.seo.index,
         theme: themeName,
+        defaultTheme,
       }),
       rss: `${origin}/${user}/rss.xml`,
     }

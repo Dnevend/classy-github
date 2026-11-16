@@ -79,6 +79,7 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
     title: `${title} · ${user} · ClassyGit`,
     description: data?.gist.description ?? undefined,
     canonical: `${origin}/${user}/gist/${gistId}`,
+    image: `${origin}/og/${encodeURIComponent(user)}.png?theme=${themeName}`,
     rss: `${origin}/${user}/rss.xml`,
     robots: 'noindex, follow',
   }}

@@ -360,6 +360,12 @@ TuiCss（DOS/TUI）、全站分享卡片（canvas 导出 PNG）、sitemap 两级
 `/<user>/rss.xml` 输出 Atom feed，用户主页 / Gists / Gist 详情加自动发现，
 Gists 列表加 RSS 入口；1 小时边缘缓存。详见 `m11-feed.md`。
 
+### M12 · OG 分享图（已完成 2026-11-16）
+
+`/og/<user>.png` 1200×630 主题化社交卡片（workers-og），
+主页 / Gist / 仓库详情接入 `og:image`；顺带修复 mac 默认主题下
+`seo.index` 永远 noindex 的判定 bug。详见 `m12-og.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |
