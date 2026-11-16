@@ -72,3 +72,16 @@ URL 不带分支名；内容统一走默认分支（raw 与 GitHub 链接用 `HE
   - `/Dnevend/repo/classy-github/README.md` 的 `README.en.md` 与 LICENSE
     链接站内可点，`assets/*.png` 指向 raw；
   - 不存在的文件返回 404。
+
+## 生产验证（2026-11-17）
+
+- Worker `classy-web` version `839a7389-50e0-4ee6-ba2d-352f61b1c186`；
+  Pages 部署预览 `https://107fd37a.classygit.pages.dev`。
+- `/ruanyf/repo/weekly` 输出 `href="/ruanyf/repo/weekly/docs/issue-419.md"`。
+- 该文件页 200，正文包含「机房来了，写字楼走了」。
+- `/ruanyf/repo/weekly/docs` 200，目录列表正常。
+- 不存在的文件 404；旧错误地址 `/ruanyf/repo/docs/issue-419.md` 仍 404
+  （缺少仓库名，无法恢复）。
+- `/Dnevend/repo/classy-github/README.md` 的 `README.en.md`、LICENSE 链接
+  站内可点，`assets/*.png` 指向 raw。
+- 文件页响应头 `x-classy-cache: HIT`、`cache-control: public, s-maxage=300`。
