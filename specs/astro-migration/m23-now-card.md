@@ -39,4 +39,7 @@ M22 把 `NowCard` 接进了各主题的 `ProfileCard`，导致「在读 / 在听
   - 与资料卡间距 16–20px，与贡献墙间距 16px；
   - 显示 `Reading 江湖边` / `Listening 秘密後院`，空 watching 不显示；
   - 无近况的用户（如 `octocat`）不渲染卡片。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `cde2fe9c-5c30-40c4-af0e-2f4310794c48`）：
+  1280px 与 390px 下四主题均为 1 个 `.now-card`，紧跟在资料卡 `<aside>` 之后，
+  与资料卡间距 16–20px、与贡献墙 16px；`octocat` 无近况不渲染卡片。
+- CI run `43906498036` 通过。
