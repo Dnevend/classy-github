@@ -436,6 +436,12 @@ GitHub 拿不到总页数，文案改为只显示 `Page {page}` / `第 {page} �
 新增 profile.gists 配置；修复 hero-links 间距；删除 default 主题代码。
 详见 `m25-gists-sidebar.md`。
 
+### M26 · 贡献卡片开关 / 资料卡按钮清理（已完成 2026-11-17）
+
+新增 profile.contrib.visible，贡献卡默认放在近况上方；
+移除资料卡里的仓库/片段/留言簿/GitHub 按钮；中文「最近 Gist」改「最近片段」。
+详见 `m26-contrib-toggle.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

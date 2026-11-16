@@ -194,20 +194,15 @@ const seo = data
             user={user}
             userinfo={data.userinfo}
             {config}
-            links={{
-              repos: `/${user}/repos`,
-              gists: `/${user}/gists`,
-              guestbook: config.guestbook.gistId
-                ? `/${user}/guestbook`
-                : undefined,
-            }}
           />
 
-          <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
+          {config.profile.contrib.visible && (
+            <SideCard title={t('contrib.title')}>
+              <ContribWall user={user} theme={themeName} />
+            </SideCard>
+          )}
 
-          <SideCard title={t('contrib.title')}>
-            <ContribWall user={user} theme={themeName} />
-          </SideCard>
+          <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
           {config.profile.gists.visible && recentGists.length > 0 && (
             <SideCard title={t('gists.recent')} variant="recent-gists">

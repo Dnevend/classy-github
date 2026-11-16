@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const { userinfo } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 
 const stats = [
@@ -47,17 +47,6 @@ const stats = [
             <span class="mac-stat__label">{stat.label}</span>
           </div>
         ))}
-      </div>
-
-      <div class="mac-actions">
-        <a class="mac-btn" href={links.repos}>{t('profile.reposTitle')}</a>
-        <a class="mac-btn" href={links.gists}>{t('profile.gistsTitle')}</a>
-        {links.guestbook && (
-          <a class="mac-btn" href={links.guestbook}>{t('nav.guestbook')}</a>
-        )}
-        <a class="mac-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-          {t('profile.github')}
-        </a>
       </div>
     </div>
   </div>

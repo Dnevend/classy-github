@@ -178,6 +178,14 @@ const display = userinfo?.name || userinfo?.login || user;
               <label class="setup-check">
                 <input
                   type="checkbox"
+                  name="showContrib"
+                  checked={initialConfig.profile.contrib.visible}
+                />
+                {t('setup.showContrib')}
+              </label>
+              <label class="setup-check">
+                <input
+                  type="checkbox"
                   name="showRepos"
                   checked={initialConfig.profile.repos.visible}
                 />
@@ -386,6 +394,10 @@ const display = userinfo?.name || userinfo?.login || user;
               language: form.language.value,
               profile: {
                 ...initial.profile,
+                contrib: {
+                  ...initial.profile.contrib,
+                  visible: form.showContrib.checked,
+                },
                 repos: {
                   ...initial.profile.repos,
                   visible: form.showRepos.checked,

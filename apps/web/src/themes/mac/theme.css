@@ -320,12 +320,6 @@
   grid-column: 1 / -1;
 }
 
-.mac-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
 /* ---------- Gist 列表 ---------- */
 
 [data-theme='mac'] .gist-list {

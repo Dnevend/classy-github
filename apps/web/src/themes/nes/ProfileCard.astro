@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const { userinfo } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -35,16 +35,5 @@ const t = createTranslator(Astro.locals.locale);
       <li><span>{userinfo.public_repos}</span> {t('profile.reposTitle')}</li>
       <li><span>{userinfo.public_gists}</span> {t('profile.gistsTitle')}</li>
     </ul>
-
-    <div class="nes-actions">
-      <a class="nes-btn is-success" href={links.repos}>{t('profile.reposTitle')}</a>
-      <a class="nes-btn is-warning" href={links.gists}>{t('profile.gistsTitle')}</a>
-      {links.guestbook && (
-        <a class="nes-btn is-primary" href={links.guestbook}>{t('nav.guestbook')}</a>
-      )}
-      <a class="nes-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-        {t('profile.github')}
-      </a>
-    </div>
   </section>
 </aside>

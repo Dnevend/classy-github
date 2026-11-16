@@ -26,6 +26,9 @@ export interface ResolvedConfig {
     cover: string | null;
     /** 可选：嵌入任意第三方统计卡图片（http/https） */
     cardUrl: string | null;
+    contrib: {
+      visible: boolean;
+    };
     repos: {
       visible: boolean;
       showCount: number;
@@ -85,6 +88,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   profile: {
     cover: null,
     cardUrl: null,
+    contrib: { visible: true },
     repos: { visible: true, showCount: 6 },
     gists: { visible: true, showCount: 6 },
   },
@@ -118,6 +122,7 @@ const profileSchema = z
   .object({
     cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL').nullable(),
     cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL').nullable(),
+    contrib: z.object({ visible: z.boolean() }).partial(),
     repos: previewListSchema,
     gists: previewListSchema,
   })
@@ -304,6 +309,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
   }
 
   const parsedProfile = profile ?? {};
+  const parsedContrib = parsedProfile.contrib ?? {};
   const parsedRepos = parsedProfile.repos ?? {};
   const parsedProfileGists = parsedProfile.gists ?? {};
 
@@ -316,6 +322,10 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
       profile: {
         cover: parsedProfile.cover ?? DEFAULT_CONFIG.profile.cover,
         cardUrl: parsedProfile.cardUrl ?? DEFAULT_CONFIG.profile.cardUrl,
+        contrib: {
+          visible:
+            parsedContrib.visible ?? DEFAULT_CONFIG.profile.contrib.visible,
+        },
         repos: {
           visible: parsedRepos.visible ?? DEFAULT_CONFIG.profile.repos.visible,
           showCount: clampCount(

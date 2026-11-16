@@ -250,12 +250,6 @@
   padding-left: 16px;
 }
 
-.w95-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
 /* ---------- Gist 列表 ---------- */
 
 [data-theme='win98'] .gist-list {

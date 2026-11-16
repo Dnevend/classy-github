@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const { userinfo } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -46,17 +46,6 @@ const t = createTranslator(Astro.locals.locale);
           <li>{userinfo.public_gists} {t('profile.gistsTitle')}</li>
         </ul>
       </fieldset>
-
-      <div class="w95-actions">
-        <a class="w95-btn" href={links.repos}>{t('profile.reposTitle')}</a>
-        <a class="w95-btn" href={links.gists}>{t('profile.gistsTitle')}</a>
-        {links.guestbook && (
-          <a class="w95-btn" href={links.guestbook}>{t('nav.guestbook')}</a>
-        )}
-        <a class="w95-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-          {t('profile.github')}
-        </a>
-      </div>
     </div>
   </div>
 </aside>

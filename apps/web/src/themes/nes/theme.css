@@ -233,17 +233,6 @@
   color: var(--accent);
 }
 
-.nes-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.nes-actions .nes-btn {
-  padding: 6px 8px;
-  font-size: 8px;
-}
-
 /* ---------- 仓库卡 ---------- */
 
 [data-theme='nes'] .repo-grid {

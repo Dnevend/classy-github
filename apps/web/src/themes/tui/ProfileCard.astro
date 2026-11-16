@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links } = Astro.props as ThemeProfileCardProps;
+const { userinfo } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 
 const stats = [
@@ -42,17 +42,6 @@ const stats = [
           <li><span>{stat.label}</span><b>{stat.value}</b></li>
         ))}
       </ul>
-
-      <div class="tui-actions">
-        <a class="tui-button" href={links.repos}>{t('profile.reposTitle')}</a>
-        <a class="tui-button" href={links.gists}>{t('profile.gistsTitle')}</a>
-        {links.guestbook && (
-          <a class="tui-button" href={links.guestbook}>{t('nav.guestbook')}</a>
-        )}
-        <a class="tui-button" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
-          {t('profile.github')}
-        </a>
-      </div>
     </div>
   </div>
 </aside>

@@ -5,6 +5,9 @@
   "profile": {
     "cover": null,
     "cardUrl": null,
+    "contrib": {
+      "visible": true
+    },
     "repos": {
       "visible": true,
       "showCount": 4

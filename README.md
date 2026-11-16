@@ -57,6 +57,7 @@ pnpm dev            # http://localhost:4321
   "theme": "mac",
   "language": "en",
   "profile": {
+    "contrib": { "visible": true },
     "repos": { "visible": true, "showCount": 6 },
     "gists": { "visible": true, "showCount": 6 },
     "cover": "https://picsum.photos/1024/576"
@@ -90,6 +91,7 @@ pnpm dev            # http://localhost:4321
 | `owner` | 配置归属的 GitHub 用户名。fork 后必须改成自己的；与访问者不匹配时会被当模板忽略 |
 | `theme` | 默认主题名（mac / nes / win98 / tui；mac 为默认） |
 | `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
+| `profile.contrib.visible` | 是否在主页展示贡献活跃度卡片 |
 | `profile.repos.visible` | 是否在主页展示仓库列表 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
 | `profile.gists.visible` | 是否在主页展示最近 Gists 列表 |

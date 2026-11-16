@@ -21,6 +21,7 @@ const cases: Case[] = [
       assert.equal(config.profile.repos.visible, true);
       assert.equal(config.profile.gists.showCount, 6);
       assert.equal(config.profile.gists.visible, true);
+      assert.equal(config.profile.contrib.visible, true);
       assert.equal(config.seo.index, false);
       assert.deepEqual(config.links, []);
       assert.equal(config.gists.prefix, 'classy');
@@ -50,6 +51,7 @@ const cases: Case[] = [
         profile: {
           cover: null,
           cardUrl: null,
+          contrib: { visible: false },
           repos: { visible: true, showCount: 4 },
           gists: { visible: false, showCount: 2 },
         },
@@ -57,6 +59,7 @@ const cases: Case[] = [
       assert.equal(config.profile.repos.showCount, 4);
       assert.equal(config.profile.gists.visible, false);
       assert.equal(config.profile.gists.showCount, 2);
+      assert.equal(config.profile.contrib.visible, false);
       assert.equal(config.profile.cover, null);
       assert.equal(config.profile.cardUrl, null);
       assert.deepEqual(issues, []);

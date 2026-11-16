@@ -3,6 +3,9 @@ import { Theme } from "@classy/shared";
 type ClassyConfig = {
   theme: Theme;
   profile: {
+    contrib: {
+      visible: boolean;
+    };
     repos: {
       visible: boolean;
       showCount: number;

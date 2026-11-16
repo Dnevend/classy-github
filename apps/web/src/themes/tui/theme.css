@@ -225,15 +225,8 @@
   line-height: 1;
 }
 
-.tui-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 /* TuiCss 的 .tui-button 自带 10px 阴影，这里收一点并统一配色 */
 [data-theme='tui'] .tui-button,
-.tui-actions .tui-button,
 .tui-repo .tui-button {
   box-shadow: 4px 4px #000;
   text-decoration: none;
