@@ -42,3 +42,6 @@ build
 
 .docusaurus
 .cache-loader
+
+# Playwright MCP 的截图/快照临时目录
+.playwright-mcp/
