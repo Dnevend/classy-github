@@ -4,8 +4,8 @@
   "language": "en",
   "profile": {
     "cover": null,
-    "showFollowers": true,
-    "showFollowing": true,
+    "showFollowers": false,
+    "showFollowing": false,
     "cardUrl": null,
     "repos": {
       "visible": true,
