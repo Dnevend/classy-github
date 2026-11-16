@@ -391,7 +391,7 @@ const cases: Case[] = [
       // OG 图跟随访客主题
       assert.equal(
         seoForProfile({ ...base, theme: 'mac', defaultTheme: 'mac' }).image,
-        'https://x.test/og/demo.png?theme=mac&v=2'
+        'https://x.test/og/demo.png?theme=mac&v=3'
       );
     },
   },
