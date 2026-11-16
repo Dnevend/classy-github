@@ -82,7 +82,7 @@ listRepos(user, { perPage });
 - 相对路径、`data:`、`javascript:` 会被配置校验拒绝；
 - 放在近况卡片底部，宽度 100%。
 
-`CACHE_VERSION` 13 → 14。
+`CACHE_VERSION` 13 → 15。
 
 ## 验证
 
