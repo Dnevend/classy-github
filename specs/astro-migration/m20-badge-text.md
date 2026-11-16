@@ -24,4 +24,7 @@ textLength="78" lengthAdjust="spacingAndGlyphs"
 - 本地 `/badge/Dnevend`：Mac / NES / Win98 / TUI 四套徽章的 `@Dnevend`
   都按自然字形显示，不再拉伸。
 - `pnpm test` / `pnpm check` / `pnpm build` 通过。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `55231b90-6cad-4d21-b89c-be132da600dc`）：
+  `/badge/Dnevend.svg` 不再含 `textLength` / `lengthAdjust`，
+  `@Dnevend` 按自然等宽字形输出；SVG 1 天缓存命中。
+- CI run `43891750178` 通过。
