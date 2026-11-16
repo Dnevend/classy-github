@@ -44,4 +44,9 @@
   - 完整 Gists 页标题省略；
   - Gist 详情页标题换行，页面无横向滚动。
 - NES 视觉检查：README / 资料卡白边，仓库卡灰边绿标题，右侧工具卡浅底绿标题。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `4e5a20bb-240d-4ed2-97ae-2c0e1659a49f`）：
+  - 四主题注入超长无空格标题后，最近片段仍显示省略号，页面无横向滚动；
+  - Gist 详情页标题 `overflow-wrap: anywhere`，长标题换行且无横向滚动；
+  - NES README / 资料卡 `4px solid #fff`，仓库卡 `2px solid #6c757d`，
+    右侧工具卡 `2px solid #495057` + `#2b3035` 背景，标题均为 `#92cc41`。
+- CI run `43929699582` 通过。
