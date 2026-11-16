@@ -40,10 +40,16 @@ file og.png
 - `pnpm test`：config smoke 新增「只有站主默认主题可索引」；
   community smoke 9 项；`pnpm check` / `pnpm build` 通过。
 - `workers-og` 让 `dist/server` 从 3.4M 涨到 5.3M，仍低于 12MB CI 阈值。
+- 生产部署（2026-11-16，Worker version `93d492f5-921a-488c-a3e9-c9bae8273ded`）：
+  `GET /og/Dnevend.png?theme=mac` → 200 `image/png`，1200×630，约 64KB；
+  `/Dnevend` 的 `og:image` 已指向该地址，`twitter:card=summary_large_image`；
+  OG 响应 `s-maxage=86400`，第二次请求 `x-classy-cache: HIT`。
+- CI：M12 首次 push 因 pnpm 9 `autoInstallPeers` 与 lockfile settings 不一致失败；
+  统一 `.npmrc` 为 `true` 并提交 lockfile 后，run `43835255288` 通过。
 
 ## 已知限制
 
 - 卡片只用 ASCII；中文显示名会退回 login。
 - 卡片是「用户卡」，仓库 / Gist 详情共用；后续可做 `/og/gist/<id>.png`。
 - 头像或字体读取失败时降级为占位圆 / 默认字体，不保证 100% 可用。
-- 生产部署与首张卡片缓存命中待上线后验证。
+- 生产卡片已上线并命中缓存；中文显示名仍会退回 login。
