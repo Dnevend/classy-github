@@ -118,7 +118,17 @@ const filtered = activeTag
         )}
 
         {gists.length === 0 ? (
-          <p class="bio">{t('gists.empty')}</p>
+          <p class="bio">
+            {t('gists.empty')}{' '}
+            <a
+              class="empty-link"
+              href="https://gist.github.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('gists.createFirst')} ↗
+            </a>
+          </p>
         ) : filtered.length === 0 ? (
           <>
             <p class="bio">{t('gists.noTag', { tag: activeTag })}</p>

@@ -399,6 +399,11 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 `webring.enabled` / `discover.enabled` 默认 true；`/setup` 客户端生成的 JSON
 补回 owner。详见 `m18-defaults.md`。
 
+### M19 · Gists 空状态创建入口（已完成 2026-11-16）
+
+无公开 Gist 时在空状态后加「Create your first Gist」链接，直达 gist.github.com。
+详见 `m19-gist-empty.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

@@ -908,6 +908,16 @@ img {
   color: var(--accent);
 }
 
+.empty-link {
+  color: var(--accent);
+  border-bottom: 1px dotted currentColor;
+}
+
+.empty-link:hover {
+  color: var(--accent);
+  border-bottom-style: solid;
+}
+
 .rss-link,
 .archive-link,
 .pill-link {

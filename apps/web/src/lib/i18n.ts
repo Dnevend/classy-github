@@ -150,6 +150,7 @@ const messages = {
 
     'gists.title': "{name}'s gists",
     'gists.empty': 'No public gists.',
+    'gists.createFirst': 'Create your first Gist',
     'gists.desc': '{name} · {count} public gists',
     'gists.files': '{count} files',
     'gists.rss': 'RSS feed',
@@ -339,6 +340,7 @@ const messages = {
 
     'gists.title': '{name} 的 Gist',
     'gists.empty': '没有公开 Gist。',
+    'gists.createFirst': '创建你的第一条 Gist',
     'gists.desc': '{name} · {count} 条公开 Gist',
     'gists.files': '{count} 个文件',
     'gists.rss': 'RSS 订阅',
