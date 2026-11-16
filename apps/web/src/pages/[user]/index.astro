@@ -158,7 +158,13 @@ const seo = data
             user={user}
             userinfo={data.userinfo}
             {config}
-            links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
+            links={{
+              repos: `/${user}/repos`,
+              gists: `/${user}/gists`,
+              guestbook: config.guestbook.gistId
+                ? `/${user}/guestbook`
+                : undefined,
+            }}
           />
 
           <section class="contrib">

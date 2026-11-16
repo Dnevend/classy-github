@@ -36,7 +36,7 @@ export interface ThemeProfileCardProps {
   userinfo: User;
   config: ResolvedConfig;
   /** 页面算好的路由，主题不要自己拼 */
-  links: { repos: string; gists: string };
+  links: { repos: string; gists: string; guestbook?: string };
 }
 
 export interface ThemeRepoCardProps {

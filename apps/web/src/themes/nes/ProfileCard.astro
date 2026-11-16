@@ -2,6 +2,7 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
+import NowCard from '../_shared/NowCard.astro';
 
 const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -28,7 +29,7 @@ const t = createTranslator(Astro.locals.locale);
 
     {userinfo.bio && <p class="nes-bio">{userinfo.bio}</p>}
     <ProfileMeta userinfo={userinfo} />
-
+    <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
     <ul class="nes-stats">
       {config.profile.showFollowers && (
@@ -44,6 +45,9 @@ const t = createTranslator(Astro.locals.locale);
     <div class="nes-actions">
       <a class="nes-btn is-success" href={links.repos}>{t('profile.reposTitle')}</a>
       <a class="nes-btn is-warning" href={links.gists}>{t('profile.gistsTitle')}</a>
+      {links.guestbook && (
+        <a class="nes-btn is-primary" href={links.guestbook}>{t('nav.guestbook')}</a>
+      )}
       <a class="nes-btn" href={userinfo.html_url} target="_blank" rel="noopener noreferrer">
         {t('profile.github')}
       </a>

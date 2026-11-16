@@ -541,3 +541,78 @@
   background: repeating-linear-gradient(90deg, #55ff55 0 6px, transparent 6px 12px);
   animation: tui-blink 0.7s steps(2, end) infinite;
 }
+
+/* 移动端：导航横向滚动，右侧用户名/头像不被挤走 */
+.tui-bar {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.tui-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+}
+
+.tui-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.tui-nav a {
+  flex: none;
+  white-space: nowrap;
+}
+
+.tui-brand {
+  flex: none;
+  max-width: 35%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tui-bar .header-avatar {
+  flex: none;
+}
+
+/* 社区页脚在 DOS 蓝底上要足够亮 */
+[data-theme='tui'] .community-footer {
+  color: #ffffff;
+}
+
+[data-theme='tui'] .community-footer a {
+  color: #55ff55;
+  border-bottom-color: #55ff55;
+}
+
+[data-theme='tui'] .community-footer a:hover {
+  color: #ffff55;
+  border-bottom-color: #ffff55;
+}
+
+[data-theme='tui'] .hit-counter {
+  color: #55ff55;
+}
+
+[data-theme='tui'] .webring-widget {
+  color: #ffffff;
+}
+
+/* ---------- DOS 鼠标 ---------- */
+
+[data-theme='tui'] body {
+  cursor: url('/cursors/tui-arrow.svg') 1 1, default;
+}
+
+[data-theme='tui'] a,
+[data-theme='tui'] button {
+  cursor: pointer;
+}
+
+[data-theme='tui'] input,
+[data-theme='tui'] textarea,
+[data-theme='tui'] select {
+  cursor: auto;
+}

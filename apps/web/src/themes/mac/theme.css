@@ -43,6 +43,37 @@
   background: #fff;
   border-bottom: 1px solid #000;
   font-size: 12px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.mac-menu {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+}
+
+.mac-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.mac-menu a {
+  flex: none;
+  white-space: nowrap;
+}
+
+.mac-clock {
+  flex: none;
+  max-width: 38%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mac-menubar .header-avatar {
+  flex: none;
 }
 
 .mac-apple {
@@ -512,4 +543,21 @@
   background: repeating-linear-gradient(45deg, #000 0 6px, #fff 6px 12px);
   border: 1px solid #000;
   animation: mac-barber 0.6s linear infinite;
+}
+
+/* ---------- System 6 鼠标 ---------- */
+
+[data-theme='mac'] body {
+  cursor: url('/cursors/mac-arrow.svg') 1 1, default;
+}
+
+[data-theme='mac'] a,
+[data-theme='mac'] button {
+  cursor: pointer;
+}
+
+[data-theme='mac'] input,
+[data-theme='mac'] textarea,
+[data-theme='mac'] select {
+  cursor: auto;
 }

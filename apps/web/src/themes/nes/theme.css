@@ -470,3 +470,38 @@
   background: repeating-linear-gradient(90deg, #3d6b2f 0 8px, #2b3035 8px 16px);
   animation: nes-blink 0.8s steps(2, end) infinite;
 }
+
+/* 移动端：导航横向滚动，右侧用户名/头像不被挤走 */
+.nes-header__inner {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.nes-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+}
+
+.nes-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.nes-nav .nes-btn {
+  flex: none;
+  white-space: nowrap;
+}
+
+.nes-brand {
+  flex: none;
+  max-width: 35%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nes-header__inner .header-avatar {
+  flex: none;
+}

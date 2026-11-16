@@ -535,3 +535,55 @@
   border: 2px inset #dfdfdf;
   animation: w98-progress 0.9s steps(2, end) infinite;
 }
+
+/* 移动端：导航横向滚动，右侧用户名/头像不被挤走 */
+.w95-taskbar {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.w95-menu {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+}
+
+.w95-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.w95-menu a {
+  flex: none;
+  white-space: nowrap;
+}
+
+.w95-clock {
+  flex: none;
+  max-width: 35%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w95-taskbar .header-avatar {
+  flex: none;
+}
+
+/* ---------- Win98 鼠标 ---------- */
+
+[data-theme='win98'] body {
+  cursor: url('/cursors/win98-arrow.svg') 1 1, default;
+}
+
+[data-theme='win98'] a,
+[data-theme='win98'] button {
+  cursor: pointer;
+}
+
+[data-theme='win98'] input,
+[data-theme='win98'] textarea,
+[data-theme='win98'] select {
+  cursor: auto;
+}

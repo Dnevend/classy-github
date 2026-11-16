@@ -414,6 +414,11 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 GitHub 拿不到总页数，文案改为只显示 `Page {page}` / `第 {page} 页`。
 详见 `m21-pager.md`。
 
+### M22 · 移动端导航 / 主题鼠标 / 资料卡近况（已完成 2026-11-16）
+
+移动端导航改横向滚动；TUI 页脚提亮；Mac/Win98/TUI 主题鼠标；
+资料卡加 Guestbook 按钮并接回 NowCard。详见 `m22-profile-mobile.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |
