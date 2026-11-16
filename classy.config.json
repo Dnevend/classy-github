@@ -3,7 +3,7 @@
   "theme": "mac",
   "language": "en",
   "profile": {
-    "cover": "https://picsum.photos/1024/576",
+    "cover": null,
     "showFollowers": true,
     "showFollowing": true,
     "cardUrl": null,
@@ -44,10 +44,13 @@
   },
   "now": {
     "books": [
-      "江湖边"
+      "《江湖边》",
+      "《北京法源寺》",
+      "《夜晚的潜水艇》"
     ],
     "music": [
-      "秘密後院"
+      "秘密後院",
+      "NeilYoung"
     ],
     "watching": []
   },
