@@ -196,7 +196,7 @@
 [data-theme='tui'] .tui-profile.has-cover {
   position: relative;
   align-items: flex-end;
-  margin-top: -34px;
+  margin-top: -22px;
 }
 
 [data-theme='tui'] .tui-profile.has-cover .tui-avatar {

@@ -207,7 +207,7 @@
 [data-theme='nes'] .nes-profile.has-cover {
   position: relative;
   align-items: flex-end;
-  margin-top: -34px;
+  margin-top: -12px;
 }
 
 [data-theme='nes'] .nes-profile.has-cover .nes-avatar {
