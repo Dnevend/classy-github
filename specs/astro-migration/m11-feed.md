@@ -35,6 +35,10 @@ curl -s -o /dev/null -w '%{http_code} %{content_type}\n' \
 - `pnpm check` / `pnpm build` 通过。
 - 本地 feed 输出 10 条 entry；`/Dnevend/gists` 同时包含
   `rel="alternate"` 与 `.rss-link`。
+- 生产部署（2026-11-16，Worker version `aced68f9-2ba0-4393-90bd-781a11a4a430`）：
+  `GET /Dnevend/rss.xml` → 200 `application/atom+xml`，9 条 entry，
+  `cache-control: public, s-maxage=3600`，`x-classy-cache: HIT`；
+  `/Dnevend` 与 `/Dnevend/gists` 均包含自动发现链接；CI run `43821566919` 通过。
 
 ## 已知限制
 
