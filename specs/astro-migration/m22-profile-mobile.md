@@ -63,4 +63,9 @@ WATCHING  ...
 - `pnpm check` / `pnpm build` / `pnpm test`。
 - Playwright：Mac / TUI 现在卡片显示 江湖边 / 秘密後院；Guestbook 按钮出现在
   actions；TUI badge 计算色 `rgb(85,255,85)`；三套主题 body cursor 指向对应 SVG。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `32b7377e-158f-47ca-8798-79cc3c028b50`）：
+  390px 下 Mac / NES / Win98 / TUI 追加 6 个导航链接后 header 仍单行，
+  导航 `overflow-x:auto`，用户名与头像同 top；
+  TUI `88×31 badge` 计算色 `rgb(85,255,85)`；三套 cursor SVG 均 200；
+  TUI 显示 Reading 江湖边 / Listening 秘密後院，Guestbook 按钮指向 `/Dnevend/guestbook`。
+- CI run `43900693432` 通过。
