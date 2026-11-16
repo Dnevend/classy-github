@@ -27,7 +27,7 @@ const shareData =
 const t = createTranslator(Astro.locals.locale);
 ---
 
-<Base {seo} {theme}>
+<Base {seo} {theme} user={user} userName={brand || userinfo?.name || user}>
   <Fragment slot="head">
     <link rel="stylesheet" href={themeCss} />
   </Fragment>
@@ -35,7 +35,7 @@ const t = createTranslator(Astro.locals.locale);
   <div class="mac-screen">
     <header class="mac-menubar">
       <a class="mac-apple" href="/" aria-label="ClassyGit">◉</a>
-      <span class="mac-appname">ClassyGit</span>
+      <a class="mac-appname" href="/">ClassyGit</a>
 
       {
         user && (

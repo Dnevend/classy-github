@@ -5,6 +5,17 @@ import ProfileMeta from '../_shared/ProfileMeta.astro';
 
 const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
+
+const stats = [
+  config.profile.showFollowers
+    ? { label: t('profile.followers'), value: userinfo.followers }
+    : null,
+  config.profile.showFollowing
+    ? { label: t('profile.following'), value: userinfo.following }
+    : null,
+  { label: t('profile.reposTitle'), value: userinfo.public_repos },
+  { label: t('profile.gistsTitle'), value: userinfo.public_gists },
+].filter((item): item is { label: string; value: number } => item !== null);
 ---
 
 <aside class="tui-aside">
@@ -33,14 +44,9 @@ const t = createTranslator(Astro.locals.locale);
 
 
       <ul class="tui-stats">
-        {config.profile.showFollowers && (
-          <li><span>{t('profile.followers')}</span><b>{userinfo.followers}</b></li>
-        )}
-        {config.profile.showFollowing && (
-          <li><span>{t('profile.following')}</span><b>{userinfo.following}</b></li>
-        )}
-        <li><span>{t('profile.reposTitle')}</span><b>{userinfo.public_repos}</b></li>
-        <li><span>{t('profile.gistsTitle')}</span><b>{userinfo.public_gists}</b></li>
+        {stats.map((stat) => (
+          <li><span>{stat.label}</span><b>{stat.value}</b></li>
+        ))}
       </ul>
 
       <div class="tui-actions">

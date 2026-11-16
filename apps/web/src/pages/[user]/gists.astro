@@ -90,13 +90,15 @@ const filtered = activeTag
             {t('gists.title', { name: display })}
             <span class="page-title__count">{filtered.length}</span>
           </h1>
-          <a class="archive-link" href={`/${user}/archive`} title={t('gists.archive')}>
-            {t('gists.archive')}
-          </a>
-          <a class="rss-link" href={`/${user}/rss.xml`} title={t('gists.rss')}>
-            RSS
-          </a>
-          <ListSearch target="#gist-list" />
+          <div class="list-actions">
+            <a class="archive-link" href={`/${user}/archive`} title={t('gists.archive')}>
+              {t('gists.archive')}
+            </a>
+            <a class="rss-link" href={`/${user}/rss.xml`} title={t('gists.rss')}>
+              RSS
+            </a>
+            <ListSearch target="#gist-list" />
+          </div>
         </div>
 
         {tagCounts.length > 0 && (

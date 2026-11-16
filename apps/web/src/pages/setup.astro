@@ -259,7 +259,16 @@ const display = userinfo?.name || userinfo?.login || user;
                   placeholder="9ec0af…"
                 />
               </label>
-              <p class="setup-hint">{t('setup.guestbookHint')}</p>
+              <p class="setup-hint">
+                {t('setup.guestbookHint')}{' '}
+                <a
+                  href="https://gist.github.com/?filename=guestbook.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('setup.createGist')} ↗
+                </a>
+              </p>
               <label class="setup-check">
                 <input type="checkbox" name="webring" checked={initialConfig.webring.enabled} />
                 {t('setup.webring')}

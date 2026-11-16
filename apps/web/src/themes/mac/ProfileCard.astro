@@ -5,6 +5,17 @@ import ProfileMeta from '../_shared/ProfileMeta.astro';
 
 const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
+
+const stats = [
+  config.profile.showFollowers
+    ? { label: t('profile.followers'), value: userinfo.followers }
+    : null,
+  config.profile.showFollowing
+    ? { label: t('profile.following'), value: userinfo.following }
+    : null,
+  { label: t('profile.reposTitle'), value: userinfo.public_repos },
+  { label: t('profile.gistsTitle'), value: userinfo.public_gists },
+].filter((item): item is { label: string; value: number } => item !== null);
 ---
 
 <aside class="mac-aside">
@@ -35,18 +46,14 @@ const t = createTranslator(Astro.locals.locale);
 
 
 
-      <table class="mac-stats">
-        <tbody>
-          {config.profile.showFollowers && (
-            <tr><th>{t('profile.followers')}</th><td>{userinfo.followers}</td></tr>
-          )}
-          {config.profile.showFollowing && (
-            <tr><th>{t('profile.following')}</th><td>{userinfo.following}</td></tr>
-          )}
-          <tr><th>{t('profile.reposTitle')}</th><td>{userinfo.public_repos}</td></tr>
-          <tr><th>{t('profile.gistsTitle')}</th><td>{userinfo.public_gists}</td></tr>
-        </tbody>
-      </table>
+      <div class="mac-stats">
+        {stats.map((stat) => (
+          <div class="mac-stat">
+            <span class="mac-stat__value">{stat.value}</span>
+            <span class="mac-stat__label">{stat.label}</span>
+          </div>
+        ))}
+      </div>
 
       <div class="mac-actions">
         <a class="mac-btn" href={links.repos}>{t('profile.reposTitle')}</a>

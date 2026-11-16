@@ -1,0 +1,57 @@
+- generic [active] [ref=f10e1]:
+  - generic [ref=f10e2]:
+    - banner [ref=f10e3]:
+      - link "CLASSYGIT" [ref=f10e4] [cursor=pointer]:
+        - /url: /
+    - main [ref=f10e5]:
+      - generic [ref=f10e6]:
+        - heading "Your GitHub, a different way" [level=1] [ref=f10e7]
+        - paragraph [ref=f10e8]: Type a username to get a personal homepage, code snippets and notes. No deploy, no login.
+        - generic [ref=f10e9]:
+          - generic [ref=f10e10]: GitHub username
+          - textbox "GitHub username" [ref=f10e11]
+          - button "View" [ref=f10e12] [cursor=pointer]
+        - paragraph [ref=f10e13]:
+          - link "Fork this repo to customize ↗" [ref=f10e14] [cursor=pointer]:
+            - /url: https://github.com/Dnevend/classy-github/fork
+        - paragraph [ref=f10e15]:
+          - link "Build your config" [ref=f10e16] [cursor=pointer]:
+            - /url: /setup
+          - generic [aria-hidden] [ref=f10e17]: ·
+          - link "ClassyGit Webring" [ref=f10e18] [cursor=pointer]:
+            - /url: /webring
+          - generic [aria-hidden] [ref=f10e19]: ·
+          - link "Random site" [ref=f10e20] [cursor=pointer]:
+            - /url: /random
+        - generic [ref=f10e21]:
+          - generic [ref=f10e22]:
+            - heading "Recently visited" [level=2] [ref=f10e23]
+            - button "Clear" [ref=f10e24] [cursor=pointer]
+          - list [ref=f10e25]:
+            - listitem [ref=f10e26]:
+              - link "Dnevend @Dnevend" [ref=f10e27] [cursor=pointer]:
+                - /url: /Dnevend
+                - generic [ref=f10e28]:
+                  - strong [ref=f10e29]: Dnevend
+                  - generic [ref=f10e30]: "@Dnevend"
+    - contentinfo [ref=f10e31]:
+      - generic [ref=f10e32]:
+        - generic [ref=f10e33]: F1=HELP F10=MENU © CLASSYGIT
+        - generic [ref=f10e34]:
+          - link "切换到中文" [ref=f10e35] [cursor=pointer]:
+            - /url: /?lang=zh
+            - generic [ref=f10e38]: EN
+          - navigation "切换主题" [ref=f10e39]:
+            - link "nes" [ref=f10e40] [cursor=pointer]:
+              - /url: /?theme=nes
+            - link "win98" [ref=f10e41] [cursor=pointer]:
+              - /url: /?theme=win98
+            - link "mac" [ref=f10e42] [cursor=pointer]:
+              - /url: /?theme=mac
+            - link "tui" [ref=f10e43] [cursor=pointer]:
+              - /url: /?theme=tui
+  - generic [ref=f10e46]:
+    - button "Menu" [ref=f10e47]
+    - button "Inspect" [ref=f10e53]
+    - button "Audit" [ref=f10e57]
+    - button "Settings" [ref=f10e62]

@@ -383,6 +383,12 @@ v2 快进合并 main；Pages 薄代理转发到 Workers；`SITE_ORIGIN` 统一
 canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 详见 `m15-domain.md`。
 
+### M16 · 首页最近访问 / 统计卡样式 / 小交互修复（已完成 2026-11-16）
+
+首页 localStorage 最近访问；Gists 头部 Archive/RSS/搜索分组；Mac 顶栏
+`ClassyGit` 回首页；Mac/TUI 资料卡统计改 2×2 网格；setup 增加 Gist 创建入口。
+详见 `m16-polish.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

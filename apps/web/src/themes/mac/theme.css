@@ -255,23 +255,38 @@
 }
 
 .mac-stats {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-bottom: 12px;
+  border: 1px solid #000;
+  background: #000;
 }
 
-.mac-stats th {
-  text-align: left;
-  font-weight: 400;
-  color: var(--fg-muted);
-  padding: 1px 0;
+.mac-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: #fff;
 }
 
-.mac-stats td {
-  text-align: right;
+.mac-stat__value {
+  font-size: 20px;
+  line-height: 1;
   font-weight: 700;
-  padding: 1px 0;
+  letter-spacing: -0.02em;
+}
+
+.mac-stat__label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.mac-stat:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .mac-actions {

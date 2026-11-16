@@ -189,24 +189,40 @@
 }
 
 .tui-stats {
-  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
   margin: 0 0 12px;
   padding: 0;
-  font-size: 13px;
+  list-style: none;
+  border: 2px solid #fff;
+  background: #fff;
 }
 
 .tui-stats li {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #0000a8;
+}
+
+.tui-stats li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .tui-stats span {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: #a8a8a8;
 }
 
 .tui-stats b {
   color: #55ff55;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .tui-actions {

@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
 import { resolveTheme } from '../themes';
 import { createTranslator, localeFromAcceptLanguage } from '../lib/i18n';
+import RecentVisits from '../themes/_shared/RecentVisits.astro';
 
 // 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
 export const prerender = false;
@@ -60,6 +61,8 @@ const seo: SeoMeta = {
       <span aria-hidden="true">·</span>
       <a href="/random">{t('webring.random')}</a>
     </p>
+
+    <RecentVisits />
   </section>
 
   <script is:inline>

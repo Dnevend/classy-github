@@ -1,0 +1,169 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e2]:
+    - banner [ref=f7e3]:
+      - link "CLASSYGIT" [ref=f7e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f7e5]:
+        - link "Repos" [ref=f7e6] [cursor=pointer]:
+          - /url: /Dnevend/repos
+        - link "Gists" [ref=f7e7] [cursor=pointer]:
+          - /url: /Dnevend/gists
+      - link "Dnevend" [ref=f7e8] [cursor=pointer]:
+        - /url: /Dnevend
+    - main [ref=f7e9]:
+      - generic [ref=f7e10]:
+        - generic [ref=f7e11]:
+          - generic [ref=f7e12]:
+            - generic [ref=f7e13]: README.TXT
+            - generic [ref=f7e15]:
+              - generic [ref=f7e16]:
+                - heading [level=3] [ref=f7e17]:
+                  - text: Hi, I'm
+                  - link "Dnevend" [ref=f7e18] [cursor=pointer]:
+                    - /url: https://dnevend.site/about
+                  - text: 👋
+                - paragraph [ref=f7e19]:
+                  - strong [ref=f7e20]: Full-stack & Web3 Developer
+                  - text: · Huzhou, China
+              - generic [ref=f7e28]: 全栈开发者，关注技术、人文、区块链及前沿AI应用。 Full-stack developer with an interest in technology, the humanities, blockchain, and cutting-edge AI applications.
+              - generic [ref=f7e29]:
+                - img "Top languages" [ref=f7e30]
+                - img "Streak" [ref=f7e31]
+          - generic [ref=f7e32]:
+            - generic [ref=f7e33]:
+              - heading "Recently updated" [level=2] [ref=f7e34]
+              - link "View all →" [ref=f7e35] [cursor=pointer]:
+                - /url: /Dnevend/repos
+            - list [ref=f7e36]:
+              - listitem [ref=f7e37]:
+                - generic [ref=f7e38]:
+                  - generic [ref=f7e39]: classy-github
+                  - generic [ref=f7e40]:
+                    - paragraph [ref=f7e41]: Without deployment, classily access your Github profile and blog/article system.
+                    - paragraph [ref=f7e42]: STARS 4 · FORKS 1 · TypeScript · 2026-11-16
+                    - link "Open" [ref=f7e44] [cursor=pointer]:
+                      - /url: /Dnevend/repo/classy-github
+              - listitem [ref=f7e45]:
+                - generic [ref=f7e46]:
+                  - generic [ref=f7e47]: fde-handbook
+                  - generic [ref=f7e48]:
+                    - paragraph [ref=f7e49]: 《FDE Handbook：从本地大模型到 RAG 落地》
+                    - paragraph [ref=f7e50]: STARS 0 · FORKS 0 · Python · 2026-11-15
+                    - link "Open" [ref=f7e52] [cursor=pointer]:
+                      - /url: /Dnevend/repo/fde-handbook
+              - listitem [ref=f7e53]:
+                - generic [ref=f7e54]:
+                  - generic [ref=f7e55]: lead-trade-radar
+                  - generic [ref=f7e56]:
+                    - paragraph [ref=f7e57]: 监控币安带单员订单流，生成可手动跟单的 Telegram 信号（只读、不下单）
+                    - paragraph [ref=f7e58]: STARS 0 · FORKS 0 · TypeScript · 2026-11-14
+                    - link "Open" [ref=f7e60] [cursor=pointer]:
+                      - /url: /Dnevend/repo/lead-trade-radar
+              - listitem [ref=f7e61]:
+                - generic [ref=f7e62]:
+                  - generic [ref=f7e63]: dnevend.github.io
+                  - generic [ref=f7e64]:
+                    - paragraph [ref=f7e65]: STARS 0 · FORKS 0 · CSS · 2026-11-12
+                    - link "Open" [ref=f7e67] [cursor=pointer]:
+                      - /url: /Dnevend/repo/dnevend.github.io
+              - listitem [ref=f7e68]:
+                - generic [ref=f7e69]:
+                  - generic [ref=f7e70]: Dnevend
+                  - generic [ref=f7e71]:
+                    - paragraph [ref=f7e72]: STARS 0 · FORKS 0 · 2026-11-08
+                    - link "Open" [ref=f7e73] [cursor=pointer]:
+                      - /url: /Dnevend/repo/Dnevend
+              - listitem [ref=f7e74]:
+                - generic [ref=f7e75]:
+                  - generic [ref=f7e76]: x-comfort-browser
+                  - generic [ref=f7e77]:
+                    - paragraph [ref=f7e78]: 用于浏览内容平台时，模糊媒体资源，屏蔽广告。专注信息获取，减少视觉干扰，获得互联网噪音下的注意力主动权，同时避免公共场合出现尴尬的场景。
+                    - paragraph [ref=f7e79]: STARS 42 · FORKS 5 · TypeScript · 2026-11-05
+                    - link "Open" [ref=f7e81] [cursor=pointer]:
+                      - /url: /Dnevend/repo/x-comfort-browser
+        - generic [ref=f7e82]:
+          - complementary [ref=f7e83]:
+            - generic [ref=f7e84]:
+              - generic [ref=f7e85]: USER INFO
+              - generic [ref=f7e86]:
+                - generic [ref=f7e87]:
+                  - img "Dnevend 的头像" [ref=f7e88]
+                  - generic [ref=f7e89]:
+                    - paragraph [ref=f7e90]: Dnevend
+                    - paragraph [ref=f7e91]: "@Dnevend"
+                - paragraph [ref=f7e92]: 无限风光在险峰
+                - list [ref=f7e93]:
+                  - listitem [ref=f7e94]:
+                    - generic [ref=f7e97]: Hangzhou
+                  - listitem [ref=f7e98]:
+                    - link "Dnevend@gmail.com" [ref=f7e101] [cursor=pointer]:
+                      - /url: mailto:Dnevend@gmail.com
+                  - listitem [ref=f7e102]:
+                    - link "https://dnevend.site" [ref=f7e105] [cursor=pointer]:
+                      - /url: https://dnevend.site
+                  - listitem [ref=f7e106]:
+                    - generic [ref=f7e109]: 2017-12
+                - list [ref=f7e110]:
+                  - listitem [ref=f7e111]:
+                    - generic [ref=f7e112]: followers
+                    - generic [ref=f7e113]: "30"
+                  - listitem [ref=f7e114]:
+                    - generic [ref=f7e115]: following
+                    - generic [ref=f7e116]: "54"
+                  - listitem [ref=f7e117]:
+                    - generic [ref=f7e118]: Repos
+                    - generic [ref=f7e119]: "47"
+                  - listitem [ref=f7e120]:
+                    - generic [ref=f7e121]: Gists
+                    - generic [ref=f7e122]: "9"
+                - generic [ref=f7e123]:
+                  - link "Repos" [ref=f7e124] [cursor=pointer]:
+                    - /url: /Dnevend/repos
+                  - link "Gists" [ref=f7e125] [cursor=pointer]:
+                    - /url: /Dnevend/gists
+                  - link "GitHub" [ref=f7e126] [cursor=pointer]:
+                    - /url: https://github.com/Dnevend
+          - heading "Contribution activity" [level=2] [ref=f7e128]
+    - contentinfo [ref=f7e131]:
+      - navigation [ref=f7e132]:
+        - link "Github ↗" [ref=f7e133] [cursor=pointer]:
+          - /url: https://github.com/Dnevend/classy-github
+        - link "Config ↗" [ref=f7e134] [cursor=pointer]:
+          - /url: https://github.com/Dnevend/classy-github#自定义配置
+      - generic [ref=f7e135]:
+        - generic [ref=f7e136]: 10 visitors
+        - navigation "Webring" [ref=f7e137]:
+          - link "Previous site" [ref=f7e138] [cursor=pointer]:
+            - /url: /carol?ref=webring
+            - text: ←
+          - link "Webring" [ref=f7e139] [cursor=pointer]:
+            - /url: /webring
+          - link "Random site" [ref=f7e140] [cursor=pointer]:
+            - /url: /bob?ref=webring
+            - text: 🎲
+          - link "Next site" [ref=f7e141] [cursor=pointer]:
+            - /url: /alice?ref=webring
+            - text: →
+        - link "88×31 badge" [ref=f7e142] [cursor=pointer]:
+          - /url: /badge/Dnevend
+      - generic [ref=f7e143]:
+        - generic [ref=f7e144]: F1=HELP F10=MENU © CLASSYGIT
+        - button "Share" [ref=f7e146] [cursor=pointer]
+        - generic [ref=f7e150]:
+          - link "切换到中文" [ref=f7e151] [cursor=pointer]:
+            - /url: /Dnevend?theme=tui&lang=zh
+            - generic [ref=f7e154]: EN
+          - navigation "切换主题" [ref=f7e155]:
+            - link "nes" [ref=f7e156] [cursor=pointer]:
+              - /url: /Dnevend?theme=nes
+            - link "win98" [ref=f7e157] [cursor=pointer]:
+              - /url: /Dnevend?theme=win98
+            - link "mac" [ref=f7e158] [cursor=pointer]:
+              - /url: /Dnevend?theme=mac
+            - link "tui" [ref=f7e159] [cursor=pointer]:
+              - /url: /Dnevend?theme=tui
+  - generic [ref=f7e162]:
+    - button "Menu" [ref=f7e163]
+    - button "Inspect" [ref=f7e169]
+    - button "Audit" [ref=f7e173]
+    - button "Settings" [ref=f7e181]

@@ -1,0 +1,120 @@
+- generic [ref=f9e2]:
+  - banner [ref=f9e3]:
+    - link "CLASSYGIT" [ref=f9e4] [cursor=pointer]:
+      - /url: /
+    - navigation [ref=f9e5]:
+      - link "Repos" [ref=f9e6] [cursor=pointer]:
+        - /url: /Dnevend/repos
+      - link "Gists" [ref=f9e7] [cursor=pointer]:
+        - /url: /Dnevend/gists
+    - link "Dnevend" [ref=f9e8] [cursor=pointer]:
+      - /url: /Dnevend
+  - main [ref=f9e9]:
+    - generic [ref=f9e10]:
+      - heading "Dnevend's gists 10" [level=1] [ref=f9e11]:
+        - text: Dnevend's gists
+        - generic [ref=f9e12]: "10"
+      - generic [ref=f9e13]:
+        - link "Archive" [ref=f9e14] [cursor=pointer]:
+          - /url: /Dnevend/archive
+        - link "RSS" [ref=f9e15] [cursor=pointer]:
+          - /url: /Dnevend/rss.xml
+        - searchbox "Search…" [ref=f9e17]
+    - list [ref=f9e18]:
+      - listitem [ref=f9e19]:
+        - link "▸ axios [code]1F 2024-10-18" [ref=f9e20] [cursor=pointer]:
+          - /url: /Dnevend/gist/9ec0af3000316acafcb4670de0dd2da8
+          - generic [ref=f9e21]: ▸
+          - generic [ref=f9e22]: axios
+          - generic [ref=f9e23]: "[code]1F 2024-10-18"
+      - listitem [ref=f9e24]:
+        - link "▸ EIP [blog]4F 2024-10-11" [ref=f9e25] [cursor=pointer]:
+          - /url: /Dnevend/gist/c0c7c2911cc5bc3aa360c45b4205b2e4
+          - generic [ref=f9e26]: ▸
+          - generic [ref=f9e27]: EIP
+          - generic [ref=f9e28]: "[blog]4F 2024-10-11"
+      - listitem [ref=f9e29]:
+        - link "▸ Uniswap [blog]1F 2024-06-28" [ref=f9e30] [cursor=pointer]:
+          - /url: /Dnevend/gist/b4ef8edfaf5be0b5a6f2554f3bea1a23
+          - generic [ref=f9e31]: ▸
+          - generic [ref=f9e32]: Uniswap
+          - generic [ref=f9e33]: "[blog]1F 2024-06-28"
+      - listitem [ref=f9e34]:
+        - link "▸ Mark 2024 [weekly]1F 2024-05-02" [ref=f9e35] [cursor=pointer]:
+          - /url: /Dnevend/gist/b6c1b24bb54dfd2ce91a07f339248d58
+          - generic [ref=f9e36]: ▸
+          - generic [ref=f9e37]: Mark 2024
+          - generic [ref=f9e38]: "[weekly]1F 2024-05-02"
+      - listitem [ref=f9e39]:
+        - link "▸ 视差滚动实践 [blog]1F 2024-05-01" [ref=f9e40] [cursor=pointer]:
+          - /url: /Dnevend/gist/e06897660807f1f12a790269fb155a98
+          - generic [ref=f9e41]: ▸
+          - generic [ref=f9e42]: 视差滚动实践
+          - generic [ref=f9e43]: "[blog]1F 2024-05-01"
+      - listitem [ref=f9e44]:
+        - link "▸ Test [blog]2F 2024-04-28" [ref=f9e45] [cursor=pointer]:
+          - /url: /Dnevend/gist/fcaa280652c961b52a99bb630fd40e34
+          - generic [ref=f9e46]: ▸
+          - generic [ref=f9e47]: Test
+          - generic [ref=f9e48]: "[blog]2F 2024-04-28"
+      - listitem [ref=f9e49]:
+        - link "▸ Github.blog.Hello ClassyGit 1F 2024-04-25" [ref=f9e50] [cursor=pointer]:
+          - /url: /Dnevend/gist/717fe9c8750660fa04278da6140c96a4
+          - generic [ref=f9e51]: ▸
+          - generic [ref=f9e52]: Github.blog.Hello ClassyGit
+          - generic [ref=f9e53]: 1F 2024-04-25
+      - listitem [ref=f9e54]:
+        - link "▸ emojiTranslateInJavascript [code]1F 2022-11-01" [ref=f9e55] [cursor=pointer]:
+          - /url: /Dnevend/gist/a778b0102c5235a96464aac6ecc3f753
+          - generic [ref=f9e56]: ▸
+          - generic [ref=f9e57]: emojiTranslateInJavascript
+          - generic [ref=f9e58]: "[code]1F 2022-11-01"
+      - listitem [ref=f9e59]:
+        - link "▸ 发布订阅模式 [code]1F 2022-10-29" [ref=f9e60] [cursor=pointer]:
+          - /url: /Dnevend/gist/039fbb648182de164b3f00c9218c2d7f
+          - generic [ref=f9e61]: ▸
+          - generic [ref=f9e62]: 发布订阅模式
+          - generic [ref=f9e63]: "[code]1F 2022-10-29"
+      - listitem [ref=f9e64]:
+        - link "▸ decoded-2022-easy 1F 2022-06-30" [ref=f9e65] [cursor=pointer]:
+          - /url: /Dnevend/gist/b5a8a15471dd5fb8d21b79344faf46e0
+          - generic [ref=f9e66]: ▸
+          - generic [ref=f9e67]: decoded-2022-easy
+          - generic [ref=f9e68]: 1F 2022-06-30
+  - contentinfo [ref=f9e69]:
+    - navigation [ref=f9e70]:
+      - link "Github ↗" [ref=f9e71] [cursor=pointer]:
+        - /url: https://github.com/Dnevend/classy-github
+      - link "Config ↗" [ref=f9e72] [cursor=pointer]:
+        - /url: https://github.com/Dnevend/classy-github#自定义配置
+    - generic [ref=f9e73]:
+      - navigation "Webring" [ref=f9e74]:
+        - link "Previous site" [ref=f9e75] [cursor=pointer]:
+          - /url: /carol?ref=webring
+          - text: ←
+        - link "Webring" [ref=f9e76] [cursor=pointer]:
+          - /url: /webring
+        - link "Random site" [ref=f9e77] [cursor=pointer]:
+          - /url: /bob?ref=webring
+          - text: 🎲
+        - link "Next site" [ref=f9e78] [cursor=pointer]:
+          - /url: /alice?ref=webring
+          - text: →
+      - link "88×31 badge" [ref=f9e79] [cursor=pointer]:
+        - /url: /badge/Dnevend
+    - generic [ref=f9e80]:
+      - generic [ref=f9e81]: F1=HELP F10=MENU © CLASSYGIT
+      - button "Share" [ref=f9e83] [cursor=pointer]
+      - generic [ref=f9e87]:
+        - link "切换到中文" [ref=f9e88] [cursor=pointer]:
+          - /url: /Dnevend/gists?lang=zh
+          - generic [ref=f9e91]: EN
+        - navigation "切换主题" [ref=f9e92]:
+          - link "nes" [ref=f9e93] [cursor=pointer]:
+            - /url: /Dnevend/gists?theme=nes
+          - link "win98" [ref=f9e94] [cursor=pointer]:
+            - /url: /Dnevend/gists?theme=win98
+          - link "mac" [ref=f9e95] [cursor=pointer]:
+            - /url: /Dnevend/gists?theme=mac
+          - link "tui" [ref=f9e96] [cursor=pointer]:
+            - /url: /Dnevend/gists?theme=tui

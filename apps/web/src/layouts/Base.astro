@@ -7,9 +7,12 @@ interface Props {
   seo: SeoMeta;
   /** 当前主题名，写到 <html data-theme> 上，主题 CSS 可据此限定作用域 */
   theme?: string;
+  /** 当前用户页的 login；用于「最近访问」本地记录 */
+  user?: string;
+  userName?: string;
 }
 
-const { seo, theme = 'default' } = Astro.props as Props;
+const { seo, theme = 'default', user = '', userName = '' } = Astro.props as Props;
 ---
 
 <!doctype html>
@@ -23,7 +26,7 @@ const { seo, theme = 'default' } = Astro.props as Props;
     <slot name="head" />
   </head>
 
-  <body>
+  <body data-classy-user={user} data-classy-name={userName}>
     <slot />
 
     <script is:inline>
@@ -37,6 +40,39 @@ const { seo, theme = 'default' } = Astro.props as Props;
         },
         true
       );
+    </script>
+
+    <script is:inline>
+      // 记录最近访问的用户页到 localStorage（只在页面访问自己的 /<login> 路径时）。
+      (() => {
+        const login = document.body.dataset.classyUser;
+        if (!login) return;
+
+        const first = location.pathname.split('/').filter(Boolean)[0];
+        if (!first || first.toLowerCase() !== login.toLowerCase()) return;
+
+        const reserved = new Set(['setup', 'webring', 'badge', 'claim', 'api', 'og', 'random']);
+        if (reserved.has(first.toLowerCase())) return;
+
+        const name = document.body.dataset.classyName || login;
+        const key = 'classy:recent';
+
+        try {
+          const raw = JSON.parse(localStorage.getItem(key) || '[]');
+          const list = Array.isArray(raw) ? raw : [];
+          const next = [
+            { login, name, at: Date.now() },
+            ...list.filter(
+              (item) =>
+                item &&
+                String(item.login).toLowerCase() !== login.toLowerCase()
+            ),
+          ].slice(0, 8);
+          localStorage.setItem(key, JSON.stringify(next));
+        } catch {
+          // localStorage 不可用时静默跳过
+        }
+      })();
     </script>
   </body>
 </html>

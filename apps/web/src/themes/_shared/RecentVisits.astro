@@ -1,0 +1,90 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+const t = createTranslator(Astro.locals.locale);
+---
+
+<section class="recent-visits" id="recent-visits" hidden>
+  <div class="recent-visits__head">
+    <h2>{t('recent.title')}</h2>
+    <button type="button" class="recent-visits__clear" id="recent-clear">
+      {t('recent.clear')}
+    </button>
+  </div>
+  <ul class="recent-visits__list" id="recent-list"></ul>
+</section>
+
+<script>
+  (() => {
+    const section = document.getElementById('recent-visits');
+    const list = document.getElementById('recent-list');
+    const clear = document.getElementById('recent-clear');
+    if (!section || !list) return;
+
+    const key = 'classy:recent';
+    const validLogin = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
+
+    const render = () => {
+      let items: { login?: unknown; name?: unknown }[] = [];
+
+      try {
+        const raw = JSON.parse(localStorage.getItem(key) || '[]');
+        if (Array.isArray(raw)) items = raw;
+      } catch {
+        // 忽略损坏的本地数据
+      }
+
+      const valid = items
+        .filter(
+          (item) => item && validLogin.test(String(item.login ?? ''))
+        )
+        .slice(0, 8);
+
+      list.replaceChildren();
+
+      if (valid.length === 0) {
+        section.hidden = true;
+        return;
+      }
+
+      for (const item of valid) {
+        const login = String(item.login);
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `/${encodeURIComponent(login)}`;
+
+        const img = document.createElement('img');
+        img.src = `https://github.com/${encodeURIComponent(login)}.png?size=40`;
+        img.alt = '';
+        img.width = 24;
+        img.height = 24;
+        img.loading = 'eager';
+
+        const text = document.createElement('span');
+        const name = document.createElement('strong');
+        name.textContent = String(item.name || login);
+        const handle = document.createElement('small');
+        handle.textContent = `@${login}`;
+        text.append(name, handle);
+
+        link.append(img, text);
+        li.append(link);
+        list.append(li);
+      }
+
+      section.hidden = false;
+    };
+
+    clear?.addEventListener('click', () => {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // 忽略
+      }
+      render();
+    });
+
+    render();
+    window.addEventListener('storage', render);
+  })();
+</script>

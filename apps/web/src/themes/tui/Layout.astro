@@ -28,7 +28,7 @@ const shareData =
 const t = createTranslator(Astro.locals.locale);
 ---
 
-<Base {seo} {theme}>
+<Base {seo} {theme} user={user} userName={brand || userinfo?.name || user}>
   <Fragment slot="head">
     <link rel="stylesheet" href={vendorCss} />
     <link rel="stylesheet" href={themeCss} />
