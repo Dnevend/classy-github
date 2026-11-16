@@ -49,7 +49,11 @@
   `.profile__aside-wrap.top - .profile__main.top` 均为 `0`；
   header offset 分别为 31 / 68 / 51 / 50px。
 - 所有主题的右栏 sticky 只用真实 header 高度，不再有 Mac 上 19–39px 的错位。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `be6a2c48-4123-454b-ba8b-b0b30bf441d2`）：
+  `/torvalds` 显示默认 README；`/setup?u=Dnevend` 与 `/claim/antfu` 的 JSON
+  分别写 owner Dnevend / antfu；Mac / NES / Win98 / TUI 四套主题
+  `.profile__aside-wrap.top - .profile__main.top` 的生产值均为 0。
+- CI run `43883927069`、`43885059282` 通过。
 
 ## 已知限制
 
