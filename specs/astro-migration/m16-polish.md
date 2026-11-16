@@ -35,7 +35,12 @@
   - `/Dnevend/gists` 的 `.list-actions` = archive / rss / search，右对齐；
   - Mac `a.mac-appname.href = "/"`，stats 四格；TUI stats 四格。
 - 桌面截图：Mac / TUI 统计卡、首页最近访问、Gists 头部。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `724e500a-944e-4afd-9b83-0e5e1610bd81`）：
+  `a.mac-appname.href="/"`；Mac 四格 / TUI 四格统计；
+  `/Dnevend/gists` 的 `.list-actions` 含 archive / rss / search；
+  setup 的 Gist 链接 = `https://gist.github.com/?filename=guestbook.md`；
+  pages.dev 上先访问 `/Dnevend` 再回 `/`，`#recent-visits` 显示 Dnevend，头像加载成功。
+- CI run `43879491654`、`43879566112` 通过。
 
 ## 已知限制
 
