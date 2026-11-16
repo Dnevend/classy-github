@@ -8,6 +8,7 @@ import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
+import { collectTagCounts, hasTag } from '../../lib/tags';
 import { resolveTheme } from '../../themes';
 import ListSearch from '../../themes/_shared/ListSearch.astro';
 
@@ -50,6 +51,16 @@ const parseDescription = createGistDescriptionParser({
   prefix: config.gists.prefix,
   split: config.gists.split,
 });
+
+const activeTag = Astro.url.searchParams.get('tag')?.trim() ?? '';
+const parsedGists = gists.map((gist) => ({
+  gist,
+  parsed: parseDescription(gist.description),
+}));
+const tagCounts = collectTagCounts(parsedGists.map((item) => item.parsed));
+const filtered = activeTag
+  ? parsedGists.filter((item) => hasTag(item.parsed, activeTag))
+  : parsedGists;
 ---
 
 <Layout
@@ -76,30 +87,51 @@ const parseDescription = createGistDescriptionParser({
         <div class="list-head">
           <h1 class="page-title">
             {t('gists.title', { name: display })}
-            <span class="page-title__count">{gists.length}</span>
+            <span class="page-title__count">{filtered.length}</span>
           </h1>
+          <a class="archive-link" href={`/${user}/archive`} title={t('gists.archive')}>
+            {t('gists.archive')}
+          </a>
           <a class="rss-link" href={`/${user}/rss.xml`} title={t('gists.rss')}>
             RSS
           </a>
           <ListSearch target="#gist-list" />
         </div>
 
+        {tagCounts.length > 0 && (
+          <nav class="tag-bar" aria-label={t('gists.tags')}>
+            <a class:list={{ 'is-current': !activeTag }} href={`/${user}/gists`}>
+              {t('gists.allTags')}
+            </a>
+            {tagCounts.slice(0, 20).map((tag) => (
+              <a
+                class:list={{ 'is-current': tag.name.toLowerCase() === activeTag.toLowerCase() }}
+                href={`/${user}/gists?tag=${encodeURIComponent(tag.name)}`}
+              >
+                #{tag.name}<span>{tag.count}</span>
+              </a>
+            ))}
+          </nav>
+        )}
+
         {gists.length === 0 ? (
           <p class="bio">{t('gists.empty')}</p>
+        ) : filtered.length === 0 ? (
+          <>
+            <p class="bio">{t('gists.noTag', { tag: activeTag })}</p>
+            <a class="pill-link" href={`/${user}/gists`}>{t('gists.clearTag')}</a>
+          </>
         ) : (
           <>
             <ul class="gist-list" id="gist-list">
-            {gists.map((gist) => {
-              const parsed = parseDescription(gist.description);
-              return (
-                <GistCard
-                  gist={gist}
-                  href={`/${user}/gist/${gist.id}`}
-                  type={parsed.type}
-                  title={parsed.title || Object.keys(gist.files)[0] || t('gist.untitled')}
-                />
-              );
-              })}
+            {filtered.map(({ gist, parsed }) => (
+              <GistCard
+                gist={gist}
+                href={`/${user}/gist/${gist.id}`}
+                type={parsed.type}
+                title={parsed.title || Object.keys(gist.files)[0] || t('gist.untitled')}
+              />
+            ))}
             </ul>
           </>
         )}

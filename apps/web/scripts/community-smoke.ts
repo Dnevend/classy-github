@@ -7,8 +7,11 @@ import assert from 'node:assert/strict';
 import { renderBadgeSvg } from '../src/lib/badge.ts';
 import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
 import { buildAtomFeed } from '../src/lib/feed.ts';
+import { createGistDescriptionParser } from '../src/lib/gist-rule.ts';
 import { isBotRequest } from '../src/lib/hit-counter.ts';
 import { localeFromAcceptLanguage } from '../src/lib/i18n.ts';
+import { estimateReadingMinutes } from '../src/lib/reading.ts';
+import { collectTagCounts, hasTag } from '../src/lib/tags.ts';
 import {
   DISCOVER_PREFIX,
   RING_PREFIX,
@@ -98,6 +101,51 @@ const cases: Case[] = [
     },
   },
   {
+    name: 'Gist 标签：提取、去重、C# 不误伤',
+    run: () => {
+      const parse = createGistDescriptionParser();
+      const parsed = parse('classy.blog.Hello #AI #长文 #ai');
+      assert.equal(parsed.type, 'blog');
+      assert.equal(parsed.title, 'Hello');
+      assert.deepEqual(parsed.tags, ['AI', '长文']);
+
+      const sharp = parse('classy.code.C#教程');
+      assert.equal(sharp.title, 'C#教程');
+      assert.deepEqual(sharp.tags, []);
+
+      const plain = parse('随手记 #js');
+      assert.equal(plain.title, '随手记');
+      assert.deepEqual(plain.tags, ['js']);
+    },
+  },
+  {
+    name: '标签统计与筛选',
+    run: () => {
+      const parse = createGistDescriptionParser();
+      const parsed = [
+        parse('classy.blog.A #AI #js'),
+        parse('classy.blog.B #ai'),
+        parse('classy.blog.C #js'),
+      ];
+
+      const counts = collectTagCounts(parsed);
+      assert.equal(counts[0]?.name.toLowerCase(), 'ai');
+      assert.equal(counts[0]?.count, 2);
+      assert.equal(counts.find((tag) => tag.name === 'js')?.count, 2);
+      assert.equal(hasTag(parsed[0], 'AI'), true);
+      assert.equal(hasTag(parsed[0], 'rust'), false);
+    },
+  },
+  {
+    name: '阅读时间：中英混排与空内容',
+    run: () => {
+      assert.equal(estimateReadingMinutes(''), 0);
+      assert.equal(estimateReadingMinutes('hello world'), 1);
+      assert.equal(estimateReadingMinutes('中'.repeat(600)), 2);
+      assert.equal(estimateReadingMinutes('word '.repeat(400)), 2);
+    },
+  },
+  {
     name: 'Atom feed：排序、转义、分类',
     run: () => {
       const userinfo = {
@@ -112,14 +160,14 @@ const cases: Case[] = [
       const gists = [
         {
           id: 'a',
-          description: 'classy.blog.First',
+          description: 'classy.blog.First #archive',
           created_at: '2026-01-01T00:00:00Z',
           updated_at: '2026-01-01T00:00:00Z',
           files: { 'a.md': { filename: 'a.md' } },
         },
         {
           id: 'b',
-          description: 'classy.blog.Second & <tag>',
+          description: 'classy.blog.Second & <tag> #AI #archive',
           created_at: '2026-01-02T00:00:00Z',
           updated_at: '2026-01-03T00:00:00Z',
           files: { 'b.md': { filename: 'b.md' } },
@@ -139,6 +187,8 @@ const cases: Case[] = [
       assert.match(xml, /application\/atom\+xml/);
       assert.match(xml, /Second &amp; &lt;tag&gt;/);
       assert.match(xml, /<category term="blog"\/>/);
+      assert.match(xml, /<category term="AI"\/>/);
+      assert.equal((xml.match(/<category term="archive"\/>/g) ?? []).length, 2);
       assert.ok(xml.indexOf('Second') < xml.indexOf('First'));
     },
   },

@@ -8,6 +8,7 @@ import { DEFAULT_CONFIG } from '../../../lib/config';
 import { loadConfig } from '../../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../../lib/i18n';
 import { createGistDescriptionParser } from '../../../lib/gist-rule';
+import { estimateReadingMinutes } from '../../../lib/reading';
 import { resolveTheme } from '../../../themes';
 
 export const prerender = false;
@@ -61,6 +62,9 @@ const parsed = createGistDescriptionParser({
 })(data?.gist.description);
 
 const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
+const readingMinutes = data
+  ? estimateReadingMinutes(data.files.map((file) => file.content).join('\n'))
+  : 0;
 ---
 
 <Layout
@@ -97,7 +101,15 @@ const title = parsed.title || data?.files[0]?.filename || t('gist.untitled');
           <h1 class="page-title">{title}</h1>
           <div class="repo-card__meta">
             {parsed.type && <span class="tag">{parsed.type}</span>}
+            {parsed.tags.map((tag) => (
+              <a class="tag" href={`/${user}/gists?tag=${encodeURIComponent(tag)}`}>
+                #{tag}
+              </a>
+            ))}
             <span>{t('gist.files', { count: data.files.length })}</span>
+            {readingMinutes > 0 && (
+              <span>{t('gist.readingTime', { minutes: readingMinutes })}</span>
+            )}
             <span>{t('gist.created', { date: data.gist.created_at.slice(0, 10) })}</span>
             <a href={data.gist.html_url} target="_blank" rel="noopener noreferrer">
               {t('repo.open')} ↗

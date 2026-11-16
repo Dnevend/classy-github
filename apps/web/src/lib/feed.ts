@@ -64,6 +64,9 @@ export const buildAtomFeed = ({
         (firstFile ? `${firstFile.filename}` : '');
       const updated = iso(gist.updated_at || gist.created_at);
       const published = iso(gist.created_at);
+      const categories = [
+        ...new Set([parsed.type, ...parsed.tags].filter(Boolean)),
+      ] as string[];
 
       return `<entry>
   <title>${escapeXml(title)}</title>
@@ -71,7 +74,7 @@ export const buildAtomFeed = ({
   <id>${escapeXml(`tag:classygit,2026:${gist.id}`)}</id>
   <updated>${updated}</updated>
   <published>${published}</published>
-  ${parsed.type ? `<category term="${escapeXml(parsed.type)}"/>` : ''}
+  ${categories.map((category) => `<category term="${escapeXml(category)}"/>`).join('\n  ')}
   <summary>${escapeXml(summary)}</summary>
 </entry>`;
     });

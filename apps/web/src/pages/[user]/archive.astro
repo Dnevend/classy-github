@@ -1,0 +1,145 @@
+---
+import NotFound from '../../components/NotFound.astro';
+import ServiceError from '../../components/ServiceError.astro';
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { loadConfig } from '../../lib/config-loader';
+import { safeLoad } from '../../lib/errors';
+import { listGists } from '../../lib/github';
+import { createGistDescriptionParser } from '../../lib/gist-rule';
+import { createTranslator, localeFromConfig } from '../../lib/i18n';
+import { loadUser } from '../../lib/page';
+import { resolveTheme } from '../../themes';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+const { data, error } = await safeLoad(async () => {
+  const userinfo = await loadUser(user);
+  if (!userinfo) return null;
+  return { userinfo, gists: await listGists(user) };
+});
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (!data) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout } = components;
+
+const display = data?.userinfo.name || data?.userinfo.login || user;
+const parseDescription = createGistDescriptionParser({
+  prefix: config.gists.prefix,
+  split: config.gists.split,
+});
+
+const locale = Astro.locals.locale === 'zh' ? 'zh-CN' : 'en';
+const monthFormat = new Intl.DateTimeFormat(locale, {
+  year: 'numeric',
+  month: 'long',
+});
+
+const sorted = [...(data?.gists ?? [])].sort(
+  (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+);
+
+const groups: {
+  key: string;
+  label: string;
+  items: { gist: (typeof sorted)[number]; title: string; type?: string; date: string }[];
+}[] = [];
+
+for (const gist of sorted) {
+  const date = new Date(gist.created_at);
+  const key = `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}`;
+  const parsed = parseDescription(gist.description);
+  const title =
+    parsed.title || Object.keys(gist.files)[0] || t('gist.untitled');
+
+  let group = groups.find((item) => item.key === key);
+  if (!group) {
+    group = {
+      key,
+      label: Number.isNaN(date.getTime())
+        ? key
+        : monthFormat.format(date),
+      items: [],
+    };
+    groups.push(group);
+  }
+
+  group.items.push({
+    gist,
+    title,
+    type: parsed.type,
+    date: Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(5, 10),
+  });
+}
+---
+
+<Layout
+  {user}
+  userinfo={data?.userinfo ?? null}
+  {config}
+  theme={themeName}
+  brand={display}
+  seo={{
+    title: `${t('archive.title', { name: display })} · ClassyGit`,
+    description: data ? t('archive.desc', { count: data.gists.length }) : undefined,
+    canonical: `${origin}/${user}/archive`,
+    rss: `${origin}/${user}/rss.xml`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={user} />
+    ) : (
+      <section class="archive-page">
+        <a class="back-link" href={`/${user}/gists`}>← {t('archive.back')}</a>
+        <header class="archive-page__head">
+          <h1 class="page-title">{t('archive.title', { name: display })}</h1>
+          <p class="bio">{t('archive.desc', { count: data.gists.length })}</p>
+        </header>
+
+        {groups.length === 0 ? (
+          <p class="bio">{t('archive.empty')}</p>
+        ) : (
+          groups.map((group) => (
+            <section class="archive-group">
+              <h2>
+                {group.label}
+                <span>{group.items.length}</span>
+              </h2>
+              <ul class="archive-list">
+                {group.items.map((item) => (
+                  <li>
+                    <a href={`/${user}/gist/${item.gist.id}`}>
+                      <time datetime={item.gist.created_at}>{item.date}</time>
+                      <span class="archive-list__title">{item.title}</span>
+                      {item.type && <span class="tag">{item.type}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        )}
+      </section>
+    )
+  }
+</Layout>

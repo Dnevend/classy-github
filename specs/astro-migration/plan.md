@@ -366,6 +366,11 @@ Gists 列表加 RSS 入口；1 小时边缘缓存。详见 `m11-feed.md`。
 主页 / Gist / 仓库详情接入 `og:image`；顺带修复 mac 默认主题下
 `seo.index` 永远 noindex 的判定 bug。详见 `m12-og.md`。
 
+### M13 · 标签 / 归档 / 阅读时间（已完成 2026-11-16）
+
+Gist 描述支持 `#标签`，Gists 页按标签筛选，`/<user>/archive` 按月归档，
+文章页显示阅读时长；Atom entry 输出 type + tags。详见 `m13-blog.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

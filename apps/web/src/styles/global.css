@@ -908,7 +908,9 @@ img {
   color: var(--accent);
 }
 
-.rss-link {
+.rss-link,
+.archive-link,
+.pill-link {
   flex: none;
   padding: 3px 9px;
   border: 1px solid var(--border);
@@ -917,9 +919,40 @@ img {
   color: var(--fg-muted);
 }
 
-.rss-link:hover {
+.rss-link:hover,
+.archive-link:hover,
+.pill-link:hover {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+.tag-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -2px 0 18px;
+}
+
+.tag-bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.tag-bar a:hover,
+.tag-bar a.is-current {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.tag-bar a span {
+  font-size: 10px;
+  opacity: 0.7;
 }
 
 /* 搜索框靠右，与标题同一行 */
@@ -1196,6 +1229,74 @@ img {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.55;
+}
+
+/* 归档页 */
+.archive-page {
+  max-width: 760px;
+}
+
+.archive-page__head {
+  margin-bottom: 22px;
+}
+
+.archive-group {
+  margin-bottom: 24px;
+}
+
+.archive-group h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+}
+
+.archive-group h2 span {
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.archive-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.archive-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px dotted var(--border);
+}
+
+.archive-list a:hover {
+  color: var(--accent);
+}
+
+.archive-list time {
+  flex: none;
+  width: 42px;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.archive-list__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.archive-list .tag {
+  flex: none;
 }
 
 /* 留言簿 */
