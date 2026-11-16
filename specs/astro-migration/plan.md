@@ -404,6 +404,11 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 无公开 Gist 时在空状态后加「Create your first Gist」链接，直达 gist.github.com。
 详见 `m19-gist-empty.md`。
 
+### M20 · 徽章用户名不压缩（已完成 2026-11-16）
+
+去掉 88×31 徽章的 `textLength` 强制拉伸，超长 login 用省略号。
+详见 `m20-badge-text.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

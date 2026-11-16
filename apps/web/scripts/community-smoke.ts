@@ -230,6 +230,8 @@ const cases: Case[] = [
       assert.match(svg, /width="88" height="31"/);
       assert.match(svg, /#212529/);
       assert.match(svg, /@Dnevend/);
+      // 不再用 textLength 强行拉伸/压扁字形
+      assert.equal(svg.includes('textLength'), false);
       assert.match(renderBadgeSvg('<x>', 'mac'), /&lt;x&gt;/);
       assert.match(renderBadgeSvg('a'.repeat(20), 'mac'), /…/);
     },
