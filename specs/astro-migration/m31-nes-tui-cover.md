@@ -31,4 +31,8 @@ M30 让有封面时姓名块底部对齐头像。NES / TUI 的像素字体行高
 - NES：封面 bottom 237，姓名 top 243，姓名完全在封面下方；头像重叠 12px。
 - TUI：封面 bottom 184，姓名 top 184，正好从封面下方开始；头像重叠 12px。
 - 两者姓名 bottom 与头像 bottom 均为 0px 差。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `8223971e-c1c3-4327-a689-465bd4d5748b`）：
+  - NES 头像重叠 12px，姓名 top 在封面 bottom 下方 6px；
+  - TUI 头像重叠 12px，姓名 top 与封面 bottom 齐平；
+  - 两者姓名 bottom 与头像 bottom 差值 0px。
+- CI run `43935314274` 通过。
