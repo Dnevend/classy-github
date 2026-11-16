@@ -469,6 +469,12 @@ Win98 改 2×2 网格，Mac/TUI 保持各自表格样式。详见
 NES / TUI 头像封面重叠从 34px 调整为 12px，姓名块完整落在封面下方，
 仍保持底部与头像对齐。详见 `m31-nes-tui-cover.md`。
 
+### M32 · 分享卡 / OG 封面背景（已完成 2026-11-17）
+
+有 `profile.cover` 时分享卡和 OG 图改用封面背景 + 深色渐变；
+OG 用 CSS background-image，WebP 封面自动回退无封面版本。
+详见 `m32-share-og-cover.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

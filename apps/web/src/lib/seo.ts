@@ -41,7 +41,7 @@ export const seoForProfile = ({
     title: `${display} (@${userinfo.login}) · ${SITE_NAME}`,
     description: description.slice(0, 160),
     canonical: `${origin}/${userinfo.login}`,
-    image: `${origin}/og/${encodeURIComponent(userinfo.login)}.png?theme=${theme}`,
+    image: `${origin}/og/${encodeURIComponent(userinfo.login)}.png?theme=${theme}&v=2`,
     // 默认不索引：无限、薄、高度重复的内容没有排名价值。
     // 用户在 classy.config.json 里设 `seo.index: true` 才放开；
     // 非默认主题（?theme=nes 等）永远不索引，canonical 指回默认主题。

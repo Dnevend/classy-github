@@ -65,7 +65,7 @@ const readmeHtml =
     title: data ? `${data.repo.name} · ${user} · ClassyGit` : t('meta.notFoundRepo', { repo: repoName }),
     description: data?.repo.description ?? undefined,
     canonical: `${origin}/${user}/repo/${repoName}`,
-    image: `${origin}/og/${encodeURIComponent(user)}.png?theme=${themeName}`,
+    image: `${origin}/og/${encodeURIComponent(user)}.png?theme=${themeName}&v=2`,
     robots: 'noindex, follow',
   }}
 >

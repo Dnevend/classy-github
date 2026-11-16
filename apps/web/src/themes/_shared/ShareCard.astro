@@ -15,9 +15,11 @@ export interface ShareCardData {
 
 interface Props extends ShareCardData {
   theme: ThemeName;
+  /** 用户资料卡封面；有值时分享卡使用背景图版本 */
+  cover?: string | null;
 }
 
-const { title, description, handle, avatar, url, theme } = Astro.props as Props;
+const { title, description, handle, avatar, url, theme, cover } = Astro.props as Props;
 const t = createTranslator(Astro.locals.locale);
 
 const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -55,7 +57,24 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
   </button>
 
   <div class="share-card__panel" role="dialog" aria-label={t('share.trigger')} data-share-panel>
-    <div class="share-card__preview" data-share-preview>
+    <div
+      class:list={['share-card__preview', { 'has-cover': !!cover }]}
+      data-share-preview
+    >
+      {
+        cover && (
+          <>
+            <img
+              class="share-card__cover"
+              src={cover}
+              alt=""
+              crossorigin="anonymous"
+              data-share-cover
+            />
+            <span class="share-card__cover-shade" aria-hidden="true" />
+          </>
+        )
+      }
       <span class="share-card__watermark" aria-hidden="true">ClassyGit</span>
 
       {

@@ -82,7 +82,7 @@ const t = createTranslator(Astro.locals.locale);
       <CommunityFooter user={user} {configured} webring={config.webring.enabled} />
       <div class="tui-footer__row">
         <span>F1=HELP  F10=MENU  © CLASSYGIT</span>
-        {shareData && <ShareCard {...shareData} theme={theme} />}
+        {shareData && <ShareCard {...shareData} theme={theme} cover={config.profile.cover} />}
         <div class="switchers">
           <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />
