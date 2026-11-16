@@ -31,6 +31,9 @@ const CACHE_VERSION = '5';
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
 
+/** 这些单段路径长得像用户名，但不是用户页，不能进主题/语言缓存 */
+const SKIP_CACHE = /^\/(?:setup|random|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|$))/;
+
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /**
@@ -57,7 +60,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.localeChoice = locale;
   context.locals.locale = locale === 'auto' ? DEFAULT_LOCALE : locale;
 
-  if (persistTheme) {
+  // 配置生成器的 iframe 预览不应该改写访客的持久主题
+  const isPreview = url.searchParams.get('preview') === '1';
+
+  if (persistTheme && !isPreview) {
     context.cookies.set(THEME_COOKIE, theme, {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
@@ -65,7 +71,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
-  if (locale !== 'auto') {
+  if (locale !== 'auto' && !isPreview) {
     context.cookies.set(LOCALE_COOKIE, locale, {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
@@ -74,7 +80,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const ttl =
-    context.request.method === 'GET' ? ttlFor(url.pathname) : undefined;
+    context.request.method === 'GET' && !SKIP_CACHE.test(url.pathname)
+      ? ttlFor(url.pathname)
+      : undefined;
 
   if (ttl === undefined) return next();
 

@@ -371,6 +371,12 @@ Gists 列表加 RSS 入口；1 小时边缘缓存。详见 `m11-feed.md`。
 Gist 描述支持 `#标签`，Gists 页按标签筛选，`/<user>/archive` 按月归档，
 文章页显示阅读时长；Atom entry 输出 type + tags。详见 `m13-blog.md`。
 
+### M14 · 配置生成器 `/setup`（已完成 2026-11-16）
+
+无登录表单生成 `classy.config.json`：主题/语言/链接/近况/社区/SEO 实时 JSON，
+主题 iframe 预览，复制 + fork/edit 入口；修复 `/setup` 命中通用用户缓存的问题。
+详见 `m14-setup.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

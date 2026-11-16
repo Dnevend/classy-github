@@ -21,7 +21,7 @@
 - **标签 / 归档 / 阅读时间**：Gists 页按标签筛选，`/<用户名>/archive` 按月归档，文章页显示预计阅读时长。
 - **RSS / Atom**：`/<用户名>/rss.xml` 输出全部 Gist，自动发现链接已接进 `<head>`。
 - **OG 分享图**：`/og/<用户名>.png` 输出 1200×630 的主题化社交卡片，链接预览不再只有头像。
-- **配置即代码**：fork 本仓库，改根目录 `classy.config.json` 即可。
+- **配置即代码**：fork 本仓库，改根目录 `classy.config.json` 即可；也可以用 `/setup` 填表生成。
 - **访问计数器**：页脚显示复古访客数，Durable Object 原子计数，不存 IP。
 - **留言簿**：用一条公开 Gist 的评论做留言簿，零后端、零审核后台。
 - **网站环**：opt-in 的复古个人主页环，页脚「上一站 / 随机 / 下一站」。
@@ -45,7 +45,10 @@ pnpm dev            # http://localhost:4321
 
 ## 自定义配置
 
-在你自己的 fork 里改根目录 `classy.config.json`（读的是**默认分支**，`main` / `master` / 其他都行）：
+不想手写 JSON：打开 `https://classy-web.dnevend.workers.dev/setup?u=<你的用户名>`，
+填表 → 复制 JSON → 粘进 fork 的 `classy.config.json`。页面会实时预览主题和语言。
+
+也可以直接在你自己的 fork 里改根目录 `classy.config.json`（读的是**默认分支**，`main` / `master` / 其他都行）：
 
 ```json
 {
