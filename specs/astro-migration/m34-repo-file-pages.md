@@ -65,8 +65,8 @@ h1–h6 生成 id（中文保留、ASCII 小写、空格转 `-`、重复标题�
 - `ReadmeSource` 增加 `path`，用于解析 README 自身的相对链接。
 - 主题 `Markdown` 槽位增加可选 `title`，仓库文件页显示文件名，gist 页显示
   gist 文件名；不传时保持 `README` / `README.md` / `README.TXT`。
-- middleware：嵌套仓库路由 TTL 300；`CACHE_VERSION` 24 → 25，让旧 HTML
-  （仍带坏链接）立即失效。
+- middleware：嵌套仓库路由 TTL 300；`CACHE_VERSION` 24 → 26（文件页上线
+  与锚点修复各递增一次），让旧 HTML（仍带坏链接 / 无标题 id）立即失效。
 
 ## 验证
 
@@ -94,3 +94,12 @@ h1–h6 生成 id（中文保留、ASCII 小写、空格转 `-`、重复标题�
 - `/Dnevend/repo/classy-github/README.md` 的 `README.en.md`、LICENSE 链接
   站内可点，`assets/*.png` 指向 raw。
 - 文件页响应头 `x-classy-cache: HIT`、`cache-control: public, s-maxage=300`。
+
+### 锚点修复复验
+
+- Worker `classy-web` version `5cb38d5e-8cae-4d51-8908-84cbc323603c`。
+- `/Dnevend/repo/classy-github/README.md` 的 `## 三分钟开始` 输出
+  `<h2 id="三分钟开始">`；`/ruanyf/repo/weekly/docs/issue-419.md` 的标题
+  同样带 id（标点按 GitHub 规则移除）。
+- 浏览器打开 `.../README.md#三分钟开始`：目标元素存在，`scrollY=1224`，
+  元素 `top=0`，页面确实滚到对应小节。
