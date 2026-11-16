@@ -14,6 +14,11 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from './i18n.ts';
 export type ThemeName = 'default' | 'nes' | 'mac' | 'win98' | 'tui';
 
 export interface ResolvedConfig {
+  /**
+   * 配置归属的 GitHub 登录名。
+   * fork 会继承作者的配置；站点读到 owner 与当前用户不一致时，会把它当模板忽略。
+   */
+  owner: string | null;
   theme: ThemeName;
   /** 访客没有选择语言时的默认语言 */
   language: Locale;
@@ -63,7 +68,15 @@ export interface ResolvedConfig {
   };
 }
 
+/** owner 为空视为旧配置；有值时必须与当前用户一致（大小写不敏感） */
+export const isConfigForUser = (
+  config: Pick<ResolvedConfig, 'owner'>,
+  user: string
+): boolean =>
+  !config.owner || config.owner.toLowerCase() === user.toLowerCase();
+
 export const DEFAULT_CONFIG: ResolvedConfig = {
+  owner: null,
   theme: 'mac',
   language: DEFAULT_LOCALE,
   profile: {
@@ -151,9 +164,11 @@ const guestbookSchema = z
 const toggleSchema = z.object({ enabled: z.boolean() }).partial();
 
 const languageSchema = z.enum(LOCALES);
+const ownerSchema = z.string().regex(/^[a-z\d](?:[a-z\d-]{0,38})$/i);
 
 const rootSchema = z
   .object({
+    owner: z.string(),
     theme: z.string(),
     language: z.string(),
     profile: z.unknown(),
@@ -207,6 +222,16 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
   }
 
   const raw = root.data;
+
+  let owner: string | null = null;
+  if (raw.owner !== undefined) {
+    const parsedOwner = pick(ownerSchema, raw.owner);
+    if (parsedOwner) {
+      owner = parsedOwner;
+    } else {
+      issues.push(`owner: "${raw.owner}" 不是合法 GitHub 用户名，已忽略`);
+    }
+  }
 
   let theme: ThemeName = DEFAULT_CONFIG.theme;
   if (raw.theme !== undefined) {
@@ -283,6 +308,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
   return {
     issues,
     config: {
+      owner,
       theme,
       language: language ?? DEFAULT_LOCALE,
       profile: {

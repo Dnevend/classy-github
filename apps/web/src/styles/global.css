@@ -1011,6 +1011,12 @@ img {
 
 /* 资料卡 + 贡献卡整体固定在右侧，不随页面滚动 */
 @media (min-width: 900px) {
+  /* sticky 的 top:84px 会把右侧往下推 20px；给网格补同样的上边距，
+     让左右两栏从同一高度开始。 */
+  .profile {
+    padding-top: 20px;
+  }
+
   .profile__aside-wrap {
     position: sticky;
     top: 84px;

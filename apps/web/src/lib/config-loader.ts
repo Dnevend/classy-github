@@ -1,6 +1,11 @@
 import { USER_AGENT } from './constants.ts';
 import { getDefaultBranch } from './github.ts';
-import { DEFAULT_CONFIG, parseConfig, type ResolvedConfig } from './config.ts';
+import {
+  DEFAULT_CONFIG,
+  isConfigForUser,
+  parseConfig,
+  type ResolvedConfig,
+} from './config.ts';
 import { cacheGet, cachePut } from './edge-cache.ts';
 
 const CONFIG_REPO = 'classy-github';
@@ -56,11 +61,11 @@ const fetchJsonWithCache = async (
 
 export interface ConfigState {
   config: ResolvedConfig;
-  /** 用户是否真的在 GitHub 上放了 classy.config.json */
+  /** 用户是否真的在 GitHub 上放了属于自己（owner 匹配）的 classy.config.json */
   configured: boolean;
   /** false 表示配置读取遇到网络/限流，不能据此判断「未认领」 */
   reliable: boolean;
-  source: 'repo' | 'default';
+  source: 'repo' | 'template' | 'default';
 }
 
 /**
@@ -106,6 +111,20 @@ export const loadConfigState = async (user: string): Promise<ConfigState> => {
     const { config, issues } = parseConfig(payload.value);
     if (issues.length > 0) {
       console.warn(`[classy] ${user} 的 ${CONFIG_FILE} 有问题：`, issues);
+    }
+
+    // fork 会继承作者的配置；owner 不匹配时视为模板，避免把作者的主题、
+    // 链接、webring 身份复制到别人的站点上。
+    if (!isConfigForUser(config, user)) {
+      console.warn(
+        `[classy] ${user} 的配置 owner=${config.owner}，视为作者的模板配置`
+      );
+      return {
+        config: DEFAULT_CONFIG,
+        configured: false,
+        reliable: true,
+        source: 'template',
+      };
     }
 
     return { config, configured: true, reliable: true, source: 'repo' };

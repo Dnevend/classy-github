@@ -9,6 +9,7 @@ import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfigState } from '../../lib/config-loader';
+import { buildDefaultReadme } from '../../lib/default-readme';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { removeSite, syncSite } from '../../lib/site-registry';
@@ -77,15 +78,22 @@ if (data) {
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, ProfileCard, RepoCard, Markdown } = components;
 
-const readmeHtml =
-  data?.readme
+const display = data?.userinfo.name || data?.userinfo.login || user;
+
+const readmeHtml = data
+  ? data.readme
     ? await renderMarkdown(data.readme.source, { base: data.readme.base })
-    : null;
+    : await renderMarkdown(
+        buildDefaultReadme({
+          user: data.userinfo.login,
+          display,
+          locale: Astro.locals.locale,
+        })
+      )
+  : null;
 
 // 展示多少个仓库由用户的 classy.config.json 决定
 const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
-
-const display = data?.userinfo.name || data?.userinfo.login || user;
 
 const defaultTheme = config.theme === 'default' ? 'mac' : config.theme;
 const seo = data

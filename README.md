@@ -53,6 +53,7 @@ pnpm dev            # http://localhost:4321
 
 ```json
 {
+  "owner": "your-login",
   "theme": "default",
   "language": "en",
   "profile": {
@@ -87,6 +88,7 @@ pnpm dev            # http://localhost:4321
 
 | 字段 | 说明 |
 |---|---|
+| `owner` | 配置归属的 GitHub 用户名。fork 后必须改成自己的；与访问者不匹配时会被当模板忽略 |
 | `theme` | 默认主题名（mac / nes / win98 / tui；mac 为默认） |
 | `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
@@ -102,6 +104,10 @@ pnpm dev            # http://localhost:4321
 | `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
 配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。
+
+**fork 后记得改 `owner`**：仓库里的 `classy.config.json` 是作者 Dnevend 的配置，
+`owner` 不匹配时站点会把它当模板忽略（不会复制作者的主题/链接/webring 身份）。
+直接用 `/setup?u=<你的用户名>` 生成配置最省事，它会自动写 `owner`。
 
 ## 社区功能
 

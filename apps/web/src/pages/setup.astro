@@ -73,6 +73,7 @@ const themeOptions = ['mac', 'nes', 'win98', 'tui'] as const;
 const languageOptions = ['en', 'zh'] as const;
 
 const initialConfig = {
+  owner: userinfo?.login ?? user,
   theme: config.theme === 'default' ? 'mac' : config.theme,
   language: config.language,
   profile: { ...config.profile },

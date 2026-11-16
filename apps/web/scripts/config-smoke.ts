@@ -5,7 +5,7 @@
  */
 import assert from 'node:assert/strict';
 
-import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
+import { DEFAULT_CONFIG, isConfigForUser, parseConfig } from '../src/lib/config.ts';
 import { seoForProfile } from '../src/lib/seo.ts';
 import { THEME_NAMES, parseThemeParam, resolveThemeChoice } from '../src/lib/theme.ts';
 
@@ -39,6 +39,20 @@ const cases: Case[] = [
       assert.equal(config.profile.repos.visible, true);
       assert.equal(config.profile.showFollowers, true);
       assert.equal(config.seo.index, false);
+    },
+  },
+  {
+    name: 'owner：合法值透传，非法值忽略',
+    run: () => {
+      assert.equal(parseConfig({ owner: 'demo' }).config.owner, 'demo');
+      const invalid = parseConfig({ owner: 'not a login' });
+      assert.equal(invalid.config.owner, null);
+      assert.ok(invalid.issues.some((issue) => issue.startsWith('owner:')));
+
+      // fork 继承作者配置时必须被识别为模板
+      assert.equal(isConfigForUser({ owner: 'Dnevend' }, 'someone'), false);
+      assert.equal(isConfigForUser({ owner: 'Dnevend' }, 'dnevend'), true);
+      assert.equal(isConfigForUser({ owner: null }, 'someone'), true);
     },
   },
   {

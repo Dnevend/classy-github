@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 
 import { renderBadgeSvg } from '../src/lib/badge.ts';
 import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
+import { buildDefaultReadme } from '../src/lib/default-readme.ts';
 import { buildAtomFeed } from '../src/lib/feed.ts';
 import { createGistDescriptionParser } from '../src/lib/gist-rule.ts';
 import { isBotRequest } from '../src/lib/hit-counter.ts';
@@ -98,6 +99,29 @@ const cases: Case[] = [
       assert.equal(localeFromAcceptLanguage('en-US,en;q=0.9'), 'en');
       assert.equal(localeFromAcceptLanguage('fr-FR,zh;q=0.8'), 'zh');
       assert.equal(localeFromAcceptLanguage(null), 'en');
+    },
+  },
+  {
+    name: '默认 README：占位符替换、中文模板',
+    run: () => {
+      const en = buildDefaultReadme({
+        user: 'demo',
+        display: 'Demo & Co',
+        locale: 'en',
+      });
+      assert.match(en, /Demo & Co/);
+      assert.match(en, /\/demo\/repos/);
+      assert.match(en, /\/setup\?u=demo/);
+      assert.equal(en.includes('{{'), false);
+
+      const zh = buildDefaultReadme({
+        user: 'demo',
+        display: '演示用户',
+        locale: 'zh',
+      });
+      assert.match(zh, /你好，我是/);
+      assert.match(zh, /演示用户/);
+      assert.equal(zh.includes('{{'), false);
     },
   },
   {
