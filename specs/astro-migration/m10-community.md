@@ -99,7 +99,26 @@
 
 ## 6. 验证
 
-本地（`astro dev` / `astro preview`，workerd）：
+### 生产（2026-11-16）
+
+部署：`pnpm deploy:web` → Worker version `418a81b8-c815-448a-9766-47c6e7cac0b3`。
+生产 bindings：`HITS (Durable Object)` / `USERS (KV)` / `ASSETS`。
+
+```bash
+GET /Dnevend                      200, cache-control: public, s-maxage=300, x-classy-cache: HIT
+GET /api/hit/Dnevend              {"count":1} → {"count":2}
+GET /api/hit/antfu                {"count":null,"skipped":"unclaimed"}
+GET /badge/Dnevend.svg            200 image/svg+xml, s-maxage=86400, MISS → HIT
+GET /random                       302 → /webring
+GET /webring                      200（暂无 opt-in 成员，显示空环）
+GET /Dnevend/guestbook            200（未配置，显示 disabled）
+GET /claim/antfu                  200（claim 三步）
+GET /antfu                        200（未认领横幅）
+GET /sitemap/1.xml                含 /webring
+/  Accept-Language zh/en          中文 / 英文
+```
+
+### 本地（`astro dev` / `astro preview`，workerd）
 
 ```bash
 curl -s localhost:4321/api/hit/Dnevend        # {"count":1}
@@ -135,6 +154,5 @@ curl -s localhost:4321/api/ring/neighbors?user=alice
 - 计数器是「会话级访客数」，不是精确 PV；允许被刷，bot 过滤只能挡大部分。
 - 网站环需要至少 3 个 opt-in 站点才会在页脚出现；冷启动要手动 seed。
 - webring / discover 的成员同步依赖主页被访问；改配置后最多 1 小时刷新标题/主题。
-- 尚未在真实 Cloudflare 部署上跑 DO 首次迁移与真实流量；本地 workerd 已验证
-  `dist/server/wrangler.json` 带 DO bindings/migrations，`entry.mjs` 导出 `HitCounter`。
+- DO 首次迁移已随生产部署应用；真实流量下的计数近似/可被刷仍是已知限制。
 - 尚未做：OG 图、RSS/标签/归档、配置生成器（claim 页目前只给三步说明 + 初始 JSON）。
