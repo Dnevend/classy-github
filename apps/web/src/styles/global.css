@@ -751,12 +751,28 @@ img {
   min-height: 100dvh;
 }
 
-/* ---------- 近况（在读/在听/在看 + 可选第三方卡片） ---------- */
+/* ---------- 近况卡片（在读/在听/在看 + 可选第三方卡片） ---------- */
 
 .now-card {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+.now-card__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.now-card__body {
   display: grid;
   gap: 10px;
 }

@@ -561,3 +561,48 @@
 [data-theme='mac'] select {
   cursor: auto;
 }
+
+/* ---------- 近况窗口 ---------- */
+
+[data-theme='mac'] .now-card {
+  gap: 0;
+  padding: 0;
+  border: 1px solid #000;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: 2px 2px 0 #000;
+}
+
+[data-theme='mac'] .now-card__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  padding: 0;
+  border-bottom: 1px solid #000;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #000 0,
+    #000 1px,
+    #fff 1px,
+    #fff 3px
+  );
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+[data-theme='mac'] .now-card__title-text {
+  padding: 0 6px;
+  background: #fff;
+}
+
+[data-theme='mac'] .now-card__body {
+  padding: 10px 12px;
+}
+
+[data-theme='mac'] .now-card__external {
+  border-radius: 0;
+}

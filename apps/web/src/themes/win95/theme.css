@@ -587,3 +587,36 @@
 [data-theme='win98'] select {
   cursor: auto;
 }
+
+/* ---------- 近况窗口 ---------- */
+
+[data-theme='win98'] .now-card {
+  gap: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 0;
+  background: silver;
+  box-shadow:
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px #fff;
+}
+
+[data-theme='win98'] .now-card__title {
+  padding: 3px 2px 3px 3px;
+  background: linear-gradient(90deg, var(--w95-navy), #1084d0);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+[data-theme='win98'] .now-card__body {
+  padding: 8px;
+}
+
+[data-theme='win98'] .now-card__external {
+  border-radius: 0;
+}

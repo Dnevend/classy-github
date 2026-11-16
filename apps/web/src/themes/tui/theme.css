@@ -616,3 +616,37 @@
 [data-theme='tui'] select {
   cursor: auto;
 }
+
+/* ---------- 近况面板 ---------- */
+
+[data-theme='tui'] .now-card {
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #0000a8;
+  box-shadow: 6px 6px #000;
+  color: #fff;
+}
+
+[data-theme='tui'] .now-card__title {
+  padding: 2px 8px;
+  background: #a8a8a8;
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-theme='tui'] .now-card__body {
+  padding: 10px 12px;
+}
+
+[data-theme='tui'] .now-card__label {
+  color: #55ff55;
+}
+
+[data-theme='tui'] .now-card__external {
+  border-radius: 0;
+}

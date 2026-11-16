@@ -16,6 +16,7 @@ import { removeSite, syncSite } from '../../lib/site-registry';
 import { resolveTheme } from '../../themes';
 import ContribWall from '../../themes/_shared/ContribWall.astro';
 import ClaimBanner from '../../themes/_shared/ClaimBanner.astro';
+import NowCard from '../../themes/_shared/NowCard.astro';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -166,6 +167,8 @@ const seo = data
                 : undefined,
             }}
           />
+
+          <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
           <section class="contrib">
             <h2 class="section__title">{t('contrib.title')}</h2>

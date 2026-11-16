@@ -2,7 +2,6 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
-import NowCard from '../_shared/NowCard.astro';
 
 const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -44,7 +43,6 @@ const stats = [
 
       {userinfo.bio && <p class="mac-bio">{userinfo.bio}</p>}
       <ProfileMeta userinfo={userinfo} />
-      <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
       <div class="mac-stats">
         {stats.map((stat) => (

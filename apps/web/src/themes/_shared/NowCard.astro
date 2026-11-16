@@ -15,53 +15,58 @@ const groups = [
   { key: 'listening', items: now.music, icon: 'music' },
   { key: 'watching', items: now.watching, icon: 'film' },
 ].filter((group) => group.items.length > 0);
+
+const hasContent = groups.length > 0 || cardUrl;
 ---
 
 {
-  (groups.length > 0 || cardUrl) && (
-    <div class="now-card">
-      {groups.map((group) => (
-        <div class="now-card__group">
-          <span class="now-card__label">
-            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
-              {group.icon === 'book' && (
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  d="M4 5v14a2 2 0 0 1 2-2h14V3H6a2 2 0 0 0-2 2Z M20 19H6a2 2 0 0 0 0 4h14"
-                />
-              )}
-              {group.icon === 'music' && (
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  d="M9 18V6l10-2v12 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              )}
-              {group.icon === 'film' && (
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  d="M3 5h18v14H3z M7 5v14M17 5v14M3 10h4M3 14h4M17 10h4M17 14h4"
-                />
-              )}
-            </svg>
-            {t(`now.${group.key}` as 'now.reading')}
-          </span>
-          <ul>
-            {group.items.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
+  hasContent && (
+    <section class="now-card">
+      <h2 class="now-card__title"><span class="now-card__title-text">{t('now.title')}</span></h2>
+      <div class="now-card__body">
+        {groups.map((group) => (
+          <div class="now-card__group">
+            <span class="now-card__label">
+              <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
+                {group.icon === 'book' && (
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    d="M4 5v14a2 2 0 0 1 2-2h14V3H6a2 2 0 0 0-2 2Z M20 19H6a2 2 0 0 0 0 4h14"
+                  />
+                )}
+                {group.icon === 'music' && (
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    d="M9 18V6l10-2v12 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                )}
+                {group.icon === 'film' && (
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    d="M3 5h18v14H3z M7 5v14M17 5v14M3 10h4M3 14h4M17 10h4M17 14h4"
+                  />
+                )}
+              </svg>
+              {t(`now.${group.key}` as 'now.reading')}
+            </span>
+            <ul>
+              {group.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
 
-      {cardUrl && (
-        <img class="now-card__external" src={cardUrl} alt="" loading="lazy" />
-      )}
-    </div>
+        {cardUrl && (
+          <img class="now-card__external" src={cardUrl} alt="" loading="lazy" />
+        )}
+      </div>
+    </section>
   )
 }
