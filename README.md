@@ -13,12 +13,15 @@
   <a href="./README.en.md">English</a>
 </p>
 
-<p align="center">
-  <a href="https://classygit.pages.dev/Dnevend">
-    <img src="./assets/homepage.png" width="100%" alt="ClassyGit 个人主页示例：mac 主题、资料卡、贡献墙、最近仓库与 Gist" />
-  </a>
-</p>
-<p align="center"><sub>mac 主题 · 在线示例 <a href="https://classygit.pages.dev/Dnevend">classygit.pages.dev/Dnevend</a> · 点图直接打开</sub></p>
+四套主题，同一份 GitHub 数据。点图直接打开线上对应主题：
+
+| `mac` · System 6 | `nes` · 8-bit |
+|---|---|
+| [![mac 主题](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes 主题](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
+| **`win98` · Windows 98** | **`tui` · DOS** |
+| [![win98 主题](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+
+<p align="center"><sub>mac / nes / win98 / tui · 截图来自 <a href="https://classygit.pages.dev/Dnevend">Dnevend 的主页</a></sub></p>
 
 **目录**：[为什么](#为什么是-classygit) · [开始](#三分钟开始) · [特性](#网页特性) · [主题](#主题) · [社区](#社区功能) · [配置](#自定义配置) · [FAQ](#常见问题) · [自建](#开发与自建)
 
@@ -118,13 +121,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ## 主题
 
-四套主题不是换色，是四套不同的 DOM 和组件。点图可以直接打开线上对应主题：
-
-| `mac` · System 6 | `nes` · 8-bit |
-|---|---|
-| [![mac 主题](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes 主题](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
-| **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 主题](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+四套主题共用同一份数据，主题只决定外壳。
 
 - 默认主题由 `classy.config.json` 的 `theme` 决定（不填是 `mac`）；旧链接 `?theme=default` 自动落到 `mac`，`?theme=win95` 落到 `win98`。
 - 主题选择优先级：`?theme=` > cookie > 站主配置的 `theme` > `mac`。

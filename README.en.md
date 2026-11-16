@@ -13,12 +13,15 @@ No deploy, no login, no server to buy: turn your README, repositories and Gists 
   <a href="./README.md">中文</a>
 </p>
 
-<p align="center">
-  <a href="https://classygit.pages.dev/Dnevend">
-    <img src="./assets/homepage.png" width="100%" alt="ClassyGit profile example: mac theme, profile card, contribution wall, recent repositories and Gists" />
-  </a>
-</p>
-<p align="center"><sub>mac theme · live demo <a href="https://classygit.pages.dev/Dnevend">classygit.pages.dev/Dnevend</a> · click the image to open it. Screenshots show the Chinese UI; the site is fully bilingual.</sub></p>
+Four themes, one GitHub dataset. Click a screenshot to open that theme live:
+
+| `mac` · System 6 | `nes` · 8-bit |
+|---|---|
+| [![mac theme](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes theme](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
+| **`win98` · Windows 98** | **`tui` · DOS** |
+| [![win98 theme](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+
+<p align="center"><sub>mac / nes / win98 / tui · screenshots from <a href="https://classygit.pages.dev/Dnevend">Dnevend's profile</a></sub></p>
 
 **Contents**: [Why](#why-classygit) · [Start](#get-started-in-3-minutes) · [Features](#what-you-get) · [Themes](#themes) · [Community](#community) · [Config](#configuration) · [FAQ](#faq) · [Self-host](#development-and-self-hosting)
 
@@ -118,13 +121,7 @@ At runtime there are only two external dependencies: **GitHub provides content a
 
 ## Themes
 
-The four themes are not just color swaps; they use different DOM and components. Click a screenshot to open that theme live:
-
-| `mac` · System 6 | `nes` · 8-bit |
-|---|---|
-| [![mac theme](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes theme](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
-| **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 theme](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+All four themes share the same data; the theme only changes the shell.
 
 - The default theme comes from `classy.config.json` (`mac` if omitted); the old `?theme=default` link maps to `mac`, and `?theme=win95` maps to `win98`.
 - Theme priority: `?theme=` > cookie > configured `theme` > `mac`.
