@@ -35,7 +35,11 @@
 - `curl -D` `/Dnevend?theme=nes&lang=zh&preview=1` → 无 `Set-Cookie`；
   普通 `?theme=nes` 仍有 cookie。
 - `pnpm test` / `pnpm check` / `pnpm build` 通过。
-- 生产部署与 CI 待补。
+- 生产部署（2026-11-16，Worker version `a6d08b10-33d6-444b-ab8e-0fba2919fb63`）：
+  `/setup` 与 `/setup?u=Dnevend` 均 200，`/setup` 无 `x-classy-cache`（已跳过缓存）；
+  `/setup?u=antfu` 200；`preview=1` 的 `/Dnevend?theme=nes&lang=zh` 无 `Set-Cookie`；
+  Playwright 在生产页改 theme/language/showCount/webring 后 JSON 与 iframe 预览同步更新。
+- CI run `43840012999` 通过。
 
 ## 已知限制
 
