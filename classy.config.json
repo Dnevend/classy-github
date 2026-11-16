@@ -14,7 +14,7 @@
     },
     "gists": {
       "visible": true,
-      "showCount": 6
+      "showCount": 4
     }
   },
   "gists": {
@@ -49,13 +49,10 @@
   },
   "now": {
     "books": [
-      "《江湖边》",
-      "《北京法源寺》",
-      "《夜晚的潜水艇》"
+      "《江湖边》《北京法源寺》《夜晚的潜水艇》"
     ],
     "music": [
-      "秘密後院",
-      "NeilYoung"
+      "秘密後院、NeilYoung"
     ],
     "watching": []
   },
