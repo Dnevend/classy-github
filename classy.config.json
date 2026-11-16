@@ -31,5 +31,11 @@
             "title": "Config",
             "href": "https://github.com/Dnevend/classy-github#自定义配置"
         }
-    ]
+    ],
+    "webring": {
+        "enabled": true
+    },
+    "discover": {
+        "enabled": true
+    }
 }

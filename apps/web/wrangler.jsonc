@@ -8,6 +8,9 @@
     "binding": "ASSETS",
     "directory": "./dist"
   },
+  "vars": {
+    "SITE_ORIGIN": "https://classygit.pages.dev"
+  },
   "kv_namespaces": [
     { "binding": "USERS", "id": "bfa9d7d2b1f44881833552cb30b4077e" }
   ],

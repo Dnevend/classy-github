@@ -1,4 +1,5 @@
 ---
+import { siteOrigin } from "../lib/site";
 import { DEFAULT_CONFIG } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
 import { resolveTheme } from '../themes';
@@ -22,7 +23,7 @@ const { Layout } = components;
 const seo: SeoMeta = {
   title: `ClassyGit · ${t('landing.title')}`,
   description: t('landing.subtitle'),
-  canonical: new URL('/', Astro.url).toString(),
+  canonical: `${siteOrigin(Astro.url)}/`,
   robots: 'index, follow',
 };
 ---

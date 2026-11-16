@@ -1,3 +1,4 @@
+import { siteOrigin } from "../../lib/site";
 import type { APIRoute } from 'astro';
 import { listIndexableUsers, usersKv } from '../../lib/users-kv';
 import { PAGE_SIZE } from '../sitemap.xml';
@@ -5,7 +6,7 @@ import { PAGE_SIZE } from '../sitemap.xml';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url, params }) => {
-  const origin = url.origin;
+  const origin = siteOrigin(url);
   const page = Number(params.page ?? '1');
 
   if (!Number.isInteger(page) || page < 1 || page > 20) {

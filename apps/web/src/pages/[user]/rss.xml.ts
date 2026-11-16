@@ -1,3 +1,4 @@
+import { siteOrigin } from "../../lib/site";
 import type { APIRoute } from 'astro';
 import { loadConfig } from '../../lib/config-loader';
 import { safeLoad } from '../../lib/errors';
@@ -36,7 +37,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     user,
     userinfo: data.userinfo,
     gists: data.gists,
-    origin: url.origin,
+    origin: siteOrigin(url),
     config,
     locale: localeFromConfig(config.language),
   });

@@ -1,3 +1,4 @@
+import { siteOrigin } from "../lib/site";
 import type { APIRoute } from 'astro';
 import { listIndexableUsers, usersKv } from '../lib/users-kv';
 
@@ -7,7 +8,7 @@ export const prerender = false;
 export const PAGE_SIZE = 5000;
 
 export const GET: APIRoute = async ({ url }) => {
-  const origin = url.origin;
+  const origin = siteOrigin(url);
   const users = await listIndexableUsers(usersKv());
 
   // 首页 + 网站环 + 用户页

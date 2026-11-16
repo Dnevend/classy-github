@@ -1,4 +1,5 @@
 ---
+import { siteOrigin } from "../../lib/site";
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { createTranslator, localeFromAcceptLanguage } from '../../lib/i18n';
 import { resolveTheme } from '../../themes';
@@ -7,7 +8,7 @@ import type { ThemeName } from '../../lib/config';
 export const prerender = false;
 
 const user = Astro.params.user as string;
-const origin = new URL(Astro.url).origin;
+const origin = siteOrigin(Astro.url);
 
 // 徽章页没有站点主配置，语言按浏览器决定。
 if (Astro.locals.localeChoice === 'auto') {

@@ -10,6 +10,7 @@
     "build": "pnpm --filter @classy/web build",
     "check": "pnpm --filter @classy/web check",
     "test": "pnpm --filter @classy/web test",
-    "deploy:web": "pnpm run build && pnpm --filter @classy/web exec wrangler deploy --config dist/server/wrangler.json"
+    "deploy:web": "pnpm run build && pnpm --filter @classy/web exec wrangler deploy --config dist/server/wrangler.json",
+    "deploy:pages": "pnpm --filter @classy/web deploy:pages"
   }
 }

@@ -1,3 +1,4 @@
+import { siteOrigin } from "../../lib/site";
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { ImageResponse } from 'workers-og';
@@ -114,7 +115,7 @@ export const GET: APIRoute = async ({ params, url }) => {
   const avatarSrc = avatar
     ? `data:image/png;base64,${toBase64(avatar)}`
     : null;
-  const host = new URL(url.origin).host;
+  const host = new URL(siteOrigin(url)).host;
 
   const stat = (value: number, label: string) => `
     <div style="display:flex;flex-direction:column;gap:4px;padding:18px 26px;border:2px solid ${palette.border};background:${palette.bg};min-width:170px;">

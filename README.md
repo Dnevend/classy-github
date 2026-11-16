@@ -2,7 +2,7 @@
 
 > 无需部署、无需登录，把你的 GitHub 变成一个可分享的个人主页 + Gist 博客，附带四套复古主题。
 
-**在线示例**：<https://classy-web.dnevend.workers.dev/Dnevend>
+**在线示例**：<https://classygit.pages.dev/Dnevend>
 
 <p align="center">
   <img src="./assets/classy-theme.png" width="80%" alt="默认主题" />
@@ -45,7 +45,7 @@ pnpm dev            # http://localhost:4321
 
 ## 自定义配置
 
-不想手写 JSON：打开 `https://classy-web.dnevend.workers.dev/setup?u=<你的用户名>`，
+不想手写 JSON：打开 `https://classygit.pages.dev/setup?u=<你的用户名>`，
 填表 → 复制 JSON → 粘进 fork 的 `classy.config.json`。页面会实时预览主题和语言。
 
 也可以直接在你自己的 fork 里改根目录 `classy.config.json`（读的是**默认分支**，`main` / `master` / 其他都行）：
@@ -159,9 +159,14 @@ cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TO
 
 # 2) 构建 + 发布（仓库根目录一条命令）
 pnpm deploy:web
+
+# 3) 更新 classygit.pages.dev 薄代理（SSR/DO 跑在 Workers，Pages 只转发）
+pnpm deploy:pages
 ```
 
 生产环境是 Cloudflare Workers（`wrangler.jsonc` 已配好 Assets + KV + Durable Object）。
+`classygit.pages.dev` 是一层 Pages 代理，`SITE_ORIGIN` 让 canonical / OG / RSS / sitemap
+统一使用这个域名；Worker 直连地址仍然可用。
 KV 命名空间 `USERS` 保存可索引用户、站点注册表（webring / 随机推荐）；
 Durable Object `HITS` 保存每个站点的访问计数。
 
