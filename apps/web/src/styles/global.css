@@ -357,7 +357,10 @@ img {
   );
 }
 
-.share-card__preview.has-cover > :not(.share-card__cover):not(.share-card__cover-shade) {
+.share-card__preview.has-cover .share-card__avatar,
+.share-card__preview.has-cover .share-card__text,
+.share-card__preview.has-cover .share-card__desc,
+.share-card__preview.has-cover .share-card__meta {
   position: relative;
   z-index: 1;
 }
