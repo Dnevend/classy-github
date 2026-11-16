@@ -8,8 +8,8 @@
    配置被视为作者模板并忽略（使用默认值、`configured:false`，显示 claim 横幅）。
 2. **没有 profile README**：用户主页显示默认可编辑的 README 模板
    （`src/templates/profile-readme.{en,zh}.ts`）。
-3. **右栏资料卡对齐**：桌面端 `.profile` 补 20px 上边距，抵消 sticky `top:84px`
-   带来的偏移，使左右两栏从同一高度开始。
+3. **右栏资料卡对齐**：Base 量出实际 header 高度写入 `--classy-header-offset`，
+   右栏 sticky 使用这个变量而不是写死 84px，使左右两栏从同一高度开始。
 
 ## 实现
 
@@ -33,9 +33,11 @@
 
 ### 右栏对齐
 
-- 原因：`.profile__aside-wrap { position:sticky; top:84px }` 在滚动位置 0 也会
-  把右栏下推 20px（左栏 top=64，右栏 top=84）。
-- 修复：桌面端 `.profile { padding-top:20px }`，左右都从 84 开始；sticky 仍保留。
+- 原因：`.profile__aside-wrap { position:sticky; top:84px }` 在 Mac（header 31px）
+  等主题下会把右栏下推，左栏 top=45，右栏 top=84。
+- 修复：Base 脚本读取页面实际 `<header>` 的 `offsetTop + offsetHeight`，写到
+  `--classy-header-offset`；右栏 `top: var(--classy-header-offset, 0px)`。
+  NES / TUI / Win98 也各自量到 68 / 50 / 51px，不再依赖写死值。
 
 ## 验证
 
@@ -43,7 +45,10 @@
   （含默认 README 中英模板）；`pnpm check` / `pnpm build` 通过。
 - 本地 `/torvalds`（无 profile README）显示：
   `Hi, I'm Linus Torvalds 👋` + 默认 README 说明 + 定制链接。
-- Playwright 1280px：`.profile__main.top = 84`，`.profile__aside-wrap.top = 84`，diff 0。
+- Playwright 1280px：Mac / NES / Win98 / TUI 四套主题的
+  `.profile__aside-wrap.top - .profile__main.top` 均为 `0`；
+  header offset 分别为 31 / 68 / 51 / 50px。
+- 所有主题的右栏 sticky 只用真实 header 高度，不再有 Mac 上 19–39px 的错位。
 - 生产部署与 CI 待补。
 
 ## 已知限制

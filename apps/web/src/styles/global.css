@@ -1011,15 +1011,11 @@ img {
 
 /* 资料卡 + 贡献卡整体固定在右侧，不随页面滚动 */
 @media (min-width: 900px) {
-  /* sticky 的 top:84px 会把右侧往下推 20px；给网格补同样的上边距，
-     让左右两栏从同一高度开始。 */
-  .profile {
-    padding-top: 20px;
-  }
-
   .profile__aside-wrap {
     position: sticky;
-    top: 84px;
+    /* Base 会量出实际 header 高度写到这个变量；初始渲染时 sticky top
+       不会大于内容起点，所以右栏和左栏从同一高度开始。 */
+    top: var(--classy-header-offset, 0px);
     align-self: start;
     max-height: calc(100dvh - 100px);
     overflow-y: auto;

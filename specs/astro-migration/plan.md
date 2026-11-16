@@ -392,7 +392,7 @@ canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
 ### M17 · fork 配置隔离 / 默认 README / 右栏对齐（已完成 2026-11-16）
 
 `owner` 字段防止 fork 继承作者配置；无 profile README 时渲染中英模板；
-桌面端右栏与左栏同为 top 84。详见 `m17-fork-guard.md`。
+桌面端右栏按真实 header 高度 sticky，与左栏同一 top。详见 `m17-fork-guard.md`。
 
 ## 9. 分支与部署策略
 

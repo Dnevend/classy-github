@@ -43,6 +43,25 @@ const { seo, theme = 'default', user = '', userName = '' } = Astro.props as Prop
     </script>
 
     <script is:inline>
+      // 右侧资料卡的 sticky top 要跟实际 header 高度一致；写死 84px 会让
+      // header 较矮的主题（Mac）右栏比左栏低一截。
+      (() => {
+        const setHeaderOffset = () => {
+          const header = document.querySelector('header');
+          if (!header) return;
+          const offset = Math.round(header.offsetTop + header.offsetHeight);
+          document.documentElement.style.setProperty(
+            '--classy-header-offset',
+            `${offset}px`
+          );
+        };
+
+        setHeaderOffset();
+        window.addEventListener('resize', setHeaderOffset);
+      })();
+    </script>
+
+    <script is:inline>
       // 记录最近访问的用户页到 localStorage（只在页面访问自己的 /<login> 路径时）。
       (() => {
         const login = document.body.dataset.classyUser;
