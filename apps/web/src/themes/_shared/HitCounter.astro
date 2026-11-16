@@ -1,0 +1,62 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  user: string;
+}
+
+const { user } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+---
+
+<span
+  class="hit-counter"
+  data-hit-counter
+  data-user={user}
+  data-template={t('hit.visitors', { count: '{count}' })}
+  hidden
+></span>
+
+<script>
+  const counters = document.querySelectorAll<HTMLElement>('[data-hit-counter]');
+
+  counters.forEach((el) => {
+    const user = el.dataset.user;
+    if (!user) return;
+
+    const key = `classy:hit:${user}`;
+    let seen = false;
+
+    try {
+      seen = sessionStorage.getItem(key) === '1';
+    } catch {
+      // 隐私模式下 sessionStorage 可能不可用
+    }
+
+    const readOnly = seen || navigator.webdriver === true;
+    const url = `/api/hit/${encodeURIComponent(user)}${readOnly ? '?mode=read' : ''}`;
+
+    fetch(url, { headers: { accept: 'application/json' } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { count?: number } | null) => {
+        if (!data || typeof data.count !== 'number') return;
+
+        const template = el.dataset.template ?? '{count}';
+        const formatted = new Intl.NumberFormat(
+          document.documentElement.lang || undefined
+        ).format(data.count);
+
+        el.textContent = template.replace('{count}', formatted);
+        el.hidden = false;
+
+        try {
+          sessionStorage.setItem(key, '1');
+        } catch {
+          // 忽略
+        }
+      })
+      .catch(() => {
+        // 计数失败就保持隐藏，不影响页面
+      });
+  });
+</script>

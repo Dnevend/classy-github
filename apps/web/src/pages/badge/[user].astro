@@ -1,0 +1,135 @@
+---
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { createTranslator, localeFromAcceptLanguage } from '../../lib/i18n';
+import { resolveTheme } from '../../themes';
+import type { ThemeName } from '../../lib/config';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+// 徽章页没有站点主配置，语言按浏览器决定。
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromAcceptLanguage(
+    Astro.request.headers.get('accept-language')
+  );
+}
+
+const t = createTranslator(Astro.locals.locale);
+
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout } = components;
+
+const themes: { name: ThemeName; label: string }[] = [
+  { name: 'mac', label: 'mac' },
+  { name: 'nes', label: 'nes' },
+  { name: 'win98', label: 'win98' },
+  { name: 'tui', label: 'tui' },
+];
+
+const display = user;
+
+const variants = themes.map((theme) => {
+  const src = `${origin}/badge/${encodeURIComponent(user)}.svg?theme=${theme.name}`;
+  const href = `${origin}/${encodeURIComponent(user)}`;
+
+  return {
+    ...theme,
+    src,
+    html: `<a href="${href}"><img src="${src}" width="88" height="31" alt="ClassyGit"></a>`,
+    markdown: `[![ClassyGit](${src})](${href})`,
+  };
+});
+---
+
+<Layout
+  {user}
+  userinfo={null}
+  config={DEFAULT_CONFIG}
+  theme={themeName}
+  brand={display}
+  seo={{
+    title: t('badge.title', { name: display }),
+    description: t('badge.desc'),
+    canonical: `${origin}/badge/${user}`,
+    robots: 'noindex, follow',
+  }}
+>
+  <section class="badge-page">
+        <header class="badge-page__head">
+          <h1 class="page-title">{t('badge.title', { name: display })}</h1>
+          <p class="bio">{t('badge.desc')}</p>
+        </header>
+
+        <div class="badge-grid">
+          {variants.map((variant) => (
+            <article class="badge-card">
+              <h2>{variant.label}</h2>
+              <img
+                class="badge-card__preview"
+                src={variant.src}
+                width="88"
+                height="31"
+                alt={`ClassyGit badge (${variant.label})`}
+                loading="lazy"
+              />
+
+              <div class="badge-card__snippet">
+                <div class="badge-card__snippet-head">
+                  <span>{t('badge.html')}</span>
+                  <button
+                    type="button"
+                    class="badge-card__copy"
+                    data-badge-copy
+                    data-copied={t('badge.copied')}
+                  >
+                    {t('badge.copy')}
+                  </button>
+                </div>
+                <pre><code>{variant.html}</code></pre>
+              </div>
+
+              <div class="badge-card__snippet">
+                <div class="badge-card__snippet-head">
+                  <span>{t('badge.markdown')}</span>
+                  <button
+                    type="button"
+                    class="badge-card__copy"
+                    data-badge-copy
+                    data-copied={t('badge.copied')}
+                  >
+                    {t('badge.copy')}
+                  </button>
+                </div>
+                <pre><code>{variant.markdown}</code></pre>
+              </div>
+            </article>
+          ))}
+        </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-badge-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const code = button.closest('.badge-card__snippet')?.querySelector('code');
+      if (!code) return;
+
+      try {
+        await navigator.clipboard.writeText(code.textContent ?? '');
+        const original = button.textContent;
+        button.textContent = button.dataset.copied ?? '✓';
+        window.setTimeout(() => {
+          button.textContent = original;
+        }, 1200);
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    });
+  });
+</script>

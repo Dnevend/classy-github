@@ -1,0 +1,28 @@
+---
+import { createTranslator } from '../../lib/i18n';
+import HitCounter from './HitCounter.astro';
+import WebringWidget from './WebringWidget.astro';
+
+interface Props {
+  user: string;
+  /** 用户是否已经放了 classy.config.json；没有就只显示徽章入口 */
+  configured?: boolean;
+  /** 用户是否 opt-in 了网站环 */
+  webring?: boolean;
+}
+
+const { user, configured = false, webring = false } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+---
+
+{
+  user && (
+    <div class="community-footer">
+      {configured && <HitCounter user={user} />}
+      <WebringWidget user={user} enabled={webring} />
+      <a class="community-footer__badge" href={`/badge/${encodeURIComponent(user)}`}>
+        {t('badge.label')}
+      </a>
+    </div>
+  )
+}

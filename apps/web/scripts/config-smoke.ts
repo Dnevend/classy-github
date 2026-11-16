@@ -95,17 +95,18 @@ const cases: Case[] = [
     },
   },
   {
-    name: '非法 theme → 回退 default 并记 issue',
+    name: '非法 theme → 回退 mac 并记 issue',
     run: () => {
       const { config, issues } = parseConfig({ theme: 'amiga' });
-      assert.equal(config.theme, 'default');
+      assert.equal(config.theme, 'mac');
       assert.ok(issues.some((issue) => issue.startsWith('theme:')));
     },
   },
   {
-    name: '合法 theme 透传',
+    name: '合法 theme 透传，win95 旧名归一为 win98',
     run: () => {
-      assert.equal(parseConfig({ theme: 'win95' }).config.theme, 'win95');
+      assert.equal(parseConfig({ theme: 'win98' }).config.theme, 'win98');
+      assert.equal(parseConfig({ theme: 'win95' }).config.theme, 'win98');
     },
   },
   {
@@ -138,18 +139,18 @@ const cases: Case[] = [
   {
     name: '?theme= 解析：大小写/非法值/null',
     run: () => {
-      assert.deepEqual([...THEME_NAMES], ['default', 'nes', 'mac', 'win95']);
-      assert.equal(parseThemeParam(undefined), 'default');
-      assert.equal(parseThemeParam(null), 'default');
-      assert.equal(parseThemeParam(''), 'default');
+      assert.deepEqual([...THEME_NAMES], ['default', 'nes', 'mac', 'win98', 'tui']);
+      assert.equal(parseThemeParam(undefined), 'mac');
+      assert.equal(parseThemeParam(null), 'mac');
+      assert.equal(parseThemeParam(''), 'mac');
       assert.equal(parseThemeParam('nes'), 'nes');
       assert.equal(parseThemeParam(' NES '), 'nes');
-      assert.equal(parseThemeParam('amiga'), 'default');
-      assert.equal(parseThemeParam('win95'), 'win95');
+      assert.equal(parseThemeParam('amiga'), 'mac');
+      assert.equal(parseThemeParam('win95'), 'win98');
     },
   },
   {
-    name: '主题持久化：?theme= 优先，其次 cookie，都没有就 default',
+    name: '主题持久化：?theme= 优先，其次 cookie，都没有就 mac',
     run: () => {
       // 显式选了主题 → 要写 cookie
       assert.deepEqual(resolveThemeChoice({ param: 'nes' }), { theme: 'nes', persist: true });
@@ -159,15 +160,15 @@ const cases: Case[] = [
       });
       // 没带参数 → 用 cookie，不重复写
       assert.deepEqual(resolveThemeChoice({ cookie: 'nes' }), { theme: 'nes', persist: false });
-      // 都没有 / 都非法 → default，不写
-      assert.deepEqual(resolveThemeChoice({}), { theme: 'default', persist: false });
+      // 都没有 / 都非法 → mac，不写
+      assert.deepEqual(resolveThemeChoice({}), { theme: 'mac', persist: false });
       assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'xx' }), {
-        theme: 'default',
+        theme: 'mac',
         persist: false,
       });
-      // 参数非法时仍要尊重合法 cookie
+      // 参数非法时仍要尊重合法 cookie；旧名 win95 归一为 win98
       assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'win95' }), {
-        theme: 'win95',
+        theme: 'win98',
         persist: false,
       });
       // 大小写

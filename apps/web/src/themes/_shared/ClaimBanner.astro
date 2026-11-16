@@ -1,0 +1,20 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  user: string;
+}
+
+const { user } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+---
+
+<aside class="claim-banner">
+  <div class="claim-banner__text">
+    <strong>{t('claim.title')}</strong>
+    <p>{t('claim.desc')}</p>
+  </div>
+  <a class="claim-banner__cta" href={`/claim/${encodeURIComponent(user)}`}>
+    {t('claim.cta')} →
+  </a>
+</aside>

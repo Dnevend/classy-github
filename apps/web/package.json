@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "deploy": "wrangler deploy",
-    "test": "node --experimental-strip-types scripts/markdown-smoke.ts && node --experimental-strip-types scripts/config-smoke.ts"
+    "test": "node --experimental-strip-types scripts/markdown-smoke.ts && node --experimental-strip-types scripts/config-smoke.ts && node --experimental-strip-types scripts/community-smoke.ts"
   },
   "dependencies": {
     "98.css": "^0.1.21",

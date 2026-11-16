@@ -1,0 +1,186 @@
+---
+import NotFound from '../../components/NotFound.astro';
+import ServiceError from '../../components/ServiceError.astro';
+import { DEFAULT_CONFIG } from '../../lib/config';
+import { loadConfigState } from '../../lib/config-loader';
+import { safeLoad } from '../../lib/errors';
+import { createTranslator, localeFromAcceptLanguage } from '../../lib/i18n';
+import { loadUser } from '../../lib/page';
+import { resolveTheme } from '../../themes';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const origin = new URL(Astro.url).origin;
+
+// 认领页没有站点主配置，语言按浏览器决定。
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromAcceptLanguage(
+    Astro.request.headers.get('accept-language')
+  );
+}
+
+const { data: userinfo, error } = await safeLoad(() => loadUser(user));
+
+if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (!userinfo) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const t = createTranslator(Astro.locals.locale);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout } = components;
+
+const configState = userinfo
+  ? await loadConfigState(user)
+  : {
+      config: DEFAULT_CONFIG,
+      configured: false,
+      reliable: false,
+      source: 'default' as const,
+    };
+const { configured, reliable } = configState;
+
+const starterConfig = JSON.stringify(
+  {
+    theme: 'mac',
+    language: Astro.locals.locale,
+    profile: {
+      repos: { visible: true, showCount: 6 },
+      showFollowers: true,
+      showFollowing: true,
+    },
+    gists: {
+      prefix: 'classy',
+      split: '.',
+      type: [{ name: 'blog' }, { name: 'code' }],
+    },
+    links: [{ title: 'GitHub', href: `https://github.com/${user}` }],
+    guestbook: { gistId: null },
+    webring: { enabled: false },
+    discover: { enabled: false },
+    seo: { index: false },
+  },
+  null,
+  2
+);
+
+const display = userinfo?.name || userinfo?.login || user;
+const forkUrl = 'https://github.com/Dnevend/classy-github/fork';
+const repoUrl = `https://github.com/${encodeURIComponent(user)}/classy-github`;
+const readmeUrl = 'https://github.com/Dnevend/classy-github#自定义配置';
+---
+
+<Layout
+  {user}
+  userinfo={userinfo}
+  config={DEFAULT_CONFIG}
+  theme={themeName}
+  brand={display}
+  configured={configured}
+  seo={{
+    title: `${t('claim.title')} · ${display}`,
+    description: t('claim.desc'),
+    canonical: `${origin}/claim/${user}`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error ? (
+      <ServiceError kind={error} />
+    ) : !userinfo ? (
+      <NotFound user={user} />
+    ) : !configured && !reliable ? (
+      <ServiceError kind="unknown" />
+    ) : (
+      <section class="claim-page">
+        <header class="claim-page__head">
+          {!configured && <p class="claim-page__eyebrow">{t('claim.steps')}</p>}
+          <h1 class="page-title">
+            {configured ? t('claim.done') : t('claim.title')}
+          </h1>
+          <p class="bio">
+            {configured ? t('claim.doneDesc') : t('claim.desc')}
+          </p>
+        </header>
+
+        {configured ? (
+          <div class="claim-page__actions">
+            <a class="claim-page__primary" href={`/${user}`}>
+              {t('claim.back')} →
+            </a>
+            <a class="claim-page__secondary" href={repoUrl} target="_blank" rel="noopener noreferrer">
+              {t('claim.edit')} ↗
+            </a>
+          </div>
+        ) : (
+          <ol class="claim-steps">
+            <li>
+              <h2>{t('claim.step1')}</h2>
+              <p>{t('claim.step1Desc')}</p>
+              <a href={forkUrl} target="_blank" rel="noopener noreferrer">
+                {t('claim.fork')} ↗
+              </a>
+            </li>
+            <li>
+              <h2>{t('claim.step2')}</h2>
+              <p>{t('claim.step2Desc')}</p>
+              <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                {t('claim.edit')} ↗
+              </a>
+              <a href={readmeUrl} target="_blank" rel="noopener noreferrer">
+                README ↗
+              </a>
+            </li>
+            <li>
+              <h2>{t('claim.step3')}</h2>
+              <p>{t('claim.step3Desc')}</p>
+            </li>
+          </ol>
+        )}
+
+        {
+          !configured && (
+            <section class="claim-config">
+              <div class="claim-config__head">
+                <h2>{t('claim.config')}</h2>
+                <button type="button" class="claim-config__copy" data-claim-copy>
+                  {t('claim.copy')}
+                </button>
+              </div>
+              <pre id="claim-config-json"><code>{starterConfig}</code></pre>
+            </section>
+          )
+        }
+      </section>
+    )
+  }
+</Layout>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-claim-copy]');
+  const code = document.querySelector<HTMLElement>('#claim-config-json code');
+
+  button?.addEventListener('click', async () => {
+    if (!code) return;
+
+    try {
+      await navigator.clipboard.writeText(code.textContent ?? '');
+      const original = button.textContent;
+      button.textContent = '✓';
+      window.setTimeout(() => {
+        button.textContent = original;
+      }, 1200);
+    } catch {
+      // 剪贴板不可用时让用户自己选中
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  });
+</script>

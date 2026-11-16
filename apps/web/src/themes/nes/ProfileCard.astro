@@ -31,8 +31,12 @@ const t = createTranslator(Astro.locals.locale);
 
 
     <ul class="nes-stats">
-      <li><span>{userinfo.followers}</span> {t('profile.followers')}</li>
-      <li><span>{userinfo.following}</span> {t('profile.following')}</li>
+      {config.profile.showFollowers && (
+        <li><span>{userinfo.followers}</span> {t('profile.followers')}</li>
+      )}
+      {config.profile.showFollowing && (
+        <li><span>{userinfo.following}</span> {t('profile.following')}</li>
+      )}
       <li><span>{userinfo.public_repos}</span> {t('profile.reposTitle')}</li>
       <li><span>{userinfo.public_gists}</span> {t('profile.gistsTitle')}</li>
     </ul>

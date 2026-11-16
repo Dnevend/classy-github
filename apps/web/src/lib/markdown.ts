@@ -154,31 +154,54 @@ const rehypeFixUrls = (base?: string) => (tree: Root) => {
   });
 };
 
+/**
+ * 留言簿用的更严格 schema：禁止图片/嵌入，避免评论里的追踪像素。
+ * 文本、链接、代码块照常保留。
+ */
+const commentAttributes = { ...(schema.attributes ?? {}) };
+delete commentAttributes.img;
+delete commentAttributes.picture;
+delete commentAttributes.source;
+
+const commentSchema: SanitizeSchema = {
+  ...schema,
+  tagNames: (schema.tagNames ?? []).filter(
+    (tag) => !['img', 'picture', 'source', 'video', 'audio'].includes(tag)
+  ),
+  attributes: commentAttributes,
+};
+
 export interface RenderMarkdownOptions {
   /** 相对路径基准，通常来自 README 的 download_url 目录 */
   base?: string;
+  /** 留言簿等用户评论关掉图片，默认允许（README 需要） */
+  allowImages?: boolean;
+  /** 评论不跑 Shiki，避免一页几十条评论把 CPU 打满 */
+  highlight?: boolean;
 }
 
 export async function renderMarkdown(
   source: string,
   options: RenderMarkdownOptions = {}
 ): Promise<string> {
-  const highlighter = await getHighlighter();
-
-  const file = await unified()
+  const pipeline = unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(rehypeSanitize, schema)
-    .use(rehypeFixUrls, options.base)
-    .use(rehypeShikiFromHighlighter, highlighter, {
+    .use(rehypeSanitize, options.allowImages === false ? commentSchema : schema)
+    .use(rehypeFixUrls, options.base);
+
+  if (options.highlight !== false) {
+    const highlighter = await getHighlighter();
+    pipeline.use(rehypeShikiFromHighlighter, highlighter, {
       themes: { light: 'github-light', dark: 'github-dark' },
       defaultLanguage: 'text',
       fallbackLanguage: 'text',
-    })
-    .use(rehypeStringify)
-    .process(source);
+    });
+  }
+
+  const file = await pipeline.use(rehypeStringify).process(source);
 
   return String(file);
 }

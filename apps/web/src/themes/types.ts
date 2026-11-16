@@ -27,6 +27,8 @@ export interface ThemeLayoutProps {
   brand?: string;
   /** 分享卡片内容；不传则用用户主页信息 */
   share?: ShareCardData;
+  /** 用户是否已经放了 classy.config.json（用于页脚计数/claim） */
+  configured?: boolean;
 }
 
 export interface ThemeProfileCardProps {

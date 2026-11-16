@@ -33,8 +33,12 @@ const t = createTranslator(Astro.locals.locale);
 
 
       <ul class="tui-stats">
-        <li><span>{t('profile.followers')}</span><b>{userinfo.followers}</b></li>
-        <li><span>{t('profile.following')}</span><b>{userinfo.following}</b></li>
+        {config.profile.showFollowers && (
+          <li><span>{t('profile.followers')}</span><b>{userinfo.followers}</b></li>
+        )}
+        {config.profile.showFollowing && (
+          <li><span>{t('profile.following')}</span><b>{userinfo.following}</b></li>
+        )}
         <li><span>{t('profile.reposTitle')}</span><b>{userinfo.public_repos}</b></li>
         <li><span>{t('profile.gistsTitle')}</span><b>{userinfo.public_gists}</b></li>
       </ul>

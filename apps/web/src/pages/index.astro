@@ -2,10 +2,18 @@
 import { DEFAULT_CONFIG } from '../lib/config';
 import type { SeoMeta } from '../lib/seo';
 import { resolveTheme } from '../themes';
-import { createTranslator } from '../lib/i18n';
+import { createTranslator, localeFromAcceptLanguage } from '../lib/i18n';
 
 // 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
 export const prerender = false;
+
+// 首页没有站点主配置可参考，首次访问按浏览器语言决定中/英；
+// 用户页仍然听站主在 classy.config.json 里设置的 language。
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromAcceptLanguage(
+    Astro.request.headers.get('accept-language')
+  );
+}
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const t = createTranslator(Astro.locals.locale);
@@ -42,6 +50,12 @@ const seo: SeoMeta = {
       <a href="https://github.com/Dnevend/classy-github/fork" target="_blank" rel="noopener noreferrer">
         {t('landing.fork')} ↗
       </a>
+    </p>
+
+    <p class="hero-links">
+      <a href="/webring">{t('webring.title')}</a>
+      <span aria-hidden="true">·</span>
+      <a href="/random">{t('webring.random')}</a>
     </p>
   </section>
 

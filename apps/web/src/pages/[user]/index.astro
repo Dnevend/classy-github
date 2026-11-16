@@ -7,11 +7,13 @@ import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
 import { seoForProfile } from '../../lib/seo';
 import { DEFAULT_CONFIG } from '../../lib/config';
-import { loadConfig } from '../../lib/config-loader';
+import { loadConfigState } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
+import { removeSite, syncSite } from '../../lib/site-registry';
 import { resolveTheme } from '../../themes';
 import ContribWall from '../../themes/_shared/ContribWall.astro';
+import ClaimBanner from '../../themes/_shared/ClaimBanner.astro';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -36,8 +38,11 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-// 配置读取失败不影响渲染：loadConfig 内部已降级为默认值
-const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+// 配置读取失败不影响渲染：loadConfigState 内部已降级为默认值
+const configState = data
+  ? await loadConfigState(user)
+  : { config: DEFAULT_CONFIG, configured: false, reliable: false, source: 'default' as const };
+const { config, configured, reliable } = configState;
 
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromConfig(config.language);
@@ -46,9 +51,26 @@ if (Astro.locals.localeChoice === 'auto') {
 const t = createTranslator(Astro.locals.locale);
 
 
-// 只有显式开启 seo.index 的用户才进 sitemap
-if (data) {
+// 只有显式开启 seo.index 的用户才进 sitemap。
+// 配置读取失败时不要动注册表，否则 GitHub 抖动会把用户误删。
+if (data && reliable) {
   await syncIndexableUser(usersKv(), data.userinfo.login, config.seo.index);
+}
+
+if (data) {
+  // 站点注册表：webring / 随机推荐 / 徽章页都依赖它
+  if (configured) {
+    await syncSite(usersKv(), {
+      login: data.userinfo.login,
+      title: data.userinfo.name || data.userinfo.login,
+      theme: config.theme,
+      webring: config.webring.enabled,
+      discover: config.discover.enabled,
+    });
+  } else if (reliable) {
+    // 只有明确「没有配置」才清理；网络错误不能误删 webring 成员
+    await removeSite(usersKv(), data.userinfo.login);
+  }
 }
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
@@ -85,6 +107,7 @@ const seo = data
   {config}
   theme={themeName}
   brand={display}
+  {configured}
   {seo}
 >
   {
@@ -93,7 +116,9 @@ const seo = data
     ) : !data ? (
       <NotFound user={user} />
     ) : (
-      <div class="profile">
+      <>
+        {!configured && reliable && <ClaimBanner user={user} />}
+        <div class="profile">
         <div class="profile__main">
           {readmeHtml && <Markdown html={readmeHtml} />}
 
@@ -127,7 +152,8 @@ const seo = data
             <ContribWall user={user} theme={themeName} />
           </section>
         </div>
-      </div>
+        </div>
+      </>
     )
   }
 </Layout>

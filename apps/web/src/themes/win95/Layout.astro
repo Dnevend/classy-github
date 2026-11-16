@@ -4,12 +4,14 @@ import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
 import LanguageSwitcher from '../_shared/LanguageSwitcher.astro';
 import { createTranslator } from '../../lib/i18n';
 import ShareCard from '../_shared/ShareCard.astro';
+import CommunityFooter from '../_shared/CommunityFooter.astro';
 import type { ThemeLayoutProps } from '../types';
 
 import winCss from './vendor/98.css?url';
 import themeCss from './theme.css?url';
 
-const { user, userinfo, config, theme, seo, brand, share } = Astro.props as ThemeLayoutProps;
+const { user, userinfo, config, theme, seo, brand, share, configured = false } =
+  Astro.props as ThemeLayoutProps;
 
 const shareUrl = seo.canonical ?? Astro.url.href;
 const shareData =
@@ -44,6 +46,9 @@ const t = createTranslator(Astro.locals.locale);
           <nav class="w95-menu">
             <a href={`/${user}/repos`}>{t('nav.repos')}</a>
             <a href={`/${user}/gists`}>{t('nav.gists')}</a>
+            {config.guestbook.gistId && (
+              <a href={`/${user}/guestbook`}>{t('nav.guestbook')}</a>
+            )}
         {config.nav.extra.map((item) => (
           <a href={item.href} target="_blank" rel="noopener noreferrer">
             {item.title}
@@ -82,6 +87,7 @@ const t = createTranslator(Astro.locals.locale);
           </nav>
         )
       }
+      <CommunityFooter user={user} {configured} webring={config.webring.enabled} />
       <div class="w95-footer__row">
         <span>Powered by ClassyGit</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}

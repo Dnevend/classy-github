@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isThemeName } from './theme.ts';
+import { parseThemeName } from './theme.ts';
 import { DEFAULT_LOCALE, LOCALES, type Locale } from './i18n.ts';
 
 /**
@@ -45,6 +45,18 @@ export interface ResolvedConfig {
     music: string[];
     watching: string[];
   };
+  /** 用一条公开 Gist 的评论做留言簿；null 表示关闭 */
+  guestbook: {
+    gistId: string | null;
+  };
+  /** 是否加入 ClassyGit 网站环 */
+  webring: {
+    enabled: boolean;
+  };
+  /** 是否允许出现在 /random 随机推荐里 */
+  discover: {
+    enabled: boolean;
+  };
   seo: {
     /** 是否允许搜索引擎收录这个人的主页 */
     index: boolean;
@@ -70,6 +82,9 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   links: [],
   nav: { extra: [] },
   now: { books: [], music: [], watching: [] },
+  guestbook: { gistId: null },
+  webring: { enabled: false },
+  discover: { enabled: false },
   seo: { index: false },
 };
 
@@ -126,6 +141,15 @@ const navSchema = z
   })
   .partial();
 
+const guestbookSchema = z
+  .object({
+    // Gist ID 是 20–40 位十六进制；允许显式 null 关闭
+    gistId: z.string().regex(/^[a-f0-9]{20,40}$/i).nullable(),
+  })
+  .partial();
+
+const toggleSchema = z.object({ enabled: z.boolean() }).partial();
+
 const languageSchema = z.enum(LOCALES);
 
 const rootSchema = z
@@ -137,6 +161,9 @@ const rootSchema = z
     links: z.unknown(),
     nav: z.unknown(),
     now: z.unknown(),
+    guestbook: z.unknown(),
+    webring: z.unknown(),
+    discover: z.unknown(),
     seo: z.unknown(),
   })
   .partial();
@@ -183,10 +210,11 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
 
   let theme: ThemeName = DEFAULT_CONFIG.theme;
   if (raw.theme !== undefined) {
-    if (isThemeName(raw.theme)) {
-      theme = raw.theme;
+    const parsedTheme = parseThemeName(raw.theme);
+    if (parsedTheme) {
+      theme = parsedTheme;
     } else {
-      issues.push(`theme: 未知主题 "${raw.theme}"，已回退为 default`);
+      issues.push(`theme: 未知主题 "${raw.theme}"，已回退为 ${DEFAULT_CONFIG.theme}`);
     }
   }
 
@@ -213,6 +241,21 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
   const now = pick(nowSchema, raw.now);
   if (raw.now !== undefined && now === null) {
     issues.push('now: 结构不合法，已忽略该段');
+  }
+
+  const guestbook = pick(guestbookSchema, raw.guestbook);
+  if (raw.guestbook !== undefined && guestbook === null) {
+    issues.push('guestbook: 结构不合法，已忽略该段');
+  }
+
+  const webring = pick(toggleSchema, raw.webring);
+  if (raw.webring !== undefined && webring === null) {
+    issues.push('webring: 结构不合法，已忽略该段');
+  }
+
+  const discover = pick(toggleSchema, raw.discover);
+  if (raw.discover !== undefined && discover === null) {
+    issues.push('discover: 结构不合法，已忽略该段');
   }
 
   const seo = pick(seoSchema, raw.seo);
@@ -266,6 +309,15 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
         books: now?.books ?? [],
         music: now?.music ?? [],
         watching: now?.watching ?? [],
+      },
+      guestbook: {
+        gistId: guestbook?.gistId ?? DEFAULT_CONFIG.guestbook.gistId,
+      },
+      webring: {
+        enabled: webring?.enabled ?? DEFAULT_CONFIG.webring.enabled,
+      },
+      discover: {
+        enabled: discover?.enabled ?? DEFAULT_CONFIG.discover.enabled,
       },
       seo: { index: seo?.index ?? DEFAULT_CONFIG.seo.index },
     },

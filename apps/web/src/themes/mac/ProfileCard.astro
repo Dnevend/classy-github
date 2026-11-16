@@ -37,8 +37,12 @@ const t = createTranslator(Astro.locals.locale);
 
       <table class="mac-stats">
         <tbody>
-          <tr><th>{t('profile.followers')}</th><td>{userinfo.followers}</td></tr>
-          <tr><th>{t('profile.following')}</th><td>{userinfo.following}</td></tr>
+          {config.profile.showFollowers && (
+            <tr><th>{t('profile.followers')}</th><td>{userinfo.followers}</td></tr>
+          )}
+          {config.profile.showFollowing && (
+            <tr><th>{t('profile.following')}</th><td>{userinfo.following}</td></tr>
+          )}
           <tr><th>{t('profile.reposTitle')}</th><td>{userinfo.public_repos}</td></tr>
           <tr><th>{t('profile.gistsTitle')}</th><td>{userinfo.public_gists}</td></tr>
         </tbody>

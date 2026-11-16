@@ -1,21 +1,29 @@
 import { defineMiddleware } from 'astro:middleware';
 import { CACHED_AT_HEADER, cacheGet, cachePut, edgeCache } from './lib/edge-cache.ts';
 import { THEME_COOKIE, resolveThemeChoice } from './lib/theme.ts';
-import { DEFAULT_LOCALE, LOCALE_COOKIE, resolveLocale } from './lib/i18n.ts';
+import {
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE,
+  localeFromAcceptLanguage,
+  resolveLocale,
+} from './lib/i18n.ts';
 
 /**
  * 按路由决定缓存时长。顺序敏感：先匹配更具体的路径。
  */
 const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
   [/^\/$/, 3600],
+  [/^\/webring\/?$/, 300],
+  [/^\/badge\/[^/]+\.svg$/, 86400],
   [/^\/[^/]+\/gist\/[^/]+\/?$/, 3600],
+  [/^\/[^/]+\/guestbook\/?$/, 300],
   [/^\/[^/]+\/(?:repos|gists)\/?$/, 300],
   [/^\/[^/]+\/repo\/[^/]+\/?$/, 300],
   [/^\/[^/]+\/?$/, 300],
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '3';
+const CACHE_VERSION = '4';
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
@@ -67,10 +75,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (ttl === undefined) return next();
 
+  // 首页 / 网站环没有站主配置，按浏览器语言渲染；缓存键必须带上它，
+  // 否则中文访客会把中文页缓存给英文访客。
+  // 用户页的 auto 由站主配置决定，不按访客浏览器语言分片。
+  const standaloneLocale = url.pathname === '/' || url.pathname === '/webring';
+  const cacheLocale =
+    standaloneLocale && locale === 'auto'
+      ? localeFromAcceptLanguage(context.request.headers.get('accept-language'))
+      : locale;
+
   // 分页参数要进缓存键
   const page = url.searchParams.get('page');
   const key = new Request(
-    `${url.origin}${url.pathname}?theme=${theme}&lang=${locale}&v=${CACHE_VERSION}${page ? `&page=${page}` : ''}`,
+    `${url.origin}${url.pathname}?theme=${theme}&lang=${cacheLocale}&v=${CACHE_VERSION}${page ? `&page=${page}` : ''}`,
     { method: 'GET' }
   );
 

@@ -13,16 +13,30 @@ export const GET: APIRoute = async ({ url, params }) => {
   }
 
   const users = await listIndexableUsers(usersKv());
+  const userPaths = users.map((login) => `/${login}`);
+  const fixed = ['/', '/webring'];
 
-  // 第一页带上首页，其余页只放用户
-  const entries = page === 1 ? [null, ...users] : users;
-  const slice = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // 第一页先放固定的两条，剩余位置给用户；后面每页 PAGE_SIZE 条。
+  // 注意偏移要减掉固定条目，否则边界处的用户会被跳过。
+  const slice =
+    page === 1
+      ? [...fixed, ...userPaths.slice(0, PAGE_SIZE - fixed.length)]
+      : userPaths.slice(
+          (page - 1) * PAGE_SIZE - fixed.length,
+          page * PAGE_SIZE - fixed.length
+        );
 
-  const urls = slice.map((login) =>
-    login === null
-      ? `  <url><loc>${origin}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`
-      : `  <url><loc>${origin}/${login}</loc><changefreq>daily</changefreq><priority>0.6</priority></url>`
-  );
+  const urls = slice.map((path) => {
+    if (path === '/') {
+      return `  <url><loc>${origin}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`;
+    }
+
+    if (path === '/webring') {
+      return `  <url><loc>${origin}/webring</loc><changefreq>daily</changefreq><priority>0.5</priority></url>`;
+    }
+
+    return `  <url><loc>${origin}${path}</loc><changefreq>daily</changefreq><priority>0.6</priority></url>`;
+  });
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

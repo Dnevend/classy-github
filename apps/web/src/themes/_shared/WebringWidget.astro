@@ -1,0 +1,76 @@
+---
+import { createTranslator } from '../../lib/i18n';
+
+interface Props {
+  user: string;
+  enabled?: boolean;
+}
+
+const { user, enabled = false } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
+---
+
+{
+  enabled && user && (
+    <nav
+      class="webring-widget"
+      data-webring
+      data-user={user}
+      aria-label={t('webring.label')}
+      hidden
+    >
+      <a data-webring-prev title={t('webring.prev')} aria-label={t('webring.prev')}>
+        ←
+      </a>
+      <a class="webring-widget__home" href="/webring">
+        {t('webring.label')}
+      </a>
+      <a data-webring-random title={t('webring.random')} aria-label={t('webring.random')}>
+        🎲
+      </a>
+      <a data-webring-next title={t('webring.next')} aria-label={t('webring.next')}>
+        →
+      </a>
+    </nav>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-webring]').forEach((el) => {
+    const user = el.dataset.user;
+    if (!user) return;
+
+    fetch(`/api/ring/neighbors?user=${encodeURIComponent(user)}`, {
+      headers: { accept: 'application/json' },
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: {
+        member?: boolean;
+        count?: number;
+        prev?: { login: string };
+        next?: { login: string };
+        random?: { login: string };
+      } | null) => {
+        if (!data?.member || (data.count ?? 0) < 3) return;
+
+        const setLink = (selector: string, site?: { login: string }) => {
+          const link = el.querySelector<HTMLAnchorElement>(selector);
+          if (!link) return;
+
+          if (site?.login) {
+            link.href = `/${encodeURIComponent(site.login)}?ref=webring`;
+          } else {
+            link.hidden = true;
+          }
+        };
+
+        setLink('[data-webring-prev]', data.prev);
+        setLink('[data-webring-next]', data.next);
+        setLink('[data-webring-random]', data.random);
+        el.hidden = false;
+      })
+      .catch(() => {
+        // 网站环不可用时保持隐藏
+      });
+  });
+</script>

@@ -42,8 +42,12 @@ const t = createTranslator(Astro.locals.locale);
       <fieldset class="w95-stats">
         <legend>stats</legend>
         <ul>
-          <li>{userinfo.followers} {t('profile.followers')}</li>
-          <li>{userinfo.following} {t('profile.following')}</li>
+          {config.profile.showFollowers && (
+            <li>{userinfo.followers} {t('profile.followers')}</li>
+          )}
+          {config.profile.showFollowing && (
+            <li>{userinfo.following} {t('profile.following')}</li>
+          )}
           <li>{userinfo.public_repos} {t('profile.reposTitle')}</li>
           <li>{userinfo.public_gists} {t('profile.gistsTitle')}</li>
         </ul>

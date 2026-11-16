@@ -10,8 +10,8 @@ export const GET: APIRoute = async ({ url }) => {
   const origin = url.origin;
   const users = await listIndexableUsers(usersKv());
 
-  // 首页 + 用户页，第一页固定给首页
-  const total = 1 + users.length;
+  // 首页 + 网站环 + 用户页
+  const total = 2 + users.length;
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

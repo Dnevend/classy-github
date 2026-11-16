@@ -348,6 +348,13 @@ TuiCss（DOS/TUI）、全站分享卡片（canvas 导出 PNG）、sitemap 两级
 分享卡片升级（图标按钮 / X 分享 / 二维码 / 水印）、README 统计卡限高。
 配置项评估见 `config-candidates.md`。
 
+### M10 · 社区功能（已完成 2026-11-16）
+
+访问计数器（Durable Object）、留言簿（Gist comments）、网站环 + `/random`、
+88×31 徽章、认领横幅与 `/claim/<user>`。新增配置：
+`guestbook.gistId` / `webring.enabled` / `discover.enabled`。
+详见 `m10-community.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

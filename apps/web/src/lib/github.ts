@@ -1,5 +1,5 @@
 import { GITHUB_TOKEN } from 'astro:env/server';
-import type { Follower, Gist, Repo, User } from '@classy/types/github';
+import type { Follower, Gist, GistComment, Repo, User } from '@classy/types/github';
 
 import { USER_AGENT } from './constants.ts';
 import { cacheGet, cachePut } from './edge-cache.ts';
@@ -206,10 +206,23 @@ export const getDefaultBranch = async (user: string): Promise<string | null> => 
       { ttl: 600 }
     );
     return repo.default_branch ?? null;
-  } catch {
-    return null;
+  } catch (error) {
+    // 404 = 没有 fork，可以放心走 main / master 兜底；
+    // 限流 / 网络错误要冒泡，调用方不能据此判断「未认领」。
+    if (error instanceof GitHubError && error.status === 404) return null;
+    throw error;
   }
 };
 
 export const getGist = (gistId: string) =>
   ghFetch<Gist>(`/gists/${encodeURIComponent(gistId)}`, { ttl: 600 });
+
+/**
+ * Gist 评论：留言簿的数据源。
+ * 评论由 GitHub 托管，站主在 Gist 里删除即可，不需要自己的审核后台。
+ */
+export const listGistComments = (gistId: string, perPage = 100) =>
+  ghFetch<GistComment[]>(
+    `/gists/${encodeURIComponent(gistId)}/comments`,
+    { query: { per_page: perPage }, ttl: 300 }
+  );

@@ -10,7 +10,8 @@
 
 ## 特性
 
-- **五套主题**：`default` / `nes`（8-bit 像素）/ `win98` / `mac`（System 6）/ `tui`（DOS 字符界面）。
+- **四套主题**：`nes`（8-bit 像素）/ `win98` / `mac`（System 6）/ `tui`（DOS 字符界面）。
+  另保留已退役的 `default` 代码，旧链接 `?theme=default` 仍可用。
   主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
 - **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图（带二维码），或一键分享到 X。
 - **双语**：English / 中文切换，默认英文，站点可在配置里设默认语言。
@@ -18,7 +19,11 @@
 - **边缘缓存**：Workers Cache API 分级缓存（主页 5 分钟 / 文章 1 小时），冷启动 < 2s，命中 ~0.3s。
 - **Gist 当 CMS**：Gist 描述写 `classy.<分类>.<标题>`，自动变成分类和标题。
 - **配置即代码**：fork 本仓库，改根目录 `classy.config.json` 即可。
-- **安全**：README / Gist 内容走 `rehype-sanitize` 白名单，`javascript:` 链接被丢弃。
+- **访问计数器**：页脚显示复古访客数，Durable Object 原子计数，不存 IP。
+- **留言簿**：用一条公开 Gist 的评论做留言簿，零后端、零审核后台。
+- **网站环**：opt-in 的复古个人主页环，页脚「上一站 / 随机 / 下一站」。
+- **88×31 徽章**：每人生成主题化小徽章，可放到 README、博客或友情链接。
+- **安全**：README / Gist / 留言内容走 `rehype-sanitize` 白名单，`javascript:` 链接被丢弃。
 
 ## 快速开始
 
@@ -66,6 +71,9 @@ pnpm dev            # http://localhost:4321
     "music": ["坂本龍一 - async"],
     "watching": []
   },
+  "guestbook": { "gistId": null },
+  "webring": { "enabled": false },
+  "discover": { "enabled": false },
   "seo": { "index": true }
 }
 ```
@@ -81,15 +89,54 @@ pnpm dev            # http://localhost:4321
 | `nav.extra` | 导航里追加的外链（最多 5 条，只允许 http/https） |
 | `now` | 资料卡下方的「近况」：`books` / `music` / `watching` |
 | `profile.cardUrl` | 可选，嵌入第三方统计卡图片（如 Action 生成的 SVG） |
+| `guestbook.gistId` | 公开 Gist 的 ID，用它的评论做留言簿；`null` 关闭 |
+| `webring.enabled` | 是否加入 ClassyGit 网站环，默认 `false` |
+| `discover.enabled` | 是否允许出现在 `/random` 随机推荐，默认 `false` |
 | `seo.index` | **是否允许搜索引擎收录你的主页**，默认 `false` |
 
 配置写错不会把站点搞崩：每一段独立校验，坏的那段回退默认值，`links` 里坏的那条只是被丢掉。
+
+## 社区功能
+
+### 访问计数器
+
+主页页脚会显示「第 N 位访客」。计数存在每个用户一个的 Durable Object 里，
+同一个浏览器会话只记一次；不存 IP，也不做用户画像。bot / 预取请求只读不计数。
+
+### 留言簿
+
+1. 建一条**公开** Gist，描述写 `classy.guestbook`，文件名随意（例如 `guestbook.md`）；
+2. 把 Gist ID 填进 `classy.config.json`：
+
+```json
+"guestbook": { "gistId": "9ec0af30..." }
+```
+
+3. 页面顶部会出现「留言簿」。访客在 GitHub 上给这条 Gist 留言，站点只读展示；
+   站主要删留言，直接在 Gist 里删即可。留言里的图片会被剥离，避免追踪像素。
+
+### 网站环与随机推荐
+
+```json
+"webring": { "enabled": true },
+"discover": { "enabled": true }
+```
+
+- `webring`：加入 `/webring` 目录，页脚出现「← 上一站 / 🎲 / 下一站 →」。
+  成员少于 3 个时页脚不显示，避免一个只有自己的环。
+- `discover`：允许 `/random` 随机跳到你的主页。
+- 两者都是 opt-in，默认关闭；改配置后最多 1 小时同步到注册表（主页本身 5 分钟内刷新）。
+
+### 88×31 徽章
+
+访问 `/<你的用户名>` 页脚的「88×31 徽章」，或直接打开 `/badge/<用户名>`，
+可以复制 HTML / Markdown 片段。徽章是纯 SVG，支持 `?theme=mac|nes|win98|tui`。
 
 ## 主题
 
 | 主题 | 预览 | 说明 |
 |---|---|---|
-| `default` | ![default](./assets/classy-theme.png) | 干净的卡片式布局 |
+| `default` | ![default](./assets/classy-theme.png) | 已退役，仅保留旧链接兼容 |
 | `nes` | ![nes](./assets/nes-theme.png) | NES.css + 缝合像素字体（中英统一像素字形） |
 | `win98` | ![win98](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
 | `mac` | ![mac](./assets/mac-theme.png) | 手写 System 6：条纹标题栏、1px 硬阴影 |
@@ -108,18 +155,19 @@ cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TO
 pnpm deploy:web
 ```
 
-生产环境是 Cloudflare Workers（`wrangler.jsonc` 已配好 Assets + KV）。
-KV 命名空间 `USERS` 保存「显式开启 `seo.index` 的用户」，供 `/sitemap.xml` 使用。
+生产环境是 Cloudflare Workers（`wrangler.jsonc` 已配好 Assets + KV + Durable Object）。
+KV 命名空间 `USERS` 保存可索引用户、站点注册表（webring / 随机推荐）；
+Durable Object `HITS` 保存每个站点的访问计数。
 
 ## 项目结构
 
 ```
 apps/web/
   src/
-    pages/            5 条路由 + 404 + robots.txt + sitemap.xml
-    themes/           契约（5 个槽位）+ default / nes / win98 / mac
-    lib/              github 取数、markdown 管线、配置校验、边缘缓存
-    middleware.ts     主题解析 + 按路由分级缓存
+    pages/            用户页 / 列表 / 详情 + webring / badge / claim / guestbook
+    themes/           契约（5 个槽位）+ nes / win98 / mac / tui（default 已退役）
+    lib/              github 取数、markdown 管线、配置校验、站点注册表、边缘缓存
+    middleware.ts     主题/语言解析 + 按路由分级缓存
   wrangler.jsonc
 packages/types/       GitHub 数据类型
 specs/                重构计划与每个阶段的实现记录
@@ -136,6 +184,6 @@ specs/                重构计划与每个阶段的实现记录
 
 - **Fusion Pixel Font**（OFL-1.1）— `public/fonts/fusion-pixel-12px-zh_hans.woff2`
 - **Press Start 2P**（OFL-1.1）— `public/fonts/press-start-2p.woff2`
-- **98.css**（MIT）— `apps/web/src/themes/win98/vendor/98.css`
+- **98.css**（MIT）— `apps/web/src/themes/win95/vendor/98.css`（主题名是 `win98`）
 - **NES.css**（MIT）— npm 依赖
 - **TuiCss**（MIT）— `apps/web/src/themes/tui/vendor/`，字体 Perfect DOS VGA 437 自托管

@@ -1,0 +1,93 @@
+---
+import { DEFAULT_CONFIG } from '../lib/config';
+import { createTranslator, localeFromAcceptLanguage } from '../lib/i18n';
+import { RING_PREFIX, listSites } from '../lib/site-registry';
+import { usersKv } from '../lib/users-kv';
+import { resolveTheme } from '../themes';
+
+export const prerender = false;
+
+// 网站环没有站主配置，语言跟首页一样按浏览器决定。
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromAcceptLanguage(
+    Astro.request.headers.get('accept-language')
+  );
+}
+
+const origin = new URL(Astro.url).origin;
+const t = createTranslator(Astro.locals.locale);
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout } = components;
+
+const sites = await listSites(usersKv(), RING_PREFIX);
+
+const joinSnippet = `"webring": { "enabled": true }`;
+---
+
+<Layout
+  user=""
+  userinfo={null}
+  config={DEFAULT_CONFIG}
+  theme={themeName}
+  seo={{
+    title: `${t('webring.title')} · ClassyGit`,
+    description: t('webring.desc'),
+    canonical: `${origin}/webring`,
+    robots: 'index, follow',
+  }}
+>
+  <section class="webring-page">
+    <header class="webring-page__head">
+      <h1 class="page-title">{t('webring.title')}</h1>
+      <p class="bio">{t('webring.desc')}</p>
+      <p class="webring-page__count">
+        {t('webring.members', { count: sites.length })}
+      </p>
+    </header>
+
+    {
+      sites.length === 0 ? (
+        <p class="bio">{t('webring.empty')}</p>
+      ) : (
+        <ul class="webring-grid">
+          {sites.map((site) => (
+            <li>
+              <a class="webring-card" href={`/${encodeURIComponent(site.login)}?ref=webring`}>
+                <img
+                  class="webring-card__avatar"
+                  src={`https://github.com/${encodeURIComponent(site.login)}.png?size=64`}
+                  alt=""
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                />
+                <span class="webring-card__text">
+                  <strong>{site.title || site.login}</strong>
+                  <span>@{site.login}</span>
+                </span>
+                <span class="webring-card__theme">{site.theme}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <section class="webring-join">
+      <h2>{t('webring.join')}</h2>
+      <p class="bio">
+        {t('webring.joinDesc')} <code>classy.config.json</code>{t('webring.joinSuffix')}
+      </p>
+      <pre><code>{joinSnippet}</code></pre>
+      <p class="bio">{t('webring.joinNote')}</p>
+      <div class="webring-join__actions">
+        <a class="webring-join__primary" href="/random">
+          {t('webring.random')} →
+        </a>
+        <a href="https://github.com/Dnevend/classy-github#自定义配置" target="_blank" rel="noopener noreferrer">
+          README ↗
+        </a>
+      </div>
+    </section>
+  </section>
+</Layout>

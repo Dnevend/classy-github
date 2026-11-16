@@ -4,6 +4,7 @@ import ThemeSwitcher from '../_shared/ThemeSwitcher.astro';
 import LanguageSwitcher from '../_shared/LanguageSwitcher.astro';
 import { createTranslator } from '../../lib/i18n';
 import ShareCard from '../_shared/ShareCard.astro';
+import CommunityFooter from '../_shared/CommunityFooter.astro';
 import type { ThemeLayoutProps } from '../types';
 
 // 主题 CSS 用 ?url 显式引用：Layout 是被动态 import 的，
@@ -11,7 +12,8 @@ import type { ThemeLayoutProps } from '../types';
 import nesCss from 'nes.css/css/nes.min.css?url';
 import themeCss from './theme.css?url';
 
-const { user, userinfo, config, theme, seo, brand, share } = Astro.props as ThemeLayoutProps;
+const { user, userinfo, config, theme, seo, brand, share, configured = false } =
+  Astro.props as ThemeLayoutProps;
 
 const shareUrl = seo.canonical ?? Astro.url.href;
 const shareData =
@@ -50,6 +52,11 @@ const t = createTranslator(Astro.locals.locale);
             <a class="nes-btn" href={`/${user}/gists`}>
               GISTS
             </a>
+            {config.guestbook.gistId && (
+              <a class="nes-btn" href={`/${user}/guestbook`}>
+                {t('nav.guestbook')}
+              </a>
+            )}
           </nav>
         )
       }
@@ -85,6 +92,7 @@ const t = createTranslator(Astro.locals.locale);
           </nav>
         )
       }
+      <CommunityFooter user={user} {configured} webring={config.webring.enabled} />
       <div class="nes-footer__row">
         <span>POWERED BY CLASSYGIT</span>
         {shareData && <ShareCard {...shareData} theme={theme} />}

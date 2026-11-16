@@ -32,6 +32,10 @@ const source = [
 
 const base = 'https://raw.githubusercontent.com/someone/someone/main/';
 const html = await renderMarkdown(source, { base });
+const commentHtml = await renderMarkdown(
+  '**签名** [主页](https://example.com)\n\n![tracking](https://evil.example/pixel.png)',
+  { allowImages: false }
+);
 
 const checks: Record<string, boolean> = {
   // 功能
@@ -49,6 +53,9 @@ const checks: Record<string, boolean> = {
   stripsOnerror: !/onerror/i.test(html),
   stripsIframe: !/<iframe/i.test(html),
   stripsJavascriptHref: !/javascript:/i.test(html),
+  // 留言簿模式：保留文字/链接，剥掉图片（防追踪像素）
+  commentKeepsText: /<strong>/.test(commentHtml) && /<a /.test(commentHtml),
+  commentStripsImages: !/<img/i.test(commentHtml),
 };
 
 const failed = Object.entries(checks)
