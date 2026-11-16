@@ -38,6 +38,10 @@ profile-cover
   - 没有 `<img>` 请求；
   - 头像覆盖横幅、姓名底部对齐。
 - 有自定义封面的用户仍加载 `cover.jpg`，`profile-cover--default` 为 false。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `f1bc8b39-4d7e-45fc-b0e3-8c217a4f6934`）：
+  - `/octocat` 四主题均为 `profile-cover--default` 且无 `<img>` 请求；
+  - 横幅高度 90px；
+  - `/Dnevend` 四主题仍加载自定义 `cover.jpg`，默认横幅不渲染。
+- CI run `43950700805` 通过。
 
 `CACHE_VERSION` 23 → 24。
