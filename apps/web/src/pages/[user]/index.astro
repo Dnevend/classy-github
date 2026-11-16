@@ -87,13 +87,16 @@ const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : []
 const display = data?.userinfo.name || data?.userinfo.login || user;
 
 const seo = data
-  ? seoForProfile({
-      user,
-      userinfo: data.userinfo,
-      origin,
-      indexable: config.seo.index,
-      theme: themeName,
-    })
+  ? {
+      ...seoForProfile({
+        user,
+        userinfo: data.userinfo,
+        origin,
+        indexable: config.seo.index,
+        theme: themeName,
+      }),
+      rss: `${origin}/${user}/rss.xml`,
+    }
   : {
       title: error ? t('meta.error') : t('meta.notFoundUser', { user }),
       robots: 'noindex, follow',

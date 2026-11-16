@@ -5,6 +5,8 @@ export interface SeoMeta {
   description?: string;
   canonical?: string;
   image?: string;
+  /** Atom / RSS 自动发现链接 */
+  rss?: string;
   robots?: string;
   type?: 'website' | 'profile' | 'article';
   jsonLd?: Record<string, unknown>;

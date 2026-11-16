@@ -355,6 +355,11 @@ TuiCss（DOS/TUI）、全站分享卡片（canvas 导出 PNG）、sitemap 两级
 `guestbook.gistId` / `webring.enabled` / `discover.enabled`。
 详见 `m10-community.md`。
 
+### M11 · Atom 订阅（已完成 2026-11-16）
+
+`/<user>/rss.xml` 输出 Atom feed，用户主页 / Gists / Gist 详情加自动发现，
+Gists 列表加 RSS 入口；1 小时边缘缓存。详见 `m11-feed.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

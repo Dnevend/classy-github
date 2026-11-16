@@ -110,6 +110,7 @@ const messages = {
     'gists.empty': 'No public gists.',
     'gists.desc': '{name} · {count} public gists',
     'gists.files': '{count} files',
+    'gists.rss': 'RSS feed',
 
     'card.open': 'Open',
     'repo.noReadme': 'This repository has no README.',
@@ -246,6 +247,7 @@ const messages = {
     'gists.empty': '没有公开 Gist。',
     'gists.desc': '{name} · {count} 条公开 Gist',
     'gists.files': '{count} 个文件',
+    'gists.rss': 'RSS 订阅',
 
     'card.open': '打开',
     'repo.noReadme': '这个仓库没有 README。',

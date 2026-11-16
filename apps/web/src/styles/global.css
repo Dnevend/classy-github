@@ -908,6 +908,20 @@ img {
   color: var(--accent);
 }
 
+.rss-link {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--fg-muted);
+}
+
+.rss-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* 搜索框靠右，与标题同一行 */
 .list-head {
   display: flex;

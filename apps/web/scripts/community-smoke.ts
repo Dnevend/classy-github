@@ -5,7 +5,8 @@
 import assert from 'node:assert/strict';
 
 import { renderBadgeSvg } from '../src/lib/badge.ts';
-import { parseConfig } from '../src/lib/config.ts';
+import { DEFAULT_CONFIG, parseConfig } from '../src/lib/config.ts';
+import { buildAtomFeed } from '../src/lib/feed.ts';
 import { isBotRequest } from '../src/lib/hit-counter.ts';
 import { localeFromAcceptLanguage } from '../src/lib/i18n.ts';
 import {
@@ -94,6 +95,51 @@ const cases: Case[] = [
       assert.equal(localeFromAcceptLanguage('en-US,en;q=0.9'), 'en');
       assert.equal(localeFromAcceptLanguage('fr-FR,zh;q=0.8'), 'zh');
       assert.equal(localeFromAcceptLanguage(null), 'en');
+    },
+  },
+  {
+    name: 'Atom feed：排序、转义、分类',
+    run: () => {
+      const userinfo = {
+        login: 'demo',
+        name: 'Demo & Co',
+        bio: '',
+        avatar_url: '',
+        html_url: 'https://github.com/demo',
+        public_repos: 1,
+        public_gists: 2,
+      } as never;
+      const gists = [
+        {
+          id: 'a',
+          description: 'classy.blog.First',
+          created_at: '2026-01-01T00:00:00Z',
+          updated_at: '2026-01-01T00:00:00Z',
+          files: { 'a.md': { filename: 'a.md' } },
+        },
+        {
+          id: 'b',
+          description: 'classy.blog.Second & <tag>',
+          created_at: '2026-01-02T00:00:00Z',
+          updated_at: '2026-01-03T00:00:00Z',
+          files: { 'b.md': { filename: 'b.md' } },
+        },
+      ] as never;
+
+      const xml = buildAtomFeed({
+        user: 'demo',
+        userinfo,
+        gists,
+        origin: 'https://x.test',
+        config: DEFAULT_CONFIG,
+        locale: 'en',
+      });
+
+      assert.match(xml, /^<\?xml/);
+      assert.match(xml, /application\/atom\+xml/);
+      assert.match(xml, /Second &amp; &lt;tag&gt;/);
+      assert.match(xml, /<category term="blog"\/>/);
+      assert.ok(xml.indexOf('Second') < xml.indexOf('First'));
     },
   },
   {

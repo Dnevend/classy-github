@@ -8,6 +8,7 @@ const {
   description,
   canonical,
   image,
+  rss,
   robots = 'index, follow',
   type = 'website',
   jsonLd,
@@ -20,6 +21,7 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : nu
 <title>{title}</title>
 {description && <meta name="description" content={description} />}
 <link rel="canonical" href={canonical ?? Astro.url.href} />
+{rss && <link rel="alternate" type="application/atom+xml" title={`${title} · Atom`} href={rss} />}
 <meta name="robots" content={robots} />
 
 <meta property="og:type" content={type} />
