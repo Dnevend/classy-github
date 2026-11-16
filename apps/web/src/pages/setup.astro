@@ -74,7 +74,7 @@ const languageOptions = ['en', 'zh'] as const;
 
 const initialConfig = {
   owner: userinfo?.login ?? user,
-  theme: config.theme === 'default' ? 'mac' : config.theme,
+  theme: config.theme,
   language: config.language,
   profile: { ...config.profile },
   gists: config.gists,
@@ -175,6 +175,14 @@ const display = userinfo?.name || userinfo?.login || user;
 
             <section class="setup-section">
               <h2>{t('setup.profile')}</h2>
+              <label class="setup-check">
+                <input
+                  type="checkbox"
+                  name="showRepos"
+                  checked={initialConfig.profile.repos.visible}
+                />
+                {t('setup.showRepos')}
+              </label>
               <div class="setup-row">
                 <label for="setup-show-count">{t('setup.showCount')}</label>
                 <input
@@ -184,6 +192,25 @@ const display = userinfo?.name || userinfo?.login || user;
                   min="0"
                   max="100"
                   value={initialConfig.profile.repos.showCount}
+                />
+              </div>
+              <label class="setup-check">
+                <input
+                  type="checkbox"
+                  name="showGists"
+                  checked={initialConfig.profile.gists.visible}
+                />
+                {t('setup.showGists')}
+              </label>
+              <div class="setup-row">
+                <label for="setup-gist-count">{t('setup.gistCount')}</label>
+                <input
+                  id="setup-gist-count"
+                  name="gistCount"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={initialConfig.profile.gists.showCount}
                 />
               </div>
             </section>
@@ -361,9 +388,18 @@ const display = userinfo?.name || userinfo?.login || user;
                 ...initial.profile,
                 repos: {
                   ...initial.profile.repos,
+                  visible: form.showRepos.checked,
                   showCount: Math.max(
                     0,
                     Math.min(100, Number(form.showCount.value) || 0)
+                  ),
+                },
+                gists: {
+                  ...initial.profile.gists,
+                  visible: form.showGists.checked,
+                  showCount: Math.max(
+                    0,
+                    Math.min(100, Number(form.gistCount.value) || 0)
                   ),
                 },
               },

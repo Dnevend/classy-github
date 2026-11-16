@@ -11,7 +11,7 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from './i18n.ts';
  * 3. **不信任外部输入** —— href 只放行 http(s)，未知字段直接丢弃。
  */
 
-export type ThemeName = 'default' | 'nes' | 'mac' | 'win98' | 'tui';
+export type ThemeName = 'nes' | 'mac' | 'win98' | 'tui';
 
 export interface ResolvedConfig {
   /**
@@ -27,6 +27,11 @@ export interface ResolvedConfig {
     /** 可选：嵌入任意第三方统计卡图片（http/https） */
     cardUrl: string | null;
     repos: {
+      visible: boolean;
+      showCount: number;
+    };
+    /** 主页右侧的「最近 Gists」预览（不是 gists 分类规则） */
+    gists: {
       visible: boolean;
       showCount: number;
     };
@@ -81,6 +86,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
     cover: null,
     cardUrl: null,
     repos: { visible: true, showCount: 6 },
+    gists: { visible: true, showCount: 6 },
   },
   gists: {
     prefix: 'classy',
@@ -100,7 +106,7 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
 const isHttpUrl = (value: string) => /^https?:\/\/[^\s]+$/i.test(value);
 
 /** 每段都用「全 optional」的 schema，目的是让 `{}` 合法、缺失字段走默认值 */
-const reposSchema = z
+const previewListSchema = z
   .object({
     visible: z.boolean(),
     // 取值范围在归一化时再夹紧：越界数字不应该让整段配置作废
@@ -112,7 +118,8 @@ const profileSchema = z
   .object({
     cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL').nullable(),
     cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL').nullable(),
-    repos: reposSchema,
+    repos: previewListSchema,
+    gists: previewListSchema,
   })
   .partial();
 
@@ -177,13 +184,13 @@ const rootSchema = z
   })
   .partial();
 
-const MAX_REPO_CARDS = 100;
+const MAX_PREVIEW_COUNT = 100;
 
-const clampCount = (value: number | undefined) => {
+const clampCount = (value: number | undefined, fallback: number) => {
   if (value === undefined || !Number.isFinite(value)) {
-    return DEFAULT_CONFIG.profile.repos.showCount;
+    return fallback;
   }
-  return Math.min(MAX_REPO_CARDS, Math.max(0, Math.floor(value)));
+  return Math.min(MAX_PREVIEW_COUNT, Math.max(0, Math.floor(value)));
 };
 
 const pick = <T>(schema: z.ZodType<T>, value: unknown): T | null => {
@@ -298,6 +305,7 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
 
   const parsedProfile = profile ?? {};
   const parsedRepos = parsedProfile.repos ?? {};
+  const parsedProfileGists = parsedProfile.gists ?? {};
 
   return {
     issues,
@@ -310,7 +318,18 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
         cardUrl: parsedProfile.cardUrl ?? DEFAULT_CONFIG.profile.cardUrl,
         repos: {
           visible: parsedRepos.visible ?? DEFAULT_CONFIG.profile.repos.visible,
-          showCount: clampCount(parsedRepos.showCount),
+          showCount: clampCount(
+            parsedRepos.showCount,
+            DEFAULT_CONFIG.profile.repos.showCount
+          ),
+        },
+        gists: {
+          visible:
+            parsedProfileGists.visible ?? DEFAULT_CONFIG.profile.gists.visible,
+          showCount: clampCount(
+            parsedProfileGists.showCount,
+            DEFAULT_CONFIG.profile.gists.showCount
+          ),
         },
       },
       gists: {

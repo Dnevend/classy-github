@@ -19,6 +19,8 @@ const cases: Case[] = [
       assert.deepEqual(issues, []);
       assert.equal(config.profile.repos.showCount, 6);
       assert.equal(config.profile.repos.visible, true);
+      assert.equal(config.profile.gists.showCount, 6);
+      assert.equal(config.profile.gists.visible, true);
       assert.equal(config.seo.index, false);
       assert.deepEqual(config.links, []);
       assert.equal(config.gists.prefix, 'classy');
@@ -37,6 +39,7 @@ const cases: Case[] = [
       const { config } = parseConfig({ profile: { repos: { showCount: 3 } } });
       assert.equal(config.profile.repos.showCount, 3);
       assert.equal(config.profile.repos.visible, true);
+      assert.equal(config.profile.gists.showCount, 6);
       assert.equal(config.seo.index, false);
     },
   },
@@ -48,9 +51,12 @@ const cases: Case[] = [
           cover: null,
           cardUrl: null,
           repos: { visible: true, showCount: 4 },
+          gists: { visible: false, showCount: 2 },
         },
       });
       assert.equal(config.profile.repos.showCount, 4);
+      assert.equal(config.profile.gists.visible, false);
+      assert.equal(config.profile.gists.showCount, 2);
       assert.equal(config.profile.cover, null);
       assert.equal(config.profile.cardUrl, null);
       assert.deepEqual(issues, []);
@@ -104,6 +110,8 @@ const cases: Case[] = [
       assert.equal(parseConfig({ profile: { repos: { showCount: 9999 } } }).config.profile.repos.showCount, 100);
       assert.equal(parseConfig({ profile: { repos: { showCount: -5 } } }).config.profile.repos.showCount, 0);
       assert.equal(parseConfig({ profile: { repos: { showCount: 2.7 } } }).config.profile.repos.showCount, 2);
+      assert.equal(parseConfig({ profile: { gists: { showCount: 9999 } } }).config.profile.gists.showCount, 100);
+      assert.equal(parseConfig({ profile: { gists: { showCount: -5 } } }).config.profile.gists.showCount, 0);
       // 同段里的其它字段仍然生效
       const { config } = parseConfig({
         profile: { repos: { showCount: 9999, visible: false } },
@@ -168,7 +176,7 @@ const cases: Case[] = [
   {
     name: '?theme= 解析：大小写/非法值/null',
     run: () => {
-      assert.deepEqual([...THEME_NAMES], ['default', 'nes', 'mac', 'win98', 'tui']);
+      assert.deepEqual([...THEME_NAMES], ['nes', 'mac', 'win98', 'tui']);
       assert.equal(parseThemeParam(undefined), 'mac');
       assert.equal(parseThemeParam(null), 'mac');
       assert.equal(parseThemeParam(''), 'mac');
@@ -176,6 +184,7 @@ const cases: Case[] = [
       assert.equal(parseThemeParam(' NES '), 'nes');
       assert.equal(parseThemeParam('amiga'), 'mac');
       assert.equal(parseThemeParam('win95'), 'win98');
+      assert.equal(parseThemeParam('default'), 'mac');
     },
   },
   {
@@ -184,7 +193,7 @@ const cases: Case[] = [
       // 显式选了主题 → 要写 cookie
       assert.deepEqual(resolveThemeChoice({ param: 'nes' }), { theme: 'nes', persist: true });
       assert.deepEqual(resolveThemeChoice({ param: 'default', cookie: 'nes' }), {
-        theme: 'default',
+        theme: 'mac',
         persist: true,
       });
       // 没带参数 → 用 cookie，不重复写

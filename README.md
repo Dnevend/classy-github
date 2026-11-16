@@ -5,13 +5,13 @@
 **在线示例**：<https://classygit.pages.dev/Dnevend>
 
 <p align="center">
-  <img src="./assets/classy-theme.png" width="80%" alt="默认主题" />
+  <img src="./assets/classy-theme.png" width="80%" alt="ClassyGit 主题示例" />
 </p>
 
 ## 特性
 
 - **四套主题**：`nes`（8-bit 像素）/ `win98` / `mac`（System 6）/ `tui`（DOS 字符界面）。
-  另保留已退役的 `default` 代码，旧链接 `?theme=default` 仍可用。
+  旧链接 `?theme=default` 会自动落到 `mac`；`?theme=win95` 落到 `win98`。
   主题是 URL 维度 + cookie 记忆：`?theme=nes` 选一次，之后访问任意页面都是这套皮肤。
 - **分享卡片**：每页页脚「分享」悬浮/点击展开，可保存一张 1200×630 的主题化分享图（带二维码），或一键分享到 X。
 - **双语**：English / 中文切换，默认英文，站点可在配置里设默认语言。
@@ -54,10 +54,11 @@ pnpm dev            # http://localhost:4321
 ```json
 {
   "owner": "your-login",
-  "theme": "default",
+  "theme": "mac",
   "language": "en",
   "profile": {
     "repos": { "visible": true, "showCount": 6 },
+    "gists": { "visible": true, "showCount": 6 },
     "cover": "https://picsum.photos/1024/576"
   },
   "gists": {
@@ -89,7 +90,10 @@ pnpm dev            # http://localhost:4321
 | `owner` | 配置归属的 GitHub 用户名。fork 后必须改成自己的；与访问者不匹配时会被当模板忽略 |
 | `theme` | 默认主题名（mac / nes / win98 / tui；mac 为默认） |
 | `language` | 默认语言 `en` / `zh`，访客可用 `?lang=` 覆盖 |
+| `profile.repos.visible` | 是否在主页展示仓库列表 |
 | `profile.repos.showCount` | 主页展示多少个仓库（0–100，越界会被夹紧） |
+| `profile.gists.visible` | 是否在主页展示最近 Gists 列表 |
+| `profile.gists.showCount` | 主页展示多少条 Gist（0–100，默认 6） |
 | `profile.cover` | 资料卡封面图 |
 | `gists.prefix` / `split` | Gist 分类规则，默认 `classy.<type>.<title>` |
 | `links` | 页脚链接（只允许 http/https） |
@@ -147,14 +151,13 @@ pnpm dev            # http://localhost:4321
 
 | 主题 | 预览 | 说明 |
 |---|---|---|
-| `default` | ![default](./assets/classy-theme.png) | 已退役，仅保留旧链接兼容 |
 | `nes` | ![nes](./assets/nes-theme.png) | NES.css + 缝合像素字体（中英统一像素字形） |
 | `win98` | ![win98](./assets/win-theme.png) | 98.css，窗口 / 任务栏 / 立体按钮 |
 | `mac` | ![mac](./assets/mac-theme.png) | 手写 System 6：条纹标题栏、1px 硬阴影 |
 | `tui` | — | TuiCss：DOS 蓝屏、灰色标题条、绿色按钮 |
 
-切换方式：任意页面页脚的 `DEFAULT / NES / WIN95 / MAC / TUI`，或直接加 `?theme=nes`。
-每套主题的 CSS 独立打包，访问 `default` 的访客不会下载 NES 那 279KB。
+切换方式：任意页面页脚的主题切换器，或直接加 `?theme=nes`。
+每套主题的 CSS 独立打包，访问 `mac` 的访客不会下载 NES 那 279KB。
 
 ## 部署
 
@@ -181,7 +184,7 @@ Durable Object `HITS` 保存每个站点的访问计数。
 apps/web/
   src/
     pages/            用户页 / 列表 / 详情 + webring / badge / claim / guestbook
-    themes/           契约（5 个槽位）+ nes / win98 / mac / tui（default 已退役）
+    themes/           契约（5 个槽位）+ nes / win98 / mac / tui
     lib/              github 取数、markdown 管线、配置校验、站点注册表、边缘缓存
     middleware.ts     主题/语言解析 + 按路由分级缓存
   wrangler.jsonc

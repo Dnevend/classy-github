@@ -529,13 +529,6 @@
   align-self: start;
 }
 
-[data-theme='tui'] .contrib {
-  background: #0000a8;
-  padding: 12px;
-  box-shadow: 6px 6px #000;
-  border: 1px solid #a8a8a8;
-}
-
 @keyframes tui-blink { 50% { opacity: 0.3; } }
 [data-theme='tui'] .contrib-wall__skeleton {
   background: repeating-linear-gradient(90deg, #55ff55 0 6px, transparent 6px 12px);
@@ -619,7 +612,8 @@
 
 /* ---------- 近况面板 ---------- */
 
-[data-theme='tui'] .now-card {
+[data-theme='tui'] .now-card,
+[data-theme='tui'] .side-card {
   gap: 0;
   padding: 0;
   border: 0;
@@ -629,7 +623,8 @@
   color: #fff;
 }
 
-[data-theme='tui'] .now-card__title {
+[data-theme='tui'] .now-card__title,
+[data-theme='tui'] .side-card__title {
   padding: 2px 8px;
   background: #a8a8a8;
   color: #000;
@@ -639,7 +634,8 @@
   text-transform: uppercase;
 }
 
-[data-theme='tui'] .now-card__body {
+[data-theme='tui'] .now-card__body,
+[data-theme='tui'] .side-card__body {
   padding: 10px 12px;
 }
 

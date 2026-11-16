@@ -14,13 +14,6 @@ export interface ThemePalette {
  * 主题名的唯一来源是 `lib/theme.ts`；`win95` 会归一为 `win98`。
  */
 export const THEME_PALETTE: Record<ThemeName, ThemePalette> = {
-  default: {
-    bg: '#ffffff',
-    fg: '#18181b',
-    muted: '#71717a',
-    accent: '#2563eb',
-    border: '#e4e4e7',
-  },
   nes: {
     bg: '#212529',
     fg: '#f8f9fa',

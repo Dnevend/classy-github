@@ -19,7 +19,6 @@ interface CalendarResponse {
 }
 
 const PALETTE: Record<string, string[]> = {
-  default: ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'],
   mac: ['#f0f0f0', '#d0d0d0', '#a0a0a0', '#606060', '#000000'],
   nes: ['#2b3035', '#3d6b2f', '#5b9c42', '#7cc24f', '#92cc41'],
   win98: ['#d4d4d4', '#b0b0c8', '#8080a8', '#4040a0', '#000080'],

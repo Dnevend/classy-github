@@ -517,15 +517,6 @@
   align-self: start;
 }
 
-[data-theme='win98'] .contrib {
-  background: var(--w95-gray);
-  padding: 12px;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
 @keyframes w98-progress {
   0% { background-position: 0 0; }
   100% { background-position: 36px 0; }
@@ -590,7 +581,8 @@
 
 /* ---------- 近况窗口 ---------- */
 
-[data-theme='win98'] .now-card {
+[data-theme='win98'] .now-card,
+[data-theme='win98'] .side-card {
   gap: 0;
   padding: 3px;
   border: 0;
@@ -603,7 +595,8 @@
     inset 2px 2px #fff;
 }
 
-[data-theme='win98'] .now-card__title {
+[data-theme='win98'] .now-card__title,
+[data-theme='win98'] .side-card__title {
   padding: 3px 2px 3px 3px;
   background: linear-gradient(90deg, var(--w95-navy), #1084d0);
   color: #fff;
@@ -613,8 +606,14 @@
   text-transform: none;
 }
 
-[data-theme='win98'] .now-card__body {
+[data-theme='win98'] .now-card__body,
+[data-theme='win98'] .side-card__body {
   padding: 8px;
+}
+
+[data-theme='win98'] .side-card .gist-list {
+  border: 0;
+  background: transparent;
 }
 
 [data-theme='win98'] .now-card__external {

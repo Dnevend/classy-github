@@ -1,0 +1,18 @@
+---
+interface Props {
+  title: string;
+  /** 额外类名，用于给具体卡片加样式钩子 */
+  variant?: string;
+}
+
+const { title, variant } = Astro.props as Props;
+---
+
+<section class:list={['side-card', variant]}>
+  <h2 class="side-card__title">
+    <span class="side-card__title-text">{title}</span>
+  </h2>
+  <div class="side-card__body">
+    <slot />
+  </div>
+</section>

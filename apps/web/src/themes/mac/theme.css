@@ -528,13 +528,6 @@
   align-self: start;
 }
 
-[data-theme='mac'] .contrib {
-  background: #fff;
-  border: 1px solid #000;
-  box-shadow: 2px 2px 0 #000;
-  padding: 12px;
-}
-
 @keyframes mac-barber {
   from { background-position: 0 0; }
   to { background-position: 24px 0; }
@@ -564,7 +557,8 @@
 
 /* ---------- 近况窗口 ---------- */
 
-[data-theme='mac'] .now-card {
+[data-theme='mac'] .now-card,
+[data-theme='mac'] .side-card {
   gap: 0;
   padding: 0;
   border: 1px solid #000;
@@ -573,7 +567,8 @@
   box-shadow: 2px 2px 0 #000;
 }
 
-[data-theme='mac'] .now-card__title {
+[data-theme='mac'] .now-card__title,
+[data-theme='mac'] .side-card__title {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -594,13 +589,20 @@
   text-transform: none;
 }
 
-[data-theme='mac'] .now-card__title-text {
+[data-theme='mac'] .now-card__title-text,
+[data-theme='mac'] .side-card__title-text {
   padding: 0 6px;
   background: #fff;
 }
 
-[data-theme='mac'] .now-card__body {
+[data-theme='mac'] .now-card__body,
+[data-theme='mac'] .side-card__body {
   padding: 10px 12px;
+}
+
+[data-theme='mac'] .side-card .gist-list {
+  border: 0;
+  background: transparent;
 }
 
 [data-theme='mac'] .now-card__external {

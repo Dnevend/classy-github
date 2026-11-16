@@ -430,6 +430,12 @@ GitHub 拿不到总页数，文案改为只显示 `Page {page}` / `第 {page} �
 删除 showFollowers/showFollowing；修复 cover/cardUrl 为 null 导致 profile
 整段失效，showCount 现在真实生效。详见 `m24-config-ui.md`。
 
+### M25 · 最近 Gists / 右侧卡片统一 / 默认主题清理（已完成 2026-11-17）
+
+主页右栏新增最近 Gists（默认 6 条），贡献墙和 Gists 统一为 SideCard；
+新增 profile.gists 配置；修复 hero-links 间距；删除 default 主题代码。
+详见 `m25-gists-sidebar.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

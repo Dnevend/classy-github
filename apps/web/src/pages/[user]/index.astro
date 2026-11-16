@@ -2,7 +2,7 @@
 import { siteOrigin } from "../../lib/site";
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
-import { getUserReadme, listRepos } from '../../lib/github';
+import { getUserReadme, listGists, listRepos } from '../../lib/github';
 import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
 import { loadUser } from '../../lib/page';
@@ -11,12 +11,14 @@ import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfigState } from '../../lib/config-loader';
 import { buildDefaultReadme } from '../../lib/default-readme';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
+import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { removeSite, syncSite } from '../../lib/site-registry';
 import { resolveTheme } from '../../themes';
 import ContribWall from '../../themes/_shared/ContribWall.astro';
 import ClaimBanner from '../../themes/_shared/ClaimBanner.astro';
 import NowCard from '../../themes/_shared/NowCard.astro';
+import SideCard from '../../themes/_shared/SideCard.astro';
 
 // 用户集合是无限的，这条路由只能按需渲染
 export const prerender = false;
@@ -40,12 +42,21 @@ const { data, error } = await safeLoad(async () => {
     100,
     Math.max(1, configState.config.profile.repos.showCount)
   );
-  const [repos, readme] = await Promise.all([
+  const gistPerPage = Math.min(
+    100,
+    Math.max(1, configState.config.profile.gists.showCount)
+  );
+  const wantsGists =
+    configState.config.profile.gists.visible &&
+    configState.config.profile.gists.showCount > 0;
+
+  const [repos, readme, gists] = await Promise.all([
     listRepos(user, { perPage }),
     getUserReadme(user),
+    wantsGists ? listGists(user, gistPerPage).catch(() => []) : Promise.resolve([]),
   ]);
 
-  return { userinfo, repos, readme, configState };
+  return { userinfo, repos, readme, gists, configState };
 });
 
 if (error) {
@@ -92,7 +103,7 @@ if (data) {
 }
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
-const { Layout, ProfileCard, RepoCard, Markdown } = components;
+const { Layout, ProfileCard, RepoCard, GistCard, Markdown } = components;
 
 const display = data?.userinfo.name || data?.userinfo.login || user;
 
@@ -111,7 +122,16 @@ const readmeHtml = data
 // 展示多少个仓库由用户的 classy.config.json 决定
 const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
 
-const defaultTheme = config.theme === 'default' ? 'mac' : config.theme;
+const parseGistDescription = createGistDescriptionParser({
+  prefix: config.gists.prefix,
+  split: config.gists.split,
+});
+const recentGists = data
+  ? data.gists
+      .slice(0, config.profile.gists.showCount)
+      .map((gist) => ({ gist, parsed: parseGistDescription(gist.description) }))
+  : [];
+
 const seo = data
   ? {
       ...seoForProfile({
@@ -120,7 +140,7 @@ const seo = data
         origin,
         indexable: config.seo.index,
         theme: themeName,
-        defaultTheme,
+        defaultTheme: config.theme,
       }),
       rss: `${origin}/${user}/rss.xml`,
     }
@@ -185,10 +205,28 @@ const seo = data
 
           <NowCard now={config.now} cardUrl={config.profile.cardUrl} />
 
-          <section class="contrib">
-            <h2 class="section__title">{t('contrib.title')}</h2>
+          <SideCard title={t('contrib.title')}>
             <ContribWall user={user} theme={themeName} />
-          </section>
+          </SideCard>
+
+          {config.profile.gists.visible && recentGists.length > 0 && (
+            <SideCard title={t('gists.recent')} variant="recent-gists">
+              <ul class="gist-list side-card__gist-list">
+                {recentGists.map(({ gist, parsed }) => (
+                  <GistCard
+                    gist={gist}
+                    href={`/${user}/gist/${gist.id}`}
+                    type={parsed.type}
+                    title={
+                      parsed.title ||
+                      Object.keys(gist.files)[0] ||
+                      t('gist.untitled')
+                    }
+                  />
+                ))}
+              </ul>
+            </SideCard>
+          )}
         </div>
         </div>
       </>

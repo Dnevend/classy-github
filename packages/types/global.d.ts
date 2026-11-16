@@ -7,6 +7,10 @@ type ClassyConfig = {
       visible: boolean;
       showCount: number;
     };
+    gists: {
+      visible: boolean;
+      showCount: number;
+    };
     cover: string;
   };
   gists: {

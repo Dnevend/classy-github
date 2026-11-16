@@ -21,7 +21,7 @@ export const availableThemes = Object.keys(registry) as ThemeName[];
 export const isThemeAvailable = (name: ThemeName) => name in registry;
 
 /**
- * 解析 `?theme=` 并加载对应主题；名字不存在时回退 default。
+ * 解析 `?theme=` 并加载对应主题；名字不存在时回退 mac。
  */
 export async function resolveTheme(param?: string | null): Promise<{
   name: ThemeName;
