@@ -96,12 +96,12 @@ At runtime there are only two external dependencies: **GitHub provides content a
 - **Themed share cards**: the footer “Share” button generates a 1200px-wide themed PNG with a QR code; save it, copy the link, or share to X. The card follows the current theme.
 - **OG images**: `/og/<username>.png` returns a 1200×630 themed social card, so link previews show more than an avatar.
 - **88×31 badges**: four theme palettes; copy HTML or Markdown and drop it into a README, blog or blogroll.
-- **SEO**: server-rendered title, description, canonical and JSON-LD; indexing is off by default and `seo.index: true` opts in. A page is indexed only when the theme the visitor sees matches the `theme` field; since visitors default to `mac`, keep `theme: "mac"` for reliable indexing.
-- **Sitemap / robots**: user pages are listed only when `seo.index` is enabled; the landing page and webring are always included. Keep `theme: "mac"` so the sitemap entry matches the default page's `index` state.
+- **SEO**: server-rendered title, description, canonical and JSON-LD; indexing is off by default and `seo.index: true` opts in. The default theme page is `index`; theme variants chosen by a visitor stay `noindex`.
+- **Sitemap / robots**: user pages are listed only when `seo.index` is enabled; the landing page and webring are always included.
 
 ### Experience and performance
 
-- **Four themes**: `mac` (System 6), `nes` (8-bit), `win98`, `tui` (DOS). Pick one with `?theme=`; a cookie remembers it. Each theme ships its own CSS, and only the current one is loaded.
+- **Four themes**: `mac` (System 6), `nes` (8-bit), `win98`, `tui` (DOS). Site owners set the default in config; visitors can switch with `?theme=` or the footer, and a cookie remembers it. Each theme ships its own CSS, and only the current one is loaded.
 - **Bilingual**: English / Chinese. Site owners set the default language; visitors can switch in the footer or with `?lang=zh`.
 - **Mobile**: all four themes were checked at 375px wide with no horizontal overflow; the main column collapses to a single column.
 - **Recent visits**: the landing page remembers profiles viewed on this device (localStorage, never uploaded).
@@ -126,8 +126,8 @@ The four themes are not just color swaps; they use different DOM and components.
 | **`win98` · Windows 98** | **`tui` · DOS** |
 | [![win98 theme](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
 
-- The default theme is `mac`; the old `?theme=default` link maps to `mac`, and `?theme=win95` maps to `win98`.
-- Theme priority: `?theme=` > cookie > `mac`. The `theme` field in `classy.config.json` is used for the webring listing and the SEO default theme.
+- The default theme comes from `classy.config.json` (`mac` if omitted); the old `?theme=default` link maps to `mac`, and `?theme=win95` maps to `win98`.
+- Theme priority: `?theme=` > cookie > configured `theme` > `mac`.
 - Each theme is a separate CSS bundle; a visitor on `mac` does not download the 279KB NES stylesheet.
 - With no cover configured, each theme renders its own default banner (checkerboard / pixel grid / DOS scanlines / teal desktop).
 - Share cards, OG images and badges follow the theme palette.
@@ -227,7 +227,7 @@ The config builder only generates JSON. It does not request GitHub authorization
 }
 ```
 
-> To send visitors straight to a specific theme, share a `?theme=nes` link; the `theme` field is used for the webring listing and the SEO default theme.
+> `theme` is the default skin for visitors who have not chosen one; to send visitors straight to a specific theme, share a `?theme=nes` link as well.
 
 ### Common changes
 
@@ -235,6 +235,7 @@ These are fragments; merge them into your JSON at the right level.
 
 | Goal | Change |
 |---|---|
+| Change the default theme | `"theme": "nes"` (`mac` / `nes` / `win98` / `tui`) |
 | Share a specific theme | Add `?theme=nes` to the URL (`mac` / `nes` / `win98` / `tui`) |
 | Default to Chinese | `"language": "zh"` |
 | Add a cover image | `"profile": { "cover": "https://…" }` |
@@ -317,7 +318,7 @@ These are fragments; merge them into your JSON at the right level.
 | Field | Default | Description |
 |---|---|---|
 | `owner` | `null` | GitHub username that owns the config. If it does not match the current user, the whole file is ignored as a template; an empty or invalid value is accepted as a legacy config. |
-| `theme` | `mac` | Theme name: `mac` / `nes` / `win98` / `tui`. Used for the webring listing and the SEO default theme; the theme a visitor sees comes from the footer or `?theme=`, defaulting to `mac`. Keep `mac` for reliable SEO indexing. |
+| `theme` | `mac` | Default theme: `mac` / `nes` / `win98` / `tui`. Used when a visitor has no `?theme=` or cookie; each theme loads its own CSS bundle. |
 | `language` | `en` | Default language: `en` / `zh`. Visitors can override with `?lang=`. |
 | `profile.cover` | `null` | Profile card cover image; when unset, a themed default banner is shown. http(s) only. |
 | `profile.cardUrl` | `null` | Third-party stats image at the bottom of the Now card, e.g. an SVG generated by an Action. |
@@ -336,7 +337,7 @@ These are fragments; merge them into your JSON at the right level.
 | `guestbook.gistId` | `null` | A public Gist ID owned by you (20–40 hex characters); `null` disables the guestbook. |
 | `webring.enabled` | `true` | Join the webring; footer links appear once the ring has at least 3 members. |
 | `discover.enabled` | `true` | Allow `/random` to recommend your site. |
-| `seo.index` | `false` | Allow search engines to index the profile; a page is indexed only when the theme the visitor sees matches `theme`. Keep `theme: "mac"` for reliable indexing, otherwise the default `/<username>` page may stay `noindex`. |
+| `seo.index` | `false` | Allow search engines to index the profile; the default theme page is `index`, while theme variants chosen by a visitor stay `noindex`. |
 
 ### What happens if the config is wrong
 
@@ -390,10 +391,10 @@ Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an a
 No. It only reads public data; private repositories and secret Gists are never shown.
 
 **Why is SEO off by default?**
-Profile pages are infinitely generated thin content, so indexing is opt-in to avoid polluting search results. Set `seo.index: true` to allow it; a page is indexed only when the theme the visitor sees matches the `theme` field. Since visitors default to `mac`, keep `theme: "mac"`; otherwise the default `/<username>` page may remain `noindex`.
+Profile pages are infinitely generated thin content, so indexing is opt-in to avoid polluting search results. Set `seo.index: true` to allow it; the default theme page is `index`, while theme variants chosen by a visitor stay `noindex`.
 
 **Do theme and language choices persist?**
-Yes, choices are stored in cookies. You can also use `?theme=nes` / `?lang=zh` to switch temporarily or share a specific version.
+Yes, choices are stored in cookies. The site default theme comes from `classy.config.json`; you can also use `?theme=nes` / `?lang=zh` to switch temporarily or share a specific version.
 
 **What about privacy?**
 The app stores no IPs, does no profiling, and runs no analytics scripts. The app uses only two functional cookies (theme and language); the landing page's “recent visits” is local-only localStorage and is never uploaded.

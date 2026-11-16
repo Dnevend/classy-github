@@ -96,12 +96,12 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 - **主题化分享卡**：页脚「分享」生成一张 1200px 宽的主题化 PNG，带二维码；可保存、复制链接、一键分享到 X。分享卡会跟随当前主题。
 - **OG 预览图**：`/og/<用户名>.png` 输出 1200×630 的主题化社交卡片，链接预览不再只有头像。
 - **88×31 徽章**：四套主题配色，复制 HTML / Markdown 就能放到 README、博客或友情链接。
-- **SEO**：服务端直出 title / description / canonical / JSON-LD；默认不收录，`seo.index: true` 才允许。只有访客看到的主题与 `theme` 字段一致时才输出 `index`；访客未选主题时默认是 `mac`，所以建议保持 `theme: "mac"`。
-- **Sitemap / Robots**：用户页只收录主动开启 `seo.index` 的；首页和网站环固定收录。为了和默认页的 `index` 保持一致，建议保持 `theme: "mac"`。
+- **SEO**：服务端直出 title / description / canonical / JSON-LD；默认不收录，`seo.index: true` 才允许。默认主题页面输出 `index`，访客切到其他主题时保持 `noindex`。
+- **Sitemap / Robots**：用户页只收录主动开启 `seo.index` 的；首页和网站环固定收录。
 
 ### 体验与性能
 
-- **四套主题**：`mac`（System 6）/ `nes`（8-bit）/ `win98` / `tui`（DOS）；`?theme=` 选择一次，之后用 cookie 记住；每套 CSS 独立打包，只加载当前主题。
+- **四套主题**：`mac`（System 6）/ `nes`（8-bit）/ `win98` / `tui`（DOS）；站主可在配置里设默认主题，访客用 `?theme=` 或页脚切换后会用 cookie 记住；每套 CSS 独立打包，只加载当前主题。
 - **双语**：English / 中文；站主可设默认语言，访客用页脚切换或 `?lang=zh` 覆盖。
 - **移动端**：375px 宽下四套主题都无横向溢出，主内容自动塌成单列。
 - **最近访问**：首页记住本机看过的用户页（localStorage，不上传）。
@@ -126,8 +126,8 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 | **`win98` · Windows 98** | **`tui` · DOS** |
 | [![win98 主题](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
 
-- 默认主题是 `mac`；旧链接 `?theme=default` 自动落到 `mac`，`?theme=win95` 落到 `win98`。
-- 主题选择优先级：`?theme=` > cookie > `mac`；`classy.config.json` 里的 `theme` 用于网站环展示和 SEO 默认可索引主题。
+- 默认主题由 `classy.config.json` 的 `theme` 决定（不填是 `mac`）；旧链接 `?theme=default` 自动落到 `mac`，`?theme=win95` 落到 `win98`。
+- 主题选择优先级：`?theme=` > cookie > 站主配置的 `theme` > `mac`。
 - 每套主题的 CSS 独立打包；访问 `mac` 的访客不会下载 NES 那 279KB。
 - 没有配置封面时，四套主题各自渲染默认横幅（棋盘格 / 像素网格 / DOS 扫描线 / Teal 桌面）。
 - 分享卡、OG 图、徽章都会跟随主题配色。
@@ -227,7 +227,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 }
 ```
 
-> 想让访客直接看到某套主题，用 `?theme=nes` 分享链接；`theme` 字段用于网站环展示和 SEO 默认可索引主题。
+> `theme` 是访客没有选择主题时的默认皮肤；想让访客直接进入某套主题，也可以分享 `?theme=nes` 链接。
 
 ### 常用开关
 
@@ -235,6 +235,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 
 | 想做什么 | 改哪里 |
 |---|---|
+| 换默认主题 | `"theme": "nes"`（可选 `mac` / `nes` / `win98` / `tui`） |
 | 分享指定主题 | 在链接后加 `?theme=nes`（可选 `mac` / `nes` / `win98` / `tui`） |
 | 默认中文 | `"language": "zh"` |
 | 加封面图 | `"profile": { "cover": "https://…" }` |
@@ -317,7 +318,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | 字段 | 默认 | 说明 |
 |---|---|---|
 | `owner` | `null` | 配置归属的 GitHub 用户名。与当前用户不一致时整份配置按模板忽略；为空或非法时按旧配置接受。 |
-| `theme` | `mac` | 站点主题名：`mac` / `nes` / `win98` / `tui`。用于网站环展示和 SEO 默认可索引主题；访客实际主题由页脚选择或 `?theme=` 决定，未选择时为 `mac`。为了 SEO 收录，建议保持 `mac`。 |
+| `theme` | `mac` | 站点默认主题：`mac` / `nes` / `win98` / `tui`。访客没有 `?theme=` 或 cookie 时使用它；每套主题的 CSS 独立加载。 |
 | `language` | `en` | 默认语言：`en` / `zh`。访客可用 `?lang=` 覆盖。 |
 | `profile.cover` | `null` | 资料卡封面图；不填时显示主题化默认横幅。只接受 http(s)。 |
 | `profile.cardUrl` | `null` | 「近况」卡片底部嵌入的第三方统计图，例如 Action 生成的 SVG。 |
@@ -336,7 +337,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | `guestbook.gistId` | `null` | 公开且属于你的 Gist ID（20–40 位十六进制）；`null` 关闭留言簿。 |
 | `webring.enabled` | `true` | 是否加入网站环；成员满 3 个后页脚出现「上一站 / 随机 / 下一站」。 |
 | `discover.enabled` | `true` | 是否允许出现在 `/random` 随机推荐里。 |
-| `seo.index` | `false` | 是否允许搜索引擎收录主页；只有访客看到的主题与 `theme` 一致时才输出 `index`。建议保持 `theme: "mac"`，否则 `/<用户名>` 默认页可能仍是 `noindex`。 |
+| `seo.index` | `false` | 是否允许搜索引擎收录主页；默认主题页面输出 `index`，访客切到其他主题时保持 `noindex`。 |
 
 ### 配置写错了会怎样
 
@@ -390,10 +391,10 @@ GitHub                          Cloudflare
 不支持。只读取公开数据；私有仓库和 secret Gist 不会显示。
 
 **为什么默认不被搜索引擎收录？**
-用户页是无限生成的薄内容，默认不收录，避免污染搜索。想收录就在配置里设 `seo.index: true`；只有访客看到的主题与 `theme` 字段一致时才会输出 `index`。访客未选主题时默认是 `mac`，所以建议保持 `theme: "mac"`；否则 `/<用户名>` 默认页可能仍是 `noindex`。
+用户页是无限生成的薄内容，默认不收录，避免污染搜索。想收录就在配置里设 `seo.index: true`；默认主题页面会输出 `index`，访客切到其他主题时保持 `noindex`。
 
 **主题和语言会记住吗？**
-会。用户选择写在 cookie 里；也可以用 `?theme=nes` / `?lang=zh` 临时切换或分享指定版本。
+会。用户选择写在 cookie 里；站点默认主题由 `classy.config.json` 的 `theme` 决定；也可以用 `?theme=nes` / `?lang=zh` 临时切换或分享指定版本。
 
 **数据隐私怎么处理？**
 应用不存 IP、不做用户画像、没有分析脚本。应用只有主题和语言两个功能性 cookie；首页的「最近访问」只存在本机 localStorage，不上传。

@@ -1,6 +1,9 @@
 import { defineMiddleware } from 'astro:middleware';
 import { CACHED_AT_HEADER, cacheGet, cachePut, edgeCache } from './lib/edge-cache.ts';
-import { THEME_COOKIE, resolveThemeChoice } from './lib/theme.ts';
+import { loadConfigState } from './lib/config-loader.ts';
+import type { ThemeName } from './lib/config.ts';
+import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
+import { resolveRequestTheme } from './lib/request-theme.ts';
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -37,17 +40,57 @@ const SKIP_CACHE = /^\/(?:setup|random|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /**
+ * 站主默认主题的短期缓存。没有 classy-github 仓库的用户不能让 middleware
+ * 每次 HTML 缓存命中都去打一次 GitHub API。
+ */
+const THEME_CACHE_TTL = 300;
+const themeCacheKey = (login: string) =>
+  new Request(`https://classy.cache/theme/${encodeURIComponent(login.toLowerCase())}?v=1`);
+
+const loadConfigTheme = async (login: string, fresh: boolean): Promise<ThemeName> => {
+  const key = themeCacheKey(login);
+
+  if (!fresh) {
+    const cached = await cacheGet(key, THEME_CACHE_TTL);
+    if (cached) {
+      const data = (await cached.json().catch(() => null)) as { theme?: unknown } | null;
+      const theme = parseThemeName(typeof data?.theme === 'string' ? data.theme : null);
+      if (theme) return theme;
+    }
+  }
+
+  const state = await loadConfigState(login, { fresh });
+  const theme = state.config.theme;
+
+  // reliable=false 表示网络/限流，不能把 mac 当成“没有配置”缓存 5 分钟
+  if (!fresh && state.reliable) {
+    const response = new Response(JSON.stringify({ theme }), {
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+    });
+    await cachePut(key, response, THEME_CACHE_TTL);
+  }
+
+  return theme;
+};
+
+/**
  * 主题与语言都在这里解析并参与缓存键：
- *   theme  = ?theme= > cookie > default
+ *   theme  = ?theme= > cookie > 站主配置的默认主题 > mac
  *   locale = ?lang=  > cookie > auto（auto 由页面按用户配置决定）
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
+  const isPreview = url.searchParams.get('preview') === '1';
 
+  const themeParam = url.searchParams.get('theme');
   const savedTheme = context.cookies.get(THEME_COOKIE);
-  const { theme, persist: persistTheme } = resolveThemeChoice({
-    param: url.searchParams.get('theme'),
+
+  const { theme, persist: persistTheme } = await resolveRequestTheme({
+    pathname: url.pathname,
+    param: themeParam,
     cookie: savedTheme ? savedTheme.value : null,
+    fresh: isPreview,
+    loadConfigTheme,
   });
 
   const savedLocale = context.cookies.get(LOCALE_COOKIE);
@@ -60,9 +103,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.localeChoice = locale;
   context.locals.locale = locale === 'auto' ? DEFAULT_LOCALE : locale;
 
-  // 配置生成器的 iframe 预览不应该改写访客的持久主题
-  const isPreview = url.searchParams.get('preview') === '1';
-
+  // 预览不能改写访客的持久主题/语言，也不能命中 HTML 缓存
   if (persistTheme && !isPreview) {
     context.cookies.set(THEME_COOKIE, theme, {
       path: '/',

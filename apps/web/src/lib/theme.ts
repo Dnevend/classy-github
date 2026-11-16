@@ -38,7 +38,7 @@ export interface ThemeChoice {
 }
 
 /**
- * 主题解析优先级：`?theme=` > cookie > default。
+ * 主题解析优先级：`?theme=` > cookie > 站主配置的默认主题 > `mac`。
  *
  * 主题是服务端渲染的维度（四套主题 DOM 不同），所以「持久化」= 记住选择 +
  * 让缓存键带上主题；不能靠浏览器端换 class。
@@ -46,9 +46,12 @@ export interface ThemeChoice {
 export const resolveThemeChoice = ({
   param,
   cookie,
+  fallback = 'mac',
 }: {
   param?: string | null;
   cookie?: string | null;
+  /** 站主配置的默认主题；没有配置或读取失败时传 mac */
+  fallback?: ThemeName;
 }): ThemeChoice => {
   const fromParam = parseThemeName(param);
   if (fromParam) return { theme: fromParam, persist: true };
@@ -56,5 +59,5 @@ export const resolveThemeChoice = ({
   const fromCookie = parseThemeName(cookie);
   if (fromCookie) return { theme: fromCookie, persist: false };
 
-  return { theme: 'mac', persist: false };
+  return { theme: parseThemeName(fallback) ?? 'mac', persist: false };
 };

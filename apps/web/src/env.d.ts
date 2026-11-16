@@ -2,7 +2,7 @@
 
 declare namespace App {
   interface Locals {
-    /** 由 middleware 解析：?theme= > cookie > default */
+    /** 由 middleware 解析：?theme= > cookie > 站主配置 > mac */
     theme: import('./lib/config').ThemeName;
     /** 由 middleware 解析：?lang= > cookie > auto */
     localeChoice: import('./lib/i18n').Locale | 'auto';

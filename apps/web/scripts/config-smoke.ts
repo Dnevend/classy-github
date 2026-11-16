@@ -8,8 +8,10 @@ import assert from 'node:assert/strict';
 import { DEFAULT_CONFIG, isConfigForUser, parseConfig } from '../src/lib/config.ts';
 import { seoForProfile } from '../src/lib/seo.ts';
 import { THEME_NAMES, parseThemeParam, resolveThemeChoice } from '../src/lib/theme.ts';
+import { resolveRequestTheme } from '../src/lib/request-theme.ts';
+import { userFromPath } from '../src/lib/user-route.ts';
 
-type Case = { name: string; run: () => void };
+type Case = { name: string; run: () => void | Promise<void> };
 
 const cases: Case[] = [
   {
@@ -203,7 +205,7 @@ const cases: Case[] = [
     },
   },
   {
-    name: '主题持久化：?theme= 优先，其次 cookie，都没有就 mac',
+    name: '主题持久化：?theme= 优先，其次 cookie，最后站主默认主题 / mac',
     run: () => {
       // 显式选了主题 → 要写 cookie
       assert.deepEqual(resolveThemeChoice({ param: 'nes' }), { theme: 'nes', persist: true });
@@ -213,10 +215,14 @@ const cases: Case[] = [
       });
       // 没带参数 → 用 cookie，不重复写
       assert.deepEqual(resolveThemeChoice({ cookie: 'nes' }), { theme: 'nes', persist: false });
-      // 都没有 / 都非法 → mac，不写
+      // 都没有 / 都非法 → fallback，默认 mac
       assert.deepEqual(resolveThemeChoice({}), { theme: 'mac', persist: false });
-      assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'xx' }), {
-        theme: 'mac',
+      assert.deepEqual(resolveThemeChoice({ fallback: 'nes' }), {
+        theme: 'nes',
+        persist: false,
+      });
+      assert.deepEqual(resolveThemeChoice({ param: 'amiga', cookie: 'xx', fallback: 'nes' }), {
+        theme: 'nes',
         persist: false,
       });
       // 参数非法时仍要尊重合法 cookie；旧名 win95 归一为 win98
@@ -226,6 +232,119 @@ const cases: Case[] = [
       });
       // 大小写
       assert.equal(resolveThemeChoice({ param: 'NES' }).theme, 'nes');
+    },
+  },
+  {
+    name: '默认主题：只有用户页需要读配置，静态/系统路径不读',
+    run: () => {
+      assert.equal(userFromPath('/Dnevend'), 'Dnevend');
+      assert.equal(userFromPath('/Dnevend/'), 'Dnevend');
+      assert.equal(userFromPath('/Dnevend/repos'), 'Dnevend');
+      assert.equal(userFromPath('/Dnevend/gist/abc'), 'Dnevend');
+      assert.equal(userFromPath('/Dnevend/repo/foo.svg'), 'Dnevend');
+      assert.equal(userFromPath('/%44nevend'), 'Dnevend');
+
+      for (const path of [
+        '/',
+        '/setup',
+        '/webring',
+        '/random',
+        '/badge/Dnevend',
+        '/og/Dnevend.png',
+        '/api/hit/Dnevend',
+        '/claim/Dnevend',
+        '/contrib/Dnevend.json',
+        '/card/Dnevend',
+        '/images/cover.webp',
+        '/fonts/x.woff2',
+        '/cursors/mac-arrow.svg',
+        '/%73etup',
+        '/robots.txt',
+        '/sitemap/1.xml',
+        '/Dnevend/rss.xml',
+        '/not%20valid',
+      ]) {
+        assert.equal(userFromPath(path), null, path);
+      }
+    },
+  },
+  {
+    name: 'middleware 主题接线：配置默认主题进入 fallback，显式选择不读配置',
+    run: async () => {
+      const calls: { login: string; fresh: boolean }[] = [];
+      const load = async (login: string, fresh: boolean) => {
+        calls.push({ login, fresh });
+        return 'nes' as const;
+      };
+
+      // 无参数/无 cookie 的用户页 → 读配置，主题变 nes
+      assert.deepEqual(
+        await resolveRequestTheme({ pathname: '/Dnevend', loadConfigTheme: load }),
+        { theme: 'nes', persist: false }
+      );
+      assert.deepEqual(calls, [{ login: 'Dnevend', fresh: false }]);
+
+      // 显式 ?theme / cookie 不读配置
+      calls.length = 0;
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          param: 'win98',
+          loadConfigTheme: load,
+        }),
+        { theme: 'win98', persist: true }
+      );
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          cookie: 'nes',
+          loadConfigTheme: load,
+        }),
+        { theme: 'nes', persist: false }
+      );
+      assert.deepEqual(calls, []);
+
+      // 非用户页不读配置
+      assert.deepEqual(
+        await resolveRequestTheme({ pathname: '/setup', loadConfigTheme: load }),
+        { theme: 'mac', persist: false }
+      );
+      assert.deepEqual(
+        await resolveRequestTheme({ pathname: '/%73etup', loadConfigTheme: load }),
+        { theme: 'mac', persist: false }
+      );
+      assert.deepEqual(calls, []);
+
+      // 非法参数时用配置默认主题
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          param: 'amiga',
+          loadConfigTheme: load,
+        }),
+        { theme: 'nes', persist: false }
+      );
+      assert.deepEqual(calls, [{ login: 'Dnevend', fresh: false }]);
+
+      // 配置读取失败回退 mac
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          loadConfigTheme: async () => {
+            throw new Error('rate limited');
+          },
+        }),
+        { theme: 'mac', persist: false }
+      );
+
+      // 预览时 fresh=true
+      calls.length = 0;
+      await resolveRequestTheme({
+        pathname: '/Dnevend',
+        fresh: true,
+        loadConfigTheme: load,
+      });
+      assert.deepEqual(calls, [{ login: 'Dnevend', fresh: true }]);
     },
   },
   {
@@ -292,7 +411,7 @@ let failed = 0;
 
 for (const { name, run } of cases) {
   try {
-    run();
+    await run();
     console.log(`  ✓ ${name}`);
   } catch (error) {
     failed += 1;
