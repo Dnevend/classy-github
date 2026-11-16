@@ -186,22 +186,6 @@ const display = userinfo?.name || userinfo?.login || user;
                   value={initialConfig.profile.repos.showCount}
                 />
               </div>
-              <label class="setup-check">
-                <input
-                  type="checkbox"
-                  name="showFollowers"
-                  checked={initialConfig.profile.showFollowers}
-                />
-                {t('setup.showFollowers')}
-              </label>
-              <label class="setup-check">
-                <input
-                  type="checkbox"
-                  name="showFollowing"
-                  checked={initialConfig.profile.showFollowing}
-                />
-                {t('setup.showFollowing')}
-              </label>
             </section>
 
             <section class="setup-section">
@@ -375,8 +359,6 @@ const display = userinfo?.name || userinfo?.login || user;
               language: form.language.value,
               profile: {
                 ...initial.profile,
-                showFollowers: form.showFollowers.checked,
-                showFollowing: form.showFollowing.checked,
                 repos: {
                   ...initial.profile.repos,
                   showCount: Math.max(

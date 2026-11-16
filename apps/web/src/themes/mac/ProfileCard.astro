@@ -3,19 +3,15 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 
 const stats = [
-  config.profile.showFollowers
-    ? { label: t('profile.followers'), value: userinfo.followers }
-    : null,
-  config.profile.showFollowing
-    ? { label: t('profile.following'), value: userinfo.following }
-    : null,
+  { label: t('profile.followers'), value: userinfo.followers },
+  { label: t('profile.following'), value: userinfo.following },
   { label: t('profile.reposTitle'), value: userinfo.public_repos },
   { label: t('profile.gistsTitle'), value: userinfo.public_gists },
-].filter((item): item is { label: string; value: number } => item !== null);
+];
 ---
 
 <aside class="mac-aside">

@@ -813,20 +813,6 @@ img {
   border-radius: 8px;
 }
 
-/* ---------- 首页 Fork 入口 ---------- */
-
-.hero-fork {
-  margin-top: 18px;
-  font-size: 0.85em;
-  color: var(--fg-muted);
-}
-
-.hero-fork a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
 /* ---------- 贡献墙 ---------- */
 
 .contrib-wall {
@@ -1794,11 +1780,6 @@ img {
 .webring-widget a[data-webring-random] {
   font-size: 12px;
   line-height: 1;
-}
-
-/* 首页 Fork 间距 */
-.hero-fork {
-  margin-top: 26px;
 }
 
 .hero-links {

@@ -24,13 +24,26 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
+// 配置和用户信息并行加载；配置用来决定一次拉多少个仓库（showCount）
+const configStatePromise = loadConfigState(user);
+
 const { data, error } = await safeLoad(async () => {
-  const userinfo = await loadUser(user);
+  const [userinfo, configState] = await Promise.all([
+    loadUser(user),
+    configStatePromise,
+  ]);
   if (!userinfo) return null;
 
-  const [repos, readme] = await Promise.all([listRepos(user), getUserReadme(user)]);
+  const perPage = Math.min(
+    100,
+    Math.max(1, configState.config.profile.repos.showCount)
+  );
+  const [repos, readme] = await Promise.all([
+    listRepos(user, { perPage }),
+    getUserReadme(user),
+  ]);
 
-  return { userinfo, repos, readme };
+  return { userinfo, repos, readme, configState };
 });
 
 if (error) {
@@ -43,7 +56,7 @@ if (error) {
 
 // 配置读取失败不影响渲染：loadConfigState 内部已降级为默认值
 const configState = data
-  ? await loadConfigState(user)
+  ? data.configState
   : { config: DEFAULT_CONFIG, configured: false, reliable: false, source: 'default' as const };
 const { config, configured, reliable } = configState;
 

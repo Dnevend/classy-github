@@ -70,8 +70,6 @@ const messages = {
     'setup.remove': 'Remove',
     'setup.profile': 'Profile',
     'setup.showCount': 'Recent repos',
-    'setup.showFollowers': 'Show followers',
-    'setup.showFollowing': 'Show following',
     'setup.now': 'Now',
     'setup.books': 'Reading',
     'setup.music': 'Listening',
@@ -196,7 +194,6 @@ const messages = {
     'landing.placeholder': 'GitHub username',
     'landing.submit': 'View',
     'landing.label': 'GitHub username',
-    'landing.fork': 'Fork this repo to customize',
   },
   zh: {
     'nav.repos': '仓库',
@@ -260,8 +257,6 @@ const messages = {
     'setup.remove': '删除',
     'setup.profile': '资料卡',
     'setup.showCount': '最近仓库数',
-    'setup.showFollowers': '显示关注者',
-    'setup.showFollowing': '显示关注中',
     'setup.now': '近况',
     'setup.books': '在读',
     'setup.music': '在听',
@@ -386,7 +381,6 @@ const messages = {
     'landing.placeholder': 'GitHub 用户名',
     'landing.submit': '查看',
     'landing.label': 'GitHub 用户名',
-    'landing.fork': 'Fork 本仓库，自定义你的站点',
   },
 } as const;
 

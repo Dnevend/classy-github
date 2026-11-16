@@ -8,8 +8,6 @@ type ClassyConfig = {
       showCount: number;
     };
     cover: string;
-    showFollowers: boolean;
-    showFollowing: boolean;
   };
   gists: {
     prefix: `Classy` | string;

@@ -24,8 +24,6 @@ export interface ResolvedConfig {
   language: Locale;
   profile: {
     cover: string | null;
-    showFollowers: boolean;
-    showFollowing: boolean;
     /** 可选：嵌入任意第三方统计卡图片（http/https） */
     cardUrl: string | null;
     repos: {
@@ -81,8 +79,6 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   language: DEFAULT_LOCALE,
   profile: {
     cover: null,
-    showFollowers: true,
-    showFollowing: true,
     cardUrl: null,
     repos: { visible: true, showCount: 6 },
   },
@@ -115,8 +111,6 @@ const reposSchema = z
 const profileSchema = z
   .object({
     cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL'),
-    showFollowers: z.boolean(),
-    showFollowing: z.boolean(),
     cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL'),
     repos: reposSchema,
   })
@@ -313,10 +307,6 @@ export const parseConfig = (input: unknown): ParseConfigResult => {
       language: language ?? DEFAULT_LOCALE,
       profile: {
         cover: parsedProfile.cover ?? DEFAULT_CONFIG.profile.cover,
-        showFollowers:
-          parsedProfile.showFollowers ?? DEFAULT_CONFIG.profile.showFollowers,
-        showFollowing:
-          parsedProfile.showFollowing ?? DEFAULT_CONFIG.profile.showFollowing,
         cardUrl: parsedProfile.cardUrl ?? DEFAULT_CONFIG.profile.cardUrl,
         repos: {
           visible: parsedRepos.visible ?? DEFAULT_CONFIG.profile.repos.visible,

@@ -3,7 +3,7 @@ import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 
-const { userinfo, links, config } = Astro.props as ThemeProfileCardProps;
+const { userinfo, links } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
 ---
 
@@ -40,12 +40,8 @@ const t = createTranslator(Astro.locals.locale);
       <fieldset class="w95-stats">
         <legend>stats</legend>
         <ul>
-          {config.profile.showFollowers && (
-            <li>{userinfo.followers} {t('profile.followers')}</li>
-          )}
-          {config.profile.showFollowing && (
-            <li>{userinfo.following} {t('profile.following')}</li>
-          )}
+          <li>{userinfo.followers} {t('profile.followers')}</li>
+          <li>{userinfo.following} {t('profile.following')}</li>
           <li>{userinfo.public_repos} {t('profile.reposTitle')}</li>
           <li>{userinfo.public_gists} {t('profile.gistsTitle')}</li>
         </ul>

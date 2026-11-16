@@ -14,7 +14,6 @@
 | `profile.repos.visible` | 主页是否显示仓库区 | |
 | `profile.repos.showCount` | 显示几个仓库 | 0–100，越界夹紧 |
 | `profile.cover` | 资料卡封面 | 仅 http(s) |
-| `profile.showFollowers` / `showFollowing` | 是否显示关注数 | **已解析但渲染层还没接**（见 TODO） |
 | `gists.prefix` / `split` / `type` / `default` | Gist 分类规则 | |
 | `links` | 页脚链接 | 只允许 http(s)，坏的逐条丢弃 |
 | `seo.index` | 是否允许收录主页 | 决定 sitemap 收录 |
@@ -120,5 +119,5 @@
 ## 当前状态
 
 - ✅ `language` 本次新增（`en` / `zh`，默认 `en`）
-- ⏳ `profile.showFollowers` / `showFollowing` 已解析未接线
+- ✅ M24 移除 `profile.showFollowers` / `showFollowing`，关注数始终显示
 - 📋 `nav` / `profile.stats` / `share.text` / `pagination.size` / `notFound` 待做

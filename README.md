@@ -58,9 +58,7 @@ pnpm dev            # http://localhost:4321
   "language": "en",
   "profile": {
     "repos": { "visible": true, "showCount": 6 },
-    "cover": "https://picsum.photos/1024/576",
-    "showFollowers": true,
-    "showFollowing": true
+    "cover": "https://picsum.photos/1024/576"
   },
   "gists": {
     "prefix": "classy",

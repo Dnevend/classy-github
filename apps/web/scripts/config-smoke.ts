@@ -37,7 +37,6 @@ const cases: Case[] = [
       const { config } = parseConfig({ profile: { repos: { showCount: 3 } } });
       assert.equal(config.profile.repos.showCount, 3);
       assert.equal(config.profile.repos.visible, true);
-      assert.equal(config.profile.showFollowers, true);
       assert.equal(config.seo.index, false);
     },
   },

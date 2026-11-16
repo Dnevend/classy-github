@@ -620,3 +620,53 @@
 [data-theme='win98'] .now-card__external {
   border-radius: 0;
 }
+
+/* ---------- 配置生成器表单 ---------- */
+
+/* 98.css 把 select 固定成 21px 高，global.css 的 6px 内边距会把文字裁掉 */
+[data-theme='win98'] .setup-row select {
+  appearance: auto;
+  height: auto;
+  min-height: 23px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 0;
+  color: #000;
+  background-color: #fff;
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px grey,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #0a0a0a;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+[data-theme='win98'] .setup-row select option {
+  color: #000;
+  background: #fff;
+}
+
+/* 98.css 把原生 checkbox 设为透明 + fixed，只有 input+label 结构才画方块；
+   这里的 label 包着 input，需要自己画一个 Win98 复选框 */
+[data-theme='win98'] .setup-check input[type='checkbox'] {
+  position: static;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  opacity: 1;
+  appearance: none;
+  background-color: #fff;
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px grey,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #0a0a0a;
+}
+
+[data-theme='win98'] .setup-check input[type='checkbox']:checked {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='7' height='7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7 0H6v1H5v1H4v1H3v1H2V3H1V2H0v3h1v1h1v1h1V6h1V5h1V4h1V3h1V0z' fill='%23000'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+}
