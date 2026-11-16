@@ -39,6 +39,15 @@ URL 不带分支名；内容统一走默认分支（raw 与 GitHub 链接用 `HE
 仓库页、个人主页 README、文件页内部 Markdown 都传同一份上下文；主页按
 `{user}/{user}` 仓库解析。
 
+## 标题锚点
+
+`renderMarkdown` 在 sanitize 之后运行 `rehype-slug`，按 GitHub 相同规则给
+h1–h6 生成 id（中文保留、ASCII 小写、空格转 `-`、重复标题加 `-1`），
+页内 `#锚点` 和跨文件 `...md#锚点` 都能跳到对应小节。
+
+手写的 `<a name="install"></a>` 会去掉 sanitize 的 `user-content-` 前缀
+（只处理 `<a>`，其他元素仍保留前缀以防 DOM clobbering），兼容老式 README。
+
 ## 文件页行为
 
 - 目录：按 GitHub 返回顺序渲染文件列表，目录带 `/` 后缀，显示文件大小。

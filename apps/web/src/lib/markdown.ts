@@ -1,6 +1,7 @@
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
+import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
@@ -128,6 +129,29 @@ const walkElements = (tree: Root, visit: (node: Element) => void) => {
   walk(tree);
 };
 
+const CLOBBER_PREFIX = 'user-content-';
+
+/**
+ * sanitize 为了防 DOM clobbering 会给 id/name 加 `user-content-` 前缀，
+ * 但 Markdown 里手写的 `<a name="install"></a>` 是常见锚点。
+ * 只对 `<a>` 去掉前缀，其余元素继续保留前缀。
+ */
+const rehypeUnprefixAnchors = () => (tree: Root) => {
+  walkElements(tree, (node) => {
+    if (node.tagName !== 'a') return;
+
+    const props = node.properties;
+    if (!props) return;
+
+    for (const key of ['id', 'name'] as const) {
+      const value = props[key];
+      if (typeof value === 'string' && value.startsWith(CLOBBER_PREFIX)) {
+        props[key] = value.slice(CLOBBER_PREFIX.length);
+      }
+    }
+  });
+};
+
 /**
  * 把 README 里的相对路径补成绝对地址，并给外链补上 target/rel。
  * GitHub 上 README 里的图片几乎都是相对路径，不处理就是一片碎图。
@@ -219,6 +243,10 @@ export async function renderMarkdown(
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeSanitize, options.allowImages === false ? commentSchema : schema)
+    // 标题 id 放在 sanitize 之后：生成的是我们自己的 slug，不能被 clobber 前缀改写；
+    // 有 id 后 `#锚点` 才能跳到页内小节（GitHub 同名 heading 的 slug 规则一致）。
+    .use(rehypeUnprefixAnchors)
+    .use(rehypeSlug)
     .use(rehypeFixUrls, options.base, options.repo);
 
   if (options.highlight !== false) {

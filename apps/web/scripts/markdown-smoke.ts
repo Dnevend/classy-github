@@ -51,6 +51,17 @@ const repoHtml = await renderMarkdown(repoSource, {
   base: 'https://raw.githubusercontent.com/someone/weekly/main/docs/',
   repo: { login: 'someone', repo: 'weekly', path: 'docs/README.md' },
 });
+const slugHtml = await renderMarkdown(
+  [
+    '[跳到小节](#section-one)',
+    '## 为什么是 ClassyGit',
+    '## 为什么是 ClassyGit',
+    '## Section One',
+  ].join('\n\n')
+);
+const explicitAnchorHtml = await renderMarkdown(
+  '<a name="install"></a>\n\n## 安装\n\n[去安装](#install)'
+);
 const commentHtml = await renderMarkdown(
   '**签名** [主页](https://example.com)\n\n![tracking](https://evil.example/pixel.png)',
   { allowImages: false }
@@ -58,10 +69,17 @@ const commentHtml = await renderMarkdown(
 
 const checks: Record<string, boolean> = {
   // 功能
-  heading: html.includes('<h1>'),
+  heading: /<h1[ >]/.test(html),
   codeHighlighted: html.includes('class="shiki'),
   table: html.includes('<table'),
   inlineCode: html.includes('<code>'),
+  // 标题锚点：与 GitHub 相同的 slug，重复标题自动加后缀
+  headingAnchor: slugHtml.includes('id="为什么是-classygit"'),
+  headingAnchorDuplicate: slugHtml.includes('id="为什么是-classygit-1"'),
+  headingAnchorLink:
+    slugHtml.includes('href="#section-one"') &&
+    slugHtml.includes('id="section-one"'),
+  explicitAnchor: explicitAnchorHtml.includes('<a name="install"></a>'),
   // 相对路径重写
   relativeImage: html.includes(`${base}demo.png`),
   // 外链加固
