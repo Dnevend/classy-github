@@ -55,6 +55,8 @@ export interface ThemeGistCardProps {
 export interface ThemeMarkdownProps {
   /** 已 sanitize + 已高亮的 HTML */
   html: string;
+  /** 窗口标题（文件名）；不传时各主题显示默认的 README */
+  title?: string;
 }
 
 export interface ThemeComponents {

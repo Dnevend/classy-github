@@ -45,7 +45,10 @@ const { Layout, Markdown } = components;
 
 const readmeHtml =
   data?.readme
-    ? await renderMarkdown(data.readme.source, { base: data.readme.base })
+    ? await renderMarkdown(data.readme.source, {
+        base: data.readme.base,
+        repo: { login: user, repo: repoName, path: data.readme.path },
+      })
     : null;
 ---
 

@@ -1,13 +1,13 @@
 ---
 import type { ThemeMarkdownProps } from '../types';
 
-const { html } = Astro.props as ThemeMarkdownProps;
+const { html, title = 'README' } = Astro.props as ThemeMarkdownProps;
 ---
 
 <div class="mac-window mac-readme">
   <div class="mac-titlebar">
     <span class="mac-close" aria-hidden="true">×</span>
-    <span class="mac-title">README</span>
+    <span class="mac-title">{title}</span>
     <span class="mac-controls" aria-hidden="true">
       <span class="mac-control">−</span>
       <span class="mac-control">□</span>

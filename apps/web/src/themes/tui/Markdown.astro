@@ -1,12 +1,12 @@
 ---
 import type { ThemeMarkdownProps } from '../types';
 
-const { html } = Astro.props as ThemeMarkdownProps;
+const { html, title = 'README.TXT' } = Astro.props as ThemeMarkdownProps;
 ---
 
 <div class="tui-panel tui-box tui-readme">
   <div class="tui-box__head tui-box__head--controls">
-    <span>README.TXT</span>
+    <span>{title}</span>
     <span class="tui-controls" aria-hidden="true">[-] [□] [X]</span>
   </div>
   <div class="tui-box__body">

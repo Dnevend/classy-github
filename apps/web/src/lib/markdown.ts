@@ -11,6 +11,12 @@ import { unified } from 'unified';
 import type { Element, Root, RootContent } from 'hast';
 import type { Options as SanitizeSchema } from 'rehype-sanitize';
 
+import {
+  isAbsoluteHref,
+  rewriteRepoHref,
+  type RepoLinkContext,
+} from './repo-link.ts';
+
 // 只注册真正需要的语言与主题。
 // 用 `@shikijs/rehype` 的默认入口会把全部 ~200 种语法打进 Worker（实测 27MB），
 // 换成 core + 显式 import 后体积降一个数量级。
@@ -109,9 +115,6 @@ const getHighlighter = () => {
   return highlighterPromise;
 };
 
-const isAbsolute = (value: string) =>
-  /^[a-z][a-z0-9+.-]*:/i.test(value) || value.startsWith('//');
-
 const walkElements = (tree: Root, visit: (node: Element) => void) => {
   const walk = (node: Root | Element) => {
     if (node.type === 'element') visit(node);
@@ -128,31 +131,55 @@ const walkElements = (tree: Root, visit: (node: Element) => void) => {
 /**
  * 把 README 里的相对路径补成绝对地址，并给外链补上 target/rel。
  * GitHub 上 README 里的图片几乎都是相对路径，不处理就是一片碎图。
+ *
+ * 传入 `repo` 时，同仓库的相对链接会按文件在仓库中的位置解析：
+ * `docs/issue-419.md` 指向站内文件页，而不是被浏览器解析成
+ * `/{user}/repo/docs/issue-419.md` 后 404。
  */
-const rehypeFixUrls = (base?: string) => (tree: Root) => {
-  walkElements(tree, (node) => {
-    const props = node.properties ?? {};
+const rehypeFixUrls =
+  (base?: string, repo?: RepoLinkContext) => (tree: Root) => {
+    walkElements(tree, (node) => {
+      const props = node.properties ?? {};
 
-    if (node.tagName === 'img' && typeof props.src === 'string') {
-      const src = props.src;
+      if (node.tagName === 'img' && typeof props.src === 'string') {
+        const src = props.src;
 
-      if (!isAbsolute(src) && base) {
-        props.src = new URL(src.replace(/^\/+/, ''), base).toString();
+        if (!isAbsoluteHref(src)) {
+          // 根相对图片按 GitHub 语义从仓库根解析；普通相对图片按文件所在目录。
+          if (src.startsWith('/') && repo) {
+            const rawRoot = `https://raw.githubusercontent.com/${repo.login}/${repo.repo}/HEAD/`;
+            props.src = new URL(src.replace(/^\/+/, ''), rawRoot).toString();
+          } else if (base) {
+            props.src = new URL(src.replace(/^\/+/, ''), base).toString();
+          }
+        }
+
+        props.loading = 'lazy';
       }
 
-      props.loading = 'lazy';
-    }
+      if (node.tagName === 'a' && typeof props.href === 'string') {
+        const href = props.href;
 
-    if (node.tagName === 'a' && typeof props.href === 'string') {
-      const href = props.href;
+        if (isAbsoluteHref(href)) {
+          props.target = '_blank';
+          props.rel = ['noopener', 'noreferrer'];
+          return;
+        }
 
-      if (isAbsolute(href)) {
-        props.target = '_blank';
-        props.rel = ['noopener', 'noreferrer'];
+        if (!repo) return;
+
+        const rewritten = rewriteRepoHref(href, repo);
+        if (!rewritten) return;
+
+        props.href = rewritten.href;
+
+        if (rewritten.external) {
+          props.target = '_blank';
+          props.rel = ['noopener', 'noreferrer'];
+        }
       }
-    }
-  });
-};
+    });
+  };
 
 /**
  * 留言簿用的更严格 schema：禁止图片/嵌入，避免评论里的追踪像素。
@@ -174,6 +201,8 @@ const commentSchema: SanitizeSchema = {
 export interface RenderMarkdownOptions {
   /** 相对路径基准，通常来自 README 的 download_url 目录 */
   base?: string;
+  /** 仓库上下文；提供后同仓库相对链接会改写成站内文件页 */
+  repo?: RepoLinkContext;
   /** 留言簿等用户评论关掉图片，默认允许（README 需要） */
   allowImages?: boolean;
   /** 评论不跑 Shiki，避免一页几十条评论把 CPU 打满 */
@@ -190,7 +219,7 @@ export async function renderMarkdown(
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeSanitize, options.allowImages === false ? commentSchema : schema)
-    .use(rehypeFixUrls, options.base);
+    .use(rehypeFixUrls, options.base, options.repo);
 
   if (options.highlight !== false) {
     const highlighter = await getHighlighter();

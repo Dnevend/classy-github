@@ -113,6 +113,8 @@ export interface ReadmeSource {
   source: string;
   /** 图片/链接相对路径的基准地址（raw.githubusercontent.com 上的目录） */
   base: string;
+  /** README 在仓库内的路径，用于解析相对链接 */
+  path: string;
 }
 
 /** README 接口返回的元数据（content 是 base64） */
@@ -163,7 +165,11 @@ export async function getRepoReadme(
     : `https://raw.githubusercontent.com/${user}/${repo}/HEAD/`;
 
   if (payload.content) {
-    return { source: decodeBase64(payload.content), base };
+    return {
+      source: decodeBase64(payload.content),
+      base,
+      path: payload.path ?? 'README.md',
+    };
   }
 
   // 文件超过 1MB 时 GitHub 不返回 content，只能退回 CDN
@@ -180,7 +186,7 @@ export async function getRepoReadme(
     return null;
   }
 
-  return { source: await res.text(), base };
+  return { source: await res.text(), base, path: payload.path ?? 'README.md' };
 }
 
 /**
@@ -194,6 +200,128 @@ export const getRepo = (user: string, repo: string) =>
   ghFetch<Repo>(
     `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}`
   );
+
+/** contents API 的条目（文件夹返回数组，文件返回对象） */
+interface ContentsPayload {
+  type?: string;
+  name?: string;
+  path?: string;
+  size?: number;
+  content?: string;
+  encoding?: string;
+  download_url?: string | null;
+  html_url?: string | null;
+}
+
+export type RepoEntryType = 'file' | 'dir' | 'symlink' | 'submodule';
+
+export interface RepoDirEntry {
+  name: string;
+  path: string;
+  type: RepoEntryType;
+  size: number;
+  htmlUrl: string;
+}
+
+export interface RepoDirectory {
+  kind: 'dir';
+  path: string;
+  htmlUrl: string;
+  entries: RepoDirEntry[];
+}
+
+export interface RepoFile {
+  kind: 'file';
+  name: string;
+  path: string;
+  size: number;
+  htmlUrl: string;
+  downloadUrl?: string;
+  /** 解码后的文本；二进制、过大或拉取失败时为 undefined */
+  source?: string;
+}
+
+export type RepoPathData = RepoDirectory | RepoFile;
+
+const encodeRepoPath = (path: string) =>
+  path
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+const normalizeEntryType = (type?: string): RepoEntryType =>
+  type === 'dir' || type === 'symlink' || type === 'submodule' ? type : 'file';
+
+const githubPathUrl = (kind: 'blob' | 'tree', user: string, repo: string, path: string) =>
+  `https://github.com/${user}/${repo}/${kind}/HEAD/${encodeRepoPath(path)}`;
+
+/**
+ * 读取仓库内任意路径。
+ *
+ * 目录返回条目数组，文件返回解码后的文本。超过 1MB 的内容 GitHub 不在
+ * JSON 里返回，这里也不退回 CDN——直接让文件页跳去 GitHub，避免为了
+ * 一个没人看的二进制文件把 Worker 内存打满。
+ */
+export async function getRepoPath(
+  user: string,
+  repo: string,
+  path: string
+): Promise<RepoPathData | null> {
+  let payload: ContentsPayload | ContentsPayload[];
+
+  try {
+    payload = await ghFetch<ContentsPayload | ContentsPayload[]>(
+      `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}/contents/${encodeRepoPath(path)}`,
+      { ttl: 600 }
+    );
+  } catch (error) {
+    if (error instanceof GitHubError && error.status === 404) return null;
+    throw error;
+  }
+
+  if (Array.isArray(payload)) {
+    return {
+      kind: 'dir',
+      path,
+      htmlUrl: githubPathUrl('tree', user, repo, path),
+      entries: payload.map((entry) => {
+        const type = normalizeEntryType(entry.type);
+        const entryPath = entry.path ?? entry.name ?? '';
+
+        return {
+          name: entry.name ?? entryPath.split('/').pop() ?? entryPath,
+          path: entryPath,
+          type,
+          size: entry.size ?? 0,
+          htmlUrl:
+            entry.html_url ??
+            githubPathUrl(type === 'dir' ? 'tree' : 'blob', user, repo, entryPath),
+        };
+      }),
+    };
+  }
+
+  const filePath = payload.path ?? path;
+  const size = payload.size ?? 0;
+
+  let source: string | undefined;
+  if (payload.encoding === 'base64' && typeof payload.content === 'string') {
+    source = decodeBase64(payload.content);
+  } else if (size === 0) {
+    source = '';
+  }
+
+  return {
+    kind: 'file',
+    name: payload.name ?? filePath.split('/').pop() ?? filePath,
+    path: filePath,
+    size,
+    htmlUrl: payload.html_url ?? githubPathUrl('blob', user, repo, filePath),
+    downloadUrl: payload.download_url ?? undefined,
+    source,
+  };
+}
 
 /**
  * 用户 fork 的默认分支。配置要从默认分支读，而不是死磕 main。

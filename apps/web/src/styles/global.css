@@ -630,6 +630,60 @@ img {
   color: var(--accent);
 }
 
+/* ---------- 仓库文件页 ---------- */
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 0.85em;
+  color: var(--fg-muted);
+  overflow-wrap: anywhere;
+}
+
+.breadcrumb a {
+  color: inherit;
+}
+
+.breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.file-list__item a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  color: var(--fg);
+}
+
+.file-list__item a:hover {
+  background: var(--bg-subtle);
+  color: var(--accent);
+}
+
+.file-list__item--dir .file-list__name {
+  font-weight: 600;
+}
+
+.file-list__size {
+  margin-left: auto;
+  color: var(--fg-muted);
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
 /* ---------- 资料卡元信息 ---------- */
 
 .profile-meta {

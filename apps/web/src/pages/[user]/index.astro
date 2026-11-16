@@ -109,7 +109,10 @@ const display = data?.userinfo.name || data?.userinfo.login || user;
 
 const readmeHtml = data
   ? data.readme
-    ? await renderMarkdown(data.readme.source, { base: data.readme.base })
+    ? await renderMarkdown(data.readme.source, {
+        base: data.readme.base,
+        repo: { login: data.userinfo.login, repo: data.userinfo.login, path: data.readme.path },
+      })
     : await renderMarkdown(
         buildDefaultReadme({
           user: data.userinfo.login,

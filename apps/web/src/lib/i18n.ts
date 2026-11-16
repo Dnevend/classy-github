@@ -172,6 +172,10 @@ const messages = {
     'card.open': 'Open',
     'repo.noReadme': 'This repository has no README.',
     'repo.open': 'Open on GitHub',
+    'repo.files': 'Files',
+    'repo.dirEmpty': 'This directory is empty.',
+    'repo.noPreview': 'This file cannot be previewed here.',
+    'meta.notFoundFile': 'File not found · ClassyGit',
 
     'gist.files': '{count} files',
     'gist.created': 'Created {date}',
@@ -365,6 +369,10 @@ const messages = {
     'card.open': '打开',
     'repo.noReadme': '这个仓库没有 README。',
     'repo.open': '在 GitHub 打开',
+    'repo.files': '文件列表',
+    'repo.dirEmpty': '这个目录是空的。',
+    'repo.noPreview': '这个文件无法在站内预览。',
+    'meta.notFoundFile': '找不到这个文件 · ClassyGit',
 
     'gist.files': '{count} 个文件',
     'gist.created': '创建于 {date}',

@@ -1,12 +1,12 @@
 ---
 import type { ThemeMarkdownProps } from '../types';
 
-const { html } = Astro.props as ThemeMarkdownProps;
+const { html, title = 'README.md' } = Astro.props as ThemeMarkdownProps;
 ---
 
 <div class="window w95-readme">
   <div class="title-bar">
-    <div class="title-bar-text">README.md</div>
+    <div class="title-bar-text">{title}</div>
     <div class="title-bar-controls">
       <button aria-label="Minimize"></button>
       <button aria-label="Maximize"></button>

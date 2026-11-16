@@ -30,8 +30,27 @@ const source = [
   '[正常链接](https://github.com/Dnevend/classy-github)',
 ].join('\n');
 
+// 仓库文件页：README 里的相对链接要按文件在仓库中的位置解析
+const repoSource = [
+  '[同级文件](issue-419.md)',
+  '[带锚点](issue-419.md#section)',
+  '[上一级](../README.md)',
+  '[根相对](/docs/issue-419.md)',
+  '[图片资源](../images/logo.png)',
+  '![根相对图片](/assets/root.png)',
+  '![同目录图片](images/rel.png)',
+  '[逃出仓库](../../outside.md)',
+  '[锚点](#top)',
+  '[外链](https://example.com/x)',
+  '[危险](javascript:alert(4))',
+].join('\n\n');
+
 const base = 'https://raw.githubusercontent.com/someone/someone/main/';
 const html = await renderMarkdown(source, { base });
+const repoHtml = await renderMarkdown(repoSource, {
+  base: 'https://raw.githubusercontent.com/someone/weekly/main/docs/',
+  repo: { login: 'someone', repo: 'weekly', path: 'docs/README.md' },
+});
 const commentHtml = await renderMarkdown(
   '**签名** [主页](https://example.com)\n\n![tracking](https://evil.example/pixel.png)',
   { allowImages: false }
@@ -56,7 +75,30 @@ const checks: Record<string, boolean> = {
   // 留言簿模式：保留文字/链接，剥掉图片（防追踪像素）
   commentKeepsText: /<strong>/.test(commentHtml) && /<a /.test(commentHtml),
   commentStripsImages: !/<img/i.test(commentHtml),
+  // 仓库内相对链接：Markdown / 目录留在站内，静态资源走 raw
+  repoRelative:
+    repoHtml.includes('href="/someone/repo/weekly/docs/issue-419.md"'),
+  repoAnchor:
+    repoHtml.includes('href="/someone/repo/weekly/docs/issue-419.md#section"'),
+  repoParent: repoHtml.includes('href="/someone/repo/weekly/README.md"'),
+  repoRootRelative:
+    repoHtml.includes('href="/someone/repo/weekly/docs/issue-419.md"'),
+  repoAsset:
+    repoHtml.includes(
+      'href="https://raw.githubusercontent.com/someone/weekly/HEAD/images/logo.png"'
+    ),
+  repoRootImage:
+    repoHtml.includes(
+      'src="https://raw.githubusercontent.com/someone/weekly/HEAD/assets/root.png"'
+    ),
+  repoRelativeImage: repoHtml.includes(
+    'src="https://raw.githubusercontent.com/someone/weekly/main/docs/images/rel.png"'
+  ),
+  repoEscapeUntouched: repoHtml.includes('href="../../outside.md"'),
+  repoAnchorUntouched: repoHtml.includes('href="#top"'),
+  repoStripsJavascript: !/javascript:/i.test(repoHtml),
 };
+
 
 const failed = Object.entries(checks)
   .filter(([, ok]) => !ok)

@@ -121,7 +121,7 @@ const readingMinutes = data
         {data.rendered.map((file) => (
           <>
             {data.rendered.length > 1 && <h2 class="section__title">{file.filename}</h2>}
-            <Markdown html={file.html} />
+            <Markdown html={file.html} title={file.filename} />
           </>
         ))}
       </>

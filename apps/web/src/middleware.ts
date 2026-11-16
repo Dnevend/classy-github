@@ -24,12 +24,13 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
   [/^\/[^/]+\/archive\/?$/, 300],
   [/^\/[^/]+\/guestbook\/?$/, 300],
   [/^\/[^/]+\/(?:repos|gists)\/?$/, 300],
+  [/^\/[^/]+\/repo\/[^/]+\/.+$/, 300],
   [/^\/[^/]+\/repo\/[^/]+\/?$/, 300],
   [/^\/[^/]+\/?$/, 300],
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '24';
+const CACHE_VERSION = '25';
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];

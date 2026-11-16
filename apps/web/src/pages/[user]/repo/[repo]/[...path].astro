@@ -1,0 +1,269 @@
+---
+import { siteOrigin } from "../../../../lib/site";
+import NotFound from '../../../../components/NotFound.astro';
+import ServiceError from '../../../../components/ServiceError.astro';
+import { getRepoPath } from '../../../../lib/github';
+import { renderMarkdown } from '../../../../lib/markdown';
+import { safeLoad } from '../../../../lib/errors';
+import { DEFAULT_CONFIG } from '../../../../lib/config';
+import { loadConfig } from '../../../../lib/config-loader';
+import { createTranslator, localeFromConfig } from '../../../../lib/i18n';
+import { resolveTheme } from '../../../../themes';
+
+export const prerender = false;
+
+const user = Astro.params.user as string;
+const repoName = Astro.params.repo as string;
+const filePath = (Astro.params.path ?? '').replace(/^\/+|\/+$/g, '');
+const origin = siteOrigin(Astro.url);
+
+// 空的 rest 参数等价于仓库首页
+if (!filePath) {
+  return Astro.redirect(`/${user}/repo/${repoName}`, 302);
+}
+
+const segments = filePath.split('/').filter(Boolean);
+const invalidPath = segments.some(
+  (segment) => segment === '.' || segment === '..' || segment.includes('\0')
+);
+
+const { data, error } = await safeLoad(async () => {
+  if (invalidPath) return null;
+  return getRepoPath(user, repoName, filePath);
+});
+
+if (error === 'not-found' || (!error && !data)) {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', 'no-store');
+} else if (error) {
+  Astro.response.status = error === 'rate-limit' ? 503 : 500;
+  Astro.response.headers.set('cache-control', 'no-store');
+}
+
+const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+
+if (Astro.locals.localeChoice === 'auto') {
+  Astro.locals.locale = localeFromConfig(config.language);
+}
+
+const t = createTranslator(Astro.locals.locale);
+
+const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
+const { Layout, Markdown } = components;
+
+const encodePath = (value: string) =>
+  value
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+const rawBase = `https://raw.githubusercontent.com/${user}/${repoName}/HEAD/`;
+
+const file = data?.kind === 'file' ? data : null;
+const isImage = /\.(?:avif|bmp|gif|ico|jpe?g|png|svg|webp)$/i.test(filePath);
+const isMarkdown = /\.(?:md|markdown)$/i.test(filePath);
+const isBinary =
+  !isImage &&
+  /\.(?:7z|avi|bin|bz2|class|db|dmg|docx?|eot|exe|flac|gz|jar|mov|mp3|mp4|ogg|otf|pdf|rar|so|tar|tgz|ttf|wav|webm|woff2?|xlsx?|zip)$/i.test(
+    filePath
+  );
+
+const looksText = Boolean(
+  !isBinary && file?.source !== undefined && !file.source.includes('\0')
+);
+const previewable = Boolean(isImage || (file && looksText));
+
+// 二进制 / 超过 1MB 的文件不站内渲染，直接去 GitHub
+if (file && !previewable) {
+  return Astro.redirect(file.htmlUrl, 302);
+}
+
+const rawUrl = file?.downloadUrl ?? `${rawBase}${encodePath(filePath)}`;
+
+const LANGUAGE_BY_EXT: Record<string, string> = {
+  bash: 'bash',
+  cjs: 'javascript',
+  css: 'css',
+  diff: 'diff',
+  go: 'go',
+  htm: 'html',
+  html: 'html',
+  java: 'java',
+  js: 'javascript',
+  json: 'json',
+  jsonc: 'jsonc',
+  jsx: 'jsx',
+  less: 'css',
+  mjs: 'javascript',
+  patch: 'diff',
+  py: 'python',
+  rs: 'rust',
+  scss: 'css',
+  sh: 'shellscript',
+  sql: 'sql',
+  toml: 'toml',
+  ts: 'typescript',
+  tsx: 'tsx',
+  vue: 'vue',
+  yaml: 'yaml',
+  yml: 'yaml',
+  zsh: 'shellscript',
+};
+
+const languageFor = (path: string) => {
+  const name = path.split('/').pop() ?? path;
+  if (/^dockerfile$/i.test(name)) return 'docker';
+  const ext = name.includes('.') ? name.split('.').pop()!.toLowerCase() : '';
+  return LANGUAGE_BY_EXT[ext] ?? 'text';
+};
+
+const longestBacktickRun = (source: string) => {
+  let longest = 0;
+  for (const match of source.matchAll(/`+/g)) {
+    longest = Math.max(longest, match[0].length);
+  }
+  return longest;
+};
+
+const escapeAttr = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;');
+
+let bodyHtml: string | null = null;
+
+if (file) {
+  if (isImage) {
+    bodyHtml = await renderMarkdown(
+      `<p><img src="${escapeAttr(rawUrl)}" alt="${escapeAttr(file.name)}"></p>`,
+      { highlight: false }
+    );
+  } else if (file.source !== undefined) {
+    if (isMarkdown) {
+      bodyHtml = await renderMarkdown(file.source, {
+        base: file.downloadUrl
+          ? file.downloadUrl.slice(0, file.downloadUrl.lastIndexOf('/') + 1)
+          : rawBase,
+        repo: { login: user, repo: repoName, path: file.path },
+      });
+    } else {
+      const fence = '`'.repeat(Math.max(4, longestBacktickRun(file.source) + 1));
+      bodyHtml = await renderMarkdown(
+        `${fence}${languageFor(file.path)}\n${file.source}\n${fence}`
+      );
+    }
+  }
+}
+
+const formatBytes = (bytes: number): string => {
+  if (!bytes) return '0 B';
+
+  const units = ['B', 'KB', 'MB', 'GB'];
+  const index = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+  const value = bytes / 1024 ** index;
+
+  return `${index === 0 ? value : value.toFixed(value >= 10 ? 0 : 1)} ${units[index]}`;
+};
+
+const title = data?.kind === 'dir' ? t('repo.files') : (file?.name ?? filePath);
+---
+
+<Layout
+  {user}
+  userinfo={null}
+  {config}
+  theme={themeName}
+  brand={user}
+  seo={{
+    title: data ? `${title} · ${repoName} · ${user} · ClassyGit` : t('meta.notFoundFile'),
+    canonical: `${origin}/${user}/repo/${repoName}/${encodePath(filePath)}`,
+    image: `${origin}/og/${encodeURIComponent(user)}.png?theme=${themeName}&v=2`,
+    robots: 'noindex, follow',
+  }}
+>
+  {
+    error && error !== 'not-found' ? (
+      <ServiceError kind={error} />
+    ) : !data ? (
+      <NotFound user={`${user}/${repoName}/${filePath}`} />
+    ) : (
+      <>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href={`/${user}/repos`}>{user}</a>
+          <span aria-hidden="true">/</span>
+          <a href={`/${user}/repo/${repoName}`}>{repoName}</a>
+          {segments.map((segment, index) => {
+            const isLast = index === segments.length - 1;
+            const href = `/${user}/repo/${repoName}/${encodePath(
+              segments.slice(0, index + 1).join('/')
+            )}`;
+
+            return (
+              <>
+                <span aria-hidden="true">/</span>
+                {isLast ? <span>{segment}</span> : <a href={href}>{segment}</a>}
+              </>
+            );
+          })}
+        </nav>
+
+        <header class="repo-detail">
+          <h1 class="page-title">{title}</h1>
+          <div class="repo-card__meta">
+            {data.kind === 'file' ? (
+              <>
+                <span>{formatBytes(data.size)}</span>
+                <a href={data.htmlUrl} target="_blank" rel="noopener noreferrer">
+                  {t('repo.open')} ↗
+                </a>
+              </>
+            ) : (
+              <a href={data.htmlUrl} target="_blank" rel="noopener noreferrer">
+                {t('repo.open')} ↗
+              </a>
+            )}
+          </div>
+        </header>
+
+        {data.kind === 'dir' ? (
+          data.entries.length ? (
+            <ul class="file-list">
+              {data.entries.map((entry) => {
+                const internal = entry.type === 'dir' || entry.type === 'file';
+                const href = internal
+                  ? `/${user}/repo/${repoName}/${encodePath(entry.path)}`
+                  : entry.htmlUrl;
+
+                return (
+                  <li class={`file-list__item file-list__item--${entry.type}`}>
+                    <a
+                      href={href}
+                      target={internal ? undefined : '_blank'}
+                      rel={internal ? undefined : 'noopener noreferrer'}
+                    >
+                      <span class="file-list__name">
+                        {entry.name}
+                        {entry.type === 'dir' ? '/' : ''}
+                      </span>
+                      {entry.type !== 'dir' && (
+                        <span class="file-list__size">{formatBytes(entry.size)}</span>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p class="bio">{t('repo.dirEmpty')}</p>
+          )
+        ) : bodyHtml !== null ? (
+          <Markdown html={bodyHtml} title={data.name} />
+        ) : (
+          <p class="bio">{t('repo.noPreview')}</p>
+        )}
+      </>
+    )
+  }
+</Layout>

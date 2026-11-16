@@ -480,6 +480,12 @@ OG 用 CSS background-image，WebP 封面自动回退无封面版本。
 `profile.cover` 默认仍为 null；无封面用户显示 CSS 生成的主题横幅。
 详见 `m33-default-cover.md`。
 
+### M34 · 仓库文件页与相对链接（已完成 2026-11-17）
+
+仓库 README 里的 `docs/issue-419.md` 等相对链接改写为站内文件页；
+新增目录列表、Markdown/代码/图片渲染，二进制跳 GitHub。
+详见 `m34-repo-file-pages.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

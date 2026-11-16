@@ -2,11 +2,11 @@
 import type { ThemeMarkdownProps } from '../types';
 
 // html 已由 lib/markdown.ts 处理过（sanitize + shiki）
-const { html } = Astro.props as ThemeMarkdownProps;
+const { html, title = 'README' } = Astro.props as ThemeMarkdownProps;
 ---
 
 <section class="nes-container with-title is-rounded is-dark nes-prose">
-  <p class="title">README</p>
+  <p class="title">{title}</p>
   <div class="nes-window__controls" aria-hidden="true">
     <span class="nes-control">−</span>
     <span class="nes-control">□</span>
