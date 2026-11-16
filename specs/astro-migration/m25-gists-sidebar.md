@@ -80,4 +80,10 @@
 - `/setup`：显示仓库/Gists 开关与数量；JSON 含 `profile.gists`。
 - 首页搜索框与 hero-links 间距 26px。
 - `?theme=default` 落到 `mac`，不再加载 default 主题代码。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `ba621419-9de7-45a8-89b6-e0803159dbb3`）：
+  - 四主题右栏顺序均为 资料卡 → Now → Contribution → Recent gists；
+  - 每主题 6 条 Gist，卡片样式与同主题其他卡片一致；
+  - `/github` 无公开 Gist，Recent gists 整块不渲染；
+  - `/setup` 的 5 个复选框全部可见，`profile.gists` 正确输出；
+  - `?theme=default` 实际渲染 `data-theme="mac"`。
+- CI run `43917702433` 通过。
