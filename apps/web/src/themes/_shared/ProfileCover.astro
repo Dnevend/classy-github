@@ -1,0 +1,11 @@
+---
+interface Props {
+  cover?: string | null;
+}
+
+const { cover } = Astro.props as Props;
+---
+
+<div class:list={['profile-cover', { 'profile-cover--default': !cover }]}>
+  {cover && <img src={cover} alt="" loading="lazy" />}
+</div>

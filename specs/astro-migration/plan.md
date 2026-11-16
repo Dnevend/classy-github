@@ -475,6 +475,11 @@ NES / TUI 头像封面重叠从 34px 调整为 12px，姓名块完整落在封�
 OG 用 CSS background-image，WebP 封面自动回退无封面版本。
 详见 `m32-share-og-cover.md`。
 
+### M33 · 主题化默认 Cover（已完成 2026-11-17）
+
+`profile.cover` 默认仍为 null；无封面用户显示 CSS 生成的主题横幅。
+详见 `m33-default-cover.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

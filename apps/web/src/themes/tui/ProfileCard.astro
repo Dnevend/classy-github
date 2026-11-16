@@ -2,6 +2,7 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
+import ProfileCover from '../_shared/ProfileCover.astro';
 
 const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -21,14 +22,10 @@ const stats = [
       <span class="tui-controls" aria-hidden="true">[?]</span>
     </div>
 
-    {config.profile.cover && (
-      <div class="profile-cover">
-        <img src={config.profile.cover} alt="" loading="lazy" />
-      </div>
-    )}
+    <ProfileCover cover={config.profile.cover} />
 
     <div class="tui-box__body">
-      <div class:list={['tui-profile', { 'has-cover': !!config.profile.cover }]}>
+      <div class:list={['tui-profile', 'has-cover']}>
         <img
           class="tui-avatar"
           src={userinfo.avatar_url}

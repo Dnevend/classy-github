@@ -2,6 +2,7 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
+import ProfileCover from '../_shared/ProfileCover.astro';
 
 const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -23,14 +24,10 @@ const stats = [
       </span>
     </div>
 
-    {config.profile.cover && (
-      <div class="profile-cover">
-        <img src={config.profile.cover} alt="" loading="lazy" />
-      </div>
-    )}
+    <ProfileCover cover={config.profile.cover} />
 
     <div class="mac-body">
-      <div class:list={['mac-profile', { 'has-cover': !!config.profile.cover }]}>
+      <div class:list={['mac-profile', 'has-cover']}>
         <img
           class="mac-avatar"
           src={userinfo.avatar_url}

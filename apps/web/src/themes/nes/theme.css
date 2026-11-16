@@ -204,6 +204,16 @@
   border-bottom: 4px solid #fff;
 }
 
+[data-theme='nes'] .profile-cover--default {
+  background-color: #2b3035;
+  background-image:
+    radial-gradient(circle at 72% 50%, #92cc41 0 16px, #92cc41 16px 18px, #3d6b2f 18px 22px, transparent 23px),
+    linear-gradient(90deg, rgba(146, 204, 65, 0.18) 1px, transparent 1px),
+    linear-gradient(rgba(146, 204, 65, 0.18) 1px, transparent 1px);
+  background-size: auto, 12px 12px, 12px 12px;
+  image-rendering: pixelated;
+}
+
 [data-theme='nes'] .nes-profile.has-cover {
   position: relative;
   align-items: flex-end;

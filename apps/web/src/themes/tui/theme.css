@@ -193,6 +193,26 @@
   border-bottom: 1px solid #a8a8a8;
 }
 
+[data-theme='tui'] .profile-cover--default {
+  background-color: #000080;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(168, 168, 168, 0.16) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(85, 255, 85, 0.1) 0 1px, transparent 1px 8px);
+  border-bottom-color: #55ff55;
+}
+
+[data-theme='tui'] .profile-cover--default::after {
+  content: "C:\\CLASSYGIT>";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  color: #55ff55;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-shadow: 1px 1px #000;
+}
+
 [data-theme='tui'] .tui-profile.has-cover {
   position: relative;
   align-items: flex-end;

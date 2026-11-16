@@ -2,6 +2,7 @@
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
+import ProfileCover from '../_shared/ProfileCover.astro';
 
 const { userinfo, config } = Astro.props as ThemeProfileCardProps;
 const t = createTranslator(Astro.locals.locale);
@@ -16,14 +17,10 @@ const t = createTranslator(Astro.locals.locale);
       </div>
     </div>
 
-    {config.profile.cover && (
-      <div class="profile-cover">
-        <img src={config.profile.cover} alt="" loading="lazy" />
-      </div>
-    )}
+    <ProfileCover cover={config.profile.cover} />
 
     <div class="window-body">
-      <div class:list={['w95-profile', { 'has-cover': !!config.profile.cover }]}>
+      <div class:list={['w95-profile', 'has-cover']}>
         <img
           class="w95-avatar"
           src={userinfo.avatar_url}
