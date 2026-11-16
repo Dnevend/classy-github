@@ -38,18 +38,35 @@ Win98 主题新增覆盖：
 
 ## 4. 修复 showCount
 
-之前主页固定只拉 30 个仓库再 `slice(0, showCount)`，所以 `showCount`
-设到 30 以上没有效果。现在：
+根因不是 `showCount` 没接，而是 `profile` 整段被丢弃：
+
+- `profile.cover` 和 `profile.cardUrl` 的 zod schema 只接受字符串；
+- 用户配置和 `/setup` 生成器都会写 `"cover": null` / `"cardUrl": null`；
+- 于是 `profile` 整段校验失败，回退默认值 `showCount: 6`；
+- 用户把 `showCount` 改成 4、把关注数开关关掉，都看起来「没有效果」。
+
+修复：
+
+```ts
+cover: z.string().refine(isHttpUrl, '…').nullable(),
+cardUrl: z.string().refine(isHttpUrl, '…').nullable(),
+```
+
+并补回归测试：`cover: null` / `cardUrl: null` 时 `profile` 仍解析，
+`showCount: 4` 必须保留。
+
+同时修正仓库拉取上限：之前固定只拉 30 个再 `slice(0, showCount)`，
+`showCount` 设到 30 以上无效。现在：
 
 ```ts
 const perPage = Math.min(100, Math.max(1, showCount));
 listRepos(user, { perPage });
 ```
 
-`showCount` 在 0–100 范围内都能真实控制主页「最近更新」的卡片数量；
-配置与页面 HTML 各有 5 分钟边缘缓存，改完后最坏约 10 分钟生效。
+配置与页面 HTML 各有 5 分钟边缘缓存，普通用户页改完后最坏约 10 分钟生效；
+`/setup` 和 `preview=1` 现在跳过配置 / HTML 缓存，保存后刷新即可看到新值。
 
-`classy.config.json` 里自己的 `showCount` 仍是 `6`。
+`classy.config.json` 当前 `showCount` 为 `4`。
 
 ## 5. cardUrl
 

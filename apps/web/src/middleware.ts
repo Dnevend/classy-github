@@ -79,6 +79,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
+  // 预览必须反映刚保存的配置，不能命中 5 分钟的 HTML 缓存
+  if (isPreview) {
+    const response = await next();
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+
   const ttl =
     context.request.method === 'GET' && !SKIP_CACHE.test(url.pathname)
       ? ttlFor(url.pathname)

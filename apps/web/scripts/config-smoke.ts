@@ -41,6 +41,22 @@ const cases: Case[] = [
     },
   },
   {
+    name: 'cover / cardUrl 为 null 时 profile 不被整段丢弃',
+    run: () => {
+      const { config, issues } = parseConfig({
+        profile: {
+          cover: null,
+          cardUrl: null,
+          repos: { visible: true, showCount: 4 },
+        },
+      });
+      assert.equal(config.profile.repos.showCount, 4);
+      assert.equal(config.profile.cover, null);
+      assert.equal(config.profile.cardUrl, null);
+      assert.deepEqual(issues, []);
+    },
+  },
+  {
     name: 'owner：合法值透传，非法值忽略',
     run: () => {
       assert.equal(parseConfig({ owner: 'demo' }).config.owner, 'demo');

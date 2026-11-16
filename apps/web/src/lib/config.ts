@@ -110,8 +110,8 @@ const reposSchema = z
 
 const profileSchema = z
   .object({
-    cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL'),
-    cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL'),
+    cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL').nullable(),
+    cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL').nullable(),
     repos: reposSchema,
   })
   .partial();

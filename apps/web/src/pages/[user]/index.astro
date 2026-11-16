@@ -25,7 +25,9 @@ const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
 // 配置和用户信息并行加载；配置用来决定一次拉多少个仓库（showCount）
-const configStatePromise = loadConfigState(user);
+// 预览页不走缓存，保证刚保存的 classy.config.json 立刻可见
+const isPreview = Astro.url.searchParams.get('preview') === '1';
+const configStatePromise = loadConfigState(user, { fresh: isPreview });
 
 const { data, error } = await safeLoad(async () => {
   const [userinfo, configState] = await Promise.all([

@@ -23,16 +23,19 @@ interface ConfigPayload {
 
 const fetchJsonWithCache = async (
   url: string,
-  ttl = CONFIG_TTL
+  ttl = CONFIG_TTL,
+  fresh = false
 ): Promise<ConfigPayload> => {
   const key = new Request(url, { method: 'GET' });
 
-  const cached = await cacheGet(key, ttl);
-  if (cached) {
-    try {
-      return { status: 'found', value: await cached.json() };
-    } catch {
-      return { status: 'found', value: null };
+  if (!fresh) {
+    const cached = await cacheGet(key, ttl);
+    if (cached) {
+      try {
+        return { status: 'found', value: await cached.json() };
+      } catch {
+        return { status: 'found', value: null };
+      }
     }
   }
 
@@ -76,7 +79,15 @@ export interface ConfigState {
  * - 文件存在但 JSON 坏了 → 仍算已认领，避免反复骚扰；
  * - 读取失败 → reliable=false，不清理注册表、不显示 claim。
  */
-export const loadConfigState = async (user: string): Promise<ConfigState> => {
+export interface ConfigLoadOptions {
+  /** 配置生成器 / 预览用：跳过配置边缘缓存，直接读 GitHub */
+  fresh?: boolean;
+}
+
+export const loadConfigState = async (
+  user: string,
+  options: ConfigLoadOptions = {}
+): Promise<ConfigState> => {
   let hadError = false;
 
   // fork 的默认分支可能是 main / master / v2 / 任意名字，
@@ -94,9 +105,11 @@ export const loadConfigState = async (user: string): Promise<ConfigState> => {
   for (const branch of branches) {
     const url = `https://raw.githubusercontent.com/${user}/${CONFIG_REPO}/${branch}/${CONFIG_FILE}`;
 
-    const payload = await fetchJsonWithCache(url).catch(
-      (): ConfigPayload => ({ status: 'error', value: null })
-    );
+    const payload = await fetchJsonWithCache(
+      url,
+      CONFIG_TTL,
+      options.fresh ?? false
+    ).catch((): ConfigPayload => ({ status: 'error', value: null }));
 
     if (payload.status === 'missing') continue;
     if (payload.status === 'error') {

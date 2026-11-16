@@ -51,7 +51,7 @@ if (error) {
 }
 
 const configState = userinfo
-  ? await loadConfigState(user)
+  ? await loadConfigState(user, { fresh: true })
   : {
       config: DEFAULT_CONFIG,
       configured: false,
