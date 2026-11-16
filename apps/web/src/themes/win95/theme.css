@@ -678,3 +678,13 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+
+/* 分享图：保存成图片时带 Win98 立体边框 */
+[data-theme='win98'] .share-card__preview {
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  box-shadow:
+    inset 1px 1px #dfdfdf,
+    inset -1px -1px #808080;
+}

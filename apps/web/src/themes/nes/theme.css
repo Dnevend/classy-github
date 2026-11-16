@@ -588,3 +588,9 @@
   font-size: 8px;
   line-height: 1;
 }
+
+/* 分享图：保存成图片时带像素白边 */
+[data-theme='nes'] .share-card__preview {
+  border: 4px solid #fff;
+  border-radius: 0;
+}

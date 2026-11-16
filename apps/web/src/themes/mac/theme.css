@@ -645,3 +645,9 @@
 [data-theme='mac'] .now-card__external {
   border-radius: 0;
 }
+
+/* 分享图：保存成图片时带 System 6 边框 */
+[data-theme='mac'] .share-card__preview {
+  border: 3px solid #000;
+  border-radius: 0;
+}

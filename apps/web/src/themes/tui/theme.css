@@ -544,8 +544,9 @@
 
 [data-theme='tui'] .share-card__preview {
   background: #000080;
-  border-color: #a8a8a8;
+  border: 2px solid #a8a8a8;
   border-radius: 0;
+  box-shadow: 4px 4px #000;
 }
 
 /* 右侧资料卡不要被拉到整列高度 */
