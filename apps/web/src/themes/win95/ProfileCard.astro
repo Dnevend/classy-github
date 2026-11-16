@@ -44,10 +44,10 @@ const t = createTranslator(Astro.locals.locale);
       <fieldset class="w95-stats">
         <legend>stats</legend>
         <ul>
-          <li>{userinfo.followers} {t('profile.followers')}</li>
-          <li>{userinfo.following} {t('profile.following')}</li>
-          <li>{userinfo.public_repos} {t('profile.reposTitle')}</li>
-          <li>{userinfo.public_gists} {t('profile.gistsTitle')}</li>
+          <li><b>{userinfo.followers}</b> <span>{t('profile.followers')}</span></li>
+          <li><b>{userinfo.following}</b> <span>{t('profile.following')}</span></li>
+          <li><b>{userinfo.public_repos}</b> <span>{t('profile.reposTitle')}</span></li>
+          <li><b>{userinfo.public_gists}</b> <span>{t('profile.gistsTitle')}</span></li>
         </ul>
       </fieldset>
     </div>

@@ -195,6 +195,7 @@
 
 [data-theme='tui'] .tui-profile.has-cover {
   position: relative;
+  align-items: flex-end;
   margin-top: -34px;
 }
 
@@ -224,7 +225,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2px;
-  margin: 0 0 12px;
+  margin: 14px 0 12px;
   padding: 0;
   list-style: none;
   border: 2px solid #fff;

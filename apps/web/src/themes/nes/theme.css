@@ -206,6 +206,7 @@
 
 [data-theme='nes'] .nes-profile.has-cover {
   position: relative;
+  align-items: flex-end;
   margin-top: -34px;
 }
 
@@ -235,16 +236,28 @@
 
 .nes-stats {
   list-style: none;
-  margin: 0 0 14px;
+  margin: 14px 0 14px;
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px 10px;
+  gap: 6px;
   font-size: 9px;
   color: var(--fg-muted);
 }
 
+.nes-stats li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid #495057;
+  background: #212529;
+}
+
 .nes-stats span {
+  font-size: 14px;
+  line-height: 1;
   color: var(--accent);
 }
 

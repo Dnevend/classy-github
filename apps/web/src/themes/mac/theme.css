@@ -301,6 +301,7 @@
 
 [data-theme='mac'] .mac-profile.has-cover {
   position: relative;
+  align-items: flex-end;
   margin-top: -34px;
 }
 
@@ -331,7 +332,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px;
-  margin-bottom: 12px;
+  margin: 14px 0 12px;
   border: 1px solid #000;
   background: #000;
 }

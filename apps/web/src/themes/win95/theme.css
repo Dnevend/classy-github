@@ -227,6 +227,7 @@
 
 [data-theme='win98'] .w95-profile.has-cover {
   position: relative;
+  align-items: flex-end;
   margin-top: -34px;
 }
 
@@ -254,15 +255,36 @@
 }
 
 .w95-stats {
-  margin: 0 0 10px;
-  padding: 8px 10px;
+  margin: 14px 0 10px;
+  padding: 6px 10px 8px;
   border: 2px groove #fff;
   background: var(--w95-gray);
 }
 
+.w95-stats legend {
+  padding: 0 4px;
+  font-size: 11px;
+}
+
 .w95-stats ul {
+  list-style: none;
   margin: 0;
-  padding-left: 16px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 14px;
+}
+
+.w95-stats li {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.w95-stats b {
+  color: var(--w95-navy);
+  font-size: 13px;
 }
 
 /* ---------- Gist 列表 ---------- */
