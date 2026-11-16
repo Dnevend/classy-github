@@ -90,4 +90,10 @@ listRepos(user, { perPage });
 - Win98 `/setup`：Theme / Language 下拉显示当前值；三个复选框可见、可勾选。
 - 首页不再出现 `Fork this repo to customize`。
 - 四主题资料卡仍显示 followers / following。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `fcc3bfeb-0876-4300-a29d-7bf3f64d8d24`）：
+  - 首页不再出现 `Fork this repo to customize`；
+  - Win98 `/setup` 下拉框显示 `mac` / `en`，3 个复选框可见可勾选；
+  - `/setup` 读到 `showCount: 4`，生成的 JSON 不含 showFollowers/showFollowing；
+  - 四主题主页均渲染 4 张仓库卡，资料卡仍显示 followers / following；
+  - `preview=1` 返回 `cache-control: no-store`，保存配置后刷新即可看到新值。
+- CI run `43912175196`、`43913239578`、`43913405705` 均通过。

@@ -427,8 +427,8 @@ GitHub 拿不到总页数，文案改为只显示 `Page {page}` / `第 {page} �
 ### M24 · 首页入口 / Win98 表单 / 配置精简（已完成 2026-11-17）
 
 移除首页 Fork 入口；修复 Win98 配置生成器下拉框和复选框；
-删除 showFollowers/showFollowing；showCount 改为按需拉取，0–100 全部生效。
-详见 `m24-config-ui.md`。
+删除 showFollowers/showFollowing；修复 cover/cardUrl 为 null 导致 profile
+整段失效，showCount 现在真实生效。详见 `m24-config-ui.md`。
 
 ## 9. 分支与部署策略
 
