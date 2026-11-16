@@ -20,4 +20,7 @@ GitHub 的 `/users/{user}/repos` 不返回总数，只按 `per_page` 返回当�
 - `/Dnevend/repos?page=2` 显示 `Page 2` / `第 2 页`，没有 `/ 总数`。
 - 上一页 / 下一页仍按 `hasNext` 正常显示。
 - `pnpm check` / `pnpm build` / `pnpm test`。
-- 生产部署与 CI 待补。
+- 生产部署（Worker version `39cf4514-3610-415d-9ebe-3727a5b18877`）：
+  `/Dnevend/repos?page=2&lang=en` → `Page 2`；
+  `?lang=zh` → `第 2 页`；均无 `/ 总数`。上一页/下一页链接正常。
+- CI run `43896407396` 通过。
