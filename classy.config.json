@@ -1,42 +1,66 @@
 {
-    "owner": "Dnevend",
-    "theme": "default",
-    "profile": {
-        "repos": {
-            "visible": true,
-            "showCount": 6
-        },
-        "cover": "https://picsum.photos/1024/576",
-        "showFollowers": true,
-        "showFollowing": true
-    },
-    "gists": {
-        "prefix": "classy",
-        "split": ".",
-        "default": null,
-        "type": [
-            {
-                "name": "blog"
-            },
-            {
-                "name": "code"
-            }
-        ]
-    },
-    "links": [
-        {
-            "title": "Github",
-            "href": "https://github.com/Dnevend/classy-github"
-        },
-        {
-            "title": "Config",
-            "href": "https://github.com/Dnevend/classy-github#自定义配置"
-        }
-    ],
-    "webring": {
-        "enabled": true
-    },
-    "discover": {
-        "enabled": true
+  "owner": "Dnevend",
+  "theme": "mac",
+  "language": "en",
+  "profile": {
+    "cover": "https://picsum.photos/1024/576",
+    "showFollowers": true,
+    "showFollowing": true,
+    "cardUrl": null,
+    "repos": {
+      "visible": true,
+      "showCount": 6
     }
+  },
+  "gists": {
+    "prefix": "classy",
+    "split": ".",
+    "default": null,
+    "type": [
+      {
+        "name": "blog"
+      },
+      {
+        "name": "code"
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "Github",
+      "href": "https://github.com/Dnevend/classy-github"
+    },
+    {
+      "title": "Config",
+      "href": "https://github.com/Dnevend/classy-github#自定义配置"
+    },
+    {
+      "title": "HomePage",
+      "href": "https://dnevend.site"
+    }
+  ],
+  "nav": {
+    "extra": []
+  },
+  "now": {
+    "books": [
+      "江湖边"
+    ],
+    "music": [
+      "秘密後院"
+    ],
+    "watching": []
+  },
+  "guestbook": {
+    "gistId": "e2e89074d0439b74222911fc6449fbb1"
+  },
+  "webring": {
+    "enabled": true
+  },
+  "discover": {
+    "enabled": true
+  },
+  "seo": {
+    "index": false
+  }
 }
