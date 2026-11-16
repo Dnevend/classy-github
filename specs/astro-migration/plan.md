@@ -377,17 +377,24 @@ Gist 描述支持 `#标签`，Gists 页按标签筛选，`/<user>/archive` 按�
 主题 iframe 预览，复制 + fork/edit 入口；修复 `/setup` 命中通用用户缓存的问题。
 详见 `m14-setup.md`。
 
+### M15 · classygit.pages.dev + 合并 main（已完成 2026-11-16）
+
+v2 快进合并 main；Pages 薄代理转发到 Workers；`SITE_ORIGIN` 统一
+canonical / OG / RSS / sitemap；开启 Dnevend 的 webring / discover。
+详见 `m15-domain.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |
 |---|---|---|
-| `main` | v1（Vite + React SPA） | Cloudflare Pages · `classy-github.pages.dev` · 冻结，不再接受重构提交 |
-| `v2` | v2（Astro）集成分支，M1–M5 全部提交进这里 | Cloudflare Workers · `classy-web.dnevend.workers.dev` |
+| `main` | v2（Astro）当前生产分支 | Workers · `classygit.pages.dev`（Pages 薄代理） |
+| `v2` | 集成分支，与 main 保持同步 | 同上；Worker 直连 `classy-web.dnevend.workers.dev` |
 
 一条命令发布：
 
 ```bash
 pnpm deploy:web        # = build:web + wrangler deploy --config dist/server/wrangler.json
+pnpm deploy:pages      # 更新 classygit.pages.dev 薄代理
 ```
 
 回滚（Workers 侧保留版本历史）：
