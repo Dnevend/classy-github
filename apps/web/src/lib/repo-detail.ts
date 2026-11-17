@@ -56,7 +56,7 @@ export async function loadRepoDetail(
       'RepoDetail',
       REPO_DETAIL_QUERY,
       { owner: user, name: repo },
-      { ttl: 600, fresh: options.fresh }
+      { ttl: 1800, fresh: options.fresh }
     );
   } catch (error) {
     console.warn(

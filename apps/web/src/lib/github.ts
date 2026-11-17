@@ -15,9 +15,9 @@ export type { RateLimitInfo } from './github-error.ts';
 
 const API_ORIGIN = 'https://api.github.com';
 
-const DEFAULT_TTL = 300;
+const DEFAULT_TTL = 1800;
 /** 明确 404 的负缓存：随机用户名扫描不应该每次都打 GitHub。 */
-const NEGATIVE_TTL = 300;
+const NEGATIVE_TTL = 1800;
 /** 限流 / 5xx 时最多拿多旧的缓存兜底。 */
 const STALE_TTL = 60 * 60 * 24;
 
@@ -200,19 +200,19 @@ export const listRepos = (
 export const listGists = (user: string, perPage = 100) =>
   ghFetch<Gist[]>(`/users/${encodeURIComponent(user)}/gists`, {
     query: { per_page: perPage },
-    ttl: 600,
+    ttl: 1800,
   });
 
 export const listFollowers = (user: string) =>
   ghFetch<Follower[]>(`/users/${encodeURIComponent(user)}/followers`, {
     query: { per_page: 100 },
-    ttl: 600,
+    ttl: 3600,
   });
 
 export const listFollowing = (user: string) =>
   ghFetch<Follower[]>(`/users/${encodeURIComponent(user)}/following`, {
     query: { per_page: 100 },
-    ttl: 600,
+    ttl: 3600,
   });
 
 export interface ReadmeSource {
@@ -256,7 +256,7 @@ export async function getRepoReadme(
   try {
     payload = await ghFetch<ReadmePayload>(
       `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}/readme`,
-      { ttl: 600 }
+      { ttl: 1800 }
     );
   } catch (error) {
     if (error instanceof GitHubError && error.status === 404) {
@@ -380,7 +380,7 @@ export async function getRepoPath(
   try {
     payload = await ghFetch<ContentsPayload | ContentsPayload[]>(
       `/repos/${encodeURIComponent(user)}/${encodeURIComponent(repo)}/contents/${encodeRepoPath(path)}`,
-      { ttl: 600 }
+      { ttl: 1800 }
     );
   } catch (error) {
     if (error instanceof GitHubError && error.status === 404) return null;
@@ -439,7 +439,7 @@ export const getDefaultBranch = async (user: string): Promise<string | null> => 
   try {
     const repo = await ghFetch<{ default_branch?: string }>(
       `/repos/${encodeURIComponent(user)}/classy-github`,
-      { ttl: 600 }
+      { ttl: 1800 }
     );
     return repo.default_branch ?? null;
   } catch (error) {
@@ -451,7 +451,7 @@ export const getDefaultBranch = async (user: string): Promise<string | null> => 
 };
 
 export const getGist = (gistId: string) =>
-  ghFetch<Gist>(`/gists/${encodeURIComponent(gistId)}`, { ttl: 600 });
+  ghFetch<Gist>(`/gists/${encodeURIComponent(gistId)}`, { ttl: 1800 });
 
 /**
  * Gist 评论：留言簿的数据源。

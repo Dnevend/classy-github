@@ -135,7 +135,7 @@ export async function loadRepoPath(
       'RepoPath',
       REPO_PATH_QUERY,
       { owner: user, name: repo, expression: `HEAD:${path}` },
-      { ttl: 600 }
+      { ttl: 1800 }
     );
 
     const object = data.repository?.object;

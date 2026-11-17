@@ -108,7 +108,7 @@ At runtime there are only two external dependencies: **GitHub provides content a
 - **Bilingual**: English / Chinese. Site owners set the default language; visitors can switch in the footer or with `?lang=zh`.
 - **Mobile**: all four themes were checked at 375px wide with no horizontal overflow; the main column collapses to a single column.
 - **Recent visits**: the landing page remembers profiles viewed on this device (localStorage, never uploaded).
-- **Edge cache**: profile pages for 5 minutes, articles for 1 hour, badges and OG images for 1 day. Cache keys include theme and language, so a NES page is never served to a mac visitor.
+- **Edge cache**: profile pages for 5 minutes, articles for 1 hour, badges and OG images for 1 day. Cache keys include theme and language, so a NES page is never served to a mac visitor. If upstream returns 5xx or hits a rate limit, the last cached HTML (up to 24 hours old) is served instead of an error page.
 - **Server-side rendering**: complete HTML in the first response, readable by crawlers and link previews.
 
 ### Security and privacy
@@ -379,7 +379,13 @@ Your content stays on GitHub; the site is only a renderer. There is no server to
 No. Fork + edit JSON, and it is live within 5 minutes. `pnpm build` / `wrangler deploy` are only for self-hosting or changing the code.
 
 **Will GitHub API rate limits break it?**
-The production instance uses a server-side GitHub token plus edge caching. Normal traffic will not hit the anonymous 60 requests/hour limit; in extreme cases the page asks you to try again later.
+The production instance uses a server-side GitHub token plus edge caching, and blocks AI crawlers at the Worker. If the quota is genuinely exhausted, it serves cached HTML (up to 24 hours old, marked `x-classy-stale`) instead of an error page.
+
+**How long do README / repository changes take?**
+Config changes (theme, links, Now) appear within 5 minutes. README, repository and Gist lists are cached for up to 30 minutes to survive launch traffic and crawlers. To verify a config change immediately, open `?preview=1` from this site.
+
+**Why do some repository file pages jump to GitHub?**
+File preview is limited to claimed sites. The file tree is an infinitely deep URL space, and opening it to every GitHub user turns it into a crawler entry point. Profile pages and repository READMEs are unaffected.
 
 **Can I use it as a blog?**
 Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an archive, reading time and an Atom feed.

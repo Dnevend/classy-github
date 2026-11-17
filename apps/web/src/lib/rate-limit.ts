@@ -2,7 +2,7 @@
  * Worker 入口的轻量限流规则。
  *
  * 只覆盖容易被刷、且会放大成本或上游配额的路径：
- * - `?preview=1` 绕过 HTML / GitHub 缓存
+ * - `?preview=1`、`/setup` 会跳过配置缓存或强制 fresh 读取
  * - `/random` 是公开的 302 入口
  * - `/api/*`、`/contrib/*` 会读写 KV / Durable Object 或打 GraphQL
  * - `/og/*`、`/card/*` 是昂贵的动态图片，`/badge/*` 是便宜的 SVG
@@ -16,6 +16,11 @@ export const rateLimitRuleFor = (url: URL): RateLimitRule | undefined => {
   if (url.searchParams.get('preview') === '1') return 'preview';
 
   const path = url.pathname;
+  // setup 会以 fresh=true 读 config，每次都是一次真实上游请求。
+  // claim 页只读用户资料，不进这个桶，避免和 setup / iframe 预览互相挤占。
+  if (path === '/setup' || path === '/setup/') {
+    return 'preview';
+  }
   if (path === '/random' || path === '/random/') return 'random';
   if (
     path.startsWith('/api/hit/') ||

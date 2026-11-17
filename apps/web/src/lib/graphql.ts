@@ -9,7 +9,7 @@ import {
 } from './github-rate-limit-marker.ts';
 
 const GRAPHQL_ENDPOINT = 'https://api.github.com/graphql';
-const DEFAULT_TTL = 300;
+const DEFAULT_TTL = 1800;
 /** GraphQL 失败时最多拿多旧的结果兜底。 */
 const STALE_TTL = 60 * 60 * 24;
 

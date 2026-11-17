@@ -15,12 +15,12 @@
     {
       "name": "PREVIEW_LIMITER",
       "namespace_id": "3101",
-      "simple": { "limit": 6, "period": 60 }
+      "simple": { "limit": 12, "period": 60 }
     },
     {
       "name": "PREVIEW_GLOBAL_LIMITER",
       "namespace_id": "3102",
-      "simple": { "limit": 60, "period": 60 }
+      "simple": { "limit": 30, "period": 60 }
     },
     {
       "name": "RANDOM_LIMITER",

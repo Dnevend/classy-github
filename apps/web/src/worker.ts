@@ -1,5 +1,6 @@
 import { handle } from '@astrojs/cloudflare/handler';
 import { DurableObject } from 'cloudflare:workers';
+import { isAiBot } from './lib/ai-bots.ts';
 import { enforceRateLimits } from './lib/rate-limit.ts';
 
 /**
@@ -24,6 +25,24 @@ export class HitCounter extends DurableObject {
 
 export default {
   async fetch(request: Request, env: Record<string, unknown>, ctx: unknown) {
+    const url = new URL(request.url);
+
+    // robots.txt 必须让 bot 读到，否则它不知道要停；其余请求直接 403。
+    // UA 声明只是礼貌，这里才是真正的执行。
+    if (
+      url.pathname !== '/robots.txt' &&
+      isAiBot(request.headers.get('user-agent'))
+    ) {
+      return new Response('AI crawlers are not allowed', {
+        status: 403,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-robots-tag': 'noindex, nofollow',
+        },
+      });
+    }
+
     const limited = await enforceRateLimits(request, env);
     if (limited) return limited;
 

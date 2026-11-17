@@ -41,7 +41,7 @@ export async function loadGistDetail(
         'GistDetail',
         GIST_DETAIL_QUERY,
         { id: gist.node_id },
-        { ttl: 600 }
+        { ttl: 1800 }
       );
 
       if (data.node) {

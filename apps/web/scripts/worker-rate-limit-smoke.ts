@@ -15,6 +15,9 @@ const rule = (url: string) => rateLimitRuleFor(new URL(url));
 
 assert.equal(rule('https://x.test/Dnevend?preview=1'), 'preview');
 assert.equal(rule('https://x.test/Dnevend?preview=1&theme=nes'), 'preview');
+assert.equal(rule('https://x.test/setup'), 'preview');
+assert.equal(rule('https://x.test/setup?u=Dnevend'), 'preview');
+assert.equal(rule('https://x.test/claim/Dnevend'), undefined);
 assert.equal(rule('https://x.test/random'), 'random');
 assert.equal(rule('https://x.test/random/'), 'random');
 assert.equal(rule('https://x.test/api/hit/Dnevend'), 'api');

@@ -5,8 +5,11 @@ import ServiceError from '../../../../components/ServiceError.astro';
 import { renderMarkdown } from '../../../../lib/markdown';
 import { safeLoad } from '../../../../lib/errors';
 import { loadRepoPath } from '../../../../lib/repo-path';
-import { DEFAULT_CONFIG } from '../../../../lib/config';
-import { loadConfig } from '../../../../lib/config-loader';
+import { loadConfigState } from '../../../../lib/config-loader';
+import {
+  githubBlobUrl,
+  shouldRedirectRepoPath,
+} from '../../../../lib/repo-access';
 import { createTranslator, localeFromConfig } from '../../../../lib/i18n';
 import { resolveTheme } from '../../../../themes';
 
@@ -27,6 +30,26 @@ const invalidPath = segments.some(
   (segment) => segment === '.' || segment === '..' || segment.includes('\0')
 );
 
+const encodePath = (value: string) =>
+  value
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+
+// 配置先读：未认领用户的仓库文件路径直接跳 GitHub，不消耗
+// RepoPath / Config 的 GraphQL 配额（爬虫的主要入口就是这里）。
+const configState = await loadConfigState(user, {
+  memo: Astro.locals.configMemo,
+});
+const config = configState.config;
+
+if (!invalidPath && shouldRedirectRepoPath(configState)) {
+  const response = Astro.redirect(githubBlobUrl(user, repoName, filePath), 302);
+  response.headers.set('x-robots-tag', 'noindex, nofollow');
+  return response;
+}
+
 const { data, error, retryAt } = await safeLoad(async () => {
   if (invalidPath) return null;
   return loadRepoPath(user, repoName, filePath);
@@ -40,8 +63,6 @@ if (error === 'not-found' || (!error && !data)) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-const config = data ? await loadConfig(user, { memo: Astro.locals.configMemo }) : DEFAULT_CONFIG;
-
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromConfig(config.language);
 }
@@ -50,13 +71,6 @@ const t = createTranslator(Astro.locals.locale);
 
 const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout, Markdown } = components;
-
-const encodePath = (value: string) =>
-  value
-    .split('/')
-    .filter(Boolean)
-    .map((segment) => encodeURIComponent(segment))
-    .join('/');
 
 const rawBase = `https://raw.githubusercontent.com/${user}/${repoName}/HEAD/`;
 
@@ -180,7 +194,7 @@ const title = data?.kind === 'dir' ? t('repo.files') : (file?.name ?? filePath);
     title: data ? `${title} · ${repoName} · ${user} · ClassyGit` : t('meta.notFoundFile'),
     canonical: `${origin}/${user}/repo/${repoName}/${encodePath(filePath)}`,
     image: `${origin}/og/${encodeURIComponent(user)}.png?theme=${themeName}&v=3`,
-    robots: 'noindex, follow',
+    robots: 'noindex, nofollow',
   }}
 >
   {

@@ -7,6 +7,8 @@ import {
 } from './lib/edge-cache.ts';
 import { loadConfigState, type ConfigState } from './lib/config-loader.ts';
 import { serveStaleHtml } from './lib/stale-html.ts';
+import { isPreviewRequest } from './lib/preview.ts';
+import { siteOrigin } from './lib/site.ts';
 import { normalizeCacheParams } from './lib/request-params.ts';
 import type { ThemeName } from './lib/config.ts';
 import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
@@ -37,7 +39,11 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '33';
+const CACHE_VERSION = '34';
+
+/** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
+const isRepoPath = (pathname: string) =>
+  /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
@@ -92,7 +98,11 @@ const loadConfigTheme = async (
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
-  const isPreview = url.searchParams.get('preview') === '1';
+  const isPreview = isPreviewRequest(
+    context.request,
+    url,
+    siteOrigin(url)
+  );
 
   // 请求级配置 memo：middleware 读过 config 后，页面直接复用同一个 Promise。
   const configMemo = new Map<string, Promise<ConfigState>>();
@@ -141,6 +151,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (isPreview) {
     const response = await next();
     response.headers.set('cache-control', 'no-store');
+    response.headers.set('x-robots-tag', 'noindex, nofollow');
     return response;
   }
 
@@ -189,12 +200,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const response = new Response(hit.body, hit);
     response.headers.delete(CACHED_AT_HEADER);
     response.headers.set('x-classy-cache', 'HIT');
+    if (isRepoPath(url.pathname)) {
+      response.headers.set('x-robots-tag', 'noindex, nofollow');
+    }
     return response;
   }
 
-  let response = forceFail
-    ? new Response('forced upstream failure', { status: 503 })
-    : await next();
+  let response: Response;
+  if (forceFail) {
+    response = new Response('forced upstream failure', { status: 503 });
+  } else {
+    try {
+      response = await next();
+    } catch (error) {
+      // 页面渲染直接抛错时也走旧 HTML；比把异常抛给访客好。
+      const fallback = await serveStaleHtml(key, 503);
+      if (fallback) {
+        console.warn(
+          `[classy] serving stale HTML ${url.pathname} after render exception`
+        );
+        return fallback;
+      }
+      throw error;
+    }
+  }
 
   const fallback = await serveStaleHtml(key, response.status);
   if (fallback) {
@@ -206,8 +235,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const out = new Response(response.body, response);
   out.headers.set('x-classy-cache', 'MISS');
+  if (isRepoPath(url.pathname)) {
+    out.headers.set('x-robots-tag', 'noindex, nofollow');
+  }
 
-  if (response.status === 200 && edgeCache()) {
+  // 200 是正常页面；302 用于未认领用户的仓库深路径跳转。
+  // 两者都进边缘缓存：前者避免重复渲染，后者避免每次深路径都执行 Worker。
+  const shouldCache =
+    (response.status === 200 || response.status === 302) && Boolean(edgeCache());
+
+  if (shouldCache) {
     out.headers.set('cache-control', `public, s-maxage=${ttl}`);
 
     // Set-Cookie 不能进缓存，否则会把「某人选的主题/语言」发给所有人
@@ -217,7 +254,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     await cachePut(key, out, ttl);
 
     if (setCookie) out.headers.set('set-cookie', setCookie);
-  } else if (response.status !== 200) {
+  } else {
     out.headers.set('cache-control', 'no-store');
   }
 

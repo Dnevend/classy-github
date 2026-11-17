@@ -10,6 +10,7 @@ import {
   type ReadmeSource,
 } from './github.ts';
 import { ghGraphql } from './graphql.ts';
+import { singleFlight } from './single-flight.ts';
 import {
   mapGistNode,
   mapRepoNode,
@@ -70,11 +71,27 @@ const loadProfileRest = async (
  * 有 token 时用一条 GraphQL 查询（独立 5,000 points/h 配额）替代
  * user + repos + README + gists 四次 REST；没有 token 的自建实例
  * 继续走 REST 匿名配额。
+ *
+ * 同一 isolate 内的并发冷请求合并成一次回源，避免首发流量把配额打穿。
  */
-export async function loadProfile(
+export function loadProfile(
   user: string,
   options: ProfileOptions
 ): Promise<ProfileData | null> {
+  const key = [
+    user.toLowerCase(),
+    clampCount(options.repoCount),
+    clampCount(options.gistCount),
+    options.fresh ? 'fresh' : 'cached',
+  ].join('|');
+
+  return singleFlight(key, () => loadProfileUncached(user, options));
+}
+
+const loadProfileUncached = async (
+  user: string,
+  options: ProfileOptions
+): Promise<ProfileData | null> => {
   if (!hasGitHubToken()) return loadProfileRest(user, options);
 
   const data = await ghGraphql<ProfileQueryData>(
@@ -85,7 +102,7 @@ export async function loadProfile(
       repoCount: clampCount(options.repoCount),
       gistCount: clampCount(options.gistCount),
     },
-    { ttl: 300, fresh: options.fresh }
+    { ttl: 1800, fresh: options.fresh }
   );
 
   const node = data.user;
@@ -109,7 +126,7 @@ export async function loadProfile(
     : null;
 
   return { userinfo, repos, readme, gists };
-}
+};
 
 export interface OgStats {
   login: string;
@@ -148,7 +165,7 @@ export async function loadUserInfo(
     'UserInfo',
     USER_INFO_QUERY,
     { login: user },
-    { ttl: 300, fresh: options.fresh }
+    { ttl: 1800, fresh: options.fresh }
   );
 
   return data.user ? mapUserNode(data.user) : null;
@@ -190,7 +207,7 @@ export async function loadReposFirstPage(
     'ReposPage',
     REPOS_QUERY,
     { login: user, first: perPage },
-    { ttl: 300, fresh: options.fresh }
+    { ttl: 1800, fresh: options.fresh }
   );
 
   const node = data.user;
@@ -238,7 +255,7 @@ export async function loadUserGists(
     'UserGists',
     GISTS_QUERY,
     { login: user, gistCount },
-    { ttl: 300, fresh: options.fresh }
+    { ttl: 1800, fresh: options.fresh }
   );
 
   const node = data.user;

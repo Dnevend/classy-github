@@ -7,6 +7,7 @@ import { safeLoad } from '../../lib/errors';
 import { loadProfile } from '../../lib/profile';
 import { seoForProfile } from '../../lib/seo';
 import { loadConfigState } from '../../lib/config-loader';
+import { isPreviewRequest } from '../../lib/preview';
 import { buildDefaultReadme } from '../../lib/default-readme';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
@@ -24,9 +25,13 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-// 配置用来决定一次拉多少个仓库（showCount）；预览页不走缓存，
-// 保证刚保存的 classy.config.json 立刻可见。
-const isPreview = Astro.url.searchParams.get('preview') === '1';
+// 配置用来决定一次拉多少个仓库（showCount）；预览只刷新配置，
+// README / repos / gists 继续走缓存，避免预览变成配额放大器。
+const isPreview = isPreviewRequest(
+  Astro.request,
+  Astro.url,
+  siteOrigin(Astro.url)
+);
 const configState = await loadConfigState(user, { fresh: isPreview, memo: Astro.locals.configMemo });
 const { config, configured, reliable } = configState;
 
@@ -38,7 +43,6 @@ const { data, error, retryAt } = await safeLoad(() =>
   loadProfile(user, {
     repoCount: wantsRepos ? config.profile.repos.showCount : 0,
     gistCount: wantsGists ? config.profile.gists.showCount : 0,
-    fresh: isPreview,
   })
 );
 
