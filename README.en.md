@@ -1,6 +1,10 @@
-# ClassyGit
+<h1 align="center">ClassyGit</h1>
 
-**Your GitHub, a different way.**
+<p align="center"><strong>Your GitHub, a different way.</strong></p>
+
+<p align="center">
+  <a href="https://classygit.dev"><img src="./assets/demo.gif" alt="ClassyGit demo — four retro themes in 15 seconds" width="880"></a>
+</p>
 
 No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog. Try it at [classygit.dev](https://classygit.dev).
 
@@ -19,13 +23,30 @@ No deploy, no login, no server to buy: turn your README, repositories and Gists 
   <a href="./README.md">中文</a>
 </p>
 
-Four themes, one GitHub dataset. Click a screenshot to open that theme live:
+Four themes, one GitHub dataset. Click a sheet to open that theme live:
 
-| `mac` · System 6 | `nes` · 8-bit |
-|---|---|
-| [![mac theme](./assets/theme-mac.png)](https://classygit.dev/Dnevend?theme=mac) | [![nes theme](./assets/theme-nes.png)](https://classygit.dev/Dnevend?theme=nes) |
-| **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 theme](./assets/theme-win98.png)](https://classygit.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.dev/Dnevend?theme=tui) |
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=mac"><img src="./assets/promo/out/theme-sheet-mac.png" alt="mac theme" width="100%"></a>
+      <br><sub><code>mac</code> · System 6</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=nes"><img src="./assets/promo/out/theme-sheet-nes.png" alt="nes theme" width="100%"></a>
+      <br><sub><code>nes</code> · 8-bit</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=win98"><img src="./assets/promo/out/theme-sheet-win98.png" alt="win98 theme" width="100%"></a>
+      <br><sub><code>win98</code> · Windows 98</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=tui"><img src="./assets/promo/out/theme-sheet-tui.png" alt="tui theme" width="100%"></a>
+      <br><sub><code>tui</code> · DOS</sub>
+    </td>
+  </tr>
+</table>
 
 <p align="center"><sub>mac / nes / win98 / tui · screenshots from <a href="https://classygit.dev/Dnevend">Dnevend's profile</a></sub></p>
 
@@ -249,29 +270,53 @@ GitHub                          Cloudflare
 
 ## FAQ
 
-**Do I need my own server or domain?**
+<details>
+<summary><strong>Do I need my own server or domain?</strong></summary>
+
 No. The public instance gives you `https://classygit.dev/<username>`. Self-host if you want your own domain.
+</details>
 
-**Do I need to log in?**
+<details>
+<summary><strong>Do I need to log in?</strong></summary>
+
 Not to browse, and site owners do not need a ClassyGit account either — just a GitHub account to host the config. Posting a guestbook comment requires a GitHub account because comments are Gist comments.
+</details>
 
-**Can the site go down? Will my content be lost?**
+<details>
+<summary><strong>Can the site go down? Will my content be lost?</strong></summary>
+
 Your content stays on GitHub; the site is only a renderer. There is no server to expire and no content database to lose. Even if this public instance stops, your README, repositories, Gists and comments remain on GitHub. The code is MIT; switch to another instance or self-host and keep going.
+</details>
 
-**How long do README / repository changes take?**
+<details>
+<summary><strong>How long do README / repository changes take?</strong></summary>
+
 Config changes (theme, links, Now) appear within 5 minutes. README, repository and Gist lists are cached for up to 30 minutes to survive launch traffic and crawlers. To verify a config change immediately, open `?preview=1` from this site.
+</details>
 
-**Will GitHub API rate limits break it?**
+<details>
+<summary><strong>Will GitHub API rate limits break it?</strong></summary>
+
 The production instance uses a server-side GitHub token plus edge caching, and blocks AI crawlers at the Worker. If the quota is genuinely exhausted, it serves cached HTML (up to 24 hours old, marked `x-classy-stale`) instead of an error page.
+</details>
 
-**Can I use it as a blog? Does it support private content?**
+<details>
+<summary><strong>Can I use it as a blog? Does it support private content?</strong></summary>
+
 Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an archive, reading time and an Atom feed. It only reads public data; private repositories and secret Gists are never shown.
+</details>
 
-**Why is SEO off by default?**
+<details>
+<summary><strong>Why is SEO off by default?</strong></summary>
+
 Profile pages are infinitely generated thin content, so indexing is opt-in to avoid polluting search results. Set `seo.index: true` to allow it; the default theme page is `index`, while theme variants chosen by a visitor stay `noindex`.
+</details>
 
-**Do theme and language choices persist? What about privacy?**
+<details>
+<summary><strong>Do theme and language choices persist? What about privacy?</strong></summary>
+
 Yes, choices are stored in cookies. The site default theme comes from `classy.config.json`, and you can use `?theme=nes` / `?lang=zh` to switch temporarily. The app stores no IPs and does no profiling; no analytics scripts are loaded by default, and only two functional cookies (theme and language) are used. The author's instance optionally enables cookieless Cloudflare Web Analytics (controlled by `PUBLIC_CF_ANALYTICS_TOKEN`; nothing is injected when unset). The landing page's “recent visits” is local-only localStorage and is never uploaded.
+</details>
 
 ## Development and self-hosting
 

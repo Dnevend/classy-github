@@ -1,6 +1,10 @@
-# ClassyGit
+<h1 align="center">ClassyGit</h1>
 
-**你的 GitHub，换一种打开方式。**
+<p align="center"><strong>你的 GitHub，换一种打开方式。</strong></p>
+
+<p align="center">
+  <a href="https://classygit.dev"><img src="./assets/demo.gif" alt="ClassyGit 四套复古主题演示（15 秒）" width="880"></a>
+</p>
 
 不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻试。
 
@@ -21,11 +25,28 @@
 
 四套主题，同一份 GitHub 数据。点图直接打开线上对应主题：
 
-| `mac` · System 6 | `nes` · 8-bit |
-|---|---|
-| [![mac 主题](./assets/theme-mac.png)](https://classygit.dev/Dnevend?theme=mac) | [![nes 主题](./assets/theme-nes.png)](https://classygit.dev/Dnevend?theme=nes) |
-| **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 主题](./assets/theme-win98.png)](https://classygit.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.dev/Dnevend?theme=tui) |
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=mac"><img src="./assets/promo/out/theme-sheet-mac.png" alt="mac 主题" width="100%"></a>
+      <br><sub><code>mac</code> · System 6</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=nes"><img src="./assets/promo/out/theme-sheet-nes.png" alt="nes 主题" width="100%"></a>
+      <br><sub><code>nes</code> · 8-bit</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=win98"><img src="./assets/promo/out/theme-sheet-win98.png" alt="win98 主题" width="100%"></a>
+      <br><sub><code>win98</code> · Windows 98</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://classygit.dev/Dnevend?theme=tui"><img src="./assets/promo/out/theme-sheet-tui.png" alt="tui 主题" width="100%"></a>
+      <br><sub><code>tui</code> · DOS</sub>
+    </td>
+  </tr>
+</table>
 
 <p align="center"><sub>mac / nes / win98 / tui · 截图来自 <a href="https://classygit.dev/Dnevend">Dnevend 的主页</a></sub></p>
 
@@ -249,29 +270,53 @@ GitHub                          Cloudflare
 
 ## 常见问题
 
-**需要自己的服务器或域名吗？**
+<details>
+<summary><strong>需要自己的服务器或域名吗？</strong></summary>
+
 不需要。公共实例直接给你 `https://classygit.dev/<用户名>`；想绑自己的域名再自建。
+</details>
 
-**需要登录吗？**
+<details>
+<summary><strong>需要登录吗？</strong></summary>
+
 浏览不需要；站主也不需要登录 ClassyGit，只要用 GitHub 账号放配置。留言需要 GitHub 账号，因为评论就是 Gist 评论。
+</details>
 
-**网站会下线吗？内容会丢吗？**
+<details>
+<summary><strong>网站会下线吗？内容会丢吗？</strong></summary>
+
 内容一直在 GitHub；站点只是渲染层。没有服务器可到期，没有内容数据库可丢失。即使公共实例哪天停止，README、仓库、Gist、留言仍然在 GitHub；代码是 MIT，换一个实例或自建就能继续。
+</details>
 
-**改了 README / 仓库，多久生效？**
+<details>
+<summary><strong>改了 README / 仓库，多久生效？</strong></summary>
+
 配置（主题、链接、近况）最多 5 分钟；README、仓库和 Gist 列表最多缓存 30 分钟，用来扛住首发流量和爬虫。想立刻确认配置，从本站打开 `?preview=1`。
+</details>
 
-**会被 GitHub API 限流吗？**
+<details>
+<summary><strong>会被 GitHub API 限流吗？</strong></summary>
+
 生产实例用服务端 GitHub token + 边缘缓存，并在 Worker 层拦截 AI 爬虫；配额真的耗尽时优先返回 24 小时内的旧页面（`x-classy-stale`），而不是错误页。
+</details>
 
-**能当博客用吗？支持私有内容吗？**
+<details>
+<summary><strong>能当博客用吗？支持私有内容吗？</strong></summary>
+
 能。公开 Gist 就是文章，支持 Markdown、代码高亮、标签、归档、阅读时长和 Atom 订阅。只读取公开数据；私有仓库和 secret Gist 不会显示。
+</details>
 
-**为什么默认不被搜索引擎收录？**
+<details>
+<summary><strong>为什么默认不被搜索引擎收录？</strong></summary>
+
 用户页是无限生成的薄内容，默认不收录，避免污染搜索。想收录就设 `seo.index: true`；默认主题页面输出 `index`，访客切到其他主题时保持 `noindex`。
+</details>
 
-**主题和语言会记住吗？隐私怎么处理？**
+<details>
+<summary><strong>主题和语言会记住吗？隐私怎么处理？</strong></summary>
+
 会。选择写在 cookie 里；站点默认主题由 `classy.config.json` 的 `theme` 决定，也可以用 `?theme=nes` / `?lang=zh` 临时切换。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
+</details>
 
 ## 开发与自建
 
