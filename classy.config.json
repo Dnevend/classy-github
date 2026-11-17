@@ -3,7 +3,7 @@
   "theme": "mac",
   "language": "en",
   "profile": {
-    "cover": "https://classygit.dev/images/cover.jpg",
+    "cover": "/images/cover.jpg",
     "cardUrl": null,
     "contrib": {
       "visible": true

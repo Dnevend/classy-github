@@ -109,6 +109,12 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
 
 const isHttpUrl = (value: string) => /^https?:\/\/[^\s]+$/i.test(value);
 
+/** 站内根路径（`/images/cover.jpg`），不接受协议相对写法 `//host/...`。 */
+const isSitePath = (value: string) => /^\/(?!\/)\S+$/.test(value);
+
+/** 封面既可外链，也可用站内路径，避免多域名入口之间出现跨域。 */
+const isMediaUrl = (value: string) => isHttpUrl(value) || isSitePath(value);
+
 /** 每段都用「全 optional」的 schema，目的是让 `{}` 合法、缺失字段走默认值 */
 const previewListSchema = z
   .object({
@@ -120,7 +126,10 @@ const previewListSchema = z
 
 const profileSchema = z
   .object({
-    cover: z.string().refine(isHttpUrl, 'cover 必须是 http(s) URL').nullable(),
+    cover: z
+      .string()
+      .refine(isMediaUrl, 'cover 必须是 http(s) URL 或站内路径')
+      .nullable(),
     cardUrl: z.string().refine(isHttpUrl, 'cardUrl 必须是 http(s) URL').nullable(),
     contrib: z.object({ visible: z.boolean() }).partial(),
     repos: previewListSchema,

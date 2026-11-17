@@ -4,7 +4,7 @@ import { env } from 'cloudflare:workers';
  * 对外展示的站点 origin。
  *
  * - 本地开发保持 localhost；
- * - 生产用 `SITE_ORIGIN`（现在是 https://classygit.pages.dev）；
+ * - 生产用 `SITE_ORIGIN`（现在是 https://classygit.dev）；
  * - 没配置时退回请求 origin，保证 Workers 直连也能用。
  */
 export const siteOrigin = (url: URL): string => {

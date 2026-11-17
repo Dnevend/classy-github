@@ -5,7 +5,8 @@ const TARGET = 'https://classy-web.dnevend.workers.dev';
  *
  * Astro 7 + Durable Object 无法原生跑在 Pages 上，所以 Pages 只负责转发到
  * Workers；真正渲染、缓存、计数都在 Worker 里。SITE_ORIGIN 让 Worker
- * 生成的 canonical / OG / RSS / sitemap 都指向 pages.dev。
+ * 生成的 canonical / OG / RSS / sitemap 都指向主域名 classygit.dev；
+ * classygit.pages.dev 仍保留为入口别名。
  *
  * 生产环境优先走 Pages 的 Service binding（CLASSY_WEB -> classy-web）：
  * 不经过公网 DNS/TLS，也不会额外计算一次 Worker 请求费。

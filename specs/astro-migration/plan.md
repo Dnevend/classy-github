@@ -486,11 +486,18 @@ OG 用 CSS background-image，WebP 封面自动回退无封面版本。
 新增目录列表、Markdown/代码/图片渲染，二进制跳 GitHub。
 详见 `m34-repo-file-pages.md`。
 
+### M36 · classygit.dev 主域名 + 分享卡封面同源（已完成 2026-11-17）
+
+Worker 绑定 `classygit.dev`，`SITE_ORIGIN` 指向新域名；`classygit.pages.dev`
+保留为 Pages 代理。`profile.cover` 支持站内路径，分享卡和 OG 图把本站绝对
+URL 归一化为同源路径，修复跨域导致封面加载失败。详见
+`m36-dev-domain-share-cover.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |
 |---|---|---|
-| `main` | v2（Astro）当前生产分支 | Workers · `classygit.pages.dev`（Pages 薄代理） |
+| `main` | v2（Astro）当前生产分支 | Workers · `classygit.dev`；`classygit.pages.dev` 保留为 Pages 薄代理 |
 | `v2` | 集成分支，与 main 保持同步 | 同上；Worker 直连 `classy-web.dnevend.workers.dev` |
 
 一条命令发布：

@@ -180,9 +180,10 @@ const display = userinfo?.name || userinfo?.login || user;
                 <input
                   id="setup-cover"
                   name="cover"
-                  type="url"
+                  type="text"
+                  inputmode="url"
                   value={initialConfig.profile.cover ?? ''}
-                  placeholder="https://…"
+                  placeholder="https://… 或 /images/cover.jpg"
                 />
               </div>
               <label class="setup-check">
@@ -391,6 +392,12 @@ const display = userinfo?.name || userinfo?.login || user;
           const optionalUrl = (value) =>
             /^https?:\/\/\S+$/i.test(value.trim()) ? value.trim() : null;
 
+          // 封面额外允许站内根路径（/images/cover.jpg），与 config.ts 保持一致。
+          const optionalMediaUrl = (value) =>
+            /^(https?:\/\/|\/(?!\/))\S+$/i.test(value.trim())
+              ? value.trim()
+              : null;
+
           const readLinks = () =>
             [...links.querySelectorAll('.setup-link-row')]
               .map((row) => ({
@@ -407,7 +414,7 @@ const display = userinfo?.name || userinfo?.login || user;
               language: form.language.value,
               profile: {
                 ...initial.profile,
-                cover: optionalUrl(form.cover.value),
+                cover: optionalMediaUrl(form.cover.value),
                 contrib: {
                   ...initial.profile.contrib,
                   visible: form.showContrib.checked,

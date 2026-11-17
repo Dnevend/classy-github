@@ -38,8 +38,9 @@ export default defineConfig({
        * Cloudflare Web Analytics 的站点 token（可选）。
        * 构建时内联进 HTML；不配就不注入任何脚本，fork 自建也不会把数据打到上游实例。
        * 生产：在 apps/web/.env 里写 PUBLIC_CF_ANALYTICS_TOKEN=...
-       * 注意：classygit.pages.dev 只是 Pages 的 _worker.js 代理，Cloudflare 的
-       * 「自动安装」注入不到 Worker 渲染的 HTML，所以只能手动放片段。
+       * 注意：主域名是 classygit.dev，直接绑在 Worker 上；classygit.pages.dev
+       * 只是 Pages 的 _worker.js 代理。Cloudflare 的「自动安装」注入不到
+       * Worker 渲染的 HTML，所以只能手动放片段。
        */
       PUBLIC_CF_ANALYTICS_TOKEN: envField.string({
         context: 'client',

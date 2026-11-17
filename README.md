@@ -235,7 +235,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | 换默认主题 | `"theme": "nes"`（可选 `mac` / `nes` / `win98` / `tui`） |
 | 分享指定主题 | 在链接后加 `?theme=nes`（可选 `mac` / `nes` / `win98` / `tui`） |
 | 默认中文 | `"language": "zh"` |
-| 加封面图 | `"profile": { "cover": "https://…" }` |
+| 加封面图 | `"profile": { "cover": "/images/cover.jpg" }` 或任意 http(s) 图片 |
 | 隐藏贡献墙 | `"profile": { "contrib": { "visible": false } }` |
 | 主页显示几个仓库 / Gist | `"profile": { "repos": { "showCount": 6 }, "gists": { "showCount": 6 } }` |
 | 加页脚链接 | `"links": [{ "title": "Blog", "href": "https://…" }]` |
@@ -317,7 +317,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | `owner` | `null` | 配置归属的 GitHub 用户名。与当前用户不一致时整份配置按模板忽略；为空或非法时按旧配置接受。 |
 | `theme` | `mac` | 站点默认主题：`mac` / `nes` / `win98` / `tui`。访客没有 `?theme=` 或 cookie 时使用它；每套主题的 CSS 独立加载。 |
 | `language` | `en` | 默认语言：`en` / `zh`。访客可用 `?lang=` 覆盖。 |
-| `profile.cover` | `null` | 资料卡封面图；不填时显示主题化默认横幅。只接受 http(s)。 |
+| `profile.cover` | `null` | 资料卡封面图；不填时显示主题化默认横幅。接受 http(s) 图片或站内路径（如 `/images/cover.jpg`）。 |
 | `profile.cardUrl` | `null` | 「近况」卡片底部嵌入的第三方统计图，例如 Action 生成的 SVG。 |
 | `profile.contrib.visible` | `true` | 是否显示贡献活跃度。 |
 | `profile.repos.visible` | `true` | 是否显示主页的最近仓库。 |

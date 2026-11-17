@@ -80,6 +80,21 @@ const cases: Case[] = [
     },
   },
   {
+    name: 'cover 允许站内根路径，拒绝协议相对地址',
+    run: () => {
+      const local = parseConfig({ profile: { cover: '/images/cover.jpg' } });
+      assert.equal(local.config.profile.cover, '/images/cover.jpg');
+
+      const protocolRelative = parseConfig({
+        profile: { cover: '//evil.example/cover.jpg' },
+      });
+      assert.equal(protocolRelative.config.profile.cover, null);
+      assert.ok(
+        protocolRelative.issues.some((issue) => issue.startsWith('profile:'))
+      );
+    },
+  },
+  {
     name: 'owner：合法值透传，非法值忽略',
     run: () => {
       assert.equal(parseConfig({ owner: 'demo' }).config.owner, 'demo');

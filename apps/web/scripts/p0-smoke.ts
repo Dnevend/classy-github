@@ -44,7 +44,7 @@ cases.push({
 cases.push({
   name: 'robots.txt：AI bot 全拦，仓库深路径和 preview 不参与抓取',
   run: () => {
-    const robots = buildRobotsTxt('https://classygit.pages.dev');
+    const robots = buildRobotsTxt('https://classygit.dev');
 
     for (const agent of AI_BOT_AGENTS) {
       assert.ok(
@@ -60,7 +60,7 @@ cases.push({
     assert.match(robots, /Disallow: \/claim\//);
     assert.match(
       robots,
-      /Sitemap: https:\/\/classygit\.pages\.dev\/sitemap\.xml/
+      /Sitemap: https:\/\/classygit\.dev\/sitemap\.xml/
     );
   },
 });
@@ -68,7 +68,7 @@ cases.push({
 cases.push({
   name: 'preview：只允许同源导航，直接访问 / 外链一律当普通请求',
   run: () => {
-    const url = new URL('https://classygit.pages.dev/Dnevend?preview=1');
+    const url = new URL('https://classygit.dev/Dnevend?preview=1');
     const request = (headers: Record<string, string>) =>
       new Request(url, { headers });
 
@@ -76,21 +76,21 @@ cases.push({
       isPreviewRequest(
         request({ 'sec-fetch-site': 'same-origin' }),
         url,
-        'https://classygit.pages.dev/'
+        'https://classygit.dev/'
       ),
       true
     );
     assert.equal(
       isPreviewRequest(
-        request({ referer: 'https://classygit.pages.dev/setup?u=Dnevend' }),
+        request({ referer: 'https://classygit.dev/setup?u=Dnevend' }),
         url,
-        'https://classygit.pages.dev'
+        'https://classygit.dev'
       ),
       true
     );
 
     // Pages 代理后面的 Worker 看到的是 workers.dev，Referer 仍是 pages.dev；
-    // 这时用 x-forwarded-host 识别公开 origin。
+    // 这时用 x-forwarded-host 识别公开 origin，旧入口仍然可用。
     const proxiedUrl = new URL(
       'https://classy-web.dnevend.workers.dev/Dnevend?preview=1'
     );
@@ -112,19 +112,19 @@ cases.push({
       isPreviewRequest(
         request({ referer: 'https://evil.test/setup' }),
         url,
-        'https://classygit.pages.dev'
+        'https://classygit.dev'
       ),
       false
     );
     assert.equal(
-      isPreviewRequest(request({}), url, 'https://classygit.pages.dev'),
+      isPreviewRequest(request({}), url, 'https://classygit.dev'),
       false
     );
     assert.equal(
       isPreviewRequest(
         request({ 'sec-fetch-site': 'same-origin' }),
-        new URL('https://classygit.pages.dev/Dnevend'),
-        'https://classygit.pages.dev'
+        new URL('https://classygit.dev/Dnevend'),
+        'https://classygit.dev'
       ),
       false
     );

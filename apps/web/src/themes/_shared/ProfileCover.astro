@@ -1,11 +1,15 @@
 ---
+import { siteOrigin } from '../../lib/site';
+import { sameOriginPath } from '../../lib/site-url';
+
 interface Props {
   cover?: string | null;
 }
 
 const { cover } = Astro.props as Props;
+const coverSrc = sameOriginPath(cover, siteOrigin(Astro.url));
 ---
 
-<div class:list={['profile-cover', { 'profile-cover--default': !cover }]}>
-  {cover && <img src={cover} alt="" loading="lazy" />}
+<div class:list={['profile-cover', { 'profile-cover--default': !coverSrc }]}>
+  {coverSrc && <img src={coverSrc} alt="" loading="lazy" />}
 </div>

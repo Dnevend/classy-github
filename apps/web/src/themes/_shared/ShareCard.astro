@@ -1,6 +1,8 @@
 ---
 import type { ThemeName } from '../../lib/config';
 import { createTranslator } from '../../lib/i18n';
+import { siteOrigin } from '../../lib/site';
+import { sameOriginPath } from '../../lib/site-url';
 
 export interface ShareCardData {
   /** 卡片主标题：用户名 / 仓库名 / Gist 标题 */
@@ -21,6 +23,10 @@ interface Props extends ShareCardData {
 
 const { title, description, handle, avatar, url, theme, cover } = Astro.props as Props;
 const t = createTranslator(Astro.locals.locale);
+
+// 封面可能是本站另一个入口的绝对地址（例如 classygit.pages.dev），
+// 分享卡的 <img crossorigin> 会按跨域处理并加载失败；统一转成站内路径。
+const coverSrc = sameOriginPath(cover, siteOrigin(Astro.url));
 
 const host = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(
@@ -58,15 +64,15 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
 
   <div class="share-card__panel" role="dialog" aria-label={t('share.trigger')} data-share-panel>
     <div
-      class:list={['share-card__preview', { 'has-cover': !!cover }]}
+      class:list={['share-card__preview', { 'has-cover': !!coverSrc }]}
       data-share-preview
     >
       {
-        cover && (
+        coverSrc && (
           <>
             <img
               class="share-card__cover"
-              src={cover}
+              src={coverSrc}
               alt=""
               crossorigin="anonymous"
               data-share-cover

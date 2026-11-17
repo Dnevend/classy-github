@@ -26,23 +26,31 @@ const assetFetcher = (): AssetFetcher | undefined => {
   }
 };
 
-const fetchCover = async (coverUrl: string, origin: string) => {
-  const target = new URL(coverUrl);
+const fetchCover = async (
+  coverUrl: string,
+  publicOrigin: string,
+  requestOrigin: string
+) => {
+  // cover 支持站内相对路径；按对外域名解析，保证本地路径和绝对 URL 都能取到。
+  const target = new URL(coverUrl, publicOrigin);
   const assets = assetFetcher();
-  const sameOrigin = target.origin === new URL(origin).origin;
+  const sameOrigin = target.origin === new URL(publicOrigin).origin;
 
   let response: Response | null = null;
 
   if (sameOrigin && assets) {
     try {
-      response = await assets.fetch(new Request(target));
+      // 静态资源按 pathname 取；host 用请求 origin，避免 Pages 代理后面
+      // ASSETS 绑定收到另一个域名时匹配不到资源。
+      const assetUrl = new URL(`${target.pathname}${target.search}`, requestOrigin);
+      response = await assets.fetch(new Request(assetUrl));
     } catch {
       response = null;
     }
   }
 
   if (!response || !response.ok) {
-    response = await fetch(coverUrl, {
+    response = await fetch(target.href, {
       headers: { 'user-agent': USER_AGENT },
     }).catch(() => null);
   }
@@ -124,6 +132,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
 
   const theme = parseThemeName(url.searchParams.get('theme')) ?? 'mac';
   const palette = paletteFor(theme);
+  const publicOrigin = siteOrigin(url);
   const [config, fonts, avatar] = await Promise.all([
     loadConfigState(user, { memo: locals.configMemo })
       .then((state) => state.config)
@@ -138,7 +147,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
 
   const coverUrl = config?.profile.cover ?? null;
   const cover = coverUrl
-    ? await fetchCover(coverUrl, url.origin).catch(() => null)
+    ? await fetchCover(coverUrl, publicOrigin, url.origin).catch(() => null)
     : null;
 
   const avatarSrc = avatar
@@ -154,7 +163,7 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
     stars: stats.stars,
     theme,
     palette,
-    host: new URL(siteOrigin(url)).host,
+    host: new URL(publicOrigin).host,
     avatar: avatarSrc,
     cover,
   });

@@ -21,7 +21,7 @@ const base = {
   stars: 1200,
   theme: 'mac' as const,
   palette: THEME_PALETTE.mac,
-  host: 'classygit.pages.dev',
+  host: 'classygit.dev',
   avatar: null,
 };
 
