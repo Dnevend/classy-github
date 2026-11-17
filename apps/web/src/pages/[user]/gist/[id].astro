@@ -18,7 +18,7 @@ const user = Astro.params.user as string;
 const gistId = Astro.params.id as string;
 const origin = siteOrigin(Astro.url);
 
-const { data, error } = await safeLoad(async () => {
+const { data, error, retryAt } = await safeLoad(async () => {
   const gist = await getGist(gistId);
   const files = Object.values(gist.files);
 
@@ -93,7 +93,7 @@ const readingMinutes = data
     error === 'not-found' ? (
       <NotFound user={`gist ${gistId}`} />
     ) : error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : data ? (
       <>
         <a class="back-link" href={`/${user}/gists`}>← {t('gists.title', { name: user })}</a>

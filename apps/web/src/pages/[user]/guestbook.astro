@@ -16,7 +16,7 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-const { data: userinfo, error } = await safeLoad(() => loadUser(user));
+const { data: userinfo, error, retryAt } = await safeLoad(() => loadUser(user));
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -120,7 +120,7 @@ const gistUrl = gist ? `${gist.html_url}#comments` : null;
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !userinfo ? (
       <NotFound user={user} />
     ) : (

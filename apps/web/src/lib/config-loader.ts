@@ -1,25 +1,55 @@
 import { USER_AGENT } from './constants.ts';
-import { getDefaultBranch } from './github.ts';
 import {
   DEFAULT_CONFIG,
   isConfigForUser,
   parseConfig,
   type ResolvedConfig,
 } from './config.ts';
-import { cacheGet, cachePut } from './edge-cache.ts';
+import { cacheGet, cacheGetStale, cachePut } from './edge-cache.ts';
+import { hasGitHubToken } from './github-auth.ts';
+import { ghGraphql } from './graphql.ts';
+import { CONFIG_QUERY } from './graphql-queries.ts';
 
 const CONFIG_REPO = 'classy-github';
 const CONFIG_FILE = 'classy.config.json';
 const CONFIG_TTL = 300;
+/** 明确 404 的负缓存：没有 fork 的用户不应该每次渲染都探测一遍。 */
+const MISSING_TTL = 300;
+/** 网络/限流时用旧配置兜底，避免主题突然掉回 mac。 */
+const STALE_TTL = 60 * 60 * 24;
 
-/** 兜底分支顺序：拿不到仓库元信息时用（v2 是本仓库当前的默认分支） */
-const FALLBACK_BRANCHES = ['main', 'master', 'v2'];
+/**
+ * 兜底分支顺序：HEAD 会跟随 fork 的默认分支（develop/v1 也能覆盖），
+ * 后面三个是历史 fork 的兜底。raw 不吃 API 配额。
+ */
+const FALLBACK_BRANCHES = ['HEAD', 'main', 'master', 'v2'];
 
 interface ConfigPayload {
   /** found = 文件存在；missing = 明确的 404；error = 网络/限流/5xx，不能下结论 */
   status: 'found' | 'missing' | 'error';
   value: unknown;
 }
+
+const jsonResponse = (value: unknown) =>
+  new Response(JSON.stringify(value), {
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+  });
+
+const parseCached = async (cached: Response): Promise<ConfigPayload> => {
+  try {
+    const value = await cached.json();
+    if (
+      value &&
+      typeof value === 'object' &&
+      (value as { __classy?: unknown }).__classy === 'missing'
+    ) {
+      return { status: 'missing', value: null };
+    }
+    return { status: 'found', value };
+  } catch {
+    return { status: 'found', value: null };
+  }
+};
 
 const fetchJsonWithCache = async (
   url: string,
@@ -30,13 +60,7 @@ const fetchJsonWithCache = async (
 
   if (!fresh) {
     const cached = await cacheGet(key, ttl);
-    if (cached) {
-      try {
-        return { status: 'found', value: await cached.json() };
-      } catch {
-        return { status: 'found', value: null };
-      }
-    }
+    if (cached) return parseCached(cached);
   }
 
   let res: Response;
@@ -44,22 +68,33 @@ const fetchJsonWithCache = async (
   try {
     res = await fetch(url, { headers: { 'user-agent': USER_AGENT } });
   } catch {
-    return { status: 'error', value: null };
+    const stale = await cacheGetStale(key, STALE_TTL);
+    const payload = stale ? await parseCached(stale) : null;
+    // 旧缓存里如果是“missing”标记，不能拿来当作现在的结论；
+    // 当前请求失败时只能标记 error，交给调用方保守处理。
+    return payload?.status === 'found'
+      ? payload
+      : { status: 'error', value: null };
   }
 
   // 只有明确的 404 才能判断「没有配置」；
   // 503/429/网络错误不能拿来清理 webring 成员。
-  if (res.status === 404) return { status: 'missing', value: null };
-  if (!res.ok) return { status: 'error', value: null };
+  if (res.status === 404) {
+    await cachePut(key, jsonResponse({ __classy: 'missing' }), MISSING_TTL);
+    return { status: 'missing', value: null };
+  }
+  if (!res.ok) {
+    const stale = await cacheGetStale(key, STALE_TTL);
+    const payload = stale ? await parseCached(stale) : null;
+    return payload?.status === 'found'
+      ? payload
+      : { status: 'error', value: null };
+  }
 
   const response = new Response(res.body, res);
   await cachePut(key, response, ttl);
 
-  try {
-    return { status: 'found', value: await response.json() };
-  } catch {
-    return { status: 'found', value: null };
-  }
+  return parseCached(response);
 };
 
 export interface ConfigState {
@@ -70,6 +105,68 @@ export interface ConfigState {
   reliable: boolean;
   source: 'repo' | 'template' | 'default';
 }
+
+interface ConfigQueryData {
+  user: {
+    repository: {
+      object: { text?: string | null } | null;
+    } | null;
+  } | null;
+}
+
+const loadConfigFromGraphql = async (
+  user: string,
+  fresh: boolean
+): Promise<ConfigPayload> => {
+  const data = await ghGraphql<ConfigQueryData>(
+    'Config',
+    CONFIG_QUERY,
+    { login: user },
+    { ttl: CONFIG_TTL, fresh }
+  );
+
+  // `HEAD:` 就是默认分支；文件不存在时 object 为 null。
+  const text = data.user?.repository?.object?.text;
+  if (!text) return { status: 'missing', value: null };
+
+  try {
+    return { status: 'found', value: JSON.parse(text) };
+  } catch {
+    return { status: 'found', value: null };
+  }
+};
+
+const resolvePayload = (
+  user: string,
+  payload: ConfigPayload
+): ConfigState | null => {
+  if (payload.status !== 'found') return null;
+
+  if (payload.value === null) {
+    console.warn(`[classy] ${user} 的 ${CONFIG_FILE} 不是合法 JSON，已回退默认值`);
+  }
+
+  const { config, issues } = parseConfig(payload.value);
+  if (issues.length > 0) {
+    console.warn(`[classy] ${user} 的 ${CONFIG_FILE} 有问题：`, issues);
+  }
+
+  // fork 会继承作者的配置；owner 不匹配时视为模板，避免把作者的主题、
+  // 链接、webring 身份复制到别人的站点上。
+  if (!isConfigForUser(config, user)) {
+    console.warn(
+      `[classy] ${user} 的配置 owner=${config.owner}，视为作者的模板配置`
+    );
+    return {
+      config: DEFAULT_CONFIG,
+      configured: false,
+      reliable: true,
+      source: 'template',
+    };
+  }
+
+  return { config, configured: true, reliable: true, source: 'repo' };
+};
 
 /**
  * 读取并校验配置，同时告诉调用方「这个站点有没有被认领」。
@@ -90,19 +187,40 @@ export const loadConfigState = async (
 ): Promise<ConfigState> => {
   let hadError = false;
 
-  // fork 的默认分支可能是 main / master / v2 / 任意名字，
-  // 先问 GitHub 拿到 default_branch，再按它 + 兜底顺序尝试。
-  const defaultBranch = await getDefaultBranch(user).catch(() => {
-    hadError = true;
-    return null;
-  });
+  // 有 token 时优先走 GraphQL：一次请求拿到默认分支上的配置文件，
+  // 不消耗 REST 配额，也不依赖 raw.githubusercontent.com 的出口 IP。
+  if (hasGitHubToken()) {
+    try {
+      const payload = await loadConfigFromGraphql(
+        user,
+        options.fresh ?? false
+      );
+      const resolved = resolvePayload(user, payload);
+      if (resolved) return resolved;
 
-  const branches = [
-    ...(defaultBranch ? [defaultBranch] : []),
-    ...FALLBACK_BRANCHES.filter((branch) => branch !== defaultBranch),
-  ];
+      if (payload.status === 'missing') {
+        return {
+          config: DEFAULT_CONFIG,
+          configured: false,
+          reliable: true,
+          source: 'default',
+        };
+      }
 
-  for (const branch of branches) {
+      hadError = true;
+    } catch (error) {
+      hadError = true;
+      console.warn(
+        `[classy] ${user} 配置 GraphQL 读取失败，回退 raw：`,
+        (error as Error).message
+      );
+    }
+  }
+
+  // 没有 token / GraphQL 失败时回退 raw。
+  // 先试 HEAD（默认分支），再试历史 fork 常见的 main / master / v2；
+  // raw 不吃 API 配额，自定义默认分支也能覆盖。
+  for (const branch of FALLBACK_BRANCHES) {
     const url = `https://raw.githubusercontent.com/${user}/${CONFIG_REPO}/${branch}/${CONFIG_FILE}`;
 
     const payload = await fetchJsonWithCache(
@@ -111,36 +229,10 @@ export const loadConfigState = async (
       options.fresh ?? false
     ).catch((): ConfigPayload => ({ status: 'error', value: null }));
 
-    if (payload.status === 'missing') continue;
-    if (payload.status === 'error') {
-      hadError = true;
-      continue;
-    }
+    const resolved = resolvePayload(user, payload);
+    if (resolved) return resolved;
 
-    if (payload.value === null) {
-      console.warn(`[classy] ${user} 的 ${CONFIG_FILE} 不是合法 JSON，已回退默认值`);
-    }
-
-    const { config, issues } = parseConfig(payload.value);
-    if (issues.length > 0) {
-      console.warn(`[classy] ${user} 的 ${CONFIG_FILE} 有问题：`, issues);
-    }
-
-    // fork 会继承作者的配置；owner 不匹配时视为模板，避免把作者的主题、
-    // 链接、webring 身份复制到别人的站点上。
-    if (!isConfigForUser(config, user)) {
-      console.warn(
-        `[classy] ${user} 的配置 owner=${config.owner}，视为作者的模板配置`
-      );
-      return {
-        config: DEFAULT_CONFIG,
-        configured: false,
-        reliable: true,
-        source: 'template',
-      };
-    }
-
-    return { config, configured: true, reliable: true, source: 'repo' };
+    if (payload.status === 'error') hadError = true;
   }
 
   return {

@@ -194,7 +194,10 @@ const messages = {
     'notfound.page': 'Page not found',
 
     'error.rateLimit.title': 'GitHub API rate limit',
-    'error.rateLimit.body': 'The public API only allows a few anonymous requests per hour. Try again later, or set GITHUB_TOKEN.',
+    'error.rateLimit.body': 'The GitHub API quota is temporarily exhausted. Try again later; site maintainers can set GITHUB_TOKEN or a GitHub App token to raise the limit.',
+    'error.rateLimit.retry': 'Try again in about {minutes} minutes.',
+    'error.forbidden.title': 'GitHub access denied',
+    'error.forbidden.body': 'GitHub rejected the request. This is usually a token permission or configuration issue.',
     'error.unknown.title': 'Data unavailable',
     'error.unknown.body': 'Something went wrong while requesting GitHub. Refreshing may help.',
     'error.retry': 'Retry',
@@ -391,7 +394,10 @@ const messages = {
     'notfound.page': '页面不存在',
 
     'error.rateLimit.title': 'GitHub 接口暂时限流',
-    'error.rateLimit.body': '公共接口每小时只允许少量匿名请求。稍后再试，或配置 GITHUB_TOKEN 后重试。',
+    'error.rateLimit.body': 'GitHub API 配额暂时用尽。请稍后重试；站点维护者可以配置 GITHUB_TOKEN 或 GitHub App token 提高配额。',
+    'error.rateLimit.retry': '约 {minutes} 分钟后重试。',
+    'error.forbidden.title': 'GitHub 拒绝访问',
+    'error.forbidden.body': 'GitHub 拒绝了这次请求。通常是 token 权限或站点配置问题。',
     'error.unknown.title': '数据暂时取不到',
     'error.unknown.body': '请求 GitHub 时出错了。这不一定是你的问题，可以刷新重试。',
     'error.retry': '重试',

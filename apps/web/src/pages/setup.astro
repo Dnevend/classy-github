@@ -38,9 +38,9 @@ if (!user) {
   // 这个分支在模板里单独处理。
 }
 
-const { data: userinfo, error } = user
+const { data: userinfo, error, retryAt } = user
   ? await safeLoad(() => loadUser(user))
-  : { data: null, error: null };
+  : { data: null, error: null, retryAt: undefined };
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -130,7 +130,7 @@ const display = userinfo?.name || userinfo?.login || user;
         </form>
       </section>
     ) : error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !userinfo ? (
       <NotFound user={user} />
     ) : !configured && !reliable ? (

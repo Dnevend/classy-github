@@ -1,22 +1,25 @@
-import { GITHUB_TOKEN } from 'astro:env/server';
 import type { Follower, Gist, GistComment, Repo, User } from '@classy/types/github';
 
 import { USER_AGENT } from './constants.ts';
-import { cacheGet, cachePut } from './edge-cache.ts';
+import { cacheGet, cacheGetStale, cachePut } from './edge-cache.ts';
+import { getGitHubToken } from './github-auth.ts';
+import { GitHubError, type RateLimitInfo } from './github-error.ts';
+import {
+  parseRateLimit,
+  RATE_LIMIT_LOCK_MAX,
+  rateLimitLockUntil,
+} from './github-rate-limit.ts';
+
+export { GitHubError } from './github-error.ts';
+export type { RateLimitInfo } from './github-error.ts';
 
 const API_ORIGIN = 'https://api.github.com';
 
 const DEFAULT_TTL = 300;
-
-export class GitHubError extends Error {
-  status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.name = 'GitHubError';
-    this.status = status;
-  }
-}
+/** 明确 404 的负缓存：随机用户名扫描不应该每次都打 GitHub。 */
+const NEGATIVE_TTL = 300;
+/** 限流 / 5xx 时最多拿多旧的缓存兜底。 */
+const STALE_TTL = 60 * 60 * 24;
 
 type Query = Record<string, string | number | undefined>;
 
@@ -30,22 +33,94 @@ const buildUrl = (path: string, query?: Query) => {
   return url;
 };
 
-const buildHeaders = (): Record<string, string> => {
+const buildHeaders = async (): Promise<Record<string, string>> => {
   const headers: Record<string, string> = {
     'user-agent': USER_AGENT,
     accept: 'application/vnd.github+json',
   };
 
   // 有 token 走 5000 次/小时，没有就退回匿名 60 次/小时
-  if (GITHUB_TOKEN) headers.authorization = `Bearer ${GITHUB_TOKEN}`;
+  const token = await getGitHubToken();
+  if (token) headers.authorization = `Bearer ${token}`;
 
   return headers;
+};
+
+const jsonResponse = (value: unknown) =>
+  new Response(JSON.stringify(value), {
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+  });
+
+/** 负缓存用独立 key，避免污染正常数据的 JSON 类型。 */
+const markerKey = (key: Request, kind: 'not-found' | 'rate-limit') => {
+  const url = new URL(key.url);
+  url.searchParams.set('__classy', kind);
+  return new Request(url.toString(), { method: 'GET' });
+};
+
+/**
+ * 全局限流熔断标记：主限额是按 token/账号算的，一个端点看到 remaining=0
+ * 之后，其他端点也不应该继续打 GitHub。
+ */
+const RATE_LIMIT_KEY = new Request(
+  'https://classy.cache/github/rate-limit?resource=core&v=1',
+  { method: 'GET' }
+);
+
+interface RateLimitMarker {
+  __classy: 'rate-limit';
+  until: number;
+  resetAt?: number;
+  retryAfter?: number;
+}
+
+const readRateLimitMarker = async (): Promise<RateLimitMarker | null> => {
+  const cached = await cacheGet(RATE_LIMIT_KEY, RATE_LIMIT_LOCK_MAX);
+  if (!cached) return null;
+
+  try {
+    const data = (await cached.json()) as Partial<RateLimitMarker>;
+    if (data?.__classy !== 'rate-limit' || typeof data.until !== 'number') {
+      return null;
+    }
+    if (data.until <= Date.now() / 1000) return null;
+
+    return data as RateLimitMarker;
+  } catch {
+    return null;
+  }
+};
+
+const writeRateLimitMarker = async (info: RateLimitInfo, status: number) => {
+  const now = Date.now() / 1000;
+  const until = rateLimitLockUntil(info, now);
+  const ttl = Math.max(1, Math.ceil(until - now));
+
+  await cachePut(
+    RATE_LIMIT_KEY,
+    jsonResponse({
+      __classy: 'rate-limit',
+      until,
+      resetAt: info.resetAt,
+      retryAfter: info.retryAfter,
+      status,
+    }),
+    ttl
+  );
+};
+
+const staleJson = async <T>(key: Request): Promise<T | undefined> => {
+  const stale = await cacheGetStale(key, STALE_TTL);
+  if (!stale) return undefined;
+
+  return (await stale.json().catch(() => undefined)) as T | undefined;
 };
 
 /**
  * 带边缘缓存的 GitHub 读取。
  *
  * 缓存键只用 URL（不带 Authorization），否则 Cache API 会拒绝写入。
+ * GitHub 限流 / 5xx / 网络错误时优先返回旧缓存，避免把整页变成 503。
  */
 export async function ghFetch<T>(
   path: string,
@@ -58,10 +133,85 @@ export async function ghFetch<T>(
   const cached = await cacheGet(key, ttl);
   if (cached) return (await cached.json()) as T;
 
-  const res = await fetch(url, { headers: buildHeaders() });
+  // 明确的 404：短时间直接复用，不再打 GitHub
+  const notFoundKey = markerKey(key, 'not-found');
+  const notFound = await cacheGet(notFoundKey, NEGATIVE_TTL);
+  if (notFound) {
+    throw new GitHubError(404, `GitHub 404 for ${path} (cached)`);
+  }
+
+  // 已经确认主限额耗尽：直接走旧缓存或快速失败，不再消耗请求
+  const rateMarker = await readRateLimitMarker();
+  if (rateMarker) {
+    const stale = await staleJson<T>(key);
+    if (stale !== undefined) return stale;
+
+    throw new GitHubError(
+      403,
+      `GitHub rate limit active until ${new Date(rateMarker.until * 1000).toISOString()} for ${path}`,
+      {
+        rateLimit: {
+          resetAt: rateMarker.resetAt,
+          retryAfter: rateMarker.retryAfter,
+        },
+      }
+    );
+  }
+
+  let res: Response;
+
+  try {
+    res = await fetch(url, { headers: await buildHeaders() });
+  } catch (error) {
+    const stale = await staleJson<T>(key);
+    if (stale !== undefined) {
+      console.warn(`[classy] GitHub network error, serving stale ${path}`);
+      return stale;
+    }
+
+    throw new GitHubError(
+      502,
+      `GitHub network error for ${path}: ${(error as Error).message}`
+    );
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => '');
+    const rateLimit = parseRateLimit(res, body);
+
+    if (rateLimit) {
+      await writeRateLimitMarker(rateLimit, res.status);
+
+      const stale = await staleJson<T>(key);
+      if (stale !== undefined) {
+        console.warn(`[classy] GitHub rate limited, serving stale ${path}`);
+        return stale;
+      }
+
+      throw new GitHubError(
+        res.status,
+        `GitHub ${res.status} ${res.statusText} for ${path} — ${body.slice(0, 160)}`,
+        { rateLimit }
+      );
+    }
+
+    if (res.status === 404) {
+      await cachePut(notFoundKey, jsonResponse({ __classy: 'not-found' }), NEGATIVE_TTL);
+      throw new GitHubError(
+        404,
+        `GitHub 404 ${res.statusText} for ${path} — ${body.slice(0, 160)}`
+      );
+    }
+
+    // token 失效/权限错误也可能只是暂时的；旧数据比错误页好
+    if (res.status === 401 || res.status >= 500) {
+      const stale = await staleJson<T>(key);
+      if (stale !== undefined) {
+        console.warn(`[classy] GitHub ${res.status}, serving stale ${path}`);
+        return stale;
+      }
+    }
+
     throw new GitHubError(
       res.status,
       `GitHub ${res.status} ${res.statusText} for ${path} — ${body.slice(0, 160)}`
@@ -324,7 +474,8 @@ export async function getRepoPath(
 }
 
 /**
- * 用户 fork 的默认分支。配置要从默认分支读，而不是死磕 main。
+ * 用户 fork 的默认分支（setup 页生成 edit URL 用）。
+ * 配置读取已不再依赖它：GraphQL 用 `HEAD:`，无 token 时走 raw 兜底。
  * 仓库不存在 / API 失败时返回 null，由调用方走兜底顺序。
  */
 export const getDefaultBranch = async (user: string): Promise<string | null> => {

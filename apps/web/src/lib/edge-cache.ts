@@ -13,19 +13,50 @@ export const edgeCache = (): Cache | undefined => {
   return runtime.caches?.default;
 };
 
+const matchCached = async (key: Request): Promise<Response | undefined> => {
+  const cache = edgeCache();
+  if (!cache) return undefined;
+
+  return (await cache.match(key)) ?? undefined;
+};
+
+/** 缓存的年龄（秒）；没有时间戳的老条目返回 null，不能猜。 */
+const ageOf = (response: Response): number | null => {
+  const cachedAt = Number(response.headers.get(CACHED_AT_HEADER) ?? 0);
+  if (!cachedAt) return null;
+
+  return (Date.now() - cachedAt) / 1000;
+};
+
 /** 命中且未过期时返回响应，否则返回 undefined */
 export const cacheGet = async (
   key: Request,
   ttlSeconds: number
 ): Promise<Response | undefined> => {
-  const cache = edgeCache();
-  if (!cache) return undefined;
-
-  const hit = await cache.match(key);
+  const hit = await matchCached(key);
   if (!hit) return undefined;
 
-  const cachedAt = Number(hit.headers.get(CACHED_AT_HEADER) ?? 0);
-  if (!cachedAt || Date.now() - cachedAt > ttlSeconds * 1000) return undefined;
+  const age = ageOf(hit);
+  if (age === null || age > ttlSeconds) return undefined;
+
+  return hit;
+};
+
+/**
+ * 读「过期但还能兜底」的缓存。
+ *
+ * 用在 GitHub 限流 / 5xx / 网络错误时：旧数据比错误页好。调用方必须自己
+ * 控制 staleTtl，避免拿几周前的数据当现在。
+ */
+export const cacheGetStale = async (
+  key: Request,
+  staleTtlSeconds: number
+): Promise<Response | undefined> => {
+  const hit = await matchCached(key);
+  if (!hit) return undefined;
+
+  const age = ageOf(hit);
+  if (age === null || age > staleTtlSeconds) return undefined;
 
   return hit;
 };

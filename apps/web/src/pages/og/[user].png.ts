@@ -3,7 +3,8 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { ImageResponse } from 'workers-og';
 import { USER_AGENT } from '../../lib/constants';
-import { GitHubError, getUser, listRepos } from '../../lib/github';
+import { isNotFound, isRateLimited } from '../../lib/errors';
+import { loadOgStats } from '../../lib/profile';
 import { parseThemeName } from '../../lib/theme';
 import { paletteFor } from '../../lib/theme-palette';
 import { loadConfigState } from '../../lib/config-loader';
@@ -108,25 +109,25 @@ export const GET: APIRoute = async ({ params, url }) => {
     return new Response('Invalid GitHub login', { status: 400 });
   }
 
-  let userinfo;
+  let stats;
 
   try {
-    userinfo = await getUser(user);
+    stats = await loadOgStats(user);
   } catch (error) {
-    const status =
-      error instanceof GitHubError && (error.status === 403 || error.status === 429)
-        ? 503
-        : 404;
+    const status = isRateLimited(error) ? 503 : isNotFound(error) ? 404 : 502;
     return new Response('GitHub unavailable', { status });
+  }
+
+  if (!stats) {
+    return new Response('GitHub user not found', { status: 404 });
   }
 
   const theme = parseThemeName(url.searchParams.get('theme')) ?? 'mac';
   const palette = paletteFor(theme);
-  const [config, repos, fonts, avatar] = await Promise.all([
-    loadConfigState(user, { fresh: true })
+  const [config, fonts, avatar] = await Promise.all([
+    loadConfigState(user)
       .then((state) => state.config)
       .catch(() => null),
-    listRepos(user, { perPage: 100 }).catch(() => []),
     loadFonts(url.origin).catch(() => null),
     fetch(`https://github.com/${encodeURIComponent(user)}.png?size=160`, {
       headers: { 'user-agent': USER_AGENT },
@@ -140,21 +141,17 @@ export const GET: APIRoute = async ({ params, url }) => {
     ? await fetchCover(coverUrl, url.origin).catch(() => null)
     : null;
 
-  const stars = repos.reduce(
-    (total, repo) => total + (repo.stargazers_count ?? 0),
-    0
-  );
   const avatarSrc = avatar
     ? `data:image/png;base64,${toBase64(avatar)}`
     : null;
 
   const html = buildOgCardHtml({
-    login: userinfo.login,
-    name: userinfo.name,
-    publicRepos: userinfo.public_repos,
-    publicGists: userinfo.public_gists,
-    followers: userinfo.followers,
-    stars,
+    login: stats.login,
+    name: stats.name,
+    publicRepos: stats.publicRepos,
+    publicGists: stats.publicGists,
+    followers: stats.followers,
+    stars: stats.stars,
     theme,
     palette,
     host: new URL(siteOrigin(url)).host,

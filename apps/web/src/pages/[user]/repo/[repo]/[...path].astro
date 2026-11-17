@@ -27,7 +27,7 @@ const invalidPath = segments.some(
   (segment) => segment === '.' || segment === '..' || segment.includes('\0')
 );
 
-const { data, error } = await safeLoad(async () => {
+const { data, error, retryAt } = await safeLoad(async () => {
   if (invalidPath) return null;
   return getRepoPath(user, repoName, filePath);
 });
@@ -185,7 +185,7 @@ const title = data?.kind === 'dir' ? t('repo.files') : (file?.name ?? filePath);
 >
   {
     error && error !== 'not-found' ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={`${user}/${repoName}/${filePath}`} />
     ) : (

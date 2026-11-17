@@ -4,22 +4,50 @@ import { createTranslator } from '../lib/i18n';
 
 interface Props {
   kind: LoadErrorKind;
+  /** 限流时的恢复时间（epoch 毫秒）；用相对分钟展示，避免 Worker 时区问题 */
+  retryAt?: number;
 }
 
-const { kind } = Astro.props as Props;
+const { kind, retryAt } = Astro.props as Props;
 const t = createTranslator(Astro.locals.locale);
+
+const retryMinutes =
+  retryAt && retryAt > Date.now()
+    ? Math.max(1, Math.ceil((retryAt - Date.now()) / 60_000))
+    : null;
 
 // 'not-found' 通常由 NotFound 组件处理，这里保留文案只为让类型闭环
 const copy =
   kind === 'rate-limit'
-    ? { title: t('error.rateLimit.title'), body: t('error.rateLimit.body') }
-    : kind === 'not-found'
-      ? { title: t('notfound.title'), body: t('notfound.page') }
-      : { title: t('error.unknown.title'), body: t('error.unknown.body') };
+    ? {
+        title: t('error.rateLimit.title'),
+        body: t('error.rateLimit.body'),
+        retry: retryMinutes
+          ? t('error.rateLimit.retry', { minutes: retryMinutes })
+          : null,
+      }
+    : kind === 'forbidden'
+      ? {
+          title: t('error.forbidden.title'),
+          body: t('error.forbidden.body'),
+          retry: null,
+        }
+      : kind === 'not-found'
+        ? {
+            title: t('notfound.title'),
+            body: t('notfound.page'),
+            retry: null,
+          }
+        : {
+            title: t('error.unknown.title'),
+            body: t('error.unknown.body'),
+            retry: null,
+          };
 ---
 
 <div class="empty">
   <h1>{copy.title}</h1>
   <p>{copy.body}</p>
+  {copy.retry && <p>{copy.retry}</p>}
   <a href={Astro.url.pathname}>{t('error.retry')}</a>
 </div>

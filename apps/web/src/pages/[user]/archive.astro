@@ -5,10 +5,9 @@ import ServiceError from '../../components/ServiceError.astro';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { safeLoad } from '../../lib/errors';
-import { listGists } from '../../lib/github';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
-import { loadUser } from '../../lib/page';
+import { loadUserGists } from '../../lib/profile';
 import { resolveTheme } from '../../themes';
 
 export const prerender = false;
@@ -16,11 +15,9 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-const { data, error } = await safeLoad(async () => {
-  const userinfo = await loadUser(user);
-  if (!userinfo) return null;
-  return { userinfo, gists: await listGists(user) };
-});
+const { data, error, retryAt } = await safeLoad(() =>
+  loadUserGists(user)
+);
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -106,7 +103,7 @@ for (const gist of sorted) {
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={user} />
     ) : (

@@ -2,9 +2,10 @@
 import { siteOrigin } from "../../lib/site";
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
-import { listRepos } from '../../lib/github';
 import { safeLoad } from '../../lib/errors';
+import { listRepos } from '../../lib/github';
 import { loadUser } from '../../lib/page';
+import { loadReposFirstPage } from '../../lib/profile';
 import { DEFAULT_CONFIG, type ResolvedConfig } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { localeFromConfig, createTranslator } from '../../lib/i18n';
@@ -21,7 +22,9 @@ const origin = siteOrigin(Astro.url);
 const pageParam = Number(Astro.url.searchParams.get('page') ?? '1');
 const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
-const { data, error } = await safeLoad(async () => {
+const { data, error, retryAt } = await safeLoad(async () => {
+  if (page === 1) return loadReposFirstPage(user, { perPage: PER_PAGE });
+
   const userinfo = await loadUser(user);
   if (!userinfo) return null;
 
@@ -70,7 +73,7 @@ const hasPrev = page > 1;
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={user} />
     ) : (

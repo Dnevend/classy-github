@@ -2,12 +2,10 @@
 import { siteOrigin } from "../../lib/site";
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
-import { getUserReadme, listGists, listRepos } from '../../lib/github';
 import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
-import { loadUser } from '../../lib/page';
+import { loadProfile } from '../../lib/profile';
 import { seoForProfile } from '../../lib/seo';
-import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfigState } from '../../lib/config-loader';
 import { buildDefaultReadme } from '../../lib/default-readme';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
@@ -26,38 +24,23 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-// 配置和用户信息并行加载；配置用来决定一次拉多少个仓库（showCount）
-// 预览页不走缓存，保证刚保存的 classy.config.json 立刻可见
+// 配置用来决定一次拉多少个仓库（showCount）；预览页不走缓存，
+// 保证刚保存的 classy.config.json 立刻可见。
 const isPreview = Astro.url.searchParams.get('preview') === '1';
-const configStatePromise = loadConfigState(user, { fresh: isPreview });
+const configState = await loadConfigState(user, { fresh: isPreview });
+const { config, configured, reliable } = configState;
 
-const { data, error } = await safeLoad(async () => {
-  const [userinfo, configState] = await Promise.all([
-    loadUser(user),
-    configStatePromise,
-  ]);
-  if (!userinfo) return null;
+const wantsRepos = config.profile.repos.visible;
+const wantsGists =
+  config.profile.gists.visible && config.profile.gists.showCount > 0;
 
-  const perPage = Math.min(
-    100,
-    Math.max(1, configState.config.profile.repos.showCount)
-  );
-  const gistPerPage = Math.min(
-    100,
-    Math.max(1, configState.config.profile.gists.showCount)
-  );
-  const wantsGists =
-    configState.config.profile.gists.visible &&
-    configState.config.profile.gists.showCount > 0;
-
-  const [repos, readme, gists] = await Promise.all([
-    listRepos(user, { perPage }),
-    getUserReadme(user),
-    wantsGists ? listGists(user, gistPerPage).catch(() => []) : Promise.resolve([]),
-  ]);
-
-  return { userinfo, repos, readme, gists, configState };
-});
+const { data, error, retryAt } = await safeLoad(() =>
+  loadProfile(user, {
+    repoCount: wantsRepos ? config.profile.repos.showCount : 0,
+    gistCount: wantsGists ? config.profile.gists.showCount : 0,
+    fresh: isPreview,
+  })
+);
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -66,12 +49,6 @@ if (error) {
   Astro.response.status = 404;
   Astro.response.headers.set('cache-control', 'no-store');
 }
-
-// 配置读取失败不影响渲染：loadConfigState 内部已降级为默认值
-const configState = data
-  ? data.configState
-  : { config: DEFAULT_CONFIG, configured: false, reliable: false, source: 'default' as const };
-const { config, configured, reliable } = configState;
 
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromConfig(config.language);
@@ -165,7 +142,7 @@ const seo = data
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={user} />
     ) : (

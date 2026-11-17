@@ -2,9 +2,8 @@
 import { siteOrigin } from "../../lib/site";
 import NotFound from '../../components/NotFound.astro';
 import ServiceError from '../../components/ServiceError.astro';
-import { listGists } from '../../lib/github';
 import { safeLoad } from '../../lib/errors';
-import { loadUser } from '../../lib/page';
+import { loadUserGists } from '../../lib/profile';
 import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
@@ -18,12 +17,9 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-const { data, error } = await safeLoad(async () => {
-  const userinfo = await loadUser(user);
-  if (!userinfo) return null;
-
-  return { userinfo, gists: await listGists(user) };
-});
+const { data, error, retryAt } = await safeLoad(() =>
+  loadUserGists(user)
+);
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -80,7 +76,7 @@ const filtered = activeTag
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={user} />
     ) : (

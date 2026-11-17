@@ -16,7 +16,7 @@ const user = Astro.params.user as string;
 const repoName = Astro.params.repo as string;
 const origin = siteOrigin(Astro.url);
 
-const { data, error } = await safeLoad(async () => {
+const { data, error, retryAt } = await safeLoad(async () => {
   const repo = await getRepo(user, repoName);
   const readme = await getRepoReadme(user, repoName);
 
@@ -74,7 +74,7 @@ const readmeHtml =
 >
   {
     error && error !== 'not-found' ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !data ? (
       <NotFound user={`${user}/${repoName}`} />
     ) : (

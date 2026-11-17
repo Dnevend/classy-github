@@ -21,7 +21,7 @@ if (Astro.locals.localeChoice === 'auto') {
   );
 }
 
-const { data: userinfo, error } = await safeLoad(() => loadUser(user));
+const { data: userinfo, error, retryAt } = await safeLoad(() => loadUser(user));
 
 if (error) {
   Astro.response.status = error === 'rate-limit' ? 503 : 500;
@@ -92,7 +92,7 @@ const readmeUrl = 'https://github.com/Dnevend/classy-github#自定义配置';
 >
   {
     error ? (
-      <ServiceError kind={error} />
+      <ServiceError kind={error} retryAt={retryAt} />
     ) : !userinfo ? (
       <NotFound user={user} />
     ) : !configured && !reliable ? (

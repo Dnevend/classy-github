@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
-import { getUser, listRepos } from '../../lib/github';
+import { isNotFound, isRateLimited } from '../../lib/errors';
+import { loadOgStats } from '../../lib/profile';
 import { paletteFor } from '../../lib/theme-palette';
 import { DEFAULT_LOCALE, isLocale, translate } from '../../lib/i18n';
 
@@ -14,26 +15,26 @@ export const GET: APIRoute = async ({ params, url }) => {
   const locale = isLocale(localeParam) ? localeParam : DEFAULT_LOCALE;
   const colors = paletteFor(url.searchParams.get('theme'));
 
-  let userinfo;
+  let stats;
+
   try {
-    userinfo = await getUser(user);
-  } catch {
-    return new Response('', { status: 404 });
+    stats = await loadOgStats(user);
+  } catch (error) {
+    const status = isRateLimited(error) ? 503 : isNotFound(error) ? 404 : 502;
+    return new Response('', { status });
   }
 
-  const repos = await listRepos(user, { perPage: 100 }).catch(() => []);
-  const stars = repos.reduce((sum, repo) => sum + (repo.stargazers_count ?? 0), 0);
-  const languages = new Set(repos.map((repo) => repo.language).filter(Boolean)).size;
+  if (!stats) return new Response('', { status: 404 });
 
-  const display = escapeXml((userinfo.name || userinfo.login).slice(0, 24));
-  const handle = escapeXml(`@${userinfo.login}`);
+  const display = escapeXml((stats.name || stats.login).slice(0, 24));
+  const handle = escapeXml(`@${stats.login}`);
   const label = (key: Parameters<typeof translate>[1]) => translate(locale, key);
 
   const cells = [
-    { value: userinfo.public_repos, label: label('stats.repos') },
-    { value: stars, label: label('stats.stars') },
-    { value: userinfo.public_gists, label: label('stats.gists') },
-    { value: languages, label: label('stats.languages') },
+    { value: stats.publicRepos, label: label('stats.repos') },
+    { value: stats.stars, label: label('stats.stars') },
+    { value: stats.publicGists, label: label('stats.gists') },
+    { value: stats.languages, label: label('stats.languages') },
   ];
 
   const cellWidth = 78;

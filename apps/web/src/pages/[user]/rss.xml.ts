@@ -3,20 +3,15 @@ import type { APIRoute } from 'astro';
 import { loadConfig } from '../../lib/config-loader';
 import { safeLoad } from '../../lib/errors';
 import { buildAtomFeed } from '../../lib/feed';
-import { listGists } from '../../lib/github';
 import { localeFromConfig } from '../../lib/i18n';
-import { loadUser } from '../../lib/page';
+import { loadUserGists } from '../../lib/profile';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ params, url }) => {
   const user = params.user ?? '';
 
-  const { data, error } = await safeLoad(async () => {
-    const userinfo = await loadUser(user);
-    if (!userinfo) return null;
-    return { userinfo, gists: await listGists(user) };
-  });
+  const { data, error } = await safeLoad(() => loadUserGists(user));
 
   if (error) {
     return new Response('GitHub temporarily unavailable', {

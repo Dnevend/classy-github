@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
-import { GITHUB_TOKEN } from 'astro:env/server';
 import { USER_AGENT } from '../../lib/constants';
 import { cacheGet, cachePut } from '../../lib/edge-cache';
+import { getGitHubToken } from '../../lib/github-auth';
 import { isThemeName } from '../../lib/theme';
 
 export const prerender = false;
@@ -48,7 +48,8 @@ export const GET: APIRoute = async ({ params, url }) => {
   const cached = await cacheGet(cacheKey, 3600);
   if (cached) return cached;
 
-  if (!GITHUB_TOKEN) return new Response('{"weeks":[]}', { status: 503 });
+  const token = await getGitHubToken();
+  if (!token) return new Response('{"weeks":[]}', { status: 503 });
 
   let weeks: number[][] = [];
 
@@ -56,7 +57,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     const res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${GITHUB_TOKEN}`,
+        authorization: `Bearer ${token}`,
         'content-type': 'application/json',
         'user-agent': USER_AGENT,
       },
