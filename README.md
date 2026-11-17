@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-  <a href="https://classygit.dev/Dnevend"><strong>在线体验</strong></a> ·
+  <a href="https://classygit.dev" target="_blank"><strong>在线体验</strong></a> ·
   <a href="#三分钟开始"><strong>3 分钟开始</strong></a> ·
-  <a href="https://classygit.dev/setup"><strong>配置生成器</strong></a> ·
+  <a href="https://classygit.dev/setup" target="_blank"><strong>配置生成器</strong></a> ·
   <a href="./README.en.md">English</a>
 </p>
 
