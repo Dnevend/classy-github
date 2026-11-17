@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "classy-web",
   "main": "./src/worker.ts",
+  "workers_dev": true,
   "compatibility_date": "2026-11-15",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "routes": [
