@@ -94,16 +94,28 @@ const loadProfileUncached = async (
 ): Promise<ProfileData | null> => {
   if (!hasGitHubToken()) return loadProfileRest(user, options);
 
-  const data = await ghGraphql<ProfileQueryData>(
-    'Profile',
-    PROFILE_QUERY,
-    {
-      login: user,
-      repoCount: clampCount(options.repoCount),
-      gistCount: clampCount(options.gistCount),
-    },
-    { ttl: 1800, fresh: options.fresh }
-  );
+  let data: ProfileQueryData;
+
+  try {
+    data = await ghGraphql<ProfileQueryData>(
+      'Profile',
+      PROFILE_QUERY,
+      {
+        login: user,
+        repoCount: clampCount(options.repoCount),
+        gistCount: clampCount(options.gistCount),
+      },
+      { ttl: 1800, fresh: options.fresh }
+    );
+  } catch (error) {
+    // GraphQL 的 5,000 points/h 和 REST core 的 5,000/h 是两套额度。
+    // GraphQL 被打满时，REST 往往还有余量；旧路径比 503 好。
+    console.warn(
+      `[classy] Profile GraphQL failed for ${user}, fallback REST:`,
+      (error as Error).message
+    );
+    return loadProfileRest(user, options);
+  }
 
   const node = data.user;
   if (!node) return null;
