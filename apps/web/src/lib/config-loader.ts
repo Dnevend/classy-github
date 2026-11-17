@@ -179,9 +179,17 @@ const resolvePayload = (
 export interface ConfigLoadOptions {
   /** 配置生成器 / 预览用：跳过配置边缘缓存，直接读 GitHub */
   fresh?: boolean;
+  /**
+   * 请求级 memo。middleware 和页面共享同一个 Map，避免一次请求里
+   * 重复读 Config（预览页尤其明显）。
+   */
+  memo?: Map<string, Promise<ConfigState>>;
 }
 
-export const loadConfigState = async (
+const memoKey = (user: string, fresh: boolean): string =>
+  `${user.toLowerCase()}|${fresh ? 'fresh' : 'cached'}`;
+
+const loadConfigStateUncached = async (
   user: string,
   options: ConfigLoadOptions = {}
 ): Promise<ConfigState> => {
@@ -244,8 +252,32 @@ export const loadConfigState = async (
 };
 
 /**
+ * 请求级 memo 包装：同一个 Map 里同 user/fresh 只执行一次。
+ * 没有 memo 时保持原来的行为。
+ */
+export const loadConfigState = (
+  user: string,
+  options: ConfigLoadOptions = {}
+): Promise<ConfigState> => {
+  const { memo } = options;
+  if (!memo) return loadConfigStateUncached(user, options);
+
+  const key = memoKey(user, options.fresh ?? false);
+  const cached = memo.get(key);
+  if (cached) return cached;
+
+  const promise = loadConfigStateUncached(user, options);
+  memo.set(key, promise);
+  void promise.catch(() => memo.delete(key));
+
+  return promise;
+};
+
+/**
  * 兼容旧调用方：只要配置，不关心认领状态。
  * 新代码优先用 `loadConfigState`。
  */
-export const loadConfig = async (user: string): Promise<ResolvedConfig> =>
-  (await loadConfigState(user)).config;
+export const loadConfig = async (
+  user: string,
+  options: ConfigLoadOptions = {}
+): Promise<ResolvedConfig> => (await loadConfigState(user, options)).config;

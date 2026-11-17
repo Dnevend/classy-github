@@ -39,7 +39,7 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-const config: ResolvedConfig = data ? await loadConfig(user) : DEFAULT_CONFIG;
+const config: ResolvedConfig = data ? await loadConfig(user, { memo: Astro.locals.configMemo }) : DEFAULT_CONFIG;
 
 // 语言优先级：?lang= > cookie > 用户配置 > en
 if (Astro.locals.localeChoice === 'auto') {

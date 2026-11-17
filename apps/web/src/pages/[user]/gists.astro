@@ -30,7 +30,7 @@ if (error) {
   Astro.response.headers.set('cache-control', 'no-store');
 }
 
-const config = data ? await loadConfig(user) : DEFAULT_CONFIG;
+const config = data ? await loadConfig(user, { memo: Astro.locals.configMemo }) : DEFAULT_CONFIG;
 
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromConfig(config.language);

@@ -25,8 +25,15 @@ const PALETTE: Record<string, string[]> = {
   tui: ['#000080', '#0050a8', '#0080a8', '#00a800', '#55ff55'],
 };
 
-/** 调色板改动时 +1，让旧的 1 小时边缘缓存立即失效 */
-const PALETTE_VERSION = '2';
+/** 原始贡献数据版本；调色板不参与这个 cache key */
+const DATA_VERSION = '3';
+/** 贡献数据缓存 1 小时；主题只影响 palette，不再重复请求 GitHub */
+const DATA_TTL = 3600;
+
+interface ContribData {
+  weeks: number[][];
+  max: number;
+}
 
 const QUERY = `query($login:String!){
   user(login:$login){
@@ -44,43 +51,56 @@ export const GET: APIRoute = async ({ params, url }) => {
   const theme = isThemeName(themeParam) ? themeParam : 'mac';
   const palette = PALETTE[theme] ?? PALETTE.mac;
 
-  const cacheKey = new Request(`${url.origin}/contrib/${user}.json?theme=${theme}&v=${PALETTE_VERSION}`, { method: 'GET' });
-  const cached = await cacheGet(cacheKey, 3600);
-  if (cached) return cached;
+  // 只按 user 缓存原始 weeks/max；theme 只影响下面的 palette。
+  const cacheKey = new Request(
+    `${url.origin}/contrib/${encodeURIComponent(user)}.json?raw=1&v=${DATA_VERSION}`,
+    { method: 'GET' }
+  );
 
-  const token = await getGitHubToken();
-  if (!token) return new Response('{"weeks":[]}', { status: 503 });
-
-  let weeks: number[][] = [];
-
-  try {
-    const res = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-        'user-agent': USER_AGENT,
-      },
-      body: JSON.stringify({ query: QUERY, variables: { login: user } }),
-    });
-
-    if (!res.ok) return new Response('{"weeks":[]}', { status: 502 });
-
-    const data = (await res.json()) as CalendarResponse;
-    weeks = (data.data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []).map((week) =>
-      week.contributionDays.map((day) => day.contributionCount)
-    );
-  } catch {
-    return new Response('{"weeks":[]}', { status: 502 });
+  let data: ContribData | null = null;
+  const cached = await cacheGet(cacheKey, DATA_TTL);
+  if (cached) {
+    data = (await cached.json().catch(() => null)) as ContribData | null;
   }
 
-  const max = Math.max(1, ...weeks.flat());
-  const body = JSON.stringify({ weeks, palette, max });
+  if (!data) {
+    const token = await getGitHubToken();
+    if (!token) return new Response('{"weeks":[]}', { status: 503 });
 
-  const response = new Response(body, {
-    headers: { 'content-type': 'application/json; charset=utf-8' },
-  });
-  await cachePut(cacheKey, response, 3600);
+    let weeks: number[][] = [];
+
+    try {
+      const res = await fetch('https://api.github.com/graphql', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+          'user-agent': USER_AGENT,
+        },
+        body: JSON.stringify({ query: QUERY, variables: { login: user } }),
+      });
+
+      if (!res.ok) return new Response('{"weeks":[]}', { status: 502 });
+
+      const payload = (await res.json()) as CalendarResponse;
+      weeks = (payload.data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []).map(
+        (week) => week.contributionDays.map((day) => day.contributionCount)
+      );
+    } catch {
+      return new Response('{"weeks":[]}', { status: 502 });
+    }
+
+    data = { weeks, max: Math.max(1, ...weeks.flat()) };
+    await cachePut(
+      cacheKey,
+      new Response(JSON.stringify(data), {
+        headers: { 'content-type': 'application/json; charset=utf-8' },
+      }),
+      DATA_TTL
+    );
+  }
+
+  const body = JSON.stringify({ weeks: data.weeks, palette, max: data.max });
 
   return new Response(body, {
     headers: {

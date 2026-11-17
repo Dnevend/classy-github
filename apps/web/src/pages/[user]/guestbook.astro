@@ -14,7 +14,7 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-const configState = await loadConfigState(user);
+const configState = await loadConfigState(user, { memo: Astro.locals.configMemo });
 const { config } = configState;
 const gistId = config.guestbook.gistId;
 

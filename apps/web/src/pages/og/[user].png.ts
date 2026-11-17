@@ -125,7 +125,7 @@ export const GET: APIRoute = async ({ params, url }) => {
   const theme = parseThemeName(url.searchParams.get('theme')) ?? 'mac';
   const palette = paletteFor(theme);
   const [config, fonts, avatar] = await Promise.all([
-    loadConfigState(user)
+    loadConfigState(user, { memo: Astro.locals.configMemo })
       .then((state) => state.config)
       .catch(() => null),
     loadFonts(url.origin).catch(() => null),

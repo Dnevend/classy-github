@@ -51,7 +51,7 @@ if (error) {
 }
 
 const configState = userinfo
-  ? await loadConfigState(user, { fresh: true })
+  ? await loadConfigState(user, { fresh: true, memo: Astro.locals.configMemo })
   : {
       config: DEFAULT_CONFIG,
       configured: false,

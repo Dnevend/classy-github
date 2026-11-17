@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     });
   }
 
-  const config = await loadConfig(user);
+  const config = await loadConfig(user, { memo: Astro.locals.configMemo });
   const body = buildAtomFeed({
     user,
     userinfo: data.userinfo,

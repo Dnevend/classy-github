@@ -27,7 +27,7 @@ const origin = siteOrigin(Astro.url);
 // 配置用来决定一次拉多少个仓库（showCount）；预览页不走缓存，
 // 保证刚保存的 classy.config.json 立刻可见。
 const isPreview = Astro.url.searchParams.get('preview') === '1';
-const configState = await loadConfigState(user, { fresh: isPreview });
+const configState = await loadConfigState(user, { fresh: isPreview, memo: Astro.locals.configMemo });
 const { config, configured, reliable } = configState;
 
 const wantsRepos = config.profile.repos.visible;

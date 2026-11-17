@@ -36,7 +36,7 @@ const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const { Layout } = components;
 
 const configState = userinfo
-  ? await loadConfigState(user)
+  ? await loadConfigState(user, { memo: Astro.locals.configMemo })
   : {
       config: DEFAULT_CONFIG,
       configured: false,

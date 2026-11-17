@@ -8,6 +8,11 @@ declare namespace App {
     localeChoice: import('./lib/i18n').Locale | 'auto';
     /** 最终生效的语言（auto 时页面会用配置里的 language 覆盖） */
     locale: import('./lib/i18n').Locale;
+    /** 请求级配置 memo：middleware 和页面共享，避免重复读 config */
+    configMemo?: Map<
+      string,
+      Promise<import('./lib/config-loader').ConfigState>
+    >;
   }
 }
 

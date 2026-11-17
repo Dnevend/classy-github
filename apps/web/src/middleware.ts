@@ -5,7 +5,7 @@ import {
   cachePut,
   edgeCache,
 } from './lib/edge-cache.ts';
-import { loadConfigState } from './lib/config-loader.ts';
+import { loadConfigState, type ConfigState } from './lib/config-loader.ts';
 import { serveStaleHtml } from './lib/stale-html.ts';
 import { normalizeCacheParams } from './lib/request-params.ts';
 import type { ThemeName } from './lib/config.ts';
@@ -55,7 +55,11 @@ const THEME_CACHE_TTL = 300;
 const themeCacheKey = (login: string) =>
   new Request(`https://classy.cache/theme/${encodeURIComponent(login.toLowerCase())}?v=1`);
 
-const loadConfigTheme = async (login: string, fresh: boolean): Promise<ThemeName> => {
+const loadConfigTheme = async (
+  login: string,
+  fresh: boolean,
+  memo?: Map<string, Promise<ConfigState>>
+): Promise<ThemeName> => {
   const key = themeCacheKey(login);
 
   if (!fresh) {
@@ -67,7 +71,7 @@ const loadConfigTheme = async (login: string, fresh: boolean): Promise<ThemeName
     }
   }
 
-  const state = await loadConfigState(login, { fresh });
+  const state = await loadConfigState(login, { fresh, memo });
   const theme = state.config.theme;
 
   // reliable=false 表示网络/限流，不能把 mac 当成“没有配置”缓存 5 分钟
@@ -90,6 +94,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
   const isPreview = url.searchParams.get('preview') === '1';
 
+  // 请求级配置 memo：middleware 读过 config 后，页面直接复用同一个 Promise。
+  const configMemo = new Map<string, Promise<ConfigState>>();
+  context.locals.configMemo = configMemo;
+
   const themeParam = url.searchParams.get('theme');
   const savedTheme = context.cookies.get(THEME_COOKIE);
 
@@ -98,7 +106,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     param: themeParam,
     cookie: savedTheme ? savedTheme.value : null,
     fresh: isPreview,
-    loadConfigTheme,
+    loadConfigTheme: (login, fresh) =>
+      loadConfigTheme(login, fresh, configMemo),
   });
 
   const savedLocale = context.cookies.get(LOCALE_COOKIE);
