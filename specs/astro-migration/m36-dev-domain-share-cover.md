@@ -92,3 +92,11 @@ GET https://classygit.pages.dev/Dnevend/rss.xml   同上
 - TUI 主题页（`?theme=tui`）不再请求 `/_astro/images/scroll-*.png`，
   `performance` 里没有 404 资源。
 
+## 已知限制
+
+- Cloudflare Web Analytics 的 RUM 站点仍只匹配 `(classygit.pages.dev)$`。
+  公共 API 的 `site_info` 创建/更新只接受单个 hostname，传多域名正则会被
+  `form.host.invalid` 拒绝；需要在 Dashboard 的 Web Analytics 里给该站点
+  追加 `classygit.dev`。在追加之前，`classygit.dev` 的 beacon 会被 CORS
+  拦截并只在控制台报错，不影响页面功能。
+
