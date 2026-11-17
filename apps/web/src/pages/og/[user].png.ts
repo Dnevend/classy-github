@@ -102,7 +102,7 @@ const toBase64 = (buffer: ArrayBuffer) => {
  * 只用 ASCII（login / 统计 / 固定 tagline），避免把中文字体打进 Worker；
  * 字体走静态资源 ASSETS，颜色跟随主题。
  */
-export const GET: APIRoute = async ({ params, url }) => {
+export const GET: APIRoute = async ({ params, url, locals }) => {
   const user = params.user ?? '';
 
   if (!LOGIN.test(user)) {
@@ -125,7 +125,7 @@ export const GET: APIRoute = async ({ params, url }) => {
   const theme = parseThemeName(url.searchParams.get('theme')) ?? 'mac';
   const palette = paletteFor(theme);
   const [config, fonts, avatar] = await Promise.all([
-    loadConfigState(user, { memo: Astro.locals.configMemo })
+    loadConfigState(user, { memo: locals.configMemo })
       .then((state) => state.config)
       .catch(() => null),
     loadFonts(url.origin).catch(() => null),

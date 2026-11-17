@@ -8,7 +8,7 @@ import { loadUserGists } from '../../lib/profile';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params, url }) => {
+export const GET: APIRoute = async ({ params, url, locals }) => {
   const user = params.user ?? '';
 
   const { data, error } = await safeLoad(() => loadUserGists(user));
@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ params, url }) => {
     });
   }
 
-  const config = await loadConfig(user, { memo: Astro.locals.configMemo });
+  const config = await loadConfig(user, { memo: locals.configMemo });
   const body = buildAtomFeed({
     user,
     userinfo: data.userinfo,
