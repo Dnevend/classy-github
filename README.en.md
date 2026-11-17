@@ -5,9 +5,9 @@
 No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog.
 
 <p align="center">
-  <a href="https://classygit.pages.dev/Dnevend"><strong>Live demo</strong></a> ·
+  <a href="https://classygit.dev/Dnevend"><strong>Live demo</strong></a> ·
   <a href="#get-started-in-3-minutes"><strong>3-minute setup</strong></a> ·
-  <a href="https://classygit.pages.dev/setup"><strong>Config builder</strong></a> ·
+  <a href="https://classygit.dev/setup"><strong>Config builder</strong></a> ·
   <a href="#themes"><strong>Themes</strong></a> ·
   <a href="https://github.com/Dnevend/classy-github"><strong>GitHub</strong></a> ·
   <a href="./README.md">中文</a>
@@ -17,11 +17,11 @@ Four themes, one GitHub dataset. Click a screenshot to open that theme live:
 
 | `mac` · System 6 | `nes` · 8-bit |
 |---|---|
-| [![mac theme](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes theme](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
+| [![mac theme](./assets/theme-mac.png)](https://classygit.dev/Dnevend?theme=mac) | [![nes theme](./assets/theme-nes.png)](https://classygit.dev/Dnevend?theme=nes) |
 | **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 theme](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+| [![win98 theme](./assets/theme-win98.png)](https://classygit.dev/Dnevend?theme=win98) | [![tui theme](./assets/theme-tui.png)](https://classygit.dev/Dnevend?theme=tui) |
 
-<p align="center"><sub>mac / nes / win98 / tui · screenshots from <a href="https://classygit.pages.dev/Dnevend">Dnevend's profile</a></sub></p>
+<p align="center"><sub>mac / nes / win98 / tui · screenshots from <a href="https://classygit.dev/Dnevend">Dnevend's profile</a></sub></p>
 
 **Contents**: [Why](#why-classygit) · [Start](#get-started-in-3-minutes) · [Features](#what-you-get) · [Themes](#themes) · [Community](#community) · [Config](#configuration) · [FAQ](#faq) · [Self-host](#development-and-self-hosting)
 
@@ -50,10 +50,10 @@ At runtime there are only two external dependencies: **GitHub provides content a
 
 ## Get started in 3 minutes
 
-1. **See it first**: open [classygit.pages.dev/Dnevend](https://classygit.pages.dev/Dnevend), or enter any GitHub username on the landing page. Any public GitHub account gets a page immediately — no fork required.
+1. **See it first**: open [classygit.dev/Dnevend](https://classygit.dev/Dnevend), or enter any GitHub username on the landing page. Any public GitHub account gets a page immediately — no fork required.
 2. **Fork the repo**: [Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork). Keep the repository name `classy-github` (the default fork name).
-3. **Build your config**: open [`/setup?u=your-username`](https://classygit.pages.dev/setup), fill the form and copy the JSON; or edit `classy.config.json` directly in the root of your fork. Set `owner` to your GitHub username.
-4. **Wait 5 minutes**: open `https://classygit.pages.dev/your-username`. The page refreshes within 5 minutes. No build, deploy or CI.
+3. **Build your config**: open [`/setup?u=your-username`](https://classygit.dev/setup), fill the form and copy the JSON; or edit `classy.config.json` directly in the root of your fork. Set `owner` to your GitHub username.
+4. **Wait 5 minutes**: open `https://classygit.dev/your-username`. The page refreshes within 5 minutes. No build, deploy or CI.
 
 > Regular users do not need `pnpm install`, a Cloudflare account or a domain. Those are only for changing the code or self-hosting — see the end of this README.
 
@@ -180,7 +180,7 @@ After claiming, the profile footer shows “{count} visitors”. Counts live in 
 
 Open the “88×31 badge” link in your profile footer, or go to `/badge/<username>`, to copy HTML or Markdown snippets. The badge is pure SVG and accepts `?theme=mac|nes|win98|tui`.
 
-[![ClassyGit badge](https://classygit.pages.dev/badge/Dnevend.svg?theme=mac)](https://classygit.pages.dev/badge/Dnevend)
+[![ClassyGit badge](https://classygit.dev/badge/Dnevend.svg?theme=mac)](https://classygit.dev/badge/Dnevend)
 
 ## Configuration
 
@@ -188,7 +188,7 @@ Open the “88×31 badge” link in your profile footer, or go to `/badge/<usern
 
 | Method | Best for | Entry point |
 |---|---|---|
-| Form builder (recommended) | First-time setup | [`/setup?u=<username>`](https://classygit.pages.dev/setup) |
+| Form builder (recommended) | First-time setup | [`/setup?u=<username>`](https://classygit.dev/setup) |
 | Claim page | Seeing the steps first | `/claim/<username>` |
 | Edit directly | People comfortable with JSON | `classy.config.json` in your fork |
 
@@ -200,7 +200,7 @@ The config builder only generates JSON. It does not request GitHub authorization
 - File: `classy.config.json` in the root of the default branch. The branch can be `main`, `master` or anything else.
 - Refresh: the profile updates within 5 minutes. No build, deploy or CI.
 - Ownership: set `owner` to your GitHub username. If you fork and keep the author's `owner`, the file is treated as a template and ignored; an empty or invalid `owner` is accepted as a legacy config, which is not recommended.
-- Preview: `https://classygit.pages.dev/<your-username>?preview=1` bypasses this site's cache.
+- Preview: open it from `/setup`, or navigate to `https://classygit.dev/<your-username>?preview=1` from this site. Pasting the URL directly does not bypass the cache (so it cannot be used to burn quota).
 
 ### Minimal config
 
@@ -355,7 +355,7 @@ GitHub                          Cloudflare
 └──────────────────────┘        └──────────────┬────────────────┘
                                                 │
                                                 ▼
-                                 classygit.pages.dev/<username>
+                                 classygit.dev/<username>
 ```
 
 - **GitHub is the source of content and identity**: README, repositories, Gists and comments live there; ClassyGit does not copy or host them.
@@ -367,7 +367,7 @@ GitHub                          Cloudflare
 ## FAQ
 
 **Do I need my own server or domain?**
-No. The public instance gives you `classygit.pages.dev/<username>`. Self-host if you want your own domain.
+No. The public instance gives you `classygit.dev/<username>`. Self-host if you want your own domain.
 
 **Do I need to log in?**
 Not to browse, and site owners do not need a ClassyGit account either — just a GitHub account to host the config. Posting a guestbook comment requires a GitHub account because comments are Gist comments; it reuses GitHub identity instead of adding another password.
@@ -446,7 +446,7 @@ pnpm deploy:pages
 
 - `SITE_ORIGIN` in `wrangler.jsonc` controls canonical / OG / feed / sitemap URLs. Change it to your final address when self-hosting.
 - Optional: enable Cloudflare Web Analytics. Create a site for your hostname in the Web Analytics dashboard, copy its token, and put it in `apps/web/.env` (gitignored): `echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`, then build and deploy. Without it, no analytics script is emitted.
-- `classygit.pages.dev` is only a thin Pages proxy; rendering, caching and counting all happen in the Worker. You can skip Pages and use the Worker URL directly.
+- `classygit.dev` is the primary domain, bound directly to the Worker; `classygit.pages.dev` stays as the legacy Pages proxy, so both URLs keep working. Rendering, caching and counting all happen in the Worker. You can skip Pages and use the Worker URL directly.
 - `pnpm deploy:pages` points `classygit.pages.dev` at the author's `classy-web.dnevend.workers.dev` by default. When self-hosting, skip this step or first change `TARGET` in `apps/web/pages-proxy/_worker.js` and the Pages `project-name` in `apps/web/package.json`.
 - The author uses Workers Paid ($5/month) mainly for CPU headroom for Shiki syntax highlighting. Light usage can start on the free plan.
 

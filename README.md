@@ -5,9 +5,9 @@
 不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。
 
 <p align="center">
-  <a href="https://classygit.pages.dev/Dnevend"><strong>在线体验</strong></a> ·
+  <a href="https://classygit.dev/Dnevend"><strong>在线体验</strong></a> ·
   <a href="#三分钟开始"><strong>三分钟搭建</strong></a> ·
-  <a href="https://classygit.pages.dev/setup"><strong>配置生成器</strong></a> ·
+  <a href="https://classygit.dev/setup"><strong>配置生成器</strong></a> ·
   <a href="#主题"><strong>四套主题</strong></a> ·
   <a href="https://github.com/Dnevend/classy-github"><strong>GitHub</strong></a> ·
   <a href="./README.en.md">English</a>
@@ -17,11 +17,11 @@
 
 | `mac` · System 6 | `nes` · 8-bit |
 |---|---|
-| [![mac 主题](./assets/theme-mac.png)](https://classygit.pages.dev/Dnevend?theme=mac) | [![nes 主题](./assets/theme-nes.png)](https://classygit.pages.dev/Dnevend?theme=nes) |
+| [![mac 主题](./assets/theme-mac.png)](https://classygit.dev/Dnevend?theme=mac) | [![nes 主题](./assets/theme-nes.png)](https://classygit.dev/Dnevend?theme=nes) |
 | **`win98` · Windows 98** | **`tui` · DOS** |
-| [![win98 主题](./assets/theme-win98.png)](https://classygit.pages.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.pages.dev/Dnevend?theme=tui) |
+| [![win98 主题](./assets/theme-win98.png)](https://classygit.dev/Dnevend?theme=win98) | [![tui 主题](./assets/theme-tui.png)](https://classygit.dev/Dnevend?theme=tui) |
 
-<p align="center"><sub>mac / nes / win98 / tui · 截图来自 <a href="https://classygit.pages.dev/Dnevend">Dnevend 的主页</a></sub></p>
+<p align="center"><sub>mac / nes / win98 / tui · 截图来自 <a href="https://classygit.dev/Dnevend">Dnevend 的主页</a></sub></p>
 
 **目录**：[为什么](#为什么是-classygit) · [开始](#三分钟开始) · [特性](#网页特性) · [主题](#主题) · [社区](#社区功能) · [配置](#自定义配置) · [FAQ](#常见问题) · [自建](#开发与自建)
 
@@ -50,10 +50,10 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ## 三分钟开始
 
-1. **先看效果**：打开 [classygit.pages.dev/Dnevend](https://classygit.pages.dev/Dnevend)，或在首页输入任意 GitHub 用户名。任何公开的 GitHub 账号都能直接生成页面，不用 fork。
+1. **先看效果**：打开 [classygit.dev/Dnevend](https://classygit.dev/Dnevend)，或在首页输入任意 GitHub 用户名。任何公开的 GitHub 账号都能直接生成页面，不用 fork。
 2. **Fork 仓库**：[Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork)。仓库名保持 `classy-github`（fork 默认就是）。
-3. **生成配置**：打开 [`/setup?u=你的用户名`](https://classygit.pages.dev/setup)，填表 → 复制 JSON；或者直接编辑 fork 根目录的 `classy.config.json`。把 `owner` 改成你的 GitHub 用户名。
-4. **等 5 分钟**：访问 `https://classygit.pages.dev/你的用户名`。主页最多 5 分钟刷新，不需要构建、部署或 CI。
+3. **生成配置**：打开 [`/setup?u=你的用户名`](https://classygit.dev/setup)，填表 → 复制 JSON；或者直接编辑 fork 根目录的 `classy.config.json`。把 `owner` 改成你的 GitHub 用户名。
+4. **等 5 分钟**：访问 `https://classygit.dev/你的用户名`。主页最多 5 分钟刷新，不需要构建、部署或 CI。
 
 > 普通用户不需要 `pnpm install`、不需要 Cloudflare 账号、不需要域名。只有想改代码或自己托管时，才看文末的「开发与自建」。
 
@@ -180,7 +180,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 
 访问 `/<你的用户名>` 页脚的「88×31 徽章」，或直接打开 `/badge/<用户名>`，可以复制 HTML / Markdown 片段。徽章是纯 SVG，支持 `?theme=mac|nes|win98|tui`。
 
-[![ClassyGit badge](https://classygit.pages.dev/badge/Dnevend.svg?theme=mac)](https://classygit.pages.dev/badge/Dnevend)
+[![ClassyGit badge](https://classygit.dev/badge/Dnevend.svg?theme=mac)](https://classygit.dev/badge/Dnevend)
 
 ## 自定义配置
 
@@ -188,7 +188,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 
 | 方式 | 适合 | 入口 |
 |---|---|---|
-| 表单生成（推荐） | 第一次配置 | [`/setup?u=<用户名>`](https://classygit.pages.dev/setup) |
+| 表单生成（推荐） | 第一次配置 | [`/setup?u=<用户名>`](https://classygit.dev/setup) |
 | 在线认领 | 想先看步骤 | `/claim/<用户名>` |
 | 直接编辑 | 熟悉 JSON | fork 里的 `classy.config.json` |
 
@@ -200,7 +200,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 - 文件：默认分支根目录的 `classy.config.json`；分支叫 `main`、`master` 或其他都行。
 - 生效：主页最多 5 分钟刷新；不用构建、不用部署、不用 CI。
 - 认领：`owner` 建议必填，且必须是你的 GitHub 用户名。fork 后如果保留作者的 `owner`，会被当模板忽略；如果 `owner` 为空或非法，会被视为旧配置并接受，不建议这样。
-- 预览：`https://classygit.pages.dev/<你的用户名>?preview=1` 跳过本站缓存。
+- 预览：从 `/setup` 点「打开预览」，或从本站导航到 `https://classygit.dev/<你的用户名>?preview=1`；直接粘贴 URL 不会绕过缓存（防止被当成配额放大器）。
 
 ### 最小可用配置
 
@@ -355,7 +355,7 @@ GitHub                          Cloudflare
 └──────────────────────┘        └──────────────┬────────────────┘
                                                 │
                                                 ▼
-                                 classygit.pages.dev/<username>
+                                 classygit.dev/<username>
 ```
 
 - **GitHub 是内容源，也是身份源**：README、仓库、Gist、留言都在 GitHub，ClassyGit 不复制、不托管。
@@ -367,7 +367,7 @@ GitHub                          Cloudflare
 ## 常见问题
 
 **需要自己的服务器或域名吗？**
-不需要。公共实例直接给你 `classygit.pages.dev/<用户名>`；想绑自己的域名再自建。
+不需要。公共实例直接给你 `classygit.dev/<用户名>`；想绑自己的域名再自建。
 
 **需要登录吗？**
 浏览不需要；站主也不需要登录 ClassyGit，只要用 GitHub 账号放配置。留言需要 GitHub 账号，因为评论就是 Gist 评论，复用 GitHub 身份，不再多一套密码。
@@ -446,7 +446,7 @@ pnpm deploy:pages
 
 - `SITE_ORIGIN` 在 `wrangler.jsonc` 里，决定 canonical / OG / feed / sitemap 使用的域名；自建时改成你的最终地址。
 - 可选：启用 Cloudflare Web Analytics。在 dashboard 的 Web Analytics 里为你的域名建一条站点并复制 token，写进 `apps/web/.env`（已在 `.gitignore`）：`echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`，再构建发布。不配则 HTML 里不会出现任何分析脚本。
-- `classygit.pages.dev` 只是一层 Pages 代理，真正渲染、缓存、计数都在 Worker 里；不用 Pages 也可以直接用 Worker 地址。生产实例在 Pages 项目里配了 `CLASSY_WEB` → `classy-web` 的 Service binding；自建时可选，不配时代理会回退到 `TARGET` 的公网地址。
+- `classygit.dev` 是主域名，直接绑在 Worker 上；`classygit.pages.dev` 仍然保留为旧域名的 Pages 代理，两个地址都能访问。真正渲染、缓存、计数都在 Worker 里；生产实例在 Pages 项目里配了 `CLASSY_WEB` → `classy-web` 的 Service binding；自建时可选，不配时代理会回退到 `TARGET` 的公网地址。
 - `pnpm deploy:pages` 默认把 `classygit.pages.dev` 指向作者的 `classy-web.dnevend.workers.dev`；自建时请跳过这一步，或先改 `apps/web/pages-proxy/_worker.js` 的 `TARGET` 和 `apps/web/package.json` 里的 Pages `project-name`。
 - 作者使用 Workers Paid（$5/月）主要是给 Shiki 语法高亮留 CPU 余量；轻度使用可以先试免费计划。
 

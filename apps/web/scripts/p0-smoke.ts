@@ -88,6 +88,26 @@ cases.push({
       ),
       true
     );
+
+    // Pages 代理后面的 Worker 看到的是 workers.dev，Referer 仍是 pages.dev；
+    // 这时用 x-forwarded-host 识别公开 origin。
+    const proxiedUrl = new URL(
+      'https://classy-web.dnevend.workers.dev/Dnevend?preview=1'
+    );
+    assert.equal(
+      isPreviewRequest(
+        new Request(proxiedUrl, {
+          headers: {
+            referer: 'https://classygit.pages.dev/setup?u=Dnevend',
+            'x-forwarded-host': 'classygit.pages.dev',
+            'x-forwarded-proto': 'https',
+          },
+        }),
+        proxiedUrl,
+        'https://classygit.dev'
+      ),
+      true
+    );
     assert.equal(
       isPreviewRequest(
         request({ referer: 'https://evil.test/setup' }),

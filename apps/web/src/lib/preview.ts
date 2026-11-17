@@ -20,8 +20,27 @@ export const isPreviewRequest = (
   const referer = request.headers.get('referer');
   if (!referer) return false;
 
+  // Pages 代理会把请求转到 workers.dev，访客看到的 origin 在 x-forwarded-host。
+  // 同时接受 SITE_ORIGIN 和请求实际暴露的 origin：classygit.dev 与
+  // classygit.pages.dev 两个入口的 preview 都能用。
+  const forwardedHost = request.headers
+    .get('x-forwarded-host')
+    ?.split(',')[0]
+    ?.trim();
+  const forwardedProto =
+    request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() || 'https';
+  const requestOrigin = forwardedHost
+    ? `${forwardedProto}://${forwardedHost}`
+    : url.origin;
+
+  const allowed = new Set(
+    [publicOrigin, requestOrigin].map((origin) =>
+      origin.replace(/\/+$/, '')
+    )
+  );
+
   try {
-    return new URL(referer).origin === publicOrigin.replace(/\/+$/, '');
+    return allowed.has(new URL(referer).origin);
   } catch {
     return false;
   }
