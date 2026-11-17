@@ -54,7 +54,7 @@ export const PROFILE_QUERY = `query Profile($login: String!, $repoCount: Int!, $
         updatedAt
         isPublic
         url
-        files(limit: 100) {
+        files(limit: 300) {
           name
           size
           language { name }
@@ -139,7 +139,7 @@ export const GISTS_QUERY = `query UserGists($login: String!, $gistCount: Int!) {
         updatedAt
         isPublic
         url
-        files(limit: 100) {
+        files(limit: 300) {
           name
           size
           language { name }
@@ -206,6 +206,52 @@ export const GIST_COMMENTS_QUERY = `query GistComments($id: ID!) {
           }
         }
       }
+    }
+  }
+}`;
+
+export const REPO_PATH_QUERY = `query RepoPath($owner: String!, $name: String!, $expression: String!) {
+  repository(owner: $owner, name: $name) {
+    object(expression: $expression) {
+      __typename
+      ... on Tree {
+        entries {
+          name
+          type
+          mode
+          object {
+            ... on Blob { byteSize isBinary isTruncated }
+          }
+        }
+      }
+      ... on Blob {
+        byteSize
+        isBinary
+        isTruncated
+        text
+      }
+    }
+  }
+}`;
+
+export const GIST_DETAIL_QUERY = `query GistDetail($id: ID!) {
+  node(id: $id) {
+    ... on Gist {
+      id
+      description
+      createdAt
+      updatedAt
+      isPublic
+      url
+      owner { login }
+      files(limit: 300) {
+        name
+        text
+        size
+        isTruncated
+        language { name }
+      }
+      comments { totalCount }
     }
   }
 }`;

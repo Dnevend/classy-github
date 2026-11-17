@@ -2,7 +2,7 @@
 import { siteOrigin } from "../../../lib/site";
 import NotFound from '../../../components/NotFound.astro';
 import ServiceError from '../../../components/ServiceError.astro';
-import { getGist } from '../../../lib/github';
+import { loadGistDetail } from '../../../lib/gist-detail';
 import { renderMarkdown } from '../../../lib/markdown';
 import { safeLoad } from '../../../lib/errors';
 import { DEFAULT_CONFIG } from '../../../lib/config';
@@ -19,7 +19,7 @@ const gistId = Astro.params.id as string;
 const origin = siteOrigin(Astro.url);
 
 const { data, error, retryAt } = await safeLoad(async () => {
-  const gist = await getGist(gistId);
+  const gist = await loadGistDetail(user, gistId);
   const files = Object.values(gist.files);
 
   const rendered = await Promise.all(

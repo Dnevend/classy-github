@@ -2,9 +2,9 @@
 import { siteOrigin } from "../../../../lib/site";
 import NotFound from '../../../../components/NotFound.astro';
 import ServiceError from '../../../../components/ServiceError.astro';
-import { getRepoPath } from '../../../../lib/github';
 import { renderMarkdown } from '../../../../lib/markdown';
 import { safeLoad } from '../../../../lib/errors';
+import { loadRepoPath } from '../../../../lib/repo-path';
 import { DEFAULT_CONFIG } from '../../../../lib/config';
 import { loadConfig } from '../../../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../../../lib/i18n';
@@ -29,7 +29,7 @@ const invalidPath = segments.some(
 
 const { data, error, retryAt } = await safeLoad(async () => {
   if (invalidPath) return null;
-  return getRepoPath(user, repoName, filePath);
+  return loadRepoPath(user, repoName, filePath);
 });
 
 if (error === 'not-found' || (!error && !data)) {

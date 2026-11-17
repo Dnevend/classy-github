@@ -8,10 +8,12 @@ import { readFileSync } from 'node:fs';
 import {
   CONFIG_QUERY,
   GIST_COMMENTS_QUERY,
+  GIST_DETAIL_QUERY,
   GISTS_QUERY,
   OG_STATS_QUERY,
   PROFILE_QUERY,
   REPO_DETAIL_QUERY,
+  REPO_PATH_QUERY,
   REPOS_QUERY,
   USER_INFO_QUERY,
 } from '../src/lib/graphql-queries.ts';
@@ -145,5 +147,27 @@ const gistComments = await query('GistComments', GIST_COMMENTS_QUERY, {
 const commentNode = (gistComments.data as any)?.node;
 assert.equal(commentNode?.id, gistId);
 assert.ok(Array.isArray(commentNode?.comments?.nodes), 'comments 应该是数组');
+
+const gistDetail = await query('GistDetail', GIST_DETAIL_QUERY, { id: gistId });
+const gistDetailNode = (gistDetail.data as any)?.node;
+assert.equal(gistDetailNode?.id, gistId);
+assert.ok(Array.isArray(gistDetailNode?.files), 'files 应该是数组');
+assert.equal(typeof gistDetailNode?.files?.[0]?.name, 'string');
+
+const repoDir = await query('RepoPath', REPO_PATH_QUERY, {
+  owner: 'Dnevend',
+  name: 'classy-github',
+  expression: 'HEAD:apps/web/src/lib',
+});
+assert.equal((repoDir.data as any)?.repository?.object?.__typename, 'Tree');
+assert.ok((repoDir.data as any)?.repository?.object?.entries?.length > 0);
+
+const repoFile = await query('RepoPath', REPO_PATH_QUERY, {
+  owner: 'Dnevend',
+  name: 'classy-github',
+  expression: 'HEAD:README.md',
+});
+assert.equal((repoFile.data as any)?.repository?.object?.__typename, 'Blob');
+assert.ok((repoFile.data as any)?.repository?.object?.text?.length > 0);
 
 console.log('graphql smoke ok');
