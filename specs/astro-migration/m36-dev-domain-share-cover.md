@@ -44,6 +44,13 @@ workers.dev / localhost 下都是同源，浏览器不再要求静态资源返�
 `CACHE_VERSION` 34 → 35，旧 HTML 缓存立即失效；`PREVIOUS_CACHE_VERSIONS`
 补 `'34'`，部署迁移期仍可回退旧 HTML。
 
+### 附带：TUI 滚动条 404
+
+`tuicss` 的 `::-webkit-scrollbar-track` 引用了未随 npm 包发布的
+`images/scroll-*.png`，构建后会被解析成 `/_astro/images/scroll-*.png` 并
+404。`src/themes/tui/theme.css` 用纯色轨道覆盖，避免每次打开 TUI 页面
+产生失败请求。
+
 ## 验证
 
 ### 本地

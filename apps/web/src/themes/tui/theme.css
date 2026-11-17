@@ -600,6 +600,13 @@
   display: none;
 }
 
+/* TuiCss 的滚动条纹理图没有随 npm 包发布，浏览器会去 /_astro/images/ 找并
+   404；这里用纯色轨道替代，保留 DOS 配色。 */
+::-webkit-scrollbar-track {
+  background-image: none !important;
+  background-color: #0000a8;
+}
+
 .tui-nav a {
   flex: none;
   white-space: nowrap;
