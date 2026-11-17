@@ -1,6 +1,7 @@
 ---
 import Seo from '../components/Seo.astro';
 import type { SeoMeta } from '../lib/seo';
+import { PUBLIC_CF_ANALYTICS_TOKEN } from 'astro:env/client';
 import '../styles/global.css';
 
 interface Props {
@@ -13,6 +14,11 @@ interface Props {
 }
 
 const { seo, theme = 'mac', user = '', userName = '' } = Astro.props as Props;
+
+// Cloudflare Web Analytics：只生产构建且配置了 token 时注入。
+// 所有主题 Layout 和 404 都用 Base，所以这一处覆盖全站 HTML；
+// RSS / sitemap / badge / OG / JSON 不走 Base，不会带脚本。
+const cfBeaconToken = import.meta.env.PROD ? PUBLIC_CF_ANALYTICS_TOKEN : undefined;
 ---
 
 <!doctype html>
@@ -23,6 +29,16 @@ const { seo, theme = 'mac', user = '', userName = '' } = Astro.props as Props;
     <link rel="icon" type="image/svg+xml" href="/github.svg" />
     <link rel="preconnect" href="https://avatars.githubusercontent.com" />
     <Seo {...seo} />
+    {
+      cfBeaconToken && (
+        <script
+          is:inline
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: cfBeaconToken })}
+        ></script>
+      )
+    }
     <slot name="head" />
   </head>
 

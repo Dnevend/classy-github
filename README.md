@@ -39,7 +39,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 >
 > 没有服务器到期、没有数据库丢失、没有平台锁定。即使公共实例哪天停止，README、仓库、Gist 和留言仍然在 GitHub；代码是 MIT，换一个实例或自建就能继续。
 
-运行时只有两个外部依赖：**GitHub 提供内容和身份，Cloudflare 提供计算、缓存和计数**。没有登录服务、没有分析脚本、没有需要续费的个人服务器。
+运行时只有两个外部依赖：**GitHub 提供内容和身份，Cloudflare 提供计算、缓存和计数**。没有登录服务、没有需要续费的个人服务器；仓库默认不加载分析脚本，作者实例可选启用无 Cookie 的 Cloudflare Web Analytics。
 
 **适合谁？**
 
@@ -113,7 +113,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ### 安全与隐私
 
-- **应用不存 IP、不做画像、没有分析脚本**。
+- **应用不存 IP、不做用户画像**。默认不加载分析脚本；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）。
 - 应用只用两个功能性 cookie：记住主题和语言。
 - README / Gist / 留言全部走 `rehype-sanitize` 白名单，`javascript:` 链接会被丢弃。
 - 留言簿只读展示公开 Gist 评论，图片和嵌入会被剥离，避免追踪像素。
@@ -394,7 +394,7 @@ GitHub                          Cloudflare
 会。用户选择写在 cookie 里；站点默认主题由 `classy.config.json` 的 `theme` 决定；也可以用 `?theme=nes` / `?lang=zh` 临时切换或分享指定版本。
 
 **数据隐私怎么处理？**
-应用不存 IP、不做用户画像、没有分析脚本。应用只有主题和语言两个功能性 cookie；首页的「最近访问」只存在本机 localStorage，不上传。
+应用不存 IP、不做用户画像。默认不加载分析脚本；作者实例启用了无 Cookie 的 Cloudflare Web Analytics（可用 `PUBLIC_CF_ANALYTICS_TOKEN` 关闭）。应用只有主题和语言两个功能性 cookie；首页的「最近访问」只存在本机 localStorage，不上传。
 
 ## 开发与自建
 
@@ -439,6 +439,7 @@ pnpm deploy:pages
 ```
 
 - `SITE_ORIGIN` 在 `wrangler.jsonc` 里，决定 canonical / OG / feed / sitemap 使用的域名；自建时改成你的最终地址。
+- 可选：启用 Cloudflare Web Analytics。在 dashboard 的 Web Analytics 里为你的域名建一条站点并复制 token，写进 `apps/web/.env`（已在 `.gitignore`）：`echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`，再构建发布。不配则 HTML 里不会出现任何分析脚本。
 - `classygit.pages.dev` 只是一层 Pages 代理，真正渲染、缓存、计数都在 Worker 里；不用 Pages 也可以直接用 Worker 地址。
 - `pnpm deploy:pages` 默认把 `classygit.pages.dev` 指向作者的 `classy-web.dnevend.workers.dev`；自建时请跳过这一步，或先改 `apps/web/pages-proxy/_worker.js` 的 `TARGET` 和 `apps/web/package.json` 里的 Pages `project-name`。
 - 作者使用 Workers Paid（$5/月）主要是给 Shiki 语法高亮留 CPU 余量；轻度使用可以先试免费计划。

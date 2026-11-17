@@ -39,7 +39,7 @@ Unlike GitHub Pages: there is no site project to maintain and no build step per 
 >
 > No server renewal, no database loss, no platform lock-in. Even if this public instance disappears one day, your README, repositories, Gists and comments are still on GitHub. The code is MIT, so you can point another instance at it or self-host.
 
-At runtime there are only two external dependencies: **GitHub provides content and identity, Cloudflare provides compute, caching and counters**. No auth service, no analytics script, no personal server bill.
+At runtime there are only two external dependencies: **GitHub provides content and identity, Cloudflare provides compute, caching and counters**. No auth service, no personal server bill. The repo loads no analytics scripts by default; the author's instance optionally enables cookieless Cloudflare Web Analytics.
 
 **Who is it for?**
 
@@ -113,7 +113,7 @@ At runtime there are only two external dependencies: **GitHub provides content a
 
 ### Security and privacy
 
-- **The app stores no IPs, does no profiling, and runs no analytics scripts**.
+- **The app stores no IPs and does no profiling**. No analytics scripts are loaded by default; the author's instance optionally enables cookieless Cloudflare Web Analytics (controlled by `PUBLIC_CF_ANALYTICS_TOKEN`).
 - The app uses only two functional cookies: theme and language.
 - READMEs, Gists and guestbook comments go through a `rehype-sanitize` allowlist; `javascript:` links are dropped.
 - The guestbook only renders comments from a public Gist and strips images/embeds to avoid tracking pixels.
@@ -394,7 +394,7 @@ Profile pages are infinitely generated thin content, so indexing is opt-in to av
 Yes, choices are stored in cookies. The site default theme comes from `classy.config.json`; you can also use `?theme=nes` / `?lang=zh` to switch temporarily or share a specific version.
 
 **What about privacy?**
-The app stores no IPs, does no profiling, and runs no analytics scripts. The app uses only two functional cookies (theme and language); the landing page's “recent visits” is local-only localStorage and is never uploaded.
+The app stores no IPs and does no profiling. No analytics scripts are loaded by default; the author's instance enables cookieless Cloudflare Web Analytics (can be turned off with `PUBLIC_CF_ANALYTICS_TOKEN`). The app uses only two functional cookies (theme and language); the landing page's “recent visits” is local-only localStorage and is never uploaded.
 
 ## Development and self-hosting
 
@@ -439,6 +439,7 @@ pnpm deploy:pages
 ```
 
 - `SITE_ORIGIN` in `wrangler.jsonc` controls canonical / OG / feed / sitemap URLs. Change it to your final address when self-hosting.
+- Optional: enable Cloudflare Web Analytics. Create a site for your hostname in the Web Analytics dashboard, copy its token, and put it in `apps/web/.env` (gitignored): `echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`, then build and deploy. Without it, no analytics script is emitted.
 - `classygit.pages.dev` is only a thin Pages proxy; rendering, caching and counting all happen in the Worker. You can skip Pages and use the Worker URL directly.
 - `pnpm deploy:pages` points `classygit.pages.dev` at the author's `classy-web.dnevend.workers.dev` by default. When self-hosting, skip this step or first change `TARGET` in `apps/web/pages-proxy/_worker.js` and the Pages `project-name` in `apps/web/package.json`.
 - The author uses Workers Paid ($5/month) mainly for CPU headroom for Shiki syntax highlighting. Light usage can start on the free plan.
