@@ -2,11 +2,11 @@ import { defineMiddleware } from 'astro:middleware';
 import {
   CACHED_AT_HEADER,
   cacheGet,
-  cacheGetStale,
   cachePut,
   edgeCache,
 } from './lib/edge-cache.ts';
 import { loadConfigState } from './lib/config-loader.ts';
+import { serveStaleHtml } from './lib/stale-html.ts';
 import type { ThemeName } from './lib/config.ts';
 import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
 import { resolveRequestTheme } from './lib/request-theme.ts';
@@ -37,9 +37,6 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
 const CACHE_VERSION = '29';
-
-/** GitHub 挂掉时最多拿多旧的 HTML 兜底 */
-const STALE_TTL = 60 * 60 * 24;
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
@@ -161,7 +158,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     { method: 'GET' }
   );
 
-  const hit = await cacheGet(key, ttl);
+  // 仅开发环境的故障注入：绕过 fresh cache 后强制上游 503，
+  // 用来验证 stale HTML 兜底。生产构建里 import.meta.env.DEV 为 false。
+  const testHeaders = import.meta.env.DEV
+    ? context.request.headers
+    : undefined;
+  const forceFail = testHeaders?.get('x-classy-test-fail') === '1';
+  const bypassFresh = testHeaders?.get('x-classy-test-bypass-cache') === '1';
+
+  const hit = bypassFresh ? undefined : await cacheGet(key, ttl);
 
   if (hit) {
     const response = new Response(hit.body, hit);
@@ -170,29 +175,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return response;
   }
 
-  const response = await next();
+  let response = forceFail
+    ? new Response('forced upstream failure', { status: 503 })
+    : await next();
 
-  // GitHub 限流 / 5xx 时返回同一主题、同一语言下的旧 HTML，
-  // 比让访客看到 503 好。404 不兜底：用户/页面可能真的被删了。
-  const canServeStale =
-    response.status === 500 ||
-    response.status === 502 ||
-    response.status === 503 ||
-    response.status === 504;
-
-  if (canServeStale) {
-    const stale = await cacheGetStale(key, STALE_TTL);
-    if (stale) {
-      const fallback = new Response(stale.body, stale);
-      fallback.headers.delete(CACHED_AT_HEADER);
-      fallback.headers.set('x-classy-cache', 'STALE');
-      fallback.headers.set('x-classy-stale', '1');
-      fallback.headers.set('cache-control', 'public, s-maxage=30');
-      console.warn(
-        `[classy] serving stale HTML ${url.pathname} (upstream ${response.status})`
-      );
-      return fallback;
-    }
+  const fallback = await serveStaleHtml(key, response.status);
+  if (fallback) {
+    console.warn(
+      `[classy] serving stale HTML ${url.pathname} (upstream ${response.status})`
+    );
+    return fallback;
   }
 
   const out = new Response(response.body, response);

@@ -11,11 +11,19 @@ export const RATE_LIMIT_LOCK_MAX = 300;
  */
 export const parseRateLimit = (
   res: Response,
-  text: string
+  text: string,
+  options: { headers?: boolean } = {}
 ): RateLimitInfo | undefined => {
-  const remaining = Number(res.headers.get('x-ratelimit-remaining') ?? NaN);
-  const resetAt = Number(res.headers.get('x-ratelimit-reset') ?? NaN);
-  const retryAfter = Number(res.headers.get('retry-after') ?? NaN);
+  const readHeaders = options.headers ?? true;
+  const remaining = readHeaders
+    ? Number(res.headers.get('x-ratelimit-remaining') ?? NaN)
+    : NaN;
+  const resetAt = readHeaders
+    ? Number(res.headers.get('x-ratelimit-reset') ?? NaN)
+    : NaN;
+  const retryAfter = readHeaders
+    ? Number(res.headers.get('retry-after') ?? NaN)
+    : NaN;
 
   const limited =
     res.status === 429 ||

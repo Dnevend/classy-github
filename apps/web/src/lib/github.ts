@@ -3,12 +3,12 @@ import type { Follower, Gist, GistComment, Repo, User } from '@classy/types/gith
 import { USER_AGENT } from './constants.ts';
 import { cacheGet, cacheGetStale, cachePut } from './edge-cache.ts';
 import { getGitHubToken } from './github-auth.ts';
-import { GitHubError, type RateLimitInfo } from './github-error.ts';
+import { GitHubError } from './github-error.ts';
+import { parseRateLimit } from './github-rate-limit.ts';
 import {
-  parseRateLimit,
-  RATE_LIMIT_LOCK_MAX,
-  rateLimitLockUntil,
-} from './github-rate-limit.ts';
+  readRateLimitMarker,
+  writeRateLimitMarker,
+} from './github-rate-limit-marker.ts';
 
 export { GitHubError } from './github-error.ts';
 export type { RateLimitInfo } from './github-error.ts';
@@ -58,57 +58,6 @@ const markerKey = (key: Request, kind: 'not-found' | 'rate-limit') => {
   return new Request(url.toString(), { method: 'GET' });
 };
 
-/**
- * 全局限流熔断标记：主限额是按 token/账号算的，一个端点看到 remaining=0
- * 之后，其他端点也不应该继续打 GitHub。
- */
-const RATE_LIMIT_KEY = new Request(
-  'https://classy.cache/github/rate-limit?resource=core&v=1',
-  { method: 'GET' }
-);
-
-interface RateLimitMarker {
-  __classy: 'rate-limit';
-  until: number;
-  resetAt?: number;
-  retryAfter?: number;
-}
-
-const readRateLimitMarker = async (): Promise<RateLimitMarker | null> => {
-  const cached = await cacheGet(RATE_LIMIT_KEY, RATE_LIMIT_LOCK_MAX);
-  if (!cached) return null;
-
-  try {
-    const data = (await cached.json()) as Partial<RateLimitMarker>;
-    if (data?.__classy !== 'rate-limit' || typeof data.until !== 'number') {
-      return null;
-    }
-    if (data.until <= Date.now() / 1000) return null;
-
-    return data as RateLimitMarker;
-  } catch {
-    return null;
-  }
-};
-
-const writeRateLimitMarker = async (info: RateLimitInfo, status: number) => {
-  const now = Date.now() / 1000;
-  const until = rateLimitLockUntil(info, now);
-  const ttl = Math.max(1, Math.ceil(until - now));
-
-  await cachePut(
-    RATE_LIMIT_KEY,
-    jsonResponse({
-      __classy: 'rate-limit',
-      until,
-      resetAt: info.resetAt,
-      retryAfter: info.retryAfter,
-      status,
-    }),
-    ttl
-  );
-};
-
 const staleJson = async <T>(key: Request): Promise<T | undefined> => {
   const stale = await cacheGetStale(key, STALE_TTL);
   if (!stale) return undefined;
@@ -141,7 +90,7 @@ export async function ghFetch<T>(
   }
 
   // 已经确认主限额耗尽：直接走旧缓存或快速失败，不再消耗请求
-  const rateMarker = await readRateLimitMarker();
+  const rateMarker = await readRateLimitMarker('core');
   if (rateMarker) {
     const stale = await staleJson<T>(key);
     if (stale !== undefined) return stale;
@@ -180,7 +129,7 @@ export async function ghFetch<T>(
     const rateLimit = parseRateLimit(res, body);
 
     if (rateLimit) {
-      await writeRateLimitMarker(rateLimit, res.status);
+      await writeRateLimitMarker('core', rateLimit, res.status);
 
       const stale = await staleJson<T>(key);
       if (stale !== undefined) {

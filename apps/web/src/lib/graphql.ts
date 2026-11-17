@@ -3,6 +3,10 @@ import { cacheGet, cacheGetStale, cachePut } from './edge-cache.ts';
 import { getGitHubToken } from './github-auth.ts';
 import { GitHubError } from './github-error.ts';
 import { parseRateLimit } from './github-rate-limit.ts';
+import {
+  readRateLimitMarker,
+  writeRateLimitMarker,
+} from './github-rate-limit-marker.ts';
 
 const GRAPHQL_ENDPOINT = 'https://api.github.com/graphql';
 const DEFAULT_TTL = 300;
@@ -76,6 +80,29 @@ export async function ghGraphql<T>(
     throw new GitHubError(401, 'GITHUB_TOKEN is not configured');
   }
 
+  // 已经确认 GraphQL 配额耗尽：直接走旧缓存或快速失败。
+  const rateMarker = await readRateLimitMarker('graphql');
+  if (rateMarker) {
+    const stale = await staleData<T>(key);
+    if (stale !== undefined) {
+      console.warn(
+        `[classy] GraphQL rate limit active, serving stale ${operation}`
+      );
+      return stale;
+    }
+
+    throw new GitHubError(
+      403,
+      `GitHub GraphQL rate limit active until ${new Date(rateMarker.until * 1000).toISOString()} for ${operation}`,
+      {
+        rateLimit: {
+          resetAt: rateMarker.resetAt,
+          retryAfter: rateMarker.retryAfter,
+        },
+      }
+    );
+  }
+
   let res: Response;
 
   try {
@@ -119,12 +146,17 @@ export async function ghGraphql<T>(
   // - 200 但没有 data（看 GraphQL errors）
   // 不要把整个 data body 喂给正则：用户 bio / 仓库描述里出现
   // “abuse”“rate limit” 不应该让整页变成限流错误。
-  const rateLimit =
-    !res.ok || payload?.data == null
-      ? parseRateLimit(res, !res.ok ? body : errorText)
+  const rateLimit = !res.ok
+    ? parseRateLimit(res, body)
+    : payload?.data == null
+      ? // 200 但没有 data：只看 GraphQL errors 的文案，不看响应头。
+        // remaining=0 可能只是窗口最后一次成功请求的正常响应头。
+        parseRateLimit(res, errorText, { headers: false })
       : undefined;
 
   if (rateLimit) {
+    await writeRateLimitMarker('graphql', rateLimit, res.status);
+
     const stale = await staleData<T>(key);
     if (stale !== undefined) {
       console.warn(`[classy] GraphQL rate limited, serving stale ${operation}`);

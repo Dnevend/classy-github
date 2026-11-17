@@ -50,6 +50,16 @@ assert.deepEqual(parseRateLimit(tooMany, ''), {
   retryAfter: undefined,
 });
 
+const lastSuccess = new Response('', {
+  status: 200,
+  headers: { 'x-ratelimit-remaining': '0' },
+});
+assert.equal(
+  parseRateLimit(lastSuccess, 'Could not resolve to a User', { headers: false }),
+  undefined,
+  '200 且只看文案时，remaining=0 不能单独当作限流'
+);
+
 const now = 1_700_000_000;
 assert.equal(
   rateLimitLockUntil({ resetAt: now + 3600 }, now),
