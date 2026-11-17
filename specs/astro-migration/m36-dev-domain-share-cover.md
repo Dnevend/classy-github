@@ -63,7 +63,7 @@ pnpm --filter @classy/web build   → Complete
 
 ### 生产
 
-Worker version `9b41d925-f0d4-4304-8eea-7f1f452a0b2f`（`pnpm deploy:web`）：
+Worker version `61d97b9c-aa5d-492b-9cc8-7aeb8f879bf7`（`pnpm deploy:web`）：
 
 ```text
 GET https://classygit.dev/Dnevend                 200
@@ -89,4 +89,6 @@ GET https://classygit.pages.dev/Dnevend/rss.xml   同上
   封面、头像、二维码都在图里。
 - `classygit.pages.dev` 仍走 Pages Service binding：`x-classy-proxy: pages`、
   `x-classy-proxy-mode: service-binding`。
+- TUI 主题页（`?theme=tui`）不再请求 `/_astro/images/scroll-*.png`，
+  `performance` 里没有 404 资源。
 
