@@ -56,4 +56,30 @@ pnpm --filter @classy/web build   → Complete
 
 ### 生产
 
-（部署后补）
+Worker version `9b41d925-f0d4-4304-8eea-7f1f452a0b2f`（`pnpm deploy:web`）：
+
+```text
+GET https://classygit.dev/Dnevend                 200
+  cover       = /images/cover.jpg
+  canonical   = https://classygit.dev/Dnevend
+  og:image    = https://classygit.dev/og/Dnevend.png?theme=mac&v=3
+GET https://classygit.pages.dev/Dnevend           200, x-classy-proxy: pages
+  cover       = /images/cover.jpg
+  canonical   = https://classygit.dev/Dnevend
+GET https://classygit.dev/images/cover.jpg        200 image/jpeg 1280×997
+GET https://classygit.dev/og/Dnevend.png          200 image/png 1200×630
+GET https://classygit.pages.dev/og/Dnevend.png    200 image/png 1200×630
+GET https://classygit.dev/robots.txt              Sitemap: https://classygit.dev/sitemap.xml
+GET https://classygit.pages.dev/robots.txt        同上
+GET https://classygit.dev/sitemap.xml             https://classygit.dev/sitemap/1.xml
+GET https://classygit.dev/Dnevend/rss.xml         https://classygit.dev/Dnevend
+GET https://classygit.pages.dev/Dnevend/rss.xml   同上
+```
+
+- 浏览器实测两个入口的 `.share-card__cover` 都是 `src="/images/cover.jpg"`，
+  `naturalWidth=1280`，控制台无图片 CORS 报错。
+- 分享卡「保存图片」成功导出 `classy-Dnevend.png`（1,556,039 bytes），
+  封面、头像、二维码都在图里。
+- `classygit.pages.dev` 仍走 Pages Service binding：`x-classy-proxy: pages`、
+  `x-classy-proxy-mode: service-binding`。
+
