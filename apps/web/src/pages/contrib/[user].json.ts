@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { USER_AGENT } from '../../lib/constants';
-import { cacheGet, cachePut } from '../../lib/edge-cache';
+import { cacheGet, cacheGetStale, cachePut } from '../../lib/edge-cache';
 import { getGitHubToken } from '../../lib/github-auth';
 import { isThemeName } from '../../lib/theme';
 
@@ -8,14 +8,17 @@ export const prerender = false;
 
 interface CalendarResponse {
   data?: {
-    user?: {
-      contributionsCollection?: {
-        contributionCalendar?: {
-          weeks: { contributionDays: { contributionCount: number }[] }[];
-        };
-      };
-    };
-  };
+    user?:
+      | {
+          contributionsCollection?: {
+            contributionCalendar?: {
+              weeks: { contributionDays: { contributionCount: number }[] }[];
+            };
+          };
+        }
+      | null;
+  } | null;
+  errors?: { type?: string; message: string }[];
 }
 
 const PALETTE: Record<string, string[]> = {
@@ -26,9 +29,11 @@ const PALETTE: Record<string, string[]> = {
 };
 
 /** 原始贡献数据版本；调色板不参与这个 cache key */
-const DATA_VERSION = '3';
+const DATA_VERSION = '4';
 /** 贡献数据缓存 1 小时；主题只影响 palette，不再重复请求 GitHub */
 const DATA_TTL = 3600;
+/** GraphQL 失败时可以拿多旧的贡献数据兜底 */
+const STALE_TTL = DATA_TTL * 6;
 
 interface ContribData {
   weeks: number[][];
@@ -67,8 +72,6 @@ export const GET: APIRoute = async ({ params, url }) => {
     const token = await getGitHubToken();
     if (!token) return new Response('{"weeks":[]}', { status: 503 });
 
-    let weeks: number[][] = [];
-
     try {
       const res = await fetch('https://api.github.com/graphql', {
         method: 'POST',
@@ -80,24 +83,45 @@ export const GET: APIRoute = async ({ params, url }) => {
         body: JSON.stringify({ query: QUERY, variables: { login: user } }),
       });
 
-      if (!res.ok) return new Response('{"weeks":[]}', { status: 502 });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const payload = (await res.json()) as CalendarResponse;
-      weeks = (payload.data?.user?.contributionsCollection?.contributionCalendar?.weeks ?? []).map(
-        (week) => week.contributionDays.map((day) => day.contributionCount)
+      const rateLimited = payload.errors?.some((error) =>
+        /rate limit/i.test(`${error.type ?? ''} ${error.message}`)
       );
-    } catch {
-      return new Response('{"weeks":[]}', { status: 502 });
-    }
 
-    data = { weeks, max: Math.max(1, ...weeks.flat()) };
-    await cachePut(
-      cacheKey,
-      new Response(JSON.stringify(data), {
-        headers: { 'content-type': 'application/json; charset=utf-8' },
-      }),
-      DATA_TTL
-    );
+      // 限流 / 空 data 不能缓存成 weeks:[]，否则贡献墙会空白一小时
+      if (rateLimited || !payload.data || payload.data.user === undefined) {
+        throw new Error('GraphQL rate limited or returned no data');
+      }
+
+      const weeks = (
+        payload.data.user?.contributionsCollection?.contributionCalendar?.weeks ?? []
+      ).map((week) =>
+        week.contributionDays.map((day) => day.contributionCount)
+      );
+
+      data = { weeks, max: Math.max(1, ...weeks.flat()) };
+      await cachePut(
+        cacheKey,
+        new Response(JSON.stringify(data), {
+          headers: { 'content-type': 'application/json; charset=utf-8' },
+        }),
+        DATA_TTL
+      );
+    } catch (error) {
+      console.warn(
+        `[classy] contrib fetch failed for ${user}:`,
+        (error as Error).message
+      );
+
+      const stale = await cacheGetStale(cacheKey, STALE_TTL);
+      if (stale) {
+        data = (await stale.json().catch(() => null)) as ContribData | null;
+      }
+
+      if (!data) return new Response('{"weeks":[]}', { status: 502 });
+    }
   }
 
   const body = JSON.stringify({ weeks: data.weeks, palette, max: data.max });
