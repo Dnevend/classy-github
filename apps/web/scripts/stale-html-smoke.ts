@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { CACHED_AT_HEADER, cachePut } from '../src/lib/edge-cache.ts';
 import {
   isStaleEligible,
+  previousCacheKey,
   serveStaleHtml,
 } from '../src/lib/stale-html.ts';
 
@@ -58,5 +59,16 @@ assert.equal(
 assert.equal(isStaleEligible(500), true);
 assert.equal(isStaleEligible(503), true);
 assert.equal(isStaleEligible(404), false);
+
+// 版本迁移：只改 v 参数，路径 / 主题 / 语言保持不变。
+const migratedKey = previousCacheKey(
+  new Request('https://classy.test/Dnevend?theme=mac&lang=zh&v=34'),
+  '33'
+);
+const migratedUrl = new URL(migratedKey.url);
+assert.equal(migratedUrl.pathname, '/Dnevend');
+assert.equal(migratedUrl.searchParams.get('theme'), 'mac');
+assert.equal(migratedUrl.searchParams.get('lang'), 'zh');
+assert.equal(migratedUrl.searchParams.get('v'), '33');
 
 console.log('stale html smoke ok');

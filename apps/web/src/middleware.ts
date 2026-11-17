@@ -6,7 +6,7 @@ import {
   edgeCache,
 } from './lib/edge-cache.ts';
 import { loadConfigState, type ConfigState } from './lib/config-loader.ts';
-import { serveStaleHtml } from './lib/stale-html.ts';
+import { serveStaleHtml, previousCacheKey } from './lib/stale-html.ts';
 import { isPreviewRequest } from './lib/preview.ts';
 import { siteOrigin } from './lib/site.ts';
 import { normalizeCacheParams } from './lib/request-params.ts';
@@ -44,6 +44,27 @@ const CACHE_VERSION = '34';
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
   /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
+
+/**
+ * v33 → v34 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
+ * 有效期就是 stale 的 24 小时，过了这个窗口删掉即可。
+ */
+const PREVIOUS_CACHE_VERSIONS = ['33'];
+
+const serveStaleAnyVersion = async (
+  key: Request,
+  status: number
+): Promise<Response | undefined> => {
+  const current = await serveStaleHtml(key, status);
+  if (current) return current;
+
+  for (const version of PREVIOUS_CACHE_VERSIONS) {
+    const old = await serveStaleHtml(previousCacheKey(key, version), status);
+    if (old) return old;
+  }
+
+  return undefined;
+};
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
@@ -214,8 +235,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
       response = await next();
     } catch (error) {
       // 页面渲染直接抛错时也走旧 HTML；比把异常抛给访客好。
-      const fallback = await serveStaleHtml(key, 503);
+      const fallback = await serveStaleAnyVersion(key, 503);
       if (fallback) {
+        if (isRepoPath(url.pathname)) {
+          fallback.headers.set('x-robots-tag', 'noindex, nofollow');
+        }
         console.warn(
           `[classy] serving stale HTML ${url.pathname} after render exception`
         );
@@ -225,8 +249,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  const fallback = await serveStaleHtml(key, response.status);
+  const fallback = await serveStaleAnyVersion(key, response.status);
   if (fallback) {
+    if (isRepoPath(url.pathname)) {
+      fallback.headers.set('x-robots-tag', 'noindex, nofollow');
+    }
     console.warn(
       `[classy] serving stale HTML ${url.pathname} (upstream ${response.status})`
     );
