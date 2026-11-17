@@ -6,7 +6,12 @@
   <a href="https://classygit.dev"><img src="./assets/demo.gif" alt="ClassyGit 四套复古主题演示（15 秒）" width="880"></a>
 </p>
 
-不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻试。
+<p align="center">
+  <a href="https://classygit.dev/Dnevend"><strong>在线体验</strong></a> ·
+  <a href="#三分钟开始"><strong>3 分钟开始</strong></a> ·
+  <a href="https://classygit.dev/setup"><strong>配置生成器</strong></a> ·
+  <a href="./README.en.md">English</a>
+</p>
 
 <p align="center">
   <a href="https://github.com/Dnevend/classy-github/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-black?style=flat-square"></a>
@@ -16,14 +21,7 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-<p align="center">
-  <a href="https://classygit.dev/Dnevend"><strong>在线体验</strong></a> ·
-  <a href="#三分钟开始"><strong>3 分钟开始</strong></a> ·
-  <a href="https://classygit.dev/setup"><strong>配置生成器</strong></a> ·
-  <a href="./README.en.md">English</a>
-</p>
-
-四套主题，同一份 GitHub 数据。点图直接打开线上对应主题：
+不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻试。
 
 <table>
   <tr>

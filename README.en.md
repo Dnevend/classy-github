@@ -6,7 +6,12 @@
   <a href="https://classygit.dev"><img src="./assets/demo.gif" alt="ClassyGit demo — four retro themes in 15 seconds" width="880"></a>
 </p>
 
-No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog. Try it at [classygit.dev](https://classygit.dev).
+<p align="center">
+  <a href="https://classygit.dev/Dnevend"><strong>Live demo</strong></a> ·
+  <a href="#get-started-in-3-minutes"><strong>3-minute setup</strong></a> ·
+  <a href="https://classygit.dev/setup"><strong>Config builder</strong></a> ·
+  <a href="./README.md">中文</a>
+</p>
 
 <p align="center">
   <a href="https://github.com/Dnevend/classy-github/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-black?style=flat-square"></a>
@@ -16,14 +21,7 @@ No deploy, no login, no server to buy: turn your README, repositories and Gists 
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-<p align="center">
-  <a href="https://classygit.dev/Dnevend"><strong>Live demo</strong></a> ·
-  <a href="#get-started-in-3-minutes"><strong>3-minute setup</strong></a> ·
-  <a href="https://classygit.dev/setup"><strong>Config builder</strong></a> ·
-  <a href="./README.md">中文</a>
-</p>
-
-Four themes, one GitHub dataset. Click a sheet to open that theme live:
+No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog. Try it at [classygit.dev](https://classygit.dev).
 
 <table>
   <tr>
