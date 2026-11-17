@@ -155,6 +155,14 @@ export async function ghGraphql<T>(
       : undefined;
 
   if (rateLimit) {
+    console.warn('[classy] github rate-limit', {
+      resource: 'graphql',
+      operation,
+      status: res.status,
+      remaining: rateLimit.remaining,
+      resetAt: rateLimit.resetAt,
+      retryAfter: rateLimit.retryAfter,
+    });
     await writeRateLimitMarker('graphql', rateLimit, res.status);
 
     const stale = await staleData<T>(key);

@@ -36,7 +36,7 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '29';
+const CACHE_VERSION = '30';
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];

@@ -150,6 +150,66 @@ export const GISTS_QUERY = `query UserGists($login: String!, $gistCount: Int!) {
   }
 }`;
 
+export const USER_INFO_QUERY = `query UserInfo($login: String!) {
+  user(login: $login) {
+    login
+    name
+    avatarUrl
+    bio
+    company
+    location
+    websiteUrl
+    twitterUsername
+    createdAt
+    followers { totalCount }
+    following { totalCount }
+    repositories(first: 1, privacy: PUBLIC, ownerAffiliations: OWNER) { totalCount }
+    gists(first: 1, privacy: PUBLIC) { totalCount }
+  }
+}`;
+
+export const REPO_DETAIL_QUERY = `query RepoDetail($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    name
+    description
+    stargazerCount
+    forkCount
+    isFork
+    isTemplate
+    homepageUrl
+    updatedAt
+    url
+    primaryLanguage { name }
+    owner { login }
+    readme: object(expression: "HEAD:README.md") {
+      ... on Blob { text }
+    }
+  }
+}`;
+
+export const GIST_COMMENTS_QUERY = `query GistComments($id: ID!) {
+  node(id: $id) {
+    ... on Gist {
+      id
+      isPublic
+      owner { login }
+      comments(first: 100) {
+        nodes {
+          id
+          databaseId
+          body
+          createdAt
+          author {
+            login
+            avatarUrl
+            url
+          }
+        }
+      }
+    }
+  }
+}`;
+
 export const OG_STATS_QUERY = `query OgStats($login: String!, $repoCount: Int!) {
   user(login: $login) {
     login

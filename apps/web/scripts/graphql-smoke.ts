@@ -7,10 +7,13 @@ import { readFileSync } from 'node:fs';
 
 import {
   CONFIG_QUERY,
+  GIST_COMMENTS_QUERY,
   GISTS_QUERY,
   OG_STATS_QUERY,
   PROFILE_QUERY,
+  REPO_DETAIL_QUERY,
   REPOS_QUERY,
+  USER_INFO_QUERY,
 } from '../src/lib/graphql-queries.ts';
 
 const readToken = (): string | undefined => {
@@ -122,5 +125,25 @@ assert.ok(
   reposUser.repositories.nodes.every((repo: any) => repo.isPrivate === false),
   'repos 第一页只应该返回公开仓库'
 );
+
+const userInfo = await query('UserInfo', USER_INFO_QUERY, { login: 'Dnevend' });
+assert.equal((userInfo.data as any)?.user?.login, 'Dnevend');
+
+const repoDetail = await query('RepoDetail', REPO_DETAIL_QUERY, {
+  owner: 'Dnevend',
+  name: 'classy-github',
+});
+const repoNode = (repoDetail.data as any)?.repository;
+assert.equal(repoNode?.name, 'classy-github');
+assert.ok(repoNode?.readme?.text?.length > 0, '应该有 README');
+
+const gistId = gistsUser.gists.nodes[0]?.id;
+assert.ok(gistId, '应该有 gist Node ID');
+const gistComments = await query('GistComments', GIST_COMMENTS_QUERY, {
+  id: gistId,
+});
+const commentNode = (gistComments.data as any)?.node;
+assert.equal(commentNode?.id, gistId);
+assert.ok(Array.isArray(commentNode?.comments?.nodes), 'comments 应该是数组');
 
 console.log('graphql smoke ok');

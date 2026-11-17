@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 
 import {
+  mapGistCommentNode,
   mapGistNode,
   mapRepoNode,
   mapUserNode,
@@ -95,5 +96,25 @@ assert.equal(gist.comments, 4);
 assert.deepEqual(Object.keys(gist.files), ['note.md']);
 assert.equal(gist.files['note.md']?.content, '# hi');
 assert.equal(gist.files['note.md']?.language, 'Markdown');
+
+const comment = mapGistCommentNode({
+  id: 'GC_abc',
+  databaseId: 42,
+  body: 'hello',
+  createdAt: '2026-01-01T00:00:00Z',
+  author: {
+    login: 'octocat',
+    avatarUrl: 'https://avatars.example/u/1',
+    url: 'https://github.com/octocat',
+  },
+});
+
+assert.equal(comment.id, 42);
+assert.equal(comment.node_id, 'GC_abc');
+assert.equal(comment.body, 'hello');
+assert.equal(comment.created_at, '2026-01-01T00:00:00Z');
+assert.equal(comment.user.login, 'octocat');
+assert.equal(comment.user.avatar_url, 'https://avatars.example/u/1');
+assert.equal(comment.user.html_url, 'https://github.com/octocat');
 
 console.log('graphql mappers ok');

@@ -16,7 +16,7 @@ import {
   mapUserNode,
   type GraphQLUserNode,
 } from './graphql-mappers.ts';
-import { GISTS_QUERY, OG_STATS_QUERY, PROFILE_QUERY, REPOS_QUERY } from './graphql-queries.ts';
+import { GISTS_QUERY, OG_STATS_QUERY, PROFILE_QUERY, REPOS_QUERY, USER_INFO_QUERY } from './graphql-queries.ts';
 
 export interface ProfileData {
   userinfo: User;
@@ -124,6 +124,34 @@ export interface OgStats {
 export interface UserGistsData {
   userinfo: User;
   gists: Gist[];
+}
+
+interface UserInfoQueryData {
+  user: GraphQLUserNode | null;
+}
+
+/** 只要用户资料（guestbook / claim / setup），不拉仓库和 gist 列表。 */
+export async function loadUserInfo(
+  user: string,
+  options: { fresh?: boolean } = {}
+): Promise<User | null> {
+  if (!hasGitHubToken()) {
+    try {
+      return await getUser(user);
+    } catch (error) {
+      if (isNotFound(error)) return null;
+      throw error;
+    }
+  }
+
+  const data = await ghGraphql<UserInfoQueryData>(
+    'UserInfo',
+    USER_INFO_QUERY,
+    { login: user },
+    { ttl: 300, fresh: options.fresh }
+  );
+
+  return data.user ? mapUserNode(data.user) : null;
 }
 
 export interface ReposPageData {

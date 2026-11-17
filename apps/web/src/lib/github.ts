@@ -129,6 +129,14 @@ export async function ghFetch<T>(
     const rateLimit = parseRateLimit(res, body);
 
     if (rateLimit) {
+      console.warn('[classy] github rate-limit', {
+        resource: 'rest',
+        path,
+        status: res.status,
+        remaining: rateLimit.remaining,
+        resetAt: rateLimit.resetAt,
+        retryAfter: rateLimit.retryAfter,
+      });
       await writeRateLimitMarker('core', rateLimit, res.status);
 
       const stale = await staleJson<T>(key);

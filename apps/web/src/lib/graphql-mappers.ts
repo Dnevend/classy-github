@@ -1,4 +1,4 @@
-import type { Gist, Repo, User } from '@classy/types/github';
+import type { Gist, GistComment, Repo, User } from '@classy/types/github';
 
 /**
  * GraphQL 节点 → 现有 REST 形状。
@@ -65,14 +65,36 @@ export interface GraphQLUserNode {
   } | null;
 }
 
-export const mapUserNode = (node: GraphQLUserNode): User => ({
-  login: node.login,
+export interface GraphQLRepoDetailNode extends GraphQLRepositoryNode {
+  owner: { login: string };
+  readme: { text?: string | null } | null;
+}
+
+export interface GraphQLGistCommentNode {
+  id: string;
+  databaseId?: number | null;
+  body: string;
+  createdAt: string;
+  author: {
+    login: string;
+    avatarUrl: string;
+    url: string;
+  } | null;
+}
+
+/** 只保证类型完整的占位用户；用于 repo.owner / 评论作者等不展示完整资料的场景。 */
+export const minimalUser = (
+  login: string,
+  avatarUrl = '',
+  htmlUrl = `https://github.com/${login}`
+): User => ({
+  login,
   id: 0,
   node_id: '',
-  avatar_url: node.avatarUrl,
+  avatar_url: avatarUrl,
   gravatar_id: '',
-  url: `https://api.github.com/users/${node.login}`,
-  html_url: `https://github.com/${node.login}`,
+  url: `https://api.github.com/users/${login}`,
+  html_url: htmlUrl,
   followers_url: '',
   following_url: '',
   gists_url: '',
@@ -84,12 +106,28 @@ export const mapUserNode = (node: GraphQLUserNode): User => ({
   received_events_url: '',
   type: 'User',
   site_admin: false,
+  name: '',
+  company: '',
+  blog: '',
+  location: '',
+  email: null,
+  hireable: false,
+  bio: '',
+  twitter_username: '',
+  public_repos: 0,
+  public_gists: 0,
+  followers: 0,
+  following: 0,
+  created_at: '',
+  updated_at: '',
+});
+
+export const mapUserNode = (node: GraphQLUserNode): User => ({
+  ...minimalUser(node.login, node.avatarUrl),
   name: node.name ?? '',
   company: node.company ?? '',
   blog: node.websiteUrl ?? '',
   location: node.location ?? '',
-  email: null,
-  hireable: false,
   bio: node.bio ?? '',
   twitter_username: node.twitterUsername ?? '',
   public_repos: node.repositories.totalCount,
@@ -163,4 +201,21 @@ export const mapGistNode = (
   description: node.description ?? '',
   comments: node.comments.totalCount,
   owner,
+});
+
+export const mapGistCommentNode = (
+  node: GraphQLGistCommentNode
+): GistComment => ({
+  url: '',
+  id: node.databaseId ?? 0,
+  node_id: node.id,
+  user: minimalUser(
+    node.author?.login ?? 'ghost',
+    node.author?.avatarUrl ?? '',
+    node.author?.url
+  ),
+  author_association: '',
+  created_at: node.createdAt,
+  updated_at: node.createdAt,
+  body: node.body,
 });
