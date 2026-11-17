@@ -440,7 +440,7 @@ pnpm deploy:pages
 
 - `SITE_ORIGIN` 在 `wrangler.jsonc` 里，决定 canonical / OG / feed / sitemap 使用的域名；自建时改成你的最终地址。
 - 可选：启用 Cloudflare Web Analytics。在 dashboard 的 Web Analytics 里为你的域名建一条站点并复制 token，写进 `apps/web/.env`（已在 `.gitignore`）：`echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`，再构建发布。不配则 HTML 里不会出现任何分析脚本。
-- `classygit.pages.dev` 只是一层 Pages 代理，真正渲染、缓存、计数都在 Worker 里；不用 Pages 也可以直接用 Worker 地址。
+- `classygit.pages.dev` 只是一层 Pages 代理，真正渲染、缓存、计数都在 Worker 里；不用 Pages 也可以直接用 Worker 地址。生产实例在 Pages 项目里配了 `CLASSY_WEB` → `classy-web` 的 Service binding；自建时可选，不配时代理会回退到 `TARGET` 的公网地址。
 - `pnpm deploy:pages` 默认把 `classygit.pages.dev` 指向作者的 `classy-web.dnevend.workers.dev`；自建时请跳过这一步，或先改 `apps/web/pages-proxy/_worker.js` 的 `TARGET` 和 `apps/web/package.json` 里的 Pages `project-name`。
 - 作者使用 Workers Paid（$5/月）主要是给 Shiki 语法高亮留 CPU 余量；轻度使用可以先试免费计划。
 

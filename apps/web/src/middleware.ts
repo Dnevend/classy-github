@@ -7,6 +7,7 @@ import {
 } from './lib/edge-cache.ts';
 import { loadConfigState } from './lib/config-loader.ts';
 import { serveStaleHtml } from './lib/stale-html.ts';
+import { normalizeCacheParams } from './lib/request-params.ts';
 import type { ThemeName } from './lib/config.ts';
 import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
 import { resolveRequestTheme } from './lib/request-theme.ts';
@@ -36,7 +37,7 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '32';
+const CACHE_VERSION = '33';
 
 const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
@@ -134,6 +135,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return response;
   }
 
+  // 分页 / 标签筛选都要进缓存键，否则不同筛选会互相污染。
+  // 非法值由 request-params 归一到安全值：不生成额外 key，也不绕过缓存，
+  // 避免 ?tag=超长字符串 / ?page=999999 变成免费的 cache miss 放大器。
+  const { page: pageParam, tag: tagParam } = normalizeCacheParams(
+    url.pathname,
+    url.searchParams
+  );
+
   const ttl =
     context.request.method === 'GET' && !SKIP_CACHE.test(url.pathname)
       ? ttlFor(url.pathname)
@@ -150,11 +159,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
       ? localeFromAcceptLanguage(context.request.headers.get('accept-language'))
       : locale;
 
-  // 分页 / 标签筛选都要进缓存键，否则不同筛选会互相污染
-  const page = url.searchParams.get('page');
-  const tag = url.searchParams.get('tag')?.trim();
+  const page = pageParam.value;
+  const tag = tagParam.value;
   const key = new Request(
-    `${url.origin}${url.pathname}?theme=${theme}&lang=${cacheLocale}&v=${CACHE_VERSION}${page ? `&page=${page}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}`,
+    `${url.origin}${url.pathname}?theme=${theme}&lang=${cacheLocale}&v=${CACHE_VERSION}${page && page > 1 ? `&page=${page}` : ''}${tag ? `&tag=${encodeURIComponent(tag)}` : ''}`,
     { method: 'GET' }
   );
 

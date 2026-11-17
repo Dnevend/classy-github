@@ -8,6 +8,7 @@ import { DEFAULT_CONFIG } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
+import { normalizeTagParam } from '../../lib/request-params';
 import { collectTagCounts, hasTag } from '../../lib/tags';
 import { resolveTheme } from '../../themes';
 import ListSearch from '../../themes/_shared/ListSearch.astro';
@@ -49,7 +50,8 @@ const parseDescription = createGistDescriptionParser({
   split: config.gists.split,
 });
 
-const activeTag = Astro.url.searchParams.get('tag')?.trim() ?? '';
+const activeTag =
+  normalizeTagParam(Astro.url.searchParams.get('tag')).value ?? '';
 const parsedGists = gists.map((gist) => ({
   gist,
   parsed: parseDescription(gist.description),

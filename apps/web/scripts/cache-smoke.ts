@@ -10,6 +10,12 @@ import {
   cacheGetStale,
   cachePut,
 } from '../src/lib/edge-cache.ts';
+import {
+  MAX_CACHE_PAGE,
+  normalizeCacheParams,
+  normalizePageParam,
+  normalizeTagParam,
+} from '../src/lib/request-params.ts';
 
 class MemoryCache {
   readonly map = new Map<string, Response>();
@@ -51,6 +57,100 @@ assert.equal(
   await cacheGetStale(key, 1),
   undefined,
   '超过 staleTtl 的缓存不能再用'
+);
+
+assert.deepEqual(normalizePageParam(null), { present: false, valid: true });
+assert.deepEqual(normalizePageParam('2'), {
+  present: true,
+  valid: true,
+  value: 2,
+});
+assert.deepEqual(normalizePageParam('02'), {
+  present: true,
+  valid: true,
+  value: 2,
+});
+assert.deepEqual(normalizePageParam(''), {
+  present: true,
+  valid: true,
+  value: 1,
+});
+assert.equal(normalizePageParam('0').valid, false);
+assert.equal(normalizePageParam('0').value, 1);
+assert.equal(normalizePageParam('-1').valid, false);
+assert.equal(normalizePageParam('abc').valid, false);
+assert.equal(normalizePageParam('abc').value, 1);
+assert.equal(
+  normalizePageParam(String(MAX_CACHE_PAGE + 1)).valid,
+  false,
+  '超出范围的分页不能原样进缓存键'
+);
+assert.equal(
+  normalizePageParam(String(MAX_CACHE_PAGE + 1)).value,
+  MAX_CACHE_PAGE
+);
+
+assert.deepEqual(normalizeTagParam(null), { present: false, valid: true });
+assert.deepEqual(normalizeTagParam(' AI '), {
+  present: true,
+  valid: true,
+  value: 'ai',
+});
+assert.deepEqual(normalizeTagParam('长文'), {
+  present: true,
+  valid: true,
+  value: '长文',
+});
+assert.deepEqual(normalizeTagParam(''), { present: true, valid: true });
+assert.equal(
+  normalizeTagParam('x'.repeat(65)).valid,
+  false,
+  '超长 tag 不能进缓存键'
+);
+assert.equal(
+  normalizeTagParam('a\nb').valid,
+  false,
+  '控制字符不能进缓存键'
+);
+assert.equal(
+  normalizeTagParam('hello world').valid,
+  false,
+  '带空格的输入不是 gist 标签'
+);
+assert.deepEqual(normalizeTagParam('a_b-c'), {
+  present: true,
+  valid: true,
+  value: 'a_b-c',
+});
+
+const gistParams = normalizeCacheParams(
+  '/Dnevend/gists',
+  new URLSearchParams('tag=AI&page=9')
+);
+assert.deepEqual(gistParams.tag, {
+  present: true,
+  valid: true,
+  value: 'ai',
+});
+assert.deepEqual(
+  gistParams.page,
+  { present: false, valid: true },
+  'gists 不消费 page，page 不能进缓存键'
+);
+
+const repoParams = normalizeCacheParams(
+  '/Dnevend/repos',
+  new URLSearchParams('page=2&tag=AI')
+);
+assert.deepEqual(repoParams.page, {
+  present: true,
+  valid: true,
+  value: 2,
+});
+assert.deepEqual(
+  repoParams.tag,
+  { present: false, valid: true },
+  'repos 不消费 tag，tag 不能进缓存键'
 );
 
 console.log('cache smoke ok');

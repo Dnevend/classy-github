@@ -1,5 +1,6 @@
 import { handle } from '@astrojs/cloudflare/handler';
 import { DurableObject } from 'cloudflare:workers';
+import { enforceRateLimits } from './lib/rate-limit.ts';
 
 /**
  * 每个用户一个 Durable Object，做原子计数。
@@ -23,6 +24,9 @@ export class HitCounter extends DurableObject {
 
 export default {
   async fetch(request: Request, env: Record<string, unknown>, ctx: unknown) {
+    const limited = await enforceRateLimits(request, env);
+    if (limited) return limited;
+
     return handle(request, env as never, ctx as never);
   },
 };

@@ -25,12 +25,19 @@ import type { UsersKv } from '../src/lib/users-kv.ts';
 
 class MemoryKv implements UsersKv {
   readonly map = new Map<string, string>();
+  readonly failKeys = new Set<string>();
+  getCalls = 0;
+  putCalls = 0;
+  listCalls = 0;
 
   async get(key: string) {
+    this.getCalls += 1;
+    if (this.failKeys.has(key)) throw new Error(`kv get failed: ${key}`);
     return this.map.get(key) ?? null;
   }
 
   async put(key: string, value: string) {
+    this.putCalls += 1;
     this.map.set(key, value);
   }
 
@@ -39,6 +46,7 @@ class MemoryKv implements UsersKv {
   }
 
   async list(options?: { prefix?: string; limit?: number; cursor?: string }) {
+    this.listCalls += 1;
     const prefix = options?.prefix ?? '';
     const limit = options?.limit ?? 1000;
     const start = Number(options?.cursor ?? 0);
@@ -294,7 +302,12 @@ const cases: Case[] = [
         discover: true,
       });
 
-      assert.equal(kv.map.size, 3);
+      assert.ok(await kv.get('site:dnevend'));
+      assert.ok(await kv.get('ring:dnevend'));
+      assert.ok(await kv.get('discover:dnevend'));
+      assert.ok(await kv.get('registry:ring'));
+      assert.ok(await kv.get('registry:discover'));
+
       assert.equal((await listSites(kv, RING_PREFIX)).length, 1);
       assert.equal((await listSites(kv, DISCOVER_PREFIX)).length, 1);
 
@@ -306,11 +319,196 @@ const cases: Case[] = [
         discover: false,
       });
 
-      assert.equal(await kv.get(`ring:dnevend`), null);
-      assert.equal(await kv.get(`discover:dnevend`), null);
+      assert.equal(await kv.get('ring:dnevend'), null);
+      assert.equal(await kv.get('discover:dnevend'), null);
+      assert.equal((await listSites(kv, RING_PREFIX)).length, 0);
+      assert.equal((await listSites(kv, DISCOVER_PREFIX)).length, 0);
 
       await removeSite(kv, 'Dnevend');
-      assert.equal(kv.map.size, 0);
+      assert.equal(await kv.get('site:dnevend'), null);
+      assert.equal((await listSites(kv, RING_PREFIX)).length, 0);
+    },
+  },
+  {
+    name: '站点注册表：读快照只打一次 KV',
+    run: async () => {
+      const kv = new MemoryKv();
+
+      await syncSite(kv, {
+        login: 'alice',
+        title: 'Alice',
+        theme: 'nes',
+        webring: true,
+        discover: true,
+      });
+
+      // 首次 sync 已经回填快照；正常读路径不应该再 list / 逐 key get。
+      kv.getCalls = 0;
+      kv.listCalls = 0;
+
+      const sites = await listSites(kv, RING_PREFIX);
+      assert.equal(sites.length, 1);
+      assert.equal(sites[0]?.login, 'alice');
+      assert.equal(kv.listCalls, 0, '快照命中时不能 list');
+      assert.equal(kv.getCalls, 1, '快照命中时只读 registry:ring');
+    },
+  },
+  {
+    name: '站点注册表：快照缺失时从旧 key 回填',
+    run: async () => {
+      const kv = new MemoryKv();
+      const legacy = {
+        login: 'alice',
+        title: 'Alice',
+        theme: 'mac',
+        webring: true,
+        discover: false,
+        configuredAt: 1,
+        updatedAt: 1,
+      };
+
+      await kv.put('ring:alice', JSON.stringify(legacy));
+      kv.getCalls = 0;
+      kv.listCalls = 0;
+
+      const sites = await listSites(kv, RING_PREFIX);
+      assert.equal(sites.length, 1);
+      assert.equal(sites[0]?.login, 'alice');
+      assert.equal(kv.listCalls, 1, '快照缺失时才回退 list');
+      assert.ok(await kv.get('registry:ring'), '读完后应回填快照');
+    },
+  },
+  {
+    name: '站点注册表：标题没变时刷新窗口到期也不写',
+    run: async () => {
+      const kv = new MemoryKv();
+      const record = {
+        login: 'alice',
+        title: 'Alice',
+        theme: 'mac' as const,
+        webring: true,
+        discover: true,
+      };
+
+      await syncSite(kv, record);
+      const raw = JSON.parse(kv.map.get('site:alice') ?? '{}') as {
+        updatedAt: number;
+      };
+      raw.updatedAt = Date.now() - 2 * 60 * 60 * 1000;
+      kv.map.set('site:alice', JSON.stringify(raw));
+      kv.putCalls = 0;
+
+      await syncSite(kv, record);
+      assert.equal(kv.putCalls, 0, '标题/主题/开关都没变时不应重复写 KV');
+    },
+  },
+  {
+    name: '站点注册表：标题变化后快照同步',
+    run: async () => {
+      const kv = new MemoryKv();
+      const record = {
+        login: 'alice',
+        title: 'Alice',
+        theme: 'mac' as const,
+        webring: true,
+        discover: true,
+      };
+
+      await syncSite(kv, record);
+      const raw = JSON.parse(kv.map.get('site:alice') ?? '{}') as {
+        updatedAt: number;
+      };
+      raw.updatedAt = Date.now() - 2 * 60 * 60 * 1000;
+      kv.map.set('site:alice', JSON.stringify(raw));
+
+      await syncSite(kv, { ...record, title: 'Alicia' });
+      const snapshot = JSON.parse(kv.map.get('registry:ring') ?? '{}') as {
+        sites: { login: string; title: string }[];
+      };
+
+      assert.equal(snapshot.sites[0]?.title, 'Alicia');
+    },
+  },
+  {
+    name: '站点注册表：快照过期后从旧 key 重建',
+    run: async () => {
+      const kv = new MemoryKv();
+      await syncSite(kv, {
+        login: 'alice',
+        title: 'Alice',
+        theme: 'mac',
+        webring: true,
+        discover: false,
+      });
+
+      const raw = JSON.parse(kv.map.get('registry:ring') ?? '{}') as {
+        updatedAt: number;
+      };
+      raw.updatedAt = Date.now() - 2 * 60 * 60 * 1000;
+      kv.map.set('registry:ring', JSON.stringify(raw));
+      kv.getCalls = 0;
+      kv.listCalls = 0;
+
+      const sites = await listSites(kv, RING_PREFIX);
+      assert.equal(sites.length, 1);
+      assert.equal(sites[0]?.login, 'alice');
+      assert.equal(kv.listCalls, 1, '快照过期后应回退 list 重建');
+    },
+  },
+  {
+    name: '站点注册表：快照损坏/版本不符时回退并回填',
+    run: async () => {
+      const kv = new MemoryKv();
+      await kv.put(
+        'ring:alice',
+        JSON.stringify({
+          login: 'alice',
+          title: 'Alice',
+          theme: 'mac',
+          webring: true,
+          discover: false,
+          configuredAt: 1,
+          updatedAt: 1,
+        })
+      );
+      await kv.put('registry:ring', '{not-json');
+
+      const sites = await listSites(kv, RING_PREFIX);
+      assert.equal(sites.length, 1);
+      assert.equal(sites[0]?.login, 'alice');
+
+      const snapshot = JSON.parse(kv.map.get('registry:ring') ?? '{}') as {
+        version: number;
+      };
+      assert.equal(snapshot.version, 1, '损坏快照应被回填');
+    },
+  },
+  {
+    name: '站点注册表：逐 key 读失败时不缓存残缺快照',
+    run: async () => {
+      const kv = new MemoryKv();
+      const make = (login: string) => ({
+        login,
+        title: login,
+        theme: 'mac',
+        webring: true,
+        discover: false,
+        configuredAt: 1,
+        updatedAt: 1,
+      });
+
+      await kv.put('ring:alice', JSON.stringify(make('alice')));
+      await kv.put('ring:bob', JSON.stringify(make('bob')));
+      kv.failKeys.add('ring:bob');
+
+      const sites = await listSites(kv, RING_PREFIX);
+      assert.equal(sites.length, 1);
+      assert.equal(sites[0]?.login, 'alice');
+      assert.equal(
+        await kv.get('registry:ring'),
+        null,
+        '读不完整时不能写快照'
+      );
     },
   },
 ];

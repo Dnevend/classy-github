@@ -9,6 +9,7 @@ import { loadReposFirstPage } from '../../lib/profile';
 import { DEFAULT_CONFIG, type ResolvedConfig } from '../../lib/config';
 import { loadConfig } from '../../lib/config-loader';
 import { localeFromConfig, createTranslator } from '../../lib/i18n';
+import { normalizePageParam } from '../../lib/request-params';
 import { resolveTheme } from '../../themes';
 import ListSearch from '../../themes/_shared/ListSearch.astro';
 
@@ -19,8 +20,7 @@ const PER_PAGE = 30;
 const user = Astro.params.user as string;
 const origin = siteOrigin(Astro.url);
 
-const pageParam = Number(Astro.url.searchParams.get('page') ?? '1');
-const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+const page = normalizePageParam(Astro.url.searchParams.get('page')).value ?? 1;
 
 const { data, error, retryAt } = await safeLoad(async () => {
   if (page === 1) return loadReposFirstPage(user, { perPage: PER_PAGE });

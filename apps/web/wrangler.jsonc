@@ -11,6 +11,53 @@
   "vars": {
     "SITE_ORIGIN": "https://classygit.pages.dev"
   },
+  "ratelimits": [
+    {
+      "name": "PREVIEW_LIMITER",
+      "namespace_id": "3101",
+      "simple": { "limit": 6, "period": 60 }
+    },
+    {
+      "name": "PREVIEW_GLOBAL_LIMITER",
+      "namespace_id": "3102",
+      "simple": { "limit": 60, "period": 60 }
+    },
+    {
+      "name": "RANDOM_LIMITER",
+      "namespace_id": "3103",
+      "simple": { "limit": 30, "period": 60 }
+    },
+    {
+      "name": "RANDOM_GLOBAL_LIMITER",
+      "namespace_id": "3104",
+      "simple": { "limit": 120, "period": 60 }
+    },
+    {
+      "name": "API_LIMITER",
+      "namespace_id": "3105",
+      "simple": { "limit": 120, "period": 60 }
+    },
+    {
+      "name": "API_GLOBAL_LIMITER",
+      "namespace_id": "3106",
+      "simple": { "limit": 600, "period": 60 }
+    },
+    {
+      "name": "BADGE_LIMITER",
+      "namespace_id": "3107",
+      "simple": { "limit": 120, "period": 60 }
+    },
+    {
+      "name": "ASSET_LIMITER",
+      "namespace_id": "3108",
+      "simple": { "limit": 120, "period": 60 }
+    },
+    {
+      "name": "ASSET_GLOBAL_LIMITER",
+      "namespace_id": "3109",
+      "simple": { "limit": 300, "period": 60 }
+    }
+  ],
   "kv_namespaces": [
     { "binding": "USERS", "id": "bfa9d7d2b1f44881833552cb30b4077e" }
   ],
