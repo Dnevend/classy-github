@@ -21,6 +21,10 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
+<p align="center">
+  <a href="https://linux.do" title="LINUX DO"><img alt="LINUX DO" src="https://img.shields.io/badge/LINUX-DO-FFB003?style=flat-square"></a>
+</p>
+
 不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻试。
 
 <table>
@@ -404,6 +408,10 @@ pnpm build
 ![ClassyGit OG](https://classygit.dev/og/Dnevend.png)
 
 </details>
+
+## 友链
+
+- [LINUX DO](https://linux.do) — 一个友好的开发者社区
 
 ## 许可
 

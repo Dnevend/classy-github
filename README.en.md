@@ -21,6 +21,10 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
+<p align="center">
+  <a href="https://linux.do" title="LINUX DO"><img alt="LINUX DO" src="https://img.shields.io/badge/LINUX-DO-FFB003?style=flat-square"></a>
+</p>
+
 No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog. Try it at [classygit.dev](https://classygit.dev).
 
 <table>
@@ -404,6 +408,10 @@ Put the badge in your README or blogroll:
 ![ClassyGit OG](https://classygit.dev/og/Dnevend.png)
 
 </details>
+
+## Friend links
+
+- [LINUX DO](https://linux.do) — a friendly developer community
 
 ## License
 
