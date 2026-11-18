@@ -13,6 +13,15 @@ declare namespace App {
       string,
       Promise<import('./lib/config-loader').ConfigState>
     >;
+    /** Cloudflare 适配器注入的请求上下文，用于 SWR 后台刷新 */
+    cfContext?: ExecutionContext;
+    /** middleware 在解析主题之前并行启动的 profile 预取 */
+    profilePrefetch?: {
+      login: string;
+      repoCount: number;
+      gistCount: number;
+      promise: Promise<import('./lib/profile').ProfileData | null>;
+    };
   }
 }
 

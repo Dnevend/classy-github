@@ -1060,6 +1060,23 @@ img {
   margin-left: 8px;
 }
 
+/* 头像加载中 / 加载失败时的占位：纯 CSS 剪影，不发额外请求。
+   背景色跟随主题的 --bg-subtle，四套主题都能用；真实头像加载后会盖住它。 */
+.header-avatar,
+.guestbook-entry__avatar,
+.webring-card__avatar,
+.share-card__avatar,
+.mac-avatar,
+.w95-avatar,
+.nes-avatar,
+.tui-avatar {
+  background-color: var(--bg-subtle);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20fill='%239ca3af'%20d='M12%203.2a4.1%204.1%200%201%200%200%208.2%204.1%204.1%200%200%200%200-8.2Zm0%2010.2c-4.5%200-8.2%202.8-8.2%206.2V21h16.4v-1.4c0-3.4-3.7-6.2-8.2-6.2Z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 62%;
+}
+
 /* 区块标题行：左标题 + 右「查看更多」 */
 .section__head {
   display: flex;

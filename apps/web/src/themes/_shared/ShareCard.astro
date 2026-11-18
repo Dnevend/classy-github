@@ -75,6 +75,8 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
               src={coverSrc}
               alt=""
               crossorigin="anonymous"
+              loading="lazy"
+              decoding="async"
               data-share-cover
             />
             <span class="share-card__cover-shade" aria-hidden="true" />
@@ -92,6 +94,9 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
             width="120"
             height="120"
             crossorigin="anonymous"
+            loading="lazy"
+            decoding="async"
+            data-avatar="1"
             data-share-avatar
           />
         )
@@ -182,6 +187,19 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     const preview = root.querySelector<HTMLElement>('[data-share-preview]');
     const avatar = root.querySelector<HTMLImageElement>('[data-share-avatar]');
 
+    // 面板默认 display:none，封面/头像用 lazy 延迟到打开时再加载；
+    // 截图前等它们真正 decode 完，避免保存出一张缺图的卡片。
+    const waitForImages = (scope: HTMLElement) =>
+      Promise.all(
+        [...scope.querySelectorAll('img')].map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise<void>((resolve) => {
+            img.addEventListener('load', () => resolve(), { once: true });
+            img.addEventListener('error', () => resolve(), { once: true });
+          });
+        })
+      );
+
     const open = (state: boolean) => {
       if (!panel || !toggle) return;
       toggle.setAttribute('aria-expanded', String(state));
@@ -242,7 +260,7 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       try {
         // 直接截取用户看到的那张卡，缩放到 1200 宽，所见即所得
         const { domToCanvas } = await import('modern-screenshot');
-        await document.fonts.ready.catch(() => {});
+        await Promise.all([waitForImages(preview), document.fonts.ready.catch(() => {})]);
         const canvas = await domToCanvas(preview, {
           scale: 1200 / preview.offsetWidth,
           backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#ffffff',

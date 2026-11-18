@@ -1,6 +1,7 @@
 ---
 import type { ThemeProfileCardProps } from '../types';
 import { createTranslator } from '../../lib/i18n';
+import { avatarUrl } from '../../lib/avatar';
 import ProfileMeta from '../_shared/ProfileMeta.astro';
 import ProfileCover from '../_shared/ProfileCover.astro';
 
@@ -28,11 +29,13 @@ const stats = [
       <div class:list={['tui-profile', 'has-cover']}>
         <img
           class="tui-avatar"
-          src={userinfo.avatar_url}
+          src={avatarUrl(userinfo)}
           alt={`${userinfo.login} 的头像`}
           width="64"
           height="64"
           loading="lazy"
+          decoding="async"
+          data-avatar="1"
         />
         <div>
           <p class="tui-name">{userinfo.name || userinfo.login}</p>

@@ -1,0 +1,7 @@
+# 字体和图片不走 Worker 渲染，给浏览器长缓存，避免每次回访都协商缓存。
+# `/_astro/*` 的 immutable 规则由 @astrojs/cloudflare 在构建时自动追加。
+/fonts/*
+  Cache-Control: public, max-age=2592000
+
+/images/*
+  Cache-Control: public, max-age=604800

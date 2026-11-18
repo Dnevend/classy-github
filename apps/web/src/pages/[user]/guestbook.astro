@@ -7,6 +7,7 @@ import { safeLoad } from '../../lib/errors';
 import { loadGuestbook } from '../../lib/guestbook';
 import { renderMarkdown } from '../../lib/markdown';
 import { createTranslator, localeFromConfig } from '../../lib/i18n';
+import { avatarUrl } from '../../lib/avatar';
 import { resolveTheme } from '../../themes';
 
 export const prerender = false;
@@ -129,14 +130,16 @@ const gistUrl = gist ? `${gist.html_url}#comments` : null;
                 {rendered.map(({ comment, html, truncated, date }) => (
                   <li class="guestbook-entry">
                     <div class="guestbook-entry__head">
-                      {comment.user?.avatar_url && (
+                      {comment.user && (
                         <img
                           class="guestbook-entry__avatar"
-                          src={comment.user.avatar_url}
+                          src={avatarUrl(comment.user, 64)}
                           alt=""
                           width="32"
                           height="32"
                           loading="lazy"
+                          decoding="async"
+                          data-avatar="1"
                         />
                       )}
                       <div>

@@ -92,7 +92,8 @@ const fetchJsonWithCache = async (
   }
 
   const response = new Response(res.body, res);
-  await cachePut(key, response, ttl);
+  // 逻辑 TTL 之外还要留 stale 窗口，raw 网络抖动时才能用旧配置兜底。
+  await cachePut(key, response, ttl, STALE_TTL);
 
   return parseCached(response);
 };

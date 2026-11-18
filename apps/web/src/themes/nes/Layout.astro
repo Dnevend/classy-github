@@ -6,6 +6,7 @@ import { createTranslator } from '../../lib/i18n';
 import ShareCard from '../_shared/ShareCard.astro';
 import CommunityFooter from '../_shared/CommunityFooter.astro';
 import type { ThemeLayoutProps } from '../types';
+import { avatarUrl, avatarUrlForLogin } from '../../lib/avatar';
 
 // 主题 CSS 用 ?url 显式引用：Layout 是被动态 import 的，
 // 直接 `import './theme.css'` 的话 Astro 收集不到，页面会没有样式。
@@ -65,11 +66,12 @@ const t = createTranslator(Astro.locals.locale);
       {user && (
         <img
           class="header-avatar"
-          src={userinfo?.avatar_url ?? `https://github.com/${user}.png?size=64`}
+          src={userinfo ? avatarUrl(userinfo) : avatarUrlForLogin(user, 64)}
           alt=""
           width="26"
           height="26"
-          loading="lazy"
+          decoding="async"
+          data-avatar="1"
         />
       )}
     </div>

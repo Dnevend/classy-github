@@ -2,15 +2,25 @@ import { defineMiddleware } from 'astro:middleware';
 import {
   CACHED_AT_HEADER,
   cacheGet,
+  cacheGetStale,
   cachePut,
   edgeCache,
 } from './lib/edge-cache.ts';
 import { loadConfigState, type ConfigState } from './lib/config-loader.ts';
-import { serveStaleHtml, previousCacheKey } from './lib/stale-html.ts';
+import {
+  serveStaleHtml,
+  serveStaleWhileRevalidate,
+  previousCacheKey,
+  STALE_HTML_TTL,
+  SWR_STALE_TTL,
+} from './lib/stale-html.ts';
 import { isPreviewRequest } from './lib/preview.ts';
 import { siteOrigin } from './lib/site.ts';
 import { normalizeCacheParams } from './lib/request-params.ts';
-import type { ThemeName } from './lib/config.ts';
+import { DEFAULT_CONFIG, type ThemeName } from './lib/config.ts';
+import { loadProfile } from './lib/profile.ts';
+import { singleFlight } from './lib/single-flight.ts';
+import { userFromPath } from './lib/user-route.ts';
 import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
 import { resolveRequestTheme } from './lib/request-theme.ts';
 import {
@@ -39,17 +49,17 @@ const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
 ];
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '40';
+const CACHE_VERSION = '41';
 
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
   /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
 
 /**
- * v39 → v40 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
+ * v40 → v41 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
  * 有效期就是 stale 的 24 小时，过了这个窗口删掉即可。
  */
-const PREVIOUS_CACHE_VERSIONS = ['39', '38', '37'];
+const PREVIOUS_CACHE_VERSIONS = ['40', '39', '38', '37'];
 
 const serveStaleAnyVersion = async (
   key: Request,
@@ -75,38 +85,84 @@ const SKIP_CACHE = /^\/(?:setup|random|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /**
- * 站主默认主题的短期缓存。没有 classy-github 仓库的用户不能让 middleware
+ * 站主默认主题的缓存。没有 classy-github 仓库的用户不能让 middleware
  * 每次 HTML 缓存命中都去打一次 GitHub API。
+ *
+ * 30 分钟新鲜期 + 24 小时 stale：过期后先返回旧主题、后台刷新，
+ * 这样 stale HTML 之前不必再等一次 Config GraphQL。
+ *
+ * 有意的取舍：站主改 theme 后，无 cookie 访客最长 30 分钟仍看到旧主题；
+ * `?theme=` / `?preview=1` 会绕过缓存，站主可以立即验证新主题。
  */
-const THEME_CACHE_TTL = 300;
+const THEME_CACHE_TTL = 60 * 30;
+const THEME_STALE_TTL = 60 * 60 * 24;
 const themeCacheKey = (login: string) =>
   new Request(`https://classy.cache/theme/${encodeURIComponent(login.toLowerCase())}?v=1`);
+
+const themeResponse = (theme: ThemeName) =>
+  new Response(JSON.stringify({ theme }), {
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+  });
+
+const parseThemePayload = async (response: Response): Promise<ThemeName | null> => {
+  const data = (await response.json().catch(() => null)) as { theme?: unknown } | null;
+  return parseThemeName(typeof data?.theme === 'string' ? data.theme : null);
+};
 
 const loadConfigTheme = async (
   login: string,
   fresh: boolean,
-  memo?: Map<string, Promise<ConfigState>>
+  memo?: Map<string, Promise<ConfigState>>,
+  waitUntil?: (promise: Promise<unknown>) => void
 ): Promise<ThemeName> => {
   const key = themeCacheKey(login);
 
   if (!fresh) {
     const cached = await cacheGet(key, THEME_CACHE_TTL);
     if (cached) {
-      const data = (await cached.json().catch(() => null)) as { theme?: unknown } | null;
-      const theme = parseThemeName(typeof data?.theme === 'string' ? data.theme : null);
+      const theme = await parseThemePayload(cached);
       if (theme) return theme;
+    }
+
+    // 过期主题先顶上；后台刷新失败时保持旧值，不影响访客。
+    const stale = await cacheGetStale(key, THEME_STALE_TTL);
+    if (stale) {
+      const theme = await parseThemePayload(stale);
+      if (theme) {
+        if (waitUntil) {
+          waitUntil(
+            singleFlight(`theme:${key.url}`, async () => {
+              try {
+                // 用请求级 memo：如果同一请求随后要渲染页面，页面直接复用
+                // 这次回源，不会再打一次 Config GraphQL。
+                const state = await loadConfigState(login, { fresh: false, memo });
+                if (state.reliable) {
+                  await cachePut(
+                    key,
+                    themeResponse(state.config.theme),
+                    THEME_CACHE_TTL,
+                    THEME_STALE_TTL
+                  );
+                }
+              } catch (error) {
+                console.warn(`[classy] 主题缓存后台刷新失败 (${login}):`, error);
+              }
+            })
+          );
+          return theme;
+        }
+        // 没有 waitUntil（本地 dev 等）时不能把 stale 主题当成最新值无限
+        // 返回；继续走下面的同步 loadConfigState。
+      }
     }
   }
 
   const state = await loadConfigState(login, { fresh, memo });
   const theme = state.config.theme;
 
-  // reliable=false 表示网络/限流，不能把 mac 当成“没有配置”缓存 5 分钟
+  // reliable=false 表示网络/限流，不能把 mac 当成“没有配置”缓存
   if (!fresh && state.reliable) {
-    const response = new Response(JSON.stringify({ theme }), {
-      headers: { 'content-type': 'application/json; charset=utf-8' },
-    });
-    await cachePut(key, response, THEME_CACHE_TTL);
+    await cachePut(key, themeResponse(theme), THEME_CACHE_TTL, THEME_STALE_TTL);
   }
 
   return theme;
@@ -125,12 +181,65 @@ export const onRequest = defineMiddleware(async (context, next) => {
     siteOrigin(url)
   );
 
+  const cfContext = context.locals.cfContext;
+  const waitUntil = cfContext
+    ? (promise: Promise<unknown>) => cfContext.waitUntil(promise)
+    : undefined;
+
   // 请求级配置 memo：middleware 读过 config 后，页面直接复用同一个 Promise。
   const configMemo = new Map<string, Promise<ConfigState>>();
   context.locals.configMemo = configMemo;
 
   const themeParam = url.searchParams.get('theme');
   const savedTheme = context.cookies.get(THEME_COOKIE);
+  const explicitTheme = Boolean(
+    parseThemeName(themeParam) ||
+      parseThemeName(savedTheme ? savedTheme.value : null)
+  );
+
+  // 用户主页的数据预取：theme 需要先读 config 才能确定，而 profile 不依赖
+  // config（数量按默认值取，页面不够再补一次）。
+  //
+  // 预取只放在两个位置：
+  // 1) 真冷路径（无显式主题、主题缓存也冷）：config 要回源，提前拉 profile
+  //    才能和它并行；
+  // 2) HTML 缓存未命中之后、next() 之前：和页面里的 config/profile 读取并行，
+  //    同时避免普通 HIT 为了预取白打一次 GitHub。
+  const isProfilePath = /^\/[^/]+\/?$/.test(url.pathname);
+  const profileLogin = isProfilePath ? userFromPath(url.pathname) : null;
+  const canPrefetchProfile =
+    profileLogin !== null && !isPreview && context.request.method === 'GET';
+
+  const startProfilePrefetch = () => {
+    if (!canPrefetchProfile || !profileLogin) return;
+    if (context.locals.profilePrefetch) return;
+
+    const repoCount = DEFAULT_CONFIG.profile.repos.showCount;
+    const gistCount = DEFAULT_CONFIG.profile.gists.showCount;
+    const promise = loadProfile(profileLogin, { repoCount, gistCount });
+    // 页面可能因为提前 404/错误而没有消费这个 Promise；先挂一个空 catch，
+    // 避免 unhandled rejection；原始 Promise 仍然会把结果/错误交给页面。
+    promise.catch(() => undefined);
+    context.locals.profilePrefetch = {
+      login: profileLogin.toLowerCase(),
+      repoCount,
+      gistCount,
+      promise,
+    };
+  };
+
+  if (canPrefetchProfile && profileLogin && !explicitTheme) {
+    // 只有「新鲜和 stale 主题缓存都没有」才算是真冷：此时 config 必须回源，
+    // 提前拉 profile 才能和它并行。主题缓存只是过期（stale 仍在）时，
+    // resolveRequestTheme 会先返回旧主题；若 HTML 命中就不该再白打 GitHub，
+    // 若 HTML 未命中则由下面的 startProfilePrefetch() 在 next() 前补上。
+    const key = themeCacheKey(profileLogin);
+    const [freshTheme, staleTheme] = await Promise.all([
+      cacheGet(key, THEME_CACHE_TTL),
+      cacheGetStale(key, THEME_STALE_TTL),
+    ]);
+    if (!freshTheme && !staleTheme) startProfilePrefetch();
+  }
 
   const { theme, persist: persistTheme } = await resolveRequestTheme({
     pathname: url.pathname,
@@ -138,7 +247,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     cookie: savedTheme ? savedTheme.value : null,
     fresh: isPreview,
     loadConfigTheme: (login, fresh) =>
-      loadConfigTheme(login, fresh, configMemo),
+      loadConfigTheme(login, fresh, configMemo, waitUntil),
   });
 
   const savedLocale = context.cookies.get(LOCALE_COOKIE);
@@ -220,11 +329,36 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (hit) {
     const response = new Response(hit.body, hit);
     response.headers.delete(CACHED_AT_HEADER);
+    // 缓存副本的 s-maxage 是给 SWR/stale 用的存储窗口，不能原样发给客户端。
+    response.headers.set('cache-control', `public, s-maxage=${ttl}`);
     response.headers.set('x-classy-cache', 'HIT');
     if (isRepoPath(url.pathname)) {
       response.headers.set('x-robots-tag', 'noindex, nofollow');
     }
     return response;
+  }
+
+  // fresh HTML 未命中：这时才启动预取。HIT 在上面已经返回，不会为了
+  // 缓存命中额外打 GitHub；预取在 next() 之前启动，和页面读取并行。
+  if (!forceFail) startProfilePrefetch();
+
+  // 刚过期、但还在 SWR 窗口内的 HTML：先返回旧页面，后台重新渲染。
+  // 没有 waitUntil（astro dev 等）时不做 SWR，保持原来的同步行为。
+  if (!bypassFresh && !forceFail && waitUntil) {
+    const stale = await serveStaleWhileRevalidate({
+      key,
+      staleTtl: SWR_STALE_TTL,
+      ttl,
+      revalidate: () => next(),
+      waitUntil,
+    });
+
+    if (stale) {
+      if (isRepoPath(url.pathname)) {
+        stale.headers.set('x-robots-tag', 'noindex, nofollow');
+      }
+      return stale;
+    }
   }
 
   let response: Response;
@@ -278,7 +412,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const setCookie = out.headers.get('set-cookie');
     out.headers.delete('set-cookie');
 
-    await cachePut(key, out, ttl);
+    // 逻辑 TTL 仍然是 ttl（5 分钟），但缓存副本要活到 stale 兜底窗口结束。
+    const cacheWrite = cachePut(key, out, ttl, STALE_HTML_TTL);
+    if (waitUntil) waitUntil(cacheWrite);
+    else await cacheWrite;
 
     if (setCookie) out.headers.set('set-cookie', setCookie);
   } else {

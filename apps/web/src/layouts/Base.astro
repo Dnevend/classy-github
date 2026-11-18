@@ -29,6 +29,36 @@ const cfBeaconToken = import.meta.env.PROD ? PUBLIC_CF_ANALYTICS_TOKEN : undefin
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" type="image/svg+xml" href="/github.svg" />
     <link rel="preconnect" href="https://avatars.githubusercontent.com" />
+    <script is:inline>
+      // README 里的第三方图片（统计卡、徽章）经常 404 或超时，
+      // 失败时把 <img> 收起来，别留一块空白。
+      //
+      // 头像是页面结构的一部分，隐藏会让布局塌陷；失败时换成透明 GIF，
+      // 保留 CSS 里的剪影占位图（见 global.css 的 avatar 规则）。
+      //
+      // 必须放在 <head>：头像是页面里最早的图片之一，放在 body 末尾会错过
+      // 它的 error 事件（图片已经加载失败，监听器还没注册）。
+      const AVATAR_PLACEHOLDER =
+        'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+      document.addEventListener(
+        'error',
+        (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLImageElement)) return;
+
+          if (target.hasAttribute('data-avatar')) {
+            if (target.dataset.avatarFailed) return;
+            target.dataset.avatarFailed = '1';
+            target.src = AVATAR_PLACEHOLDER;
+            return;
+          }
+
+          target.style.display = 'none';
+        },
+        true
+      );
+    </script>
     <Seo {...seo} />
     {
       cfBeaconToken && (
@@ -45,19 +75,6 @@ const cfBeaconToken = import.meta.env.PROD ? PUBLIC_CF_ANALYTICS_TOKEN : undefin
 
   <body data-classy-user={user} data-classy-name={userName}>
     <slot />
-
-    <script is:inline>
-      // README 里的第三方图片（统计卡、徽章）经常 404 或超时，
-      // 失败时把 <img> 收起来，别留一块空白。
-      document.addEventListener(
-        'error',
-        (event) => {
-          const target = event.target;
-          if (target instanceof HTMLImageElement) target.style.display = 'none';
-        },
-        true
-      );
-    </script>
 
     <script is:inline>
       // 右侧资料卡的 sticky top 要跟实际 header 高度一致；写死 84px 会让

@@ -4,6 +4,7 @@ import { DEFAULT_CONFIG } from '../lib/config';
 import { createTranslator, localeFromAcceptLanguage } from '../lib/i18n';
 import { RING_PREFIX, listSites } from '../lib/site-registry';
 import { usersKv } from '../lib/users-kv';
+import { avatarUrlForLogin } from '../lib/avatar';
 import { resolveTheme } from '../themes';
 
 export const prerender = false;
@@ -56,11 +57,13 @@ const joinSnippet = `"webring": { "enabled": true }`;
               <a class="webring-card" href={`/${encodeURIComponent(site.login)}?ref=webring`}>
                 <img
                   class="webring-card__avatar"
-                  src={`https://github.com/${encodeURIComponent(site.login)}.png?size=64`}
+                  src={avatarUrlForLogin(site.login, 64)}
                   alt=""
                   width="40"
                   height="40"
                   loading="lazy"
+                  decoding="async"
+                  data-avatar="1"
                 />
                 <span class="webring-card__text">
                   <strong>{site.title || site.login}</strong>
