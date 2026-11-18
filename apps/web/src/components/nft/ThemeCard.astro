@@ -1,0 +1,71 @@
+---
+import { THEME_NAMES, type Theme } from '../../lib/nft/types.ts';
+
+interface Props {
+  theme: Theme;
+  title: string;
+  line: string;
+  cta: string;
+  status?: string;
+  mode?: 'link' | 'button';
+  href?: string;
+  disabled?: boolean;
+}
+
+const {
+  theme,
+  title,
+  line,
+  cta,
+  status = '—',
+  mode = 'link',
+  href,
+  disabled = false,
+} = Astro.props as Props;
+
+const name = THEME_NAMES[theme];
+const index = String(theme + 1).padStart(2, '0');
+const claimHref = href ?? `/nft/claim?theme=${name}`;
+---
+
+<article class="nft-card" data-card data-theme={name} data-state="available">
+  <div class="nft-card__media">
+    <img
+      src={`/nft/${name}.png`}
+      alt={`ClassyGit Pass — ${name} theme card`}
+      width="1024"
+      height="1024"
+      loading="eager"
+      decoding="async"
+    />
+  </div>
+
+  <div class="nft-card__top">
+    <span>{index} / {name.toUpperCase()}</span>
+    <span data-card-remaining>— / 2212</span>
+  </div>
+
+  <h3 class="nft-card__title">{title}</h3>
+  <p class="nft-card__line">{line}</p>
+
+  <div class="nft-card__bottom">
+    <span class="nft-status" data-card-status>{status}</span>
+    {
+      mode === 'link' ? (
+        <a class="nft-button nft-button--card" data-card-cta href={claimHref}>
+          {cta}
+        </a>
+      ) : (
+        <button
+          class="nft-button nft-button--card"
+          type="button"
+          data-claim-theme={name}
+          data-theme={name}
+          disabled={disabled}
+        >
+          {cta}
+        </button>
+      )
+    }
+  </div>
+</article>

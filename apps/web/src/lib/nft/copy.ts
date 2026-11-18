@@ -1,0 +1,438 @@
+export type NftLocale = 'en' | 'zh';
+
+const en = {
+  nav: {
+    overview: 'Overview',
+    claim: 'Claim',
+    github: 'GitHub',
+    lang: '中文',
+  },
+  hero: {
+    eyebrow: 'ClassyGit Pass / Series 01–04',
+    title: 'Four themes. One GitHub.',
+    lead:
+      'A free commemorative pass for people who turned their GitHub into a homepage. Verify your site, choose a theme, claim up to four.',
+    cta: 'Verify GitHub & claim',
+    secondary: 'Read the rules',
+    asideSeries: 'Series',
+    asideEdition: 'Edition',
+    asideChain: 'Chain',
+    asidePrice: 'Price',
+    free: 'Free',
+    base: 'Base',
+    total: '8,848 cards',
+  },
+  stats: {
+    minted: 'Minted',
+    remaining: 'Remaining',
+    edition: 'Edition',
+    total: 'Total',
+    chain: 'Chain',
+  },
+  cards: {
+    mac: {
+      title: 'One bit is enough.',
+      line: 'README, rendered in one bit.',
+    },
+    nes: {
+      title: 'Your GitHub. Press start.',
+      line: 'README, rendered as a cartridge.',
+    },
+    win98: {
+      title: 'Double-click your GitHub.',
+      line: 'README, rendered as a window.',
+    },
+    tui: {
+      title: 'README at the prompt.',
+      line: 'README, rendered at the prompt.',
+    },
+  },
+  cardMeta: {
+    available: 'Available',
+    claimed: 'Claimed',
+    soldOut: 'Sold out',
+    inProgress: 'In progress',
+    claim: 'Claim',
+    view: 'View',
+    edition: '2212 edition',
+  },
+  how: {
+    title: 'How it works',
+    titles: ['Verify GitHub', 'Check your site', 'Choose a theme', 'Sign & mint'],
+    steps: [
+      'Verify your GitHub account with OAuth. We only read your public profile.',
+      'We check that your public classy-github repo has a matching owner in classy.config.json.',
+      'Connect an EVM wallet on Base and choose one of the four themes.',
+      'Sign the claim message. The card is minted to your wallet; the network fee is paid by you during the beta.',
+    ],
+  },
+  rules: {
+    title: 'Rules',
+    items: [
+      'Free to claim. No payment, no hidden mint price.',
+      'One card per theme per GitHub account, up to four cards total.',
+      'Your GitHub account must be at least 90 days old.',
+      'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
+      'No star or fork is required. A site is the only requirement.',
+      'Cards are transferable ERC-721 tokens on Base.',
+      'The NFT metadata does not contain your GitHub identity.',
+      'This is a commemorative collectible, not an investment. It has no promised financial value.',
+    ],
+  },
+  faq: {
+    title: 'Questions',
+    items: [
+      {
+        q: 'Do I need to star or fork the repository?',
+        a: 'No. The only requirement is a public classy-github repo with a config that points to your GitHub login.',
+      },
+      {
+        q: 'Can I claim all four themes?',
+        a: 'Yes. Each GitHub account can claim one card per theme, up to four cards. Each card can go to any wallet; the receiving wallet must sign.',
+      },
+      {
+        q: 'Which wallet should I use?',
+        a: 'Any EVM wallet that can connect to Base. Use a wallet you plan to keep: the card is transferable, but a lost wallet cannot be recovered by us.',
+      },
+      {
+        q: 'Who pays the network fee?',
+        a: 'During the beta the claim transaction is paid by your wallet, usually a fraction of a cent on Base. A sponsored gasless flow is next.',
+      },
+      {
+        q: 'Is this an investment?',
+        a: 'No. ClassyGit Pass is a free commemorative item with no financial value and no promise of returns.',
+      },
+    ],
+  },
+  progress: {
+    title: 'Your set',
+    signedIn: 'Signed in as',
+    signIn: 'Sign in with GitHub',
+    ofFour: 'of 4',
+    none: 'You have not claimed a pass yet.',
+    complete: 'Full set collected.',
+    start: 'Start your set',
+    manage: 'Open claim page',
+  },
+  claim: {
+    eyebrow: 'ClassyGit Pass / Claim',
+    title: 'Claim your pass',
+    lead: 'Choose a theme, connect a wallet on Base, and sign the claim message.',
+    signedInAs: 'Signed in as',
+    yourSet: 'Your set',
+    select: 'Choose a theme',
+    selected: 'Selected',
+    connect: 'Connect wallet',
+    connectHint: 'MetaMask, Rabby, Coinbase Wallet, or any EVM wallet.',
+    changeWallet: 'Change wallet',
+    wallet: 'Wallet',
+    notConnected: 'Not connected',
+    network: 'Network',
+    wrongNetwork: 'Wrong network',
+    switchNetwork: 'Switch to Base',
+    fee: 'Network fee is paid by your wallet (about $0.01 on Base).',
+    action: 'Claim',
+    preparing: 'Preparing your claim…',
+    signing: 'Waiting for your wallet signature…',
+    minting: 'Minting on Base…',
+    confirming: 'Confirming the transaction…',
+    success: 'Claimed',
+    token: 'Token',
+    serial: 'Serial',
+    viewTx: 'View transaction',
+    claimAnother: 'Claim another theme',
+    noWallet: 'No wallet detected.',
+    noWalletHint:
+      'Open this page in MetaMask, Rabby, or Coinbase Wallet’s in-app browser, then try again.',
+    pending: 'A voucher is already bound to',
+    pendingHint: 'Wait for it to expire, or use that wallet.',
+    already: 'This theme is already claimed.',
+    soldOut: 'This theme is sold out.',
+    accountTooNew: 'Your GitHub account must be at least 90 days old.',
+    sessionExpired: 'Your session expired. Verify GitHub again.',
+    retry: 'Try again',
+    allDone: 'You have collected all four themes.',
+    disclaimer: 'Free commemorative pass. Not an investment.',
+  },
+  footer: {
+    disclaimer:
+      'ClassyGit Pass is a free commemorative collectible. Not an investment. No financial value.',
+    contract: 'Contract',
+    sourcify: 'Sourcify',
+    repo: 'GitHub',
+    series: 'ClassyGit Pass / EST. 2026 / 2212 edition',
+    rules: 'Rules',
+  },
+  common: {
+    loading: 'Loading…',
+    unavailable: 'Unavailable',
+    retry: 'Retry',
+    back: 'Back to overview',
+    close: 'Close',
+    copy: 'Copy',
+    copied: 'Copied',
+    error: 'Something went wrong.',
+  },
+  errors: {
+    oauth_denied: 'GitHub authorization was cancelled.',
+    oauth_failed: 'GitHub sign-in failed. Please try again.',
+    oauth_access_denied: 'GitHub authorization was cancelled.',
+    account_too_new: 'Your GitHub account must be at least 90 days old.',
+    no_config:
+      'We could not find a classy.config.json in your public classy-github repo.',
+    owner_mismatch:
+      'The owner in classy.config.json does not match your GitHub login.',
+    github_unavailable:
+      'GitHub is temporarily unavailable. Please try again in a moment.',
+    invalid_state: 'The sign-in request expired. Please try again.',
+    not_authenticated: 'Please verify your GitHub account again.',
+    not_configured: 'The pass is not configured on this instance.',
+    storage_unavailable: 'The claim service is temporarily unavailable.',
+    invalid_body: 'The request was invalid.',
+    invalid_address: 'That wallet address is invalid.',
+    invalid_signature: 'The wallet signature could not be verified.',
+    invalid_deadline: 'The claim expired. Please try again.',
+    sold_out: 'This theme is sold out.',
+    already_claimed: 'You already claimed this theme.',
+    voucher_pending: 'A voucher is already bound to another wallet.',
+    signer_mismatch: 'The claim signer is misconfigured.',
+    rpc_unavailable: 'Base is busy right now. Please try again.',
+    tx_not_found: 'The transaction was not found yet. Try again in a moment.',
+    tx_reverted: 'The mint transaction was reverted.',
+    mint_event_not_found: 'The mint event could not be found.',
+    claim_not_found: 'This transaction does not match your claim.',
+    wallet_mismatch: 'The minted wallet does not match your claim.',
+    user_rejected: 'You rejected the wallet request.',
+    no_wallet: 'No wallet detected. Open this page in a wallet browser.',
+    wrong_network: 'Switch to Base to continue.',
+    confirm_timeout:
+      'The transaction was sent but is not confirmed yet. Check your wallet.',
+    unknown: 'Something went wrong. Please try again.',
+  },
+} as const;
+
+export type NftCopy = {
+  [K in keyof typeof en]: (typeof en)[K] extends readonly unknown[]
+    ? readonly string[]
+    : (typeof en)[K] extends object
+      ? NftCopyObject<(typeof en)[K]>
+      : string;
+};
+
+type NftCopyObject<T> = {
+  [K in keyof T]: T[K] extends readonly { q: string; a: string }[]
+    ? readonly { q: string; a: string }[]
+    : T[K] extends readonly unknown[]
+      ? readonly string[]
+      : T[K] extends object
+        ? NftCopyObject<T[K]>
+        : string;
+};
+
+const zh: NftCopy = {
+  nav: {
+    overview: '总览',
+    claim: '领取',
+    github: 'GitHub',
+    lang: 'EN',
+  },
+  hero: {
+    eyebrow: 'ClassyGit Pass / 系列 01–04',
+    title: '四个主题，一\u2060个 GitHub。',
+    lead:
+      '给把 GitHub 变成个人主页的人，一张免费纪念卡。验证你的站点，选一个主题，最多领四张。',
+    cta: '验证 GitHub 并领取',
+    secondary: '查看规则',
+    asideSeries: '系列',
+    asideEdition: '总量',
+    asideChain: '链',
+    asidePrice: '价格',
+    free: '免费',
+    base: 'Base',
+    total: '8,848 张',
+  },
+  stats: {
+    minted: '已领取',
+    remaining: '剩余',
+    edition: '总量',
+    total: '总计',
+    chain: '链',
+  },
+  cards: {
+    mac: {
+      title: '一位就够了。',
+      line: 'README，用一位呈现。',
+    },
+    nes: {
+      title: '你的 GitHub。按开始。',
+      line: 'README，装进卡带。',
+    },
+    win98: {
+      title: '双击你的 GitHub。',
+      line: 'README，变成一个窗口。',
+    },
+    tui: {
+      title: '在提示符前读 README。',
+      line: 'README，在命令行里呈现。',
+    },
+  },
+  cardMeta: {
+    available: '可领取',
+    claimed: '已领取',
+    soldOut: '已售罄',
+    inProgress: '进行中',
+    claim: '领取',
+    view: '查看',
+    edition: '2212 版',
+  },
+  how: {
+    title: '怎么领',
+    titles: ['验证 GitHub', '检查站点', '选择主题', '签名并 mint'],
+    steps: [
+      '用 GitHub OAuth 验证账号。我们只读公开资料。',
+      '检查你的公开 classy-github 仓库，以及 classy.config.json 里的 owner 是否匹配。',
+      '在 Base 上连接 EVM 钱包，从四个主题里选一个。',
+      '签署领取消息，卡片会 mint 到你的钱包。内测阶段网络费由你的钱包支付。',
+    ],
+  },
+  rules: {
+    title: '规则',
+    items: [
+      '免费领取，没有隐藏的 mint 价格。',
+      '每个 GitHub 账号每个主题一张，最多四张。',
+      'GitHub 账号需要满 90 天。',
+      '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
+      '不需要 star 或 fork，只需要一个真实的站点。',
+      '卡片是 Base 上可转让的 ERC-721。',
+      'NFT 元数据不包含你的 GitHub 身份。',
+      '这是纪念收藏品，不是投资品，不承诺任何金融价值。',
+    ],
+  },
+  faq: {
+    title: '常见问题',
+    items: [
+      {
+        q: '需要 star 或 fork 仓库吗？',
+        a: '不需要。唯一条件是一个公开的 classy-github 仓库，配置里的 owner 指向你的 GitHub 登录名。',
+      },
+      {
+        q: '四个主题都能领吗？',
+        a: '可以。每个 GitHub 账号每个主题一张，最多四张。每张可以进任意钱包，但收款钱包必须签名。',
+      },
+      {
+        q: '用哪个钱包？',
+        a: '任何能连接 Base 的 EVM 钱包。请使用你打算长期持有的钱包；卡片可转让，但钱包丢失我们无法找回。',
+      },
+      {
+        q: '网络费谁付？',
+        a: '内测阶段由你的钱包支付，Base 上通常不到一分钱。免 gas 代付是下一步。',
+      },
+      {
+        q: '这是投资吗？',
+        a: '不是。ClassyGit Pass 是免费纪念品，没有金融价值，也不承诺回报。',
+      },
+    ],
+  },
+  progress: {
+    title: '你的一套',
+    signedIn: '已登录',
+    signIn: '用 GitHub 登录',
+    ofFour: '/ 4',
+    none: '你还没有领取。',
+    complete: '四张已集齐。',
+    start: '开始领取',
+    manage: '打开领取页',
+  },
+  claim: {
+    eyebrow: 'ClassyGit Pass / 领取',
+    title: '领取你的通行证',
+    lead: '选一个主题，在 Base 上连接钱包，签署领取消息。',
+    signedInAs: '已登录',
+    yourSet: '你的一套',
+    select: '选择主题',
+    selected: '已选择',
+    connect: '连接钱包',
+    connectHint: 'MetaMask、Rabby、Coinbase Wallet 或任意 EVM 钱包。',
+    changeWallet: '更换钱包',
+    wallet: '钱包',
+    notConnected: '未连接',
+    network: '网络',
+    wrongNetwork: '网络不对',
+    switchNetwork: '切换到 Base',
+    fee: '网络费由你的钱包支付（Base 上约 $0.01）。',
+    action: '领取',
+    preparing: '正在准备领取…',
+    signing: '等待钱包签名…',
+    minting: '正在 Base 上 mint…',
+    confirming: '正在确认交易…',
+    success: '已领取',
+    token: 'Token',
+    serial: '序号',
+    viewTx: '查看交易',
+    claimAnother: '再领一个主题',
+    noWallet: '没有检测到钱包。',
+    noWalletHint: '请在 MetaMask、Rabby 或 Coinbase Wallet 的内置浏览器中打开本页。',
+    pending: '这张卡的 voucher 已绑定到',
+    pendingHint: '等它过期，或使用那个钱包。',
+    already: '这个主题已经领取。',
+    soldOut: '这个主题已售罄。',
+    accountTooNew: 'GitHub 账号需要满 90 天。',
+    sessionExpired: '登录已过期，请重新验证 GitHub。',
+    retry: '重试',
+    allDone: '四个主题都集齐了。',
+    disclaimer: '免费纪念卡，不是投资品。',
+  },
+  footer: {
+    disclaimer: 'ClassyGit Pass 是免费纪念收藏品，不是投资品，没有金融价值。',
+    contract: '合约',
+    sourcify: 'Sourcify',
+    repo: 'GitHub',
+    series: 'ClassyGit Pass / EST. 2026 / 2212 版',
+    rules: '规则',
+  },
+  common: {
+    loading: '加载中…',
+    unavailable: '不可用',
+    retry: '重试',
+    back: '返回总览',
+    close: '关闭',
+    copy: '复制',
+    copied: '已复制',
+    error: '出了点问题。',
+  },
+  errors: {
+    oauth_denied: 'GitHub 授权被取消。',
+    oauth_failed: 'GitHub 登录失败，请重试。',
+    oauth_access_denied: 'GitHub 授权被取消。',
+    account_too_new: 'GitHub 账号需要满 90 天。',
+    no_config: '在你的公开 classy-github 仓库里没有找到 classy.config.json。',
+    owner_mismatch: 'classy.config.json 的 owner 与 GitHub 登录名不一致。',
+    github_unavailable: 'GitHub 暂时不可用，请稍后重试。',
+    invalid_state: '登录请求已过期，请重试。',
+    not_authenticated: '请重新验证 GitHub。',
+    not_configured: '这个实例还没有配置通行证。',
+    storage_unavailable: '领取服务暂时不可用。',
+    invalid_body: '请求格式不正确。',
+    invalid_address: '钱包地址不合法。',
+    invalid_signature: '钱包签名验证失败。',
+    invalid_deadline: '领取已过期，请重试。',
+    sold_out: '这个主题已售罄。',
+    already_claimed: '这个主题已经领取。',
+    voucher_pending: 'voucher 已绑定到另一个钱包。',
+    signer_mismatch: '领取签名配置有误。',
+    rpc_unavailable: 'Base 当前繁忙，请重试。',
+    tx_not_found: '还没有找到这笔交易，请稍后重试。',
+    tx_reverted: 'mint 交易被回滚。',
+    mint_event_not_found: '没有找到 mint 事件。',
+    claim_not_found: '这笔交易与你的领取记录不匹配。',
+    wallet_mismatch: 'mint 的钱包与领取记录不匹配。',
+    user_rejected: '你拒绝了钱包请求。',
+    no_wallet: '没有检测到钱包，请在钱包内置浏览器中打开。',
+    wrong_network: '请切换到 Base 继续。',
+    confirm_timeout: '交易已发送但还未确认，请稍后在钱包里查看。',
+    unknown: '出了点问题，请重试。',
+  },
+};
+
+export const getNftCopy = (locale: string): NftCopy =>
+  locale === 'zh' ? zh : en;

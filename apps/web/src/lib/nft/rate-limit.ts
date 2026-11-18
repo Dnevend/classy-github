@@ -24,21 +24,34 @@ const limited = async (
   }
 };
 
+export type NftRateLimitMode = 'read' | 'write';
+
+const BINDINGS: Record<
+  NftRateLimitMode,
+  { perIp: string; global: string }
+> = {
+  read: { perIp: 'NFT_LIMITER', global: 'NFT_GLOBAL_LIMITER' },
+  write: { perIp: 'NFT_WRITE_LIMITER', global: 'NFT_WRITE_GLOBAL_LIMITER' },
+};
+
 /**
- * Dedicated NFT bucket. Unlike the site-wide helper, this also applies to POST
- * so voucher/prepare calls cannot be scripted freely.
+ * Two NFT buckets:
+ * - write: OAuth / prepare / voucher / logout (protects the GitHub token)
+ * - read:  stats / session / confirm polling (must tolerate a claim flow)
  */
 export const enforceNftRateLimit = async (
   request: Request,
-  env: Record<string, unknown>
+  env: Record<string, unknown>,
+  mode: NftRateLimitMode = 'read'
 ): Promise<Response | undefined> => {
-  const globalLimiter = env.NFT_GLOBAL_LIMITER as RateLimiter | undefined;
-  const perIpLimiter = env.NFT_LIMITER as RateLimiter | undefined;
+  const bindings = BINDINGS[mode];
+  const globalLimiter = env[bindings.global] as RateLimiter | undefined;
+  const perIpLimiter = env[bindings.perIp] as RateLimiter | undefined;
 
-  if (await limited(globalLimiter, 'nft:global')) {
+  if (await limited(globalLimiter, `nft:${mode}:global`)) {
     return tooManyRequests();
   }
-  if (await limited(perIpLimiter, `nft:${clientIp(request)}`)) {
+  if (await limited(perIpLimiter, `nft:${mode}:${clientIp(request)}`)) {
     return tooManyRequests();
   }
   return undefined;

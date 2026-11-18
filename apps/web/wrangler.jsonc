@@ -64,11 +64,21 @@
     {
       "name": "NFT_LIMITER",
       "namespace_id": "3110",
-      "simple": { "limit": 10, "period": 60 }
+      "simple": { "limit": 60, "period": 60 }
     },
     {
       "name": "NFT_GLOBAL_LIMITER",
       "namespace_id": "3111",
+      "simple": { "limit": 300, "period": 60 }
+    },
+    {
+      "name": "NFT_WRITE_LIMITER",
+      "namespace_id": "3112",
+      "simple": { "limit": 10, "period": 60 }
+    },
+    {
+      "name": "NFT_WRITE_GLOBAL_LIMITER",
+      "namespace_id": "3113",
       "simple": { "limit": 60, "period": 60 }
     }
   ],

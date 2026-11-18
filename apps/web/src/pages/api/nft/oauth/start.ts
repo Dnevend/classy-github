@@ -15,7 +15,7 @@ import { siteOrigin } from '../../../../lib/site.ts';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
-  const limited = await enforceNftRateLimit(request, env);
+  const limited = await enforceNftRateLimit(request, env, 'write');
   if (limited) return limited;
 
   let config;

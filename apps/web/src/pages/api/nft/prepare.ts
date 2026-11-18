@@ -33,7 +33,7 @@ interface PrepareBody {
 }
 
 export const POST: APIRoute = async ({ request, url, cookies }) => {
-  const limited = await enforceNftRateLimit(request, env);
+  const limited = await enforceNftRateLimit(request, env, 'write');
   if (limited) return limited;
   if (!originAllowed(request, url)) return errorResponse('invalid_origin', 403);
 

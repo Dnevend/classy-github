@@ -22,6 +22,7 @@ Disallow: /*/repo/
 Disallow: /*?preview=1
 Disallow: /setup
 Disallow: /claim/
+Disallow: /nft/claim
 
 # 用户主页默认 noindex（薄内容），只有 classy.config.json 里
 # 显式设置 seo.index: true 的用户才会进 sitemap

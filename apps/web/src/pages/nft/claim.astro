@@ -1,0 +1,320 @@
+---
+import NftLayout from '../../layouts/NftLayout.astro';
+import ThemeCard from '../../components/nft/ThemeCard.astro';
+import { getNftCopy } from '../../lib/nft/copy.ts';
+import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
+import { readSession } from '../../lib/nft/http.ts';
+import {
+  effectiveStatus,
+  listClaims,
+  type ClaimRecord,
+} from '../../lib/nft/store.ts';
+import { THEME_NAMES, themeName, type Theme } from '../../lib/nft/types.ts';
+import { usersKv } from '../../lib/users-kv.ts';
+import { siteOrigin } from '../../lib/site.ts';
+
+export const prerender = false;
+
+const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
+const copy = getNftCopy(locale);
+const origin = siteOrigin(Astro.url);
+const errorCode = Astro.url.searchParams.get('error');
+const errorText = errorCode
+  ? ((copy.errors as Record<string, string>)[errorCode] ??
+    copy.errors.unknown)
+  : null;
+
+let config = null;
+let configError: NftConfigError | null = null;
+try {
+  config = loadNftConfig();
+} catch (error) {
+  if (error instanceof NftConfigError) {
+    configError = error;
+    Astro.response.status = 503;
+  } else {
+    throw error;
+  }
+}
+
+let session = null;
+let claims: ClaimRecord[] = [];
+
+if (config) {
+  session = await readSession(Astro.cookies, Astro.url, config.sessionSecret);
+  if (!session) {
+    return Astro.redirect('/api/nft/oauth/start');
+  }
+
+  const kv = usersKv();
+  claims = kv ? await listClaims(kv, session.ghId) : [];
+}
+
+const claimMap = new Map(claims.map((claim) => [claim.theme, claim]));
+const claimsView = claims.map((claim) => ({
+  theme: claim.theme,
+  status: effectiveStatus(claim),
+  wallet: claim.wallet,
+  tokenId: claim.tokenId,
+  serial: claim.serial,
+  txHash: claim.txHash,
+}));
+
+const themeParam = Astro.url.searchParams.get('theme');
+const themeIndex = themeParam
+  ? THEME_NAMES.indexOf(themeParam as (typeof THEME_NAMES)[number])
+  : -1;
+const selectedTheme = themeIndex >= 0 ? (themeIndex as Theme) : undefined;
+
+const statusFor = (theme: Theme): string => {
+  const claim = claimMap.get(theme);
+  if (!claim) return copy.cardMeta.available;
+  const status = effectiveStatus(claim);
+  if (status === 'confirmed') {
+    return `${copy.cardMeta.claimed}${
+      claim.serial ? ` #${claim.serial}` : ''
+    }`;
+  }
+  if (status === 'issued') return copy.cardMeta.inProgress;
+  return copy.cardMeta.available;
+};
+
+const ctaFor = (theme: Theme): string => {
+  const claim = claimMap.get(theme);
+  if (!claim) return copy.cardMeta.claim;
+  const status = effectiveStatus(claim);
+  if (status === 'confirmed') return copy.cardMeta.claimed;
+  if (status === 'issued') return copy.cardMeta.inProgress;
+  return copy.cardMeta.claim;
+};
+
+const isClaimed = (theme: Theme): boolean => {
+  const claim = claimMap.get(theme);
+  return claim ? effectiveStatus(claim) === 'confirmed' : false;
+};
+
+const pageData =
+  config && session
+    ? {
+        locale,
+        copy,
+        chainId: config.chainId,
+        contract: config.contractAddress,
+        login: session.login,
+        ghId: session.ghId,
+        selectedTheme,
+        claims: claimsView,
+      }
+    : null;
+
+const dataJson = pageData
+  ? JSON.stringify(pageData).replace(/</g, '\\u003c')
+  : null;
+
+const title =
+  locale === 'zh'
+    ? '领取 ClassyGit Pass'
+    : 'Claim your ClassyGit Pass';
+---
+
+<NftLayout
+  title={title}
+  description={copy.claim.lead}
+  locale={locale}
+  canonical={`${origin}/nft/claim`}
+  image={`${origin}/nft/contact-sheet.png`}
+  robots="noindex, follow"
+  contract={config?.contractAddress ?? null}
+  chainId={config?.chainId}
+>
+  {
+    configError ? (
+      <section class="nft-section" style="margin-top: 40px">
+        <p class="nft-eyebrow">ClassyGit Pass</p>
+        <h1 class="nft-title nft-title--claim">
+          {copy.errors.not_configured}
+        </h1>
+        <p class="nft-lead">
+          {copy.errors.unknown}
+        </p>
+        <ul class="nft-rules" style="margin-top: 24px">
+          {configError.missing.map((field) => (
+            <li class="nft-rule">
+              <span class="nft-rule__num">—</span>
+              <span class="nft-rule__text">
+                <code>{field}</code>
+              </span>
+            </li>
+          ))}
+          {configError.invalid.map((field) => (
+            <li class="nft-rule">
+              <span class="nft-rule__num">!</span>
+              <span class="nft-rule__text">
+                <code>{field}</code>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div class="nft-actions" style="margin-top: 24px">
+          <a class="nft-button" href="/nft">{copy.common.back}</a>
+        </div>
+      </section>
+    ) : (
+      <>
+        {errorText && (
+          <div class="nft-banner" role="alert">
+            {errorText}{' '}
+            <a href="/api/nft/oauth/start">{copy.common.retry}</a>
+          </div>
+        )}
+
+        <section class="nft-hero">
+          <div>
+            <p class="nft-eyebrow">{copy.claim.eyebrow}</p>
+            <h1 class="nft-title nft-title--claim">{copy.claim.title}</h1>
+            <p class="nft-lead">{copy.claim.lead}</p>
+            <p class="nft-eyebrow">
+              {copy.claim.signedInAs} @{session?.login}
+            </p>
+          </div>
+
+          <aside class="nft-hero__meta">
+            <div class="nft-meta-row">
+              <dt>{copy.claim.yourSet}</dt>
+              <dd data-progress-label>0 / 4</dd>
+            </div>
+            <div class="nft-progress" aria-hidden="true">
+              {THEME_NAMES.map(() => (
+                <span
+                  class="nft-progress__segment"
+                  data-progress-segment
+                  data-state="empty"
+                />
+              ))}
+            </div>
+            <p class="nft-note" data-progress-note style="margin-top: 10px">
+              {copy.progress.none}
+            </p>
+          </aside>
+        </section>
+
+        <div class="nft-claim">
+          <section>
+            <div class="nft-section__head">
+              <h2 class="nft-section__title">{copy.claim.select}</h2>
+              <span class="nft-section__note">
+                {copy.claim.selected}: <span data-selected-theme>
+                  {selectedTheme == null ? '—' : themeName(selectedTheme)}
+                </span>
+              </span>
+            </div>
+
+            <div class="nft-claim__cards">
+              {THEME_NAMES.map((name, index) => (
+                <ThemeCard
+                  theme={index as Theme}
+                  title={copy.cards[name].title}
+                  line={copy.cards[name].line}
+                  cta={ctaFor(index as Theme)}
+                  status={statusFor(index as Theme)}
+                  mode="button"
+                  disabled={isClaimed(index as Theme)}
+                />
+              ))}
+            </div>
+          </section>
+
+          <aside class="nft-panel">
+            <div class="nft-panel__head">
+              <h2 class="nft-panel__title">{copy.claim.title}</h2>
+            </div>
+
+            <div class="nft-panel__row">
+              <span class="nft-panel__label">{copy.claim.wallet}</span>
+              <span class="nft-wallet" data-wallet-address>
+                {copy.claim.notConnected}
+              </span>
+            </div>
+
+            <div class="nft-inline">
+              <button class="nft-button" type="button" data-connect>
+                {copy.claim.connect}
+              </button>
+              <button
+                class="nft-button is-secondary"
+                type="button"
+                data-change-wallet
+                hidden
+              >
+                {copy.claim.changeWallet}
+              </button>
+              <button
+                class="nft-button is-secondary"
+                type="button"
+                data-switch
+                hidden
+              >
+                {copy.claim.switchNetwork}
+              </button>
+            </div>
+
+            <p class="nft-note" data-no-wallet hidden>
+              {copy.claim.noWallet} {copy.claim.noWalletHint}
+            </p>
+
+            <div class="nft-panel__row">
+              <span class="nft-panel__label">{copy.claim.network}</span>
+              <span data-network>{copy.claim.notConnected}</span>
+            </div>
+
+            <button class="nft-button" type="button" data-claim-action>
+              {copy.claim.connect}
+            </button>
+
+            <div
+              class="nft-status-line"
+              data-claim-status
+              role="status"
+              aria-live="polite"
+              hidden
+            />
+
+            <div class="nft-result" data-claim-result hidden>
+              <div class="nft-result__row">
+                <span>{copy.claim.token}</span>
+                <span data-result-token>—</span>
+              </div>
+              <div class="nft-result__row">
+                <span>{copy.claim.serial}</span>
+                <span data-result-serial>—</span>
+              </div>
+              <div class="nft-result__row">
+                <span>{copy.claim.select}</span>
+                <span data-result-theme>—</span>
+              </div>
+              <a data-tx-link href="#" target="_blank" rel="noopener noreferrer" hidden>
+                {copy.claim.viewTx} ↗
+              </a>
+            </div>
+
+            <p class="nft-note">{copy.claim.fee}</p>
+            <p class="nft-note">{copy.claim.disclaimer}</p>
+          </aside>
+        </div>
+
+        {dataJson && (
+          <script
+            type="application/json"
+            id="nft-page-data"
+            set:html={dataJson}
+          />
+        )}
+
+        <script>
+          import { initClaim } from '../../lib/nft/page-client.ts';
+          initClaim().catch(() => undefined);
+        </script>
+      </>
+    )
+  }
+</NftLayout>
