@@ -66,6 +66,12 @@ a:hover {
   color: var(--accent);
 }
 
+/* 页脚品牌署名：常显下划线，提示可以点进仓库 */
+.footer-credit {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 img {
   max-width: 100%;
   height: auto;
