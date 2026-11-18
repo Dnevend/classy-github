@@ -154,8 +154,9 @@ export const findMintByClaimKey = async (
   const client = nftPublicClient(config);
   const latest = await client.getBlockNumber();
   // The public Base RPC caps `eth_getLogs` at 200 blocks, so scan in chunks.
-  // 1200 blocks is roughly 40 minutes on Base; claims are valid for 15.
-  const scanBlocks = 1_200n;
+  // 4000 blocks covers the whole 15-minute voucher window on Base Sepolia
+  // (sub-second blocks) and several hours on Base mainnet (2s blocks).
+  const scanBlocks = 4_000n;
   const chunk = 200n;
   const fromBlock = latest > scanBlocks ? latest - scanBlocks : 0n;
 

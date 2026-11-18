@@ -181,7 +181,8 @@ export class MintRelayer extends DurableObject {
         await this.ctx.storage.delete(key);
       } else {
         const known = await this.transactionKnown(publicClient, record.txHash);
-        const stale = Date.now() - record.createdAt > STALE_TX_MS;
+        const createdAt = record.createdAt ?? record.updatedAt ?? 0;
+        const stale = Date.now() - createdAt > STALE_TX_MS;
         if (known === false && stale) {
           await this.ctx.storage.delete(key);
         } else {
