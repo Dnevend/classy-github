@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClassyGit Pass — Four Themes</title>
+<style>
+  :root {
+    --paper: #F2F2F2;
+    --ink: #0B0B0B;
+    --muted: #6A6A6A;
+    --line: rgba(11, 11, 11, .18);
+    --light-bg: #F4F2EC;
+    --dark-bg: #0E0E0E;
+    --mono: ui-monospace, "SFMono-Regular", "DejaVu Sans Mono", "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--light-bg); }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brandline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+
+  .mark {
+    display: grid;
+    grid-template-columns: repeat(3, 6px);
+    grid-template-rows: repeat(3, 6px);
+    gap: 2px;
+  }
+
+  .mark i { background: var(--ink); }
+  .mark i:nth-child(5) { background: #92CC41; }
+
+  .masthead h1 {
+    margin: 34px 0 0;
+    font-size: clamp(44px, 6vw, 92px);
+    line-height: .92;
+    letter-spacing: -.045em;
+    font-weight: 700;
+  }
+
+  .masthead h1 span { display: block; }
+
+  .lede {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 34px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.9;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .lede p { margin: 0; max-width: 48ch; }
+
+  /* ---------- sections ---------- */
+
+  section { padding: 46px 0 18px; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+  }
+
+  .section-head p {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .card__zoom {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid rgba(11, 11, 11, .22);
+    background: transparent;
+    cursor: zoom-in;
+    line-height: 0;
+  }
+
+  .card__zoom img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .card__zoom:focus-visible {
+    outline: 2px solid #1084D0;
+    outline-offset: 3px;
+  }
+
+  .card figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .card figcaption b { font-weight: 700; }
+  .card figcaption span { color: var(--muted); }
+
+  .card .files {
+    display: flex;
+    gap: 14px;
+    padding-top: 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .files a { text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+  .files a:hover { color: var(--ink); }
+
+  /* ---------- dark gallery ---------- */
+
+  .dark {
+    background: var(--dark-bg);
+    color: #F2F2F2;
+    margin-top: 40px;
+    padding-bottom: 46px;
+  }
+
+  .dark .section-head p,
+  .dark .card figcaption span,
+  .dark .files { color: #9A9A9A; }
+
+  .dark .files a:hover { color: #F2F2F2; }
+
+  .dark .card__zoom {
+    border-color: rgba(255, 255, 255, .18);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .6);
+  }
+
+  /* ---------- thumbnails ---------- */
+
+  .thumbs .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .thumb-row + .thumb-row { margin-top: 22px; }
+
+  .row-label {
+    margin: 0 0 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .thumb-panel {
+    padding: 20px;
+    border: 1px solid var(--line);
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .thumb-panel--ink {
+    background: var(--dark-bg);
+    border-color: var(--dark-bg);
+  }
+
+  .thumb-panel--ink .row-label { color: #9A9A9A; }
+
+  .thumb {
+    margin: 0;
+    width: 256px;
+    flex: none;
+  }
+
+  .thumb img {
+    display: block;
+    width: 100%;
+    border: 1px solid rgba(11, 11, 11, .2);
+  }
+
+  .thumb figcaption {
+    padding-top: 7px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .thumb--dark img { border-color: rgba(255, 255, 255, .18); }
+
+  /* ---------- notes ---------- */
+
+  .notes {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 32px;
+    padding: 34px 0 64px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .notes h3 {
+    margin: 0 0 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .notes p { margin: 0 0 8px; color: #333; }
+  .notes code { font-family: var(--mono); font-size: 11px; }
+
+  /* ---------- lightbox ---------- */
+
+  dialog#lightbox {
+    width: min(1120px, 94vw);
+    max-width: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #F2F2F2;
+    overflow: visible;
+  }
+
+  dialog#lightbox::backdrop { background: rgba(8, 8, 8, .92); }
+
+  .lb-stage {
+    display: grid;
+    place-items: center;
+    min-height: 60vh;
+  }
+
+  .lb-stage img {
+    display: block;
+    width: min(86vh, 100%);
+    height: auto;
+  }
+
+  .lb-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 2px 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #BDBDBD;
+  }
+
+  .lb-bar b { color: #F2F2F2; }
+
+  .lb-bar button {
+    appearance: none;
+    background: transparent;
+    border: 1px solid #4A4A4A;
+    color: #F2F2F2;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+
+  .lb-bar button:hover { border-color: #F2F2F2; }
+
+  .lb-actions { display: flex; gap: 8px; }
+
+  @media (max-width: 1000px) {
+    .wrap { padding: 0 22px; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .thumbs .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .notes { grid-template-columns: 1fr; gap: 22px; }
+    .masthead { padding-top: 40px; }
+  }
+
+  @media (max-width: 540px) {
+    .grid { grid-template-columns: 1fr; }
+    .thumbs .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="brandline">
+      <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span>ClassyGit Pass</span>
+    </div>
+    <h1><span>Four themes.</span><span>Four eras.</span></h1>
+    <div class="lede">
+      <p>Four collectible cards, one per theme. Same layout, same colophon, four design languages. 1024 × 1024 SVG masters, 2048 × 2048 PNG exports.</p>
+      <p>EST. 2026<br>2212 EDITION<br>No serial printed on the card</p>
+    </div>
+  </div>
+</header>
+
+<section class="light">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>On paper</h2>
+      <p>Light review background / 4 × 1</p>
+    </div>
+    <div class="grid" id="light-grid"></div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>On ink</h2>
+      <p>Dark review background / 4 × 1</p>
+    </div>
+    <div class="grid" id="dark-grid"></div>
+  </div>
+</section>
+
+<section class="thumbs">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>256 px check</h2>
+      <p>Thumbnail legibility, both grounds</p>
+    </div>
+    <div class="thumb-row">
+      <p class="row-label">Light ground</p>
+      <div class="thumb-panel">
+        <div class="grid" id="thumb-light"></div>
+      </div>
+    </div>
+    <div class="thumb-row">
+      <p class="row-label">Ink ground</p>
+      <div class="thumb-panel thumb-panel--ink">
+        <div class="grid" id="thumb-dark"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="notes">
+    <div>
+      <h3>Review notes</h3>
+      <p>Click any card to open the 1024 master. Arrow keys move between themes, <code>Esc</code> closes. All artwork is vector; no external images or web fonts.</p>
+    </div>
+    <div>
+      <h3>Series lockup</h3>
+      <p>64 px margins · 896 × 500 plate · 56 px headline · one colophon. Only the plate and the display face change per theme.</p>
+    </div>
+    <div>
+      <h3>Files</h3>
+      <p><code>src/*.svg</code> masters<br><code>export/*.png</code> 2048 px<br><code>tools/export.sh</code> re-render</p>
+    </div>
+  </div>
+</section>
+
+<dialog id="lightbox" aria-label="Card preview">
+  <div class="lb-stage"><img id="lb-img" alt=""></div>
+  <div class="lb-bar">
+    <span id="lb-label"></span>
+    <span class="lb-actions">
+      <button type="button" id="lb-prev">← Prev</button>
+      <button type="button" id="lb-next">Next →</button>
+      <button type="button" id="lb-close">Close</button>
+    </span>
+  </div>
+</dialog>
+
+<script>
+  const THEMES = [
+    { slug: 'mac',   no: '01', name: 'MAC',   spec: 'System 6 · 1-bit',  file: 'src/mac.svg' },
+    { slug: 'nes',   no: '02', name: 'NES',   spec: '8-bit · cartridge', file: 'src/nes.svg' },
+    { slug: 'win98', no: '03', name: 'WIN98', spec: '32-bit · bevel',    file: 'src/win98.svg' },
+    { slug: 'tui',   no: '04', name: 'TUI',   spec: 'Text mode · DOS',   file: 'src/tui.svg' }
+  ];
+
+  function card(theme, dark) {
+    const fig = document.createElement('figure');
+    fig.className = 'card';
+    fig.innerHTML = `
+      <button class="card__zoom" type="button" data-slug="${theme.slug}" aria-label="Open ${theme.name} card">
+        <img src="${theme.file}" width="1024" height="1024" alt="ClassyGit Pass ${theme.name} card">
+      </button>
+      <figcaption><b>${theme.no} / ${theme.name}</b><span>${theme.spec}</span></figcaption>
+      <div class="files">
+        <a href="${theme.file}">SVG</a>
+        <a href="export/${theme.slug}.png">PNG 2048</a>
+      </div>`;
+    return fig;
+  }
+
+  function thumb(theme, dark) {
+    const fig = document.createElement('figure');
+    fig.className = 'thumb' + (dark ? ' thumb--dark' : '');
+    fig.innerHTML = `
+      <img src="${theme.file}" width="256" height="256" alt="" loading="lazy">
+      <figcaption>${theme.no} ${theme.name}</figcaption>`;
+    return fig;
+  }
+
+  const lightGrid = document.getElementById('light-grid');
+  const darkGrid = document.getElementById('dark-grid');
+  const thumbLight = document.getElementById('thumb-light');
+  const thumbDark = document.getElementById('thumb-dark');
+
+  THEMES.forEach(t => {
+    lightGrid.appendChild(card(t, false));
+    darkGrid.appendChild(card(t, true));
+    thumbLight.appendChild(thumb(t, false));
+    thumbDark.appendChild(thumb(t, true));
+  });
+
+  const dlg = document.getElementById('lightbox');
+  const img = document.getElementById('lb-img');
+  const label = document.getElementById('lb-label');
+  let at = 0;
+
+  function show(i) {
+    at = (i + THEMES.length) % THEMES.length;
+    const t = THEMES[at];
+    img.src = t.file;
+    img.alt = `ClassyGit Pass ${t.name} card`;
+    label.innerHTML = `<b>${t.no} / ${t.name}</b> &nbsp; ${t.spec} &nbsp; · &nbsp; 1024 × 1024 SVG`;
+  }
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.card__zoom');
+    if (!btn) return;
+    const i = THEMES.findIndex(t => t.slug === btn.dataset.slug);
+    show(i);
+    dlg.showModal();
+  });
+
+  document.getElementById('lb-prev').onclick = () => show(at - 1);
+  document.getElementById('lb-next').onclick = () => show(at + 1);
+  document.getElementById('lb-close').onclick = () => dlg.close();
+
+  dlg.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
+  });
+
+  dlg.addEventListener('click', e => {
+    if (e.target === dlg) dlg.close();
+  });
+
+  // deep link for review: preview.html?zoom=nes
+  const zoom = new URLSearchParams(location.search).get('zoom');
+  if (zoom) {
+    const i = THEMES.findIndex(t => t.slug === zoom);
+    if (i >= 0) { show(i); dlg.showModal(); }
+  }
+</script>
+</body>
+</html>
