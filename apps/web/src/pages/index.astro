@@ -5,6 +5,7 @@ import type { SeoMeta } from '../lib/seo';
 import { resolveTheme } from '../themes';
 import { createTranslator, localeFromAcceptLanguage } from '../lib/i18n';
 import RecentVisits from '../themes/_shared/RecentVisits.astro';
+import LandingScene from '../components/LandingScene.astro';
 
 // 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
 export const prerender = false;
@@ -58,6 +59,8 @@ const seo: SeoMeta = {
 
     <RecentVisits />
   </section>
+
+  <LandingScene theme={themeName} />
 
   <script is:inline>
     const form = document.getElementById('lookup');

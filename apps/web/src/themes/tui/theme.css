@@ -700,3 +700,143 @@
 [data-theme='tui'] .now-card__external {
   border-radius: 0;
 }
+
+/* ---------- 首页主题场景带（hero 下方） ---------- */
+
+[data-theme='tui'] .landing-scene.scene-tui {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 0.85fr;
+  gap: 16px;
+  width: 100%;
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 3px double #fff;
+}
+
+[data-theme='tui'] .scene-tui-box {
+  position: relative;
+  min-width: 0;
+  padding: 16px 14px 12px;
+  border: 3px double #fff;
+  background: #0000a8;
+}
+
+[data-theme='tui'] .scene-tui-title {
+  position: absolute;
+  left: 12px;
+  top: -11px;
+  padding: 0 6px;
+  background: #0000a8;
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+[data-theme='tui'] .scene-tui-head,
+[data-theme='tui'] .scene-tui-file {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 42px 48px;
+  gap: 6px;
+  align-items: center;
+}
+
+[data-theme='tui'] .scene-tui-head {
+  padding: 0 0 5px;
+  border-bottom: 2px solid #a8a8a8;
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 11px;
+  color: #a8a8a8;
+}
+
+[data-theme='tui'] .scene-tui-file {
+  height: 26px;
+  border-bottom: 1px dashed #4d4dc0;
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 12px;
+}
+
+[data-theme='tui'] .scene-tui-file.on {
+  margin: 0 -8px;
+  padding: 0 8px;
+  background: #a8a8a8;
+  color: #000;
+}
+
+[data-theme='tui'] .scene-tui-cur {
+  color: #00a800;
+}
+
+[data-theme='tui'] .scene-tui-file.on .scene-tui-cur {
+  color: #000;
+}
+
+[data-theme='tui'] .scene-tui-file b {
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme='tui'] .scene-tui-file span:last-child {
+  text-align: right;
+}
+
+[data-theme='tui'] .scene-tui-log {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 26px;
+  border-bottom: 1px dotted #4d4dc0;
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 12px;
+}
+
+[data-theme='tui'] .scene-tui-log:last-child {
+  border-bottom: 0;
+}
+
+[data-theme='tui'] .scene-tui-log .cmd {
+  color: #ffff55;
+}
+
+[data-theme='tui'] .scene-tui-log b {
+  font-weight: 400;
+  color: #00a800;
+}
+
+[data-theme='tui'] .scene-tui-log .cursor {
+  color: #fff;
+}
+
+[data-theme='tui'] .scene-tui-line {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  height: 27px;
+  font-family: 'DOS', var(--tui-cjk);
+  font-size: 12px;
+}
+
+[data-theme='tui'] .scene-tui-line span {
+  color: #a8a8a8;
+}
+
+[data-theme='tui'] .scene-tui-line i {
+  flex: 1;
+  border-bottom: 1px dotted #5c5cc8;
+  transform: translateY(-4px);
+}
+
+[data-theme='tui'] .scene-tui-line b {
+  font-weight: 400;
+}
+
+@media (max-width: 820px) {
+  [data-theme='tui'] .landing-scene.scene-tui {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 44px;
+    padding-top: 18px;
+  }
+}

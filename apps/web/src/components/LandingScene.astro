@@ -1,0 +1,296 @@
+---
+/**
+ * 首页 hero 下方的主题场景带。
+ *
+ * 只做装饰：把四套主题汇总图里的视觉元素（Mac 电脑/软盘、Win98 CG/水印、
+ * NES 卡带/高分榜、TUI 文件管理器）带到首页空白区，不参与任何交互。
+ * 中间 hero 模块保持原样。
+ */
+interface Props {
+  theme: string;
+}
+
+const { theme } = Astro.props as Props;
+const zh = Astro.locals.locale === 'zh';
+
+const PAGES = [
+  { en: 'HOME', zh: '首页', file: 'HOME.TXT', size: '6.0K' },
+  { en: 'PROFILE', zh: '用户主页', file: 'PROFILE.TXT', size: '8.2K' },
+  { en: 'GISTS', zh: '片段列表', file: 'GISTS.TXT', size: '4.1K' },
+  { en: 'GUEST', zh: '留言簿', file: 'GUESTBOOK.TXT', size: '5.6K' },
+  { en: 'SETUP', zh: '配置生成器', file: 'SETUP.TXT', size: '7.3K' },
+  { en: 'BADGE', zh: '徽章页', file: 'BADGE.TXT', size: '2.0K' },
+];
+---
+
+{
+  theme === 'mac' && (
+    <section class="landing-scene scene-mac" aria-hidden="true">
+      <div class="scene-mac-computer">
+        <div class="scene-mac-case">
+          <div class="scene-mac-screen">
+            <div class="scene-mac-face">
+              <i />
+              <i />
+            </div>
+          </div>
+          <div class="scene-mac-slot" />
+        </div>
+        <div class="scene-mac-base">
+          <span>ClassyGit HD</span>
+        </div>
+      </div>
+
+      <div class="scene-mac-copy">
+        <div class="scene-mac-kicker">SYSTEM 6 · 1988</div>
+        <p class="scene-mac-headline">
+          NO DEPLOY.
+          <br />
+          NO LOGIN.
+          <br />
+          NO SERVER.
+        </p>
+        <div class="scene-mac-rule" />
+        <div class="scene-mac-meta">
+          <span>ALL PAGES</span>
+          <span>4 THEMES</span>
+          <span>1 DATASET</span>
+        </div>
+      </div>
+
+      <div class="scene-mac-side">
+        <div class="scene-mac-mini">
+          <div class="scene-mac-mini-bar">
+            <i />
+            <span>Get Info</span>
+            <i />
+          </div>
+          <div class="scene-mac-mini-body">
+            <b>ClassyGit HD</b>
+            <span>4 themes · all pages</span>
+            <div class="scene-mac-swatches">
+              <i />
+              <i />
+              <i />
+            </div>
+          </div>
+        </div>
+        <div class="scene-mac-floppies">
+          <div class="scene-mac-floppy">
+            <span>README</span>
+          </div>
+          <div class="scene-mac-floppy">
+            <span>GISTS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  theme === 'win98' && (
+    <section class="landing-scene scene-w98" aria-hidden="true">
+      <div class="scene-w98-left">
+        <div class="scene-w98-brand">
+          <div class="scene-w98-logo">CG</div>
+          <div>
+            <h2>ClassyGit</h2>
+            <p>Your GitHub, a different way.</p>
+          </div>
+        </div>
+        <div class="scene-w98-facts">
+          <span>4 THEMES</span>
+          <span>ALL PAGES</span>
+          <span>1 DATASET</span>
+        </div>
+      </div>
+
+      <div class="scene-w98-window">
+        <div class="scene-w98-title">
+          <i />
+          <span>System Properties</span>
+          <span class="scene-w98-btns">
+            <i>_</i>
+            <i>□</i>
+            <i>×</i>
+          </span>
+        </div>
+        <div class="scene-w98-body">
+          <div class="scene-w98-icons">
+            {PAGES.map((page) => (
+              <div class="scene-w98-icon">
+                <i class="scene-w98-doc" />
+                <b>{page.en}</b>
+                {zh && <span>{page.zh}</span>}
+              </div>
+            ))}
+          </div>
+          <div class="scene-w98-foot">
+            <span>Windows 98 · 88×31 badge</span>
+            <span>4 themes loaded</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene-w98-watermark">98</div>
+    </section>
+  )
+}
+
+{
+  theme === 'nes' && (
+    <section class="landing-scene scene-nes" aria-hidden="true">
+      <div class="scene-nes-cart">
+        <div class="scene-nes-ridge" />
+        <div class="scene-nes-label">
+          <b>CLASSYGIT</b>
+          <span>ALL IN ONE</span>
+          <em>README · GISTS · MORE</em>
+        </div>
+        <div class="scene-nes-grooves" />
+        <div class="scene-nes-cartfoot">8-BIT · 2026</div>
+      </div>
+
+      <div class="scene-nes-scores">
+        <div class="scene-nes-title">HIGH SCORES</div>
+        <div class="scene-nes-row on">
+          <b>1ST</b>
+          <span>NES</span>
+          <i />
+          <em>0300</em>
+        </div>
+        <div class="scene-nes-row">
+          <b>2ND</b>
+          <span>MAC</span>
+          <i />
+          <em>0250</em>
+        </div>
+        <div class="scene-nes-row">
+          <b>3RD</b>
+          <span>WIN98</span>
+          <i />
+          <em>0200</em>
+        </div>
+        <div class="scene-nes-row">
+          <b>4TH</b>
+          <span>TUI</span>
+          <i />
+          <em>0150</em>
+        </div>
+      </div>
+
+      <div class="scene-nes-info">
+        <div class="scene-nes-title">GAME INFO</div>
+        <div class="scene-nes-line">
+          <span>PLAYERS</span>
+          <i />
+          <b>1</b>
+        </div>
+        <div class="scene-nes-line">
+          <span>PAGES</span>
+          <i />
+          <b>ALL</b>
+        </div>
+        <div class="scene-nes-line">
+          <span>THEMES</span>
+          <i />
+          <b>4</b>
+        </div>
+        <div class="scene-nes-line">
+          <span>SAVE DATA</span>
+          <i />
+          <b>GITHUB</b>
+        </div>
+        <div class="scene-nes-hud">
+          <span>PLAYER 1</span>
+          <span>SCORE 000600</span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  theme === 'tui' && (
+    <section class="landing-scene scene-tui" aria-hidden="true">
+      <div class="scene-tui-box scene-tui-files">
+        <div class="scene-tui-title">C:\CLASSYGIT\</div>
+        <div class="scene-tui-head">
+          <span />
+          <span>Name</span>
+          <span>Size</span>
+          <span>Date</span>
+        </div>
+        {PAGES.map((page, i) => (
+          <div class={`scene-tui-file ${i === 0 ? 'on' : ''}`}>
+            <span class="scene-tui-cur">{i === 0 ? '>' : ' '}</span>
+            <b>{page.file}</b>
+            <span>{page.size}</span>
+            <span>11-17</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="scene-tui-box scene-tui-boot">
+        <div class="scene-tui-title">BOOT.LOG</div>
+        <div class="scene-tui-log">
+          <span class="cmd">C:\&gt; classygit --theme tui</span>
+        </div>
+        <div class="scene-tui-log">
+          <span>MOUNT GITHUB</span>
+          <b>OK</b>
+        </div>
+        <div class="scene-tui-log">
+          <span>README.MD</span>
+          <b>OK</b>
+        </div>
+        <div class="scene-tui-log">
+          <span>GISTS (10)</span>
+          <b>OK</b>
+        </div>
+        <div class="scene-tui-log">
+          <span>GUESTBOOK</span>
+          <b>OK</b>
+        </div>
+        <div class="scene-tui-log">
+          <span>4 THEMES</span>
+          <b>OK</b>
+        </div>
+        <div class="scene-tui-log">
+          <span>READY.</span>
+          <b class="cursor">█</b>
+        </div>
+      </div>
+
+      <div class="scene-tui-box scene-tui-info">
+        <div class="scene-tui-title">SYSTEM.INFO</div>
+        <div class="scene-tui-line">
+          <span>THEME</span>
+          <i />
+          <b>TUI</b>
+        </div>
+        <div class="scene-tui-line">
+          <span>SCREENS</span>
+          <i />
+          <b>ALL</b>
+        </div>
+        <div class="scene-tui-line">
+          <span>PALETTE</span>
+          <i />
+          <b>CGA 16</b>
+        </div>
+        <div class="scene-tui-line">
+          <span>SOURCE</span>
+          <i />
+          <b>GITHUB</b>
+        </div>
+        <div class="scene-tui-line">
+          <span>BADGE</span>
+          <i />
+          <b>88×31</b>
+        </div>
+      </div>
+    </section>
+  )
+}
