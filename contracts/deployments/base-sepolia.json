@@ -55,5 +55,39 @@
       "txHash": "0xb8c5b6c115d36b7544e1350365d35be60f942b46ff0043eb8b958f4ddeb44826",
       "note": "Current-code confirm integration smoke; local KV claim removed."
     }
+  ],
+  "relaySmokeMints": [
+    {
+      "tokenId": 6637,
+      "theme": "tui",
+      "serial": 1,
+      "to": "0xc7403Aa4a6Ea399Fe3c4972b480a31a9014eC686",
+      "txHash": "0x918502ca88a1f63428944f6b1fc96f296c8a8552deab45efe417fc4912f2b2e5",
+      "path": "astro dev / MintRelayer"
+    },
+    {
+      "tokenId": 4425,
+      "theme": "win98",
+      "serial": 1,
+      "to": "0xD49ced2C68a87b5b68Abc89702BD54F365b7a5dE",
+      "txHash": "0xb0538ad957c8a30df11eb25aa9de8d97d7435d984ce7e14553210338a7648e48",
+      "path": "astro dev / MintRelayer; idempotent retry returned the same hash"
+    },
+    {
+      "tokenId": 2213,
+      "theme": "nes",
+      "serial": 1,
+      "to": "0xeaF057d7Fcc77ccEec8903545A7168729D68F562",
+      "txHash": "0x3dfd2c27eb5ea912fd123b97c0c6d06cbf5120a11c160e8ae1d4380432c4397b",
+      "path": "nft-relay-smoke.ts / astro dev"
+    },
+    {
+      "tokenId": 4,
+      "theme": "mac",
+      "serial": 4,
+      "to": "0x3D71fE731aF566bc6462c81D47B088CFAa59aa14",
+      "txHash": "0xee98370959e4f67fd1fc913fa1dd92d49ef2776b80683b136d143a74187bfc4f",
+      "path": "nft-relay-smoke.ts / production wrangler dev (DO v2)"
+    }
   ]
 }
