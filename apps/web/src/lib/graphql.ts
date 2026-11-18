@@ -39,7 +39,7 @@ const cacheKey = (
     if (value !== undefined) params.set(name, String(value));
   }
   // 查询字段/行为变化时 +1，避免读到旧形状的缓存
-  params.set('v', '3');
+  params.set('v', '4');
 
   return new Request(
     `https://classy.cache/graphql/${operation}?${params.toString()}`,

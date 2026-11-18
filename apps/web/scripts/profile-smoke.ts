@@ -7,10 +7,17 @@ import assert from 'node:assert/strict';
 import {
   mapGistCommentNode,
   mapGistNode,
+  mapPinnedRepoNode,
+  mapPinnedRepos,
   mapRepoNode,
   mapUserNode,
   type GraphQLUserNode,
 } from '../src/lib/graphql-mappers.ts';
+import {
+  mergeProfileRepos,
+  PINNED_LIMIT,
+  repoHref,
+} from '../src/lib/profile-repos.ts';
 
 const userNode: GraphQLUserNode = {
   login: 'octocat',
@@ -65,6 +72,128 @@ assert.equal(repo.html_url, 'https://github.com/octocat/hello-world');
 assert.equal(repo.full_name, 'octocat/hello-world');
 assert.equal(repo.homepage, 'https://example.com/hello');
 assert.equal(repo.updated_at, '2026-01-02T03:04:05Z');
+
+const pinnedNode = {
+  name: 'hello-world',
+  description: 'demo',
+  isPrivate: false,
+  stargazerCount: 42,
+  forkCount: 7,
+  isFork: false,
+  isTemplate: false,
+  homepageUrl: null,
+  updatedAt: '2026-01-02T03:04:05Z',
+  url: 'https://github.com/octocat/hello-world',
+  primaryLanguage: null,
+  owner: { login: 'octocat' },
+};
+
+const pinnedRepo = mapPinnedRepoNode(pinnedNode, user);
+
+assert.equal(pinnedRepo.full_name, 'octocat/hello-world');
+assert.equal(pinnedRepo.owner.login, 'octocat');
+
+const orgPinnedNode = {
+  name: 'design-system',
+  description: null,
+  isPrivate: false,
+  stargazerCount: 0,
+  forkCount: 0,
+  isFork: false,
+  isTemplate: false,
+  homepageUrl: null,
+  updatedAt: '2026-01-01T00:00:00Z',
+  url: 'https://github.com/acme/design-system',
+  primaryLanguage: null,
+  owner: { login: 'acme' },
+};
+
+const orgPinnedRepo = mapPinnedRepoNode(orgPinnedNode, user);
+
+assert.equal(orgPinnedRepo.full_name, 'acme/design-system');
+assert.equal(orgPinnedRepo.owner.login, 'acme');
+
+const privatePinnedNode = {
+  ...pinnedNode,
+  name: 'secret',
+  isPrivate: true,
+  url: 'https://github.com/octocat/secret',
+};
+
+// 主页只展示公开 pin：私有节点在数据层就被过滤
+assert.deepEqual(
+  mapPinnedRepos([pinnedNode, orgPinnedNode, privatePinnedNode], user).map(
+    (item) => item.full_name
+  ),
+  ['octocat/hello-world', 'acme/design-system']
+);
+
+// 本人仓库走站内详情页，组织 / 他人仓库直接去 GitHub
+assert.equal(repoHref(pinnedRepo, 'octocat', 'octocat'), '/octocat/repo/hello-world');
+assert.equal(repoHref(pinnedRepo, 'Octocat', 'OCTOCAT'), '/Octocat/repo/hello-world');
+assert.equal(
+  repoHref(orgPinnedRepo, 'octocat', 'octocat'),
+  'https://github.com/acme/design-system'
+);
+
+const makeRepo = (name: string, options: { isPrivate?: boolean } = {}) =>
+  mapPinnedRepoNode(
+    {
+      name,
+      description: null,
+      isPrivate: options.isPrivate ?? false,
+      stargazerCount: 0,
+      forkCount: 0,
+      isFork: false,
+      isTemplate: false,
+      homepageUrl: null,
+      updatedAt: '2026-01-01T00:00:00Z',
+      url: `https://github.com/octocat/${name}`,
+      primaryLanguage: null,
+      owner: { login: 'octocat' },
+    },
+    user
+  );
+
+assert.equal(PINNED_LIMIT, 6);
+
+assert.deepEqual(
+  mergeProfileRepos(
+    [makeRepo('pinned-a'), makeRepo('pinned-b')],
+    [makeRepo('recent-a')],
+    4
+  ).map((item) => item.name),
+  ['pinned-a', 'pinned-b', 'recent-a']
+);
+
+// 同一个仓库同时出现在 pinned 和最近更新里：只保留 pinned 的顺序
+assert.deepEqual(
+  mergeProfileRepos(
+    [makeRepo('Hello')],
+    [makeRepo('hello'), makeRepo('other')],
+    3
+  ).map((item) => item.name),
+  ['Hello', 'other']
+);
+
+// 私有 pin 不展示
+assert.deepEqual(
+  mergeProfileRepos(
+    [makeRepo('secret', { isPrivate: true })],
+    [makeRepo('public')],
+    3
+  ).map((item) => item.name),
+  ['public']
+);
+
+// limit 截断与 0
+assert.deepEqual(
+  mergeProfileRepos([makeRepo('pinned')], [makeRepo('recent')], 1).map(
+    (item) => item.name
+  ),
+  ['pinned']
+);
+assert.deepEqual(mergeProfileRepos([makeRepo('pinned')], [], 0), []);
 
 const gist = mapGistNode(
   {

@@ -5,6 +5,7 @@ import ServiceError from '../../components/ServiceError.astro';
 import { renderMarkdown } from '../../lib/markdown';
 import { safeLoad } from '../../lib/errors';
 import { loadProfile } from '../../lib/profile';
+import { mergeProfileRepos, repoHref } from '../../lib/profile-repos';
 import { seoForProfile } from '../../lib/seo';
 import { loadConfigState } from '../../lib/config-loader';
 import { isPreviewRequest } from '../../lib/preview';
@@ -105,8 +106,16 @@ const readmeHtml = data
       )
   : null;
 
-// 展示多少个仓库由用户的 classy.config.json 决定
-const topRepos = data ? data.repos.slice(0, config.profile.repos.showCount) : [];
+// 展示多少个仓库由用户的 classy.config.json 决定：
+// pinned 优先，不足的名额用最近更新补齐（同一仓库只出现一次）
+const topRepos = data
+  ? mergeProfileRepos(
+      data.pinnedRepos,
+      data.repos,
+      config.profile.repos.showCount
+    )
+  : [];
+const hasPinnedRepos = (data?.pinnedRepos.length ?? 0) > 0;
 
 const parseGistDescription = createGistDescriptionParser({
   prefix: config.gists.prefix,
@@ -163,12 +172,17 @@ const seo = data
           {config.profile.repos.visible && topRepos.length > 0 && (
             <section class="section">
               <div class="section__head">
-                <h2 class="section__title">{t('section.recent')}</h2>
+                <h2 class="section__title">
+                  {hasPinnedRepos ? t('section.pinned') : t('section.recent')}
+                </h2>
                 <a class="section__more" href={`/${user}/repos`}>{t('section.more')} →</a>
               </div>
               <ul class="repo-grid">
                 {topRepos.map((repo) => (
-                  <RepoCard repo={repo} href={`/${user}/repo/${repo.name}`} />
+                  <RepoCard
+                    repo={repo}
+                    href={repoHref(repo, user, data.userinfo.login)}
+                  />
                 ))}
               </ul>
             </section>

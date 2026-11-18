@@ -21,6 +21,11 @@ export interface GraphQLRepositoryNode {
   primaryLanguage: { name: string } | null;
 }
 
+/** pinnedItems 可以是别人的仓库（组织 / 合作仓库），owner 以节点为准。 */
+export interface GraphQLPinnedRepoNode extends GraphQLRepositoryNode {
+  owner?: { login?: string | null } | null;
+}
+
 export interface GraphQLGistFile {
   name: string;
   size: number;
@@ -56,6 +61,10 @@ export interface GraphQLUserNode {
     totalCount: number;
     nodes?: GraphQLRepositoryNode[] | null;
   };
+  pinnedItems?: {
+    totalCount: number;
+    nodes: GraphQLPinnedRepoNode[] | null;
+  } | null;
   gists?: {
     totalCount: number;
     nodes: GraphQLGistNode[] | null;
@@ -165,6 +174,32 @@ export const mapRepoNode = (
   clone_url: `https://github.com/${owner.login}/${node.name}.git`,
   owner,
 });
+
+/**
+ * 主页置顶仓库：owner 可能不是主页用户，`full_name` 必须用节点里的 owner，
+ * 否则卡片和仓库详情链接会指向错误地址。
+ */
+export const mapPinnedRepoNode = (
+  node: GraphQLPinnedRepoNode,
+  fallbackOwner: User
+): Repo => {
+  const login = node.owner?.login || fallbackOwner.login;
+  const owner =
+    login.toLowerCase() === fallbackOwner.login.toLowerCase()
+      ? fallbackOwner
+      : minimalUser(login);
+
+  return mapRepoNode(node, owner);
+};
+
+/** 主页只展示公开的 pinned 仓库：带 token 时可能返回私有 pin。 */
+export const mapPinnedRepos = (
+  nodes: readonly GraphQLPinnedRepoNode[],
+  owner: User
+): Repo[] =>
+  nodes
+    .map((node) => mapPinnedRepoNode(node, owner))
+    .filter((repo) => !repo.private);
 
 /** GraphQL 的 Gist.id 是 Node ID（G_kw…），REST/页面链接用的是 hex id。 */
 const gistIdFromUrl = (url: string): string => {

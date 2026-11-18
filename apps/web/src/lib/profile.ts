@@ -13,15 +13,20 @@ import { ghGraphql } from './graphql.ts';
 import { singleFlight } from './single-flight.ts';
 import {
   mapGistNode,
+  mapPinnedRepos,
   mapRepoNode,
   mapUserNode,
   type GraphQLUserNode,
 } from './graphql-mappers.ts';
+import { PINNED_LIMIT } from './profile-repos.ts';
 import { GISTS_QUERY, OG_STATS_QUERY, PROFILE_QUERY, REPOS_QUERY, USER_INFO_QUERY } from './graphql-queries.ts';
 
 export interface ProfileData {
   userinfo: User;
+  /** 最近更新的公开仓库，用于补齐 pinned 之后的名额 */
   repos: Repo[];
+  /** 用户 pin 的公开仓库；无 token 的 REST 路径为空 */
+  pinnedRepos: Repo[];
   readme: ReadmeSource | null;
   gists: Gist[];
 }
@@ -62,7 +67,7 @@ const loadProfileRest = async (
       : Promise.resolve([] as Gist[]),
   ]);
 
-  return { userinfo, repos, readme, gists };
+  return { userinfo, repos, pinnedRepos: [], readme, gists };
 };
 
 /**
@@ -104,6 +109,7 @@ const loadProfileUncached = async (
         login: user,
         repoCount: clampCount(options.repoCount),
         gistCount: clampCount(options.gistCount),
+        pinnedCount: PINNED_LIMIT,
       },
       { ttl: 1800, fresh: options.fresh }
     );
@@ -124,6 +130,7 @@ const loadProfileUncached = async (
   const repos = (node.repositories.nodes ?? []).map((repo) =>
     mapRepoNode(repo, userinfo)
   );
+  const pinnedRepos = mapPinnedRepos(node.pinnedItems?.nodes ?? [], userinfo);
   const gists = (node.gists?.nodes ?? []).map((gist) =>
     mapGistNode(gist, userinfo)
   );
@@ -137,7 +144,7 @@ const loadProfileUncached = async (
       }
     : null;
 
-  return { userinfo, repos, readme, gists };
+  return { userinfo, repos, pinnedRepos, readme, gists };
 };
 
 export interface OgStats {

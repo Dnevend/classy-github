@@ -64,6 +64,7 @@ const profile = await query('Profile', PROFILE_QUERY, {
   login: 'Dnevend',
   repoCount: 6,
   gistCount: 3,
+  pinnedCount: 6,
 });
 const profileUser = (profile.data as any)?.user;
 assert.ok(profileUser, 'Profile 应该返回 user');
@@ -74,11 +75,28 @@ assert.ok(
   'profile 只应该返回公开仓库'
 );
 assert.ok(profileUser.profileRepo.object.text.length > 0, '应该有 profile README');
+assert.ok(Array.isArray(profileUser.pinnedItems.nodes), 'pinnedItems 应该是数组');
+assert.ok(profileUser.pinnedItems.nodes.length > 0, 'Dnevend 应该有 pinned 仓库');
+assert.ok(
+  profileUser.pinnedItems.nodes.length <= 6,
+  'pinned 最多返回 6 个仓库'
+);
+assert.ok(
+  profileUser.pinnedItems.nodes.every(
+    (repo: any) => typeof repo.owner?.login === 'string'
+  ),
+  'pinned 节点应该带 owner.login'
+);
+assert.ok(
+  profileUser.pinnedItems.nodes.every((repo: any) => repo.isPrivate === false),
+  'pinned 只应该返回公开仓库'
+);
 
 const missing = await query('Profile', PROFILE_QUERY, {
   login: 'zzz-not-exist-9x8f',
   repoCount: 1,
   gistCount: 1,
+  pinnedCount: 6,
 });
 assert.equal((missing.data as any)?.user, null, '不存在的用户应该返回 null');
 
