@@ -70,7 +70,7 @@ const ttlFor = (pathname: string) =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
 
 /** 这些单段路径长得像用户名，但不是用户页，不能进主题/语言缓存 */
-const SKIP_CACHE = /^\/(?:setup|random|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|$))/;
+const SKIP_CACHE = /^\/(?:setup|random|nft(?:\/|$)|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|$))/;
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 

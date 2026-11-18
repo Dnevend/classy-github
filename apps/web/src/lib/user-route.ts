@@ -15,6 +15,7 @@ const RESERVED_ROOTS = new Set([
   'cursors',
   'fonts',
   'images',
+  'nft',
   'og',
   'random',
   'robots.txt',

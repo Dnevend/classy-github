@@ -39,5 +39,12 @@
     "url": "https://sourcify.dev/#/lookup/0x0165c50e8c35d89bca98f5d0db8e5f8fff07dfb7"
   },
   "explorer": "https://sepolia.basescan.org/address/0x0165c50e8c35d89bca98f5d0db8e5f8fff07dfb7",
-  "deployedAt": "2026-11-18"
+  "deployedAt": "2026-11-18",
+  "apiSmokeMint": {
+    "tokenId": 2,
+    "theme": "mac",
+    "to": "0xC94a324cff5728Fd49d2a4913a5E79A8e816614D",
+    "txHash": "0x78e7c1c844ffd00a268236d1454359e8778887581c507ba981d2418fa50c3ed7",
+    "note": "Manual API integration smoke; local KV claim removed."
+  }
 }

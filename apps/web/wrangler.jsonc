@@ -60,6 +60,16 @@
       "name": "ASSET_GLOBAL_LIMITER",
       "namespace_id": "3109",
       "simple": { "limit": 300, "period": 60 }
+    },
+    {
+      "name": "NFT_LIMITER",
+      "namespace_id": "3110",
+      "simple": { "limit": 30, "period": 60 }
+    },
+    {
+      "name": "NFT_GLOBAL_LIMITER",
+      "namespace_id": "3111",
+      "simple": { "limit": 120, "period": 60 }
     }
   ],
   "kv_namespaces": [

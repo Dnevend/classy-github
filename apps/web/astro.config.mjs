@@ -35,6 +35,70 @@ export default defineConfig({
         optional: true,
       }),
       /**
+       * ClassyGit Pass OAuth + minting secrets.
+       * Local: apps/web/.dev.vars; production: `wrangler secret put`.
+       */
+      GITHUB_OAUTH_CLIENT_ID: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      GITHUB_OAUTH_CLIENT_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_SESSION_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_SIGNER_PRIVATE_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_SIGNER_ADDRESS: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      RELAYER_PRIVATE_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      RELAYER_ADDRESS: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_CLAIM_SALT: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_CONTRACT_ADDRESS: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_CHAIN_ID: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      BASE_RPC_URL: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      NFT_MIN_ACCOUNT_AGE_DAYS: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      /**
        * Cloudflare Web Analytics 的站点 token（可选）。
        * 构建时内联进 HTML；不配就不注入任何脚本，fork 自建也不会把数据打到上游实例。
        * 生产：在 apps/web/.env 里写 PUBLIC_CF_ANALYTICS_TOKEN=...
