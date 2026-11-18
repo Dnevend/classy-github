@@ -169,13 +169,37 @@ export const mintPass = async ({
   });
 };
 
-export const isUserRejected = (error: unknown): boolean =>
-  Boolean(
-    error &&
-      typeof error === 'object' &&
-      'code' in error &&
-      (error as { code?: number }).code === 4001
-  );
+export const isUserRejected = (error: unknown): boolean => {
+  const walk = (value: unknown, depth: number): boolean => {
+    if (depth > 6 || !value || typeof value !== 'object') return false;
+    if (
+      'code' in value &&
+      (value as { code?: number }).code === 4001
+    ) {
+      return true;
+    }
+
+    const record = value as {
+      cause?: unknown;
+      walk?: (fn: (cause: unknown) => boolean) => unknown;
+    };
+
+    if (typeof record.walk === 'function') {
+      try {
+        if (record.walk((cause) => walk(cause, depth + 1)) === true) {
+          return true;
+        }
+      } catch {
+        // Ignore a broken walk implementation.
+      }
+    }
+
+    if ('cause' in record) return walk(record.cause, depth + 1);
+    return false;
+  };
+
+  return walk(error, 0);
+};
 
 export const shortAddress = (address: string): string =>
   address.length > 10

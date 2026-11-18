@@ -50,6 +50,11 @@ export const readStats = async (config: NftConfig): Promise<NftStats> => {
   };
 };
 
+/**
+ * Off-chain ownership check only: the contract verifies the server signer over
+ * the EIP-712 voucher, not this user signature. EIP-1271 recipients are fine
+ * as long as `_safeMint` can call `onERC721Received`.
+ */
 export const verifyWalletSignature = async (
   config: NftConfig,
   address: Address,

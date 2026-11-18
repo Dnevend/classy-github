@@ -10,6 +10,7 @@ import type { ConfigState } from '../src/lib/config-loader.ts';
 import { checkEligibility, isAccountOldEnough } from '../src/lib/nft/eligibility.ts';
 import { deriveClaimKey } from '../src/lib/nft/claim-key.ts';
 import { MINT_TYPES, mintDomain } from '../src/lib/nft/contract.ts';
+import { isUserRejected } from '../src/lib/nft/client.ts';
 import { clearCookie } from '../src/lib/nft/http.ts';
 import { buildClaimMessage } from '../src/lib/nft/message.ts';
 import {
@@ -218,6 +219,17 @@ const main = async (): Promise<void> => {
   assert.match(message, /GitHub: @alice \(id: 42\)/);
   assert.match(message, /Theme: mac/);
   assert.match(message, /Expires At: 2023-11-14T22:13:20.000Z/);
+
+  // Wallet rejection can be top-level or nested by viem/wallet wrappers.
+  assert.equal(isUserRejected({ code: 4001 }), true);
+  assert.equal(isUserRejected({ cause: { code: 4001 } }), true);
+  assert.equal(
+    isUserRejected({
+      walk: (fn: (cause: unknown) => boolean) => fn({ code: 4001 }),
+    }),
+    true
+  );
+  assert.equal(isUserRejected({ code: 5000 }), false);
 
   // Voucher signature recovers to the configured signer.
   const signerPrivateKey = keccak256(

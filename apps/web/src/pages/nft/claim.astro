@@ -15,6 +15,9 @@ import { siteOrigin } from '../../lib/site.ts';
 
 export const prerender = false;
 
+// This page contains the session login, claim state and wallet address.
+Astro.response.headers.set('cache-control', 'no-store');
+
 const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
 const copy = getNftCopy(locale);
 const origin = siteOrigin(Astro.url);

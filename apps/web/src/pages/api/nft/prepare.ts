@@ -17,12 +17,11 @@ import {
 import { deriveClaimKey } from '../../../lib/nft/claim-key.ts';
 import { buildClaimMessage } from '../../../lib/nft/message.ts';
 import { enforceNftRateLimit } from '../../../lib/nft/rate-limit.ts';
-import { readStats } from '../../../lib/nft/rpc.ts';
 import {
   effectiveStatus,
   getClaim,
 } from '../../../lib/nft/store.ts';
-import { isTheme, PER_THEME, type Theme } from '../../../lib/nft/types.ts';
+import { isTheme, type Theme } from '../../../lib/nft/types.ts';
 import { usersKv } from '../../../lib/users-kv.ts';
 
 export const prerender = false;
@@ -107,13 +106,8 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     }
   }
 
-  try {
-    const { stats } = await readStats(config);
-    if (stats[theme] >= PER_THEME) return errorResponse('sold_out', 409);
-  } catch {
-    // The contract is the source of truth; don't block on a flaky RPC.
-  }
-
+  // The claim page already reads stats; the contract enforces sold-out.
+  // Avoid an extra 5s RPC wait on the critical claim path.
   const claimKey = deriveClaimKey(session.ghId, theme, config.claimSalt);
   const deadline = Math.floor(Date.now() / 1000) + config.claimTtlSeconds;
   const message = buildClaimMessage({

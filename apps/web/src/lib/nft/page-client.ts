@@ -128,6 +128,11 @@ const requestJson = async <T>(
     ...init,
     headers,
   });
+  if (response.status === 429) {
+    throw new ApiError('rate_limited', 429, {
+      retryAfter: response.headers.get('retry-after'),
+    });
+  }
   const data = (await response.json().catch(() => ({}))) as Record<
     string,
     unknown
@@ -330,7 +335,11 @@ export const initLanding = async (): Promise<void> => {
       if (count) count.textContent = `${confirmed} / 4`;
       if (note) {
         note.textContent =
-          confirmed === 4 ? copy.progress.complete : copy.progress.none;
+          confirmed === 4
+            ? copy.progress.complete
+            : confirmed > 0
+              ? copy.progress.inProgress.replace('{n}', String(confirmed))
+              : copy.progress.none;
       }
       $$('[data-session-segment]').forEach((segment) => {
         const theme = parseThemeAttr(segment);
@@ -358,7 +367,11 @@ const waitForConfirm = async (txHash: string): Promise<ConfirmResponse> => {
       return await postJson<ConfirmResponse>('/api/nft/confirm', { txHash });
     } catch (error) {
       if (error instanceof ApiError) {
-        if (error.status === 404 || error.status === 503) {
+        if (
+          error.status === 404 ||
+          error.status === 429 ||
+          error.status === 503
+        ) {
           await sleep(2000);
           continue;
         }
@@ -632,6 +645,7 @@ export const initClaim = async (): Promise<void> => {
   };
 
   const connect = async (): Promise<void> => {
+    if (busy) return;
     try {
       const wallet = await ensureWallet();
       if (wallet) setStatus('', 'info');
@@ -641,6 +655,7 @@ export const initClaim = async (): Promise<void> => {
   };
 
   const change = async (): Promise<void> => {
+    if (busy) return;
     const p = provider ?? getInjectedProvider();
     if (!p) {
       setStatus(copy.claim.noWallet, 'error');
@@ -659,6 +674,7 @@ export const initClaim = async (): Promise<void> => {
   };
 
   const switchNetwork = async (): Promise<void> => {
+    if (busy) return;
     const p = provider ?? getInjectedProvider();
     if (!p) {
       setStatus(copy.claim.noWallet, 'error');
@@ -682,34 +698,30 @@ export const initClaim = async (): Promise<void> => {
       return;
     }
 
-    let wallet;
-    try {
-      wallet = await ensureWallet();
-    } catch (error) {
-      setStatus(messageFor(copy, error), 'error');
-      return;
-    }
-    if (!wallet) return;
-
-    const existing = claimFor(selected);
-    if (existing?.status === 'confirmed') {
-      setStatus(copy.claim.already, 'error');
-      return;
-    }
-    if (
-      stats &&
-      stats.remaining[selected] <= 0 &&
-      existing?.status !== 'issued'
-    ) {
-      setStatus(copy.claim.soldOut, 'error');
-      return;
-    }
-
+    // Set the lock before the wallet prompt: connecting/switching can take
+    // seconds, and a second click must not start a parallel claim.
     busy = true;
     setStatus(copy.claim.preparing, 'info');
     render();
 
     try {
+      const wallet = await ensureWallet();
+      if (!wallet) return;
+
+      const existing = claimFor(selected);
+      if (existing?.status === 'confirmed') {
+        setStatus(copy.claim.already, 'error');
+        return;
+      }
+      if (
+        stats &&
+        stats.remaining[selected] <= 0 &&
+        existing?.status !== 'issued'
+      ) {
+        setStatus(copy.claim.soldOut, 'error');
+        return;
+      }
+
       const prepared = await postJson<PrepareResponse>('/api/nft/prepare', {
         theme: selected,
         address: wallet.address,
@@ -765,7 +777,9 @@ export const initClaim = async (): Promise<void> => {
 
   const recoverPending = async (): Promise<void> => {
     for (const claim of claims) {
-      if (claim.status !== 'issued') continue;
+      // `expired` is a derived state; the KV record may still be `issued` and
+      // the mint may have landed before confirm. Always try a stored tx hash.
+      if (claim.status !== 'issued' && claim.status !== 'expired') continue;
       const hash = window.localStorage.getItem(txKey(ghId, claim.theme));
       if (!hash) continue;
       try {
@@ -779,6 +793,27 @@ export const initClaim = async (): Promise<void> => {
     }
     await refresh();
   };
+
+  // Bind handlers before the first network refresh: stats can take a few
+  // seconds, and a click during that window must not be silently lost.
+  $('[data-connect]')?.addEventListener('click', () => {
+    void connect();
+  });
+  $('[data-change-wallet]')?.addEventListener('click', () => {
+    void change();
+  });
+  $('[data-switch]')?.addEventListener('click', () => {
+    void switchNetwork();
+  });
+  $('[data-claim-action]')?.addEventListener('click', () => {
+    void claim();
+  });
+  $$('[data-claim-theme]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const theme = parseThemeAttr(button);
+      if (theme != null) selectTheme(theme);
+    });
+  });
 
   if (provider) {
     attachProvider(provider);
@@ -807,25 +842,5 @@ export const initClaim = async (): Promise<void> => {
   }
 
   render();
-
-  $('[data-connect]')?.addEventListener('click', () => {
-    void connect();
-  });
-  $('[data-change-wallet]')?.addEventListener('click', () => {
-    void change();
-  });
-  $('[data-switch]')?.addEventListener('click', () => {
-    void switchNetwork();
-  });
-  $('[data-claim-action]')?.addEventListener('click', () => {
-    void claim();
-  });
-  $$('[data-claim-theme]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const theme = parseThemeAttr(button);
-      if (theme != null) selectTheme(theme);
-    });
-  });
-
   void recoverPending();
 };
