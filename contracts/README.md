@@ -99,6 +99,16 @@ cast send $CONTRACT "setContractURI(string)" "ipfs://..." --rpc-url $BASE_RPC_UR
 
 `setImageURI` accepts only printable ASCII URI characters (0x20–0x7E, excluding `"` and `\`). Percent-encode spaces, non-ASCII, and anything else. This keeps the JSON metadata valid UTF-8 and prevents string terminators / escapes.
 
+The four image URIs and the collection URI live in `assets/nft/pins.json` / `assets/nft/contract-uri.json`. After putting `CONTRACT_ADDRESS`, `IMAGE_URI_*` and `CONTRACT_URI` into `.env`, run:
+
+```bash
+forge script script/Configure.s.sol:Configure \
+  --rpc-url "$BASE_RPC_URL" \
+  --broadcast
+```
+
+This sets the four theme images and the collection metadata. Minting is blocked until each theme image is set.
+
 ## Claim key
 
 The server computes:
