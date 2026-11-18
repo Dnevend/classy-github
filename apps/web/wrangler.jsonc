@@ -86,9 +86,15 @@
     { "binding": "USERS", "id": "bfa9d7d2b1f44881833552cb30b4077e" }
   ],
   "durable_objects": {
-    "bindings": [{ "name": "HITS", "class_name": "HitCounter" }]
+    "bindings": [
+      { "name": "HITS", "class_name": "HitCounter" },
+      { "name": "MINT_RELAYER", "class_name": "MintRelayer" }
+    ]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["HitCounter"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["HitCounter"] },
+    { "tag": "v2", "new_sqlite_classes": ["MintRelayer"] }
+  ],
   "observability": {
     "enabled": true
   }

@@ -43,6 +43,13 @@ export const NFT_ABI = [
     outputs: [{ name: '', type: 'bool' }],
   },
   {
+    type: 'function',
+    name: 'usedClaimKey',
+    stateMutability: 'view',
+    inputs: [{ name: 'claimKey', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
     type: 'event',
     name: 'Minted',
     inputs: [

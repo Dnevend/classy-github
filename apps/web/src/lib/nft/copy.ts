@@ -63,7 +63,7 @@ const en = {
       'Verify your GitHub account with OAuth. We only read your public profile.',
       'We check that your public classy-github repo has a matching owner in classy.config.json.',
       'Connect an EVM wallet on Base and choose one of the four themes.',
-      'Sign the claim message. The card is minted to your wallet; the network fee is paid by you during the beta.',
+      'Sign the claim message. The card is minted to your wallet; gas is sponsored when available, otherwise your wallet pays the network fee.',
     ],
   },
   rules: {
@@ -96,7 +96,7 @@ const en = {
       },
       {
         q: 'Who pays the network fee?',
-        a: 'During the beta the claim transaction is paid by your wallet, usually a fraction of a cent on Base. A sponsored gasless flow is next.',
+        a: 'During the beta the project sponsors gas when the relayer is available. If sponsorship is unavailable, your wallet pays the fee, usually a fraction of a cent on Base.',
       },
       {
         q: 'Is this an investment?',
@@ -131,11 +131,14 @@ const en = {
     network: 'Network',
     wrongNetwork: 'Wrong network',
     switchNetwork: 'Switch to Base',
-    fee: 'Network fee is paid by your wallet (about $0.01 on Base).',
+    fee: 'Gas is sponsored when available; otherwise your wallet pays about $0.01 on Base.',
     action: 'Claim',
     preparing: 'Preparing your claim…',
     signing: 'Waiting for your wallet signature…',
     minting: 'Minting on Base…',
+    sponsoring: 'Minting on Base with sponsored gas…',
+    selfPayFallback:
+      'Gas sponsorship is unavailable. Confirm the network fee in your wallet.',
     confirming: 'Confirming the transaction…',
     success: 'Claimed',
     token: 'Token',
@@ -198,6 +201,8 @@ const en = {
     voucher_pending: 'A voucher is already bound to another wallet.',
     signer_mismatch: 'The claim signer is misconfigured.',
     rpc_unavailable: 'Base is busy right now. Please try again.',
+    relayer_unavailable:
+      'Gas sponsorship is unavailable. Your wallet will pay the network fee.',
     rate_limited: 'Too many requests. Wait a moment and try again.',
     tx_not_found: 'The transaction was not found yet. Try again in a moment.',
     tx_reverted: 'The mint transaction was reverted.',
@@ -294,7 +299,7 @@ const zh: NftCopy = {
       '用 GitHub OAuth 验证账号。我们只读公开资料。',
       '检查你的公开 classy-github 仓库，以及 classy.config.json 里的 owner 是否匹配。',
       '在 Base 上连接 EVM 钱包，从四个主题里选一个。',
-      '签署领取消息，卡片会 mint 到你的钱包。内测阶段网络费由你的钱包支付。',
+      '签署领取消息，卡片会 mint 到你的钱包。有代付时 gas 由项目承担，否则由你的钱包支付网络费。',
     ],
   },
   rules: {
@@ -327,7 +332,7 @@ const zh: NftCopy = {
       },
       {
         q: '网络费谁付？',
-        a: '内测阶段由你的钱包支付，Base 上通常不到一分钱。免 gas 代付是下一步。',
+        a: '内测阶段 relayer 可用时由项目代付；代付不可用时由你的钱包支付，Base 上通常不到一分钱。',
       },
       {
         q: '这是投资吗？',
@@ -362,11 +367,13 @@ const zh: NftCopy = {
     network: '网络',
     wrongNetwork: '网络不对',
     switchNetwork: '切换到 Base',
-    fee: '网络费由你的钱包支付（Base 上约 $0.01）。',
+    fee: '有代付时 gas 由项目承担；否则由你的钱包支付（Base 上约 $0.01）。',
     action: '领取',
     preparing: '正在准备领取…',
     signing: '等待钱包签名…',
     minting: '正在 Base 上 mint…',
+    sponsoring: '正在通过代付在 Base 上 mint…',
+    selfPayFallback: '代付暂不可用，请在钱包里确认网络费。',
     confirming: '正在确认交易…',
     success: '已领取',
     token: 'Token',
@@ -424,6 +431,7 @@ const zh: NftCopy = {
     voucher_pending: 'voucher 已绑定到另一个钱包。',
     signer_mismatch: '领取签名配置有误。',
     rpc_unavailable: 'Base 当前繁忙，请重试。',
+    relayer_unavailable: '代付暂不可用，将由你的钱包支付网络费。',
     rate_limited: '请求太频繁，请稍后重试。',
     tx_not_found: '还没有找到这笔交易，请稍后重试。',
     tx_reverted: 'mint 交易被回滚。',

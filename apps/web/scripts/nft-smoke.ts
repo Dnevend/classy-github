@@ -37,7 +37,7 @@ import {
   type ClaimRecord,
 } from '../src/lib/nft/store.ts';
 import { isTheme, themeName } from '../src/lib/nft/types.ts';
-import { signMintVoucher } from '../src/lib/nft/voucher.ts';
+import { signMintVoucher, verifyMintVoucher } from '../src/lib/nft/voucher.ts';
 import type { UsersKv } from '../src/lib/users-kv.ts';
 
 const baseConfig = { owner: 'alice' } as ConfigState['config'];
@@ -293,6 +293,26 @@ const main = async (): Promise<void> => {
     signature: signed.signature,
   });
   assert.equal(recovered.toLowerCase(), signed.signer.toLowerCase());
+  assert.equal(
+    await verifyMintVoucher({
+      signerAddress: signed.signer,
+      chainId: 84532,
+      verifyingContract,
+      voucher: signed.voucher,
+      signature: signed.signature,
+    }),
+    true
+  );
+  assert.equal(
+    await verifyMintVoucher({
+      signerAddress: signed.signer,
+      chainId: 84532,
+      verifyingContract,
+      voucher: signed.voucher,
+      signature: `0x${'22'.repeat(65)}` as Hex,
+    }),
+    false
+  );
 
   // Claim storage: keyed by (ghId, theme), expiry is computed.
   const kv = makeKv();

@@ -69,11 +69,18 @@ interface ConfirmResponse {
   txHash?: string;
 }
 
+interface RelayResponse {
+  ok: true;
+  gasless: true;
+  txHash: Hex;
+}
+
 interface PageData {
   locale: NftLocale;
   copy: NftCopy;
   chainId: number;
   contract: string | null;
+  gasless?: boolean;
   login?: string;
   ghId?: number;
   selectedTheme?: Theme;
@@ -760,15 +767,66 @@ export const initClaim = async (): Promise<void> => {
         signature,
       });
 
-      setStatus(copy.claim.minting, 'info');
-      const txHash = await mintPass({
-        provider: wallet.provider,
-        address: wallet.address,
-        chainId: wallet.chainId,
-        contract: data.contract as Address,
-        voucher: voucher.voucher,
-        signature: voucher.signature,
-      });
+      let txHash: Hex;
+      if (data.gasless) {
+        setStatus(copy.claim.sponsoring, 'info');
+        try {
+          const relayed = await postJson<RelayResponse>('/api/nft/relay', {
+            theme: selected,
+            address: wallet.address,
+            claimKey: voucher.voucher.claimKey,
+            deadline: voucher.voucher.deadline,
+            signature: voucher.signature,
+          });
+          txHash = relayed.txHash;
+        } catch (error) {
+          if (error instanceof ApiError && error.code === 'already_claimed') {
+            if (typeof error.extra.txHash === 'string') {
+              txHash = error.extra.txHash as Hex;
+            } else {
+              setStatus(copy.claim.already, 'error');
+              await refresh();
+              return;
+            }
+          } else if (
+            error instanceof ApiError &&
+            error.code === 'sold_out'
+          ) {
+            setStatus(copy.claim.soldOut, 'error');
+            await refresh();
+            return;
+          } else if (
+            error instanceof ApiError &&
+            (error.code === 'relayer_unavailable' ||
+              error.status === 429 ||
+              error.status === 503)
+          ) {
+            // Sponsored gas is best-effort; the voucher is still valid for
+            // the self-pay path.
+            setStatus(copy.claim.selfPayFallback, 'info');
+            txHash = await mintPass({
+              provider: wallet.provider,
+              address: wallet.address,
+              chainId: wallet.chainId,
+              contract: data.contract as Address,
+              voucher: voucher.voucher,
+              signature: voucher.signature,
+            });
+          } else {
+            throw error;
+          }
+        }
+      } else {
+        setStatus(copy.claim.minting, 'info');
+        txHash = await mintPass({
+          provider: wallet.provider,
+          address: wallet.address,
+          chainId: wallet.chainId,
+          contract: data.contract as Address,
+          voucher: voucher.voucher,
+          signature: voucher.signature,
+        });
+      }
 
       window.localStorage.setItem(txKey(ghId, selected), txHash);
 
@@ -812,7 +870,8 @@ export const initClaim = async (): Promise<void> => {
       // `expired` is a derived state; the KV record may still be `issued` and
       // the mint may have landed before confirm. Always try a stored tx hash.
       if (claim.status !== 'issued' && claim.status !== 'expired') continue;
-      const hash = window.localStorage.getItem(txKey(ghId, claim.theme));
+      const hash =
+        window.localStorage.getItem(txKey(ghId, claim.theme)) ?? claim.txHash;
       if (!hash) continue;
       try {
         const confirmed = await waitForConfirm(hash);

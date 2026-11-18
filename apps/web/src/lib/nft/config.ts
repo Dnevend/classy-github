@@ -5,13 +5,25 @@ import {
   NFT_CHAIN_ID,
   NFT_CLAIM_SALT,
   NFT_CONTRACT_ADDRESS,
+  NFT_MAX_FEE_GWEI,
   NFT_MIN_ACCOUNT_AGE_DAYS,
+  NFT_MINT_MODE,
+  NFT_RELAY_DAILY_CAP_ETH,
+  NFT_RELAYER_MIN_BALANCE_ETH,
   NFT_SESSION_SECRET,
   NFT_SIGNER_ADDRESS,
   NFT_SIGNER_PRIVATE_KEY,
+  RELAYER_ADDRESS,
   RELAYER_PRIVATE_KEY,
 } from 'astro:env/server';
-import { getAddress, type Address, type Hex } from 'viem';
+import {
+  getAddress,
+  parseEther,
+  parseGwei,
+  type Address,
+  type Hex,
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 export class NftConfigError extends Error {
   readonly missing: string[];
@@ -37,6 +49,14 @@ export interface NftConfig {
   signerPrivateKey: Hex;
   signerAddress: Address;
   relayerPrivateKey?: Hex;
+  relayerAddress?: Address;
+  mintMode: 'relay' | 'self';
+  /** True when the server can sponsor gas and the operator enabled it. */
+  gasless: boolean;
+  maxFeePerGasWei: bigint;
+  maxPriorityFeePerGasWei: bigint;
+  relayDailyCapWei: bigint;
+  relayerMinBalanceWei: bigint;
   sessionSecret: string;
   oauthClientId: string;
   oauthClientSecret: string;
@@ -109,12 +129,61 @@ export const loadNftConfig = (): NftConfig => {
   }
 
   let relayerPrivateKey: Hex | undefined;
+  let relayerAddress: Address | undefined;
   if (RELAYER_PRIVATE_KEY) {
     if (!PRIVATE_KEY.test(RELAYER_PRIVATE_KEY)) {
       throw new NftConfigError([], ['RELAYER_PRIVATE_KEY']);
     }
     relayerPrivateKey = RELAYER_PRIVATE_KEY as Hex;
+    relayerAddress = privateKeyToAccount(relayerPrivateKey).address;
+
+    if (RELAYER_ADDRESS) {
+      let declared: Address;
+      try {
+        declared = getAddress(RELAYER_ADDRESS as string);
+      } catch {
+        throw new NftConfigError([], ['RELAYER_ADDRESS']);
+      }
+      if (declared !== relayerAddress) {
+        throw new NftConfigError([], ['RELAYER_ADDRESS']);
+      }
+    }
   }
+
+  const mintMode = NFT_MINT_MODE || 'relay';
+  if (mintMode !== 'relay' && mintMode !== 'self') {
+    throw new NftConfigError([], ['NFT_MINT_MODE']);
+  }
+
+  const parseGweiCap = (name: string, value: string | undefined, fallback: string): bigint => {
+    if (!value) return parseGwei(fallback);
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0 || numeric > 1000) {
+      throw new NftConfigError([], [name]);
+    }
+    return parseGwei(value);
+  };
+
+  const parseEtherCap = (name: string, value: string | undefined, fallback: string): bigint => {
+    if (!value) return parseEther(fallback);
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) {
+      throw new NftConfigError([], [name]);
+    }
+    return parseEther(value);
+  };
+
+  const maxFeePerGasWei = parseGweiCap('NFT_MAX_FEE_GWEI', NFT_MAX_FEE_GWEI, '0.1');
+  const relayDailyCapWei = parseEtherCap(
+    'NFT_RELAY_DAILY_CAP_ETH',
+    NFT_RELAY_DAILY_CAP_ETH,
+    '0.01'
+  );
+  const relayerMinBalanceWei = parseEtherCap(
+    'NFT_RELAYER_MIN_BALANCE_ETH',
+    NFT_RELAYER_MIN_BALANCE_ETH,
+    '0.001'
+  );
 
   return {
     chainId,
@@ -124,6 +193,13 @@ export const loadNftConfig = (): NftConfig => {
     signerPrivateKey: NFT_SIGNER_PRIVATE_KEY as Hex,
     signerAddress,
     relayerPrivateKey,
+    relayerAddress,
+    mintMode,
+    gasless: mintMode === 'relay' && Boolean(relayerPrivateKey),
+    maxFeePerGasWei,
+    maxPriorityFeePerGasWei: parseGwei('0.001'),
+    relayDailyCapWei,
+    relayerMinBalanceWei,
     sessionSecret: NFT_SESSION_SECRET as string,
     oauthClientId: GITHUB_OAUTH_CLIENT_ID as string,
     oauthClientSecret: GITHUB_OAUTH_CLIENT_SECRET as string,

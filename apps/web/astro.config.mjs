@@ -98,6 +98,30 @@ export default defineConfig({
         access: 'secret',
         optional: true,
       }),
+      /** `relay` (default) or `self`; self disables gas sponsorship. */
+      NFT_MINT_MODE: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      /** Reject relayed mints when the fee would exceed this many gwei. */
+      NFT_MAX_FEE_GWEI: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      /** Daily relay spend cap, in ETH. */
+      NFT_RELAY_DAILY_CAP_ETH: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      /** Stop relaying (self-pay fallback) below this relayer balance, in ETH. */
+      NFT_RELAYER_MIN_BALANCE_ETH: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
       /**
        * Cloudflare Web Analytics 的站点 token（可选）。
        * 构建时内联进 HTML；不配就不注入任何脚本，fork 自建也不会把数据打到上游实例。
