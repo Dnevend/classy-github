@@ -81,6 +81,11 @@
   line-height: 1;
 }
 
+/* 图标用伪元素渲染，DOM 里不留「◉」文本，避免被搜索引擎拼进页面摘要 */
+.mac-apple::before {
+  content: '◉';
+}
+
 .mac-appname {
   font-weight: 700;
 }

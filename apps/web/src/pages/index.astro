@@ -24,7 +24,7 @@ const { Layout } = components;
 
 const seo: SeoMeta = {
   title: `ClassyGit · ${t('landing.title')}`,
-  description: t('landing.subtitle'),
+  description: t('landing.seoDescription'),
   canonical: `${siteOrigin(Astro.url)}/`,
   robots: 'index, follow',
 };
@@ -35,8 +35,10 @@ const seo: SeoMeta = {
     <h1>{t('landing.title')}</h1>
     <p>{t('landing.subtitle')}</p>
 
-    <form id="lookup" method="get" action="/">
-      <label class="sr-only" for="username">{t('landing.label')}</label>
+    <form id="lookup" method="get" action="/" data-nosnippet>
+      <label class="sr-only" for="username">
+        <span data-nosnippet>{t('landing.label')}</span>
+      </label>
       <input
         id="username"
         name="u"
@@ -46,7 +48,9 @@ const seo: SeoMeta = {
         spellcheck="false"
         required
       />
-      <button type="submit">{t('landing.submit')}</button>
+      <button type="submit">
+        <span data-nosnippet>{t('landing.submit')}</span>
+      </button>
     </form>
 
     <p class="hero-links">
