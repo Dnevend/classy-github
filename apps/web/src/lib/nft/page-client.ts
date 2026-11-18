@@ -9,6 +9,7 @@ import {
   mintPass,
   readAccounts,
   readChainId,
+  revertNameOf,
   shortAddress,
   signClaimMessage,
   switchChain,
@@ -361,6 +362,16 @@ export const initLanding = async (): Promise<void> => {
 const txKey = (ghId: number, theme: Theme): string =>
   `nft:tx:${ghId}:${theme}`;
 
+const retryDelay = (error: unknown): number => {
+  const retryAfter =
+    error instanceof ApiError && typeof error.extra.retryAfter === 'string'
+      ? Number.parseInt(error.extra.retryAfter, 10)
+      : Number.NaN;
+  return Number.isFinite(retryAfter) && retryAfter > 0
+    ? Math.min(retryAfter * 1000, 15_000)
+    : 2000;
+};
+
 const waitForConfirm = async (txHash: string): Promise<ConfirmResponse> => {
   for (let attempt = 0; attempt < 30; attempt += 1) {
     try {
@@ -372,7 +383,7 @@ const waitForConfirm = async (txHash: string): Promise<ConfirmResponse> => {
           error.status === 429 ||
           error.status === 503
         ) {
-          await sleep(2000);
+          await sleep(retryDelay(error));
           continue;
         }
         throw error;
@@ -530,16 +541,23 @@ export const initClaim = async (): Promise<void> => {
             : copy.claim.wrongNetwork;
     }
 
-    const connect = $<HTMLElement>('[data-connect]');
-    if (connect) connect.hidden = Boolean(address);
-    const change = $<HTMLElement>('[data-change-wallet]');
-    if (change) change.hidden = !address;
-    const switchButton = $<HTMLElement>('[data-switch]');
+    const connect = $<HTMLButtonElement>('[data-connect]');
+    if (connect) {
+      connect.hidden = Boolean(address);
+      connect.disabled = busy;
+    }
+    const change = $<HTMLButtonElement>('[data-change-wallet]');
+    if (change) {
+      change.hidden = !address;
+      change.disabled = busy;
+    }
+    const switchButton = $<HTMLButtonElement>('[data-switch]');
     if (switchButton) {
       switchButton.hidden =
         !provider ||
         walletChainId == null ||
         walletChainId === data.chainId;
+      switchButton.disabled = busy;
     }
     const noWallet = $<HTMLElement>('[data-no-wallet]');
     if (noWallet) noWallet.hidden = Boolean(provider);
@@ -768,7 +786,21 @@ export const initClaim = async (): Promise<void> => {
 
       await refresh();
     } catch (error) {
-      setStatus(messageFor(copy, error), 'error');
+      if (isUserRejected(error)) {
+        setStatus(copy.errors.user_rejected, 'error');
+      } else {
+        const revert = revertNameOf(error);
+        if (revert === 'SoldOut') {
+          // The cached stats looked fine but the chain is authoritative.
+          setStatus(copy.claim.soldOut, 'error');
+          await refresh();
+        } else if (revert === 'ClaimAlreadyUsed') {
+          setStatus(copy.claim.already, 'error');
+          await refresh();
+        } else {
+          setStatus(messageFor(copy, error), 'error');
+        }
+      }
     } finally {
       busy = false;
       render();

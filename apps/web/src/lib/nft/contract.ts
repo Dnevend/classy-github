@@ -53,6 +53,32 @@ export const NFT_ABI = [
       { name: 'claimKey', type: 'bytes32', indexed: false },
     ],
   },
+  // Revert reasons. viem only decodes a custom error into `data.errorName`
+  // when the ABI lists it; the UI uses this to turn a `SoldOut` rollback into
+  // the sold-out card state instead of a generic error.
+  { type: 'error', name: 'InvalidRecipient', inputs: [] },
+  {
+    type: 'error',
+    name: 'InvalidTheme',
+    inputs: [{ name: 'theme', type: 'uint8' }],
+  },
+  { type: 'error', name: 'InvalidSigner', inputs: [] },
+  { type: 'error', name: 'InvalidSignature', inputs: [] },
+  {
+    type: 'error',
+    name: 'Expired',
+    inputs: [{ name: 'deadline', type: 'uint256' }],
+  },
+  {
+    type: 'error',
+    name: 'ClaimAlreadyUsed',
+    inputs: [{ name: 'claimKey', type: 'bytes32' }],
+  },
+  {
+    type: 'error',
+    name: 'SoldOut',
+    inputs: [{ name: 'theme', type: 'uint8' }],
+  },
 ] as const;
 
 export const MINT_TYPES = {

@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import {
+  BaseError,
+  ContractFunctionRevertedError,
+  encodeErrorResult,
   getAddress,
   keccak256,
   recoverTypedDataAddress,
@@ -9,8 +12,8 @@ import {
 import type { ConfigState } from '../src/lib/config-loader.ts';
 import { checkEligibility, isAccountOldEnough } from '../src/lib/nft/eligibility.ts';
 import { deriveClaimKey } from '../src/lib/nft/claim-key.ts';
-import { MINT_TYPES, mintDomain } from '../src/lib/nft/contract.ts';
-import { isUserRejected } from '../src/lib/nft/client.ts';
+import { MINT_TYPES, NFT_ABI, mintDomain } from '../src/lib/nft/contract.ts';
+import { isUserRejected, revertNameOf } from '../src/lib/nft/client.ts';
 import { clearCookie } from '../src/lib/nft/http.ts';
 import { buildClaimMessage } from '../src/lib/nft/message.ts';
 import {
@@ -224,12 +227,44 @@ const main = async (): Promise<void> => {
   assert.equal(isUserRejected({ code: 4001 }), true);
   assert.equal(isUserRejected({ cause: { code: 4001 } }), true);
   assert.equal(
+    isUserRejected(
+      new BaseError('mint failed', {
+        cause: Object.assign(new Error('User rejected'), { code: 4001 }),
+      })
+    ),
+    true
+  );
+  // viem's walk returns the matched error object, not `true`.
+  assert.equal(
     isUserRejected({
-      walk: (fn: (cause: unknown) => boolean) => fn({ code: 4001 }),
+      walk: (fn: (cause: unknown) => boolean) => {
+        const match = { code: 4001 };
+        return fn(match) ? match : null;
+      },
     }),
     true
   );
   assert.equal(isUserRejected({ code: 5000 }), false);
+
+  // Decoded custom-error names drive the sold-out / already-claimed states.
+  assert.equal(
+    revertNameOf({ cause: { data: { errorName: 'SoldOut' } } }),
+    'SoldOut'
+  );
+  const soldOutError = new ContractFunctionRevertedError({
+    abi: NFT_ABI,
+    data: encodeErrorResult({
+      abi: NFT_ABI,
+      errorName: 'SoldOut',
+      args: [0],
+    }),
+    functionName: 'mintWithSignature',
+  });
+  assert.equal(
+    revertNameOf(new BaseError('mint failed', { cause: soldOutError })),
+    'SoldOut'
+  );
+  assert.equal(revertNameOf({ code: 4001 }), null);
 
   // Voucher signature recovers to the configured signer.
   const signerPrivateKey = keccak256(
