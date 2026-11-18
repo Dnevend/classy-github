@@ -67,6 +67,55 @@ const commentHtml = await renderMarkdown(
   { allowImages: false }
 );
 
+// GitHub 主题变体图片：#gh-*-mode-only 与 <picture> 按站点主题的亮/暗取舍
+const themeSource = [
+  '<img src="light.svg#gh-light-mode-only" alt="light">',
+  '<img src="dark.svg#gh-dark-mode-only" alt="dark">',
+  '',
+  '<picture>',
+  '  <source media="(prefers-color-scheme: dark)" srcset="./banner-dark.svg">',
+  '  <source media="(prefers-color-scheme: light)" srcset="./banner-light.svg 1x">',
+  '  <img src="./banner.png" alt="banner" width="100%">',
+  '</picture>',
+  '',
+  '<a href="/hidden-link"><img src="linked-dark.svg#gh-dark-mode-only" alt="linked"></a>',
+].join('\n');
+const lightThemeHtml = await renderMarkdown(themeSource, { base, colorScheme: 'light' });
+const darkThemeHtml = await renderMarkdown(themeSource, { base, colorScheme: 'dark' });
+const fallbackPictureHtml = await renderMarkdown(
+  '<picture><source media="(prefers-color-scheme: dark)" srcset="./only-dark.svg"><img src="./fallback.png" alt="fallback"></picture>',
+  { base, colorScheme: 'light' }
+);
+const responsivePictureHtml = await renderMarkdown(
+  '<picture><source media="(min-width: 600px)" srcset="./wide.png"><img src="./narrow.png" alt="narrow"></picture>',
+  { base }
+);
+const responsiveThemeImgHtml = await renderMarkdown(
+  '<picture><source media="(min-width: 600px)" srcset="./wide.png"><img src="./inner-dark.svg#gh-dark-mode-only" alt="inner"></picture>',
+  { base, colorScheme: 'light' }
+);
+const responsiveThemeImgDarkHtml = await renderMarkdown(
+  '<picture><source media="(min-width: 600px)" srcset="./wide.png"><img src="./inner-dark.svg#gh-dark-mode-only" alt="inner"></picture>',
+  { base, colorScheme: 'dark' }
+);
+const emptyPictureHtml = await renderMarkdown(
+  '<picture><source media="(prefers-color-scheme: dark)" srcset="./only-dark.svg"></picture>',
+  { base, colorScheme: 'light' }
+);
+const unsafePictureHtml = await renderMarkdown(
+  '<picture><source media="(prefers-color-scheme: light)" srcset="javascript:alert(1)"><img src="./safe.png" alt="safe"></picture>',
+  { base, colorScheme: 'light' }
+);
+const unsafeSchemeUrls = ['javascript:alert(2)', 'vbscript:msgbox(1)', 'file:///etc/passwd'];
+const unsafeSchemeHtml = await Promise.all(
+  unsafeSchemeUrls.map((url, index) =>
+    renderMarkdown(
+      `<picture><source media="(prefers-color-scheme: light)" srcset="${url}"><img src="./safe-${index}.png" alt="safe"></picture>`,
+      { base, colorScheme: 'light' }
+    )
+  )
+);
+
 const checks: Record<string, boolean> = {
   // 功能
   heading: /<h1[ >]/.test(html),
@@ -115,6 +164,46 @@ const checks: Record<string, boolean> = {
   repoEscapeUntouched: repoHtml.includes('href="../../outside.md"'),
   repoAnchorUntouched: repoHtml.includes('href="#top"'),
   repoStripsJavascript: !/javascript:/i.test(repoHtml),
+  // GitHub 主题变体图片：只留与当前主题配色一致的一版
+  themeLightPicksLight:
+    lightThemeHtml.includes(`${base}light.svg`) &&
+    !lightThemeHtml.includes(`${base}dark.svg`),
+  themeLightDropsDark:
+    !lightThemeHtml.includes('#gh-light-mode-only') &&
+    !lightThemeHtml.includes('#gh-dark-mode-only'),
+  themeDarkPicksDark:
+    darkThemeHtml.includes(`${base}dark.svg`) &&
+    !darkThemeHtml.includes(`${base}light.svg`),
+  themeLightPicture:
+    lightThemeHtml.includes(`${base}banner-light.svg`) &&
+    !lightThemeHtml.includes(`${base}banner-dark.svg`) &&
+    !lightThemeHtml.includes('<picture'),
+  themeDarkPicture:
+    darkThemeHtml.includes(`${base}banner-dark.svg`) &&
+    !darkThemeHtml.includes(`${base}banner-light.svg`) &&
+    !darkThemeHtml.includes('<picture'),
+  themePictureFallback:
+    fallbackPictureHtml.includes(`${base}fallback.png`) &&
+    !fallbackPictureHtml.includes('only-dark.svg'),
+  themePictureUnrelatedUntouched:
+    responsivePictureHtml.includes('<picture') &&
+    responsivePictureHtml.includes('srcset="./wide.png"'),
+  themeResponsivePictureImgFragment:
+    !responsiveThemeImgHtml.includes('inner-dark.svg') &&
+    !responsiveThemeImgHtml.includes('gh-dark-mode-only') &&
+    responsiveThemeImgDarkHtml.includes(`${base}inner-dark.svg`) &&
+    !responsiveThemeImgDarkHtml.includes('gh-dark-mode-only'),
+  themeEmptyPictureRemoved:
+    !emptyPictureHtml.includes('<picture') && !emptyPictureHtml.includes('only-dark.svg'),
+  themePictureRejectsUnsafeSrcset:
+    unsafePictureHtml.includes(`${base}safe.png`) &&
+    !/javascript:/i.test(unsafePictureHtml),
+  themePictureRejectsUnsafeProtocols: unsafeSchemeHtml.every(
+    (out, index) =>
+      out.includes(`${base}safe-${index}.png`) &&
+      !/(?:javascript|vbscript|file):/i.test(out)
+  ),
+  themeDropsEmptyAnchor: !lightThemeHtml.includes('href="/hidden-link"'),
 };
 
 

@@ -10,6 +10,21 @@ export const isThemeName = (value: unknown): value is ThemeName =>
   typeof value === 'string' && (THEME_NAMES as readonly string[]).includes(value);
 
 /**
+ * 主题的亮/暗归属，必须与各主题 `theme.css` 里的 `color-scheme` 一致。
+ * README 里 GitHub 的 `#gh-light-mode-only` / `#gh-dark-mode-only`
+ * 主题变体图片按它取舍（见 lib/theme-images.ts）。
+ */
+export const THEME_COLOR_SCHEMES: Record<ThemeName, 'light' | 'dark'> = {
+  nes: 'dark',
+  mac: 'light',
+  win98: 'light',
+  tui: 'dark',
+};
+
+export const themeColorScheme = (name: ThemeName): 'light' | 'dark' =>
+  THEME_COLOR_SCHEMES[name];
+
+/**
  * `?theme=` 的解析规则。
  * 纯函数，方便在 node 里断言；主题是 URL 维度，不做 cookie 维度
  * （四套主题的 DOM 结构不同，浏览器端切不了）。

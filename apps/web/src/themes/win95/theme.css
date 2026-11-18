@@ -13,6 +13,7 @@
   --w95-gray: #c0c0c0;
   --w95-face: #dfdfdf;
   --w95-navy: #000080;
+  /* 与 lib/theme.ts 的 THEME_COLOR_SCHEMES 保持一致 */
   color-scheme: light;
 }
 

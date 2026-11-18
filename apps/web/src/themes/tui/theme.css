@@ -12,6 +12,7 @@
   --accent: #00a800;
   --radius: 0px;
   --tui-cjk: 'Fusion Pixel', 'PingFang SC', 'Microsoft YaHei', monospace;
+  /* 与 lib/theme.ts 的 THEME_COLOR_SCHEMES 保持一致 */
   color-scheme: dark;
 }
 

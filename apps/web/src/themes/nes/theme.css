@@ -37,6 +37,7 @@
   --nes-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
     sans-serif;
 
+  /* 与 lib/theme.ts 的 THEME_COLOR_SCHEMES 保持一致 */
   color-scheme: dark;
 }
 

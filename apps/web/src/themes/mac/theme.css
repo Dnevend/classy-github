@@ -11,6 +11,7 @@
   --accent: #000000;
   --radius: 0px;
   --mac-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  /* 与 lib/theme.ts 的 THEME_COLOR_SCHEMES 保持一致 */
   color-scheme: light;
 }
 

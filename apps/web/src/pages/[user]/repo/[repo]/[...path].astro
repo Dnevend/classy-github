@@ -11,6 +11,7 @@ import {
   shouldRedirectRepoPath,
 } from '../../../../lib/repo-access';
 import { createTranslator, localeFromConfig } from '../../../../lib/i18n';
+import { themeColorScheme } from '../../../../lib/theme';
 import { resolveTheme } from '../../../../themes';
 
 export const prerender = false;
@@ -161,6 +162,7 @@ if (file) {
           ? file.downloadUrl.slice(0, file.downloadUrl.lastIndexOf('/') + 1)
           : rawBase,
         repo: { login: user, repo: repoName, path: file.path },
+        colorScheme: themeColorScheme(themeName),
       });
     } else {
       const fence = '`'.repeat(Math.max(4, longestBacktickRun(file.source) + 1));

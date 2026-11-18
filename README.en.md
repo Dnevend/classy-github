@@ -74,7 +74,7 @@ It is for people who want a homepage without maintaining a server, people who al
 
 ## What you get
 
-- **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting and relative images; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
+- **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting, relative images, and GitHub's light/dark theme variants (`#gh-dark-mode-only` / `<picture>`), showing only the one that matches the site theme; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
 - **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default; visitors switch with `?theme=` or the footer.
 - **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. SEO is off by default; `seo.index: true` opts in.
