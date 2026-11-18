@@ -177,8 +177,9 @@ export async function ghFetch<T>(
 
   const response = new Response(res.body, res);
 
-  // 失败不影响渲染：缓存只是优化
-  await cachePut(key, response, ttl);
+  // 失败不影响渲染：缓存只是优化。
+  // 副本活到 stale 窗口，限流/5xx 时才有旧数据可用。
+  await cachePut(key, response, ttl, STALE_TTL);
 
   return (await response.json()) as T;
 }

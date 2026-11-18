@@ -228,7 +228,8 @@ export async function ghGraphql<T>(
   const response = new Response(JSON.stringify(payload.data), {
     headers: { 'content-type': 'application/json; charset=utf-8' },
   });
-  await cachePut(key, response, ttl);
+  // 逻辑 TTL 用于新鲜度判断；缓存副本要活到 stale 兜底窗口，限流/5xx 时才有旧数据可用。
+  await cachePut(key, response, ttl, STALE_TTL);
 
   return payload.data;
 }

@@ -61,17 +61,30 @@ export const cacheGetStale = async (
   return hit;
 };
 
+/** 删除缓存条目；没有 Cache API 时静默跳过。 */
+export const cacheDelete = async (key: Request): Promise<void> => {
+  const cache = edgeCache();
+  if (!cache) return;
+
+  await cache.delete(key).catch(() => false);
+};
+
 /** 写一份带时间戳的副本，调用方的响应不受影响 */
 export const cachePut = async (
   key: Request,
   response: Response,
-  ttlSeconds: number
+  ttlSeconds: number,
+  /**
+   * 写进缓存副本的 s-maxage。SWR / stale 兜底需要条目比逻辑 TTL 活得更久，
+   * 否则部分运行时会在 s-maxage 到期时直接淘汰条目，stale 永远读不到。
+   */
+  headerTtlSeconds = ttlSeconds
 ): Promise<void> => {
   const cache = edgeCache();
   if (!cache) return;
 
   const copy = response.clone();
-  copy.headers.set('cache-control', `public, s-maxage=${ttlSeconds}`);
+  copy.headers.set('cache-control', `public, s-maxage=${headerTtlSeconds}`);
   copy.headers.set(CACHED_AT_HEADER, String(Date.now()));
 
   await cache.put(key, copy).catch(() => undefined);
