@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import {
+  clearCookie,
   errorResponse,
   jsonResponse,
   originAllowed,
@@ -18,6 +19,6 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
   if (limited) return limited;
   if (!originAllowed(request, url)) return errorResponse('invalid_origin', 403);
 
-  cookies.delete(sessionCookieName(isSecureUrl(url)), { path: '/' });
+  clearCookie(cookies, sessionCookieName(isSecureUrl(url)), url);
   return jsonResponse({ ok: true });
 };

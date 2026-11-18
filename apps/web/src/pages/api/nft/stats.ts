@@ -17,7 +17,10 @@ export const GET: APIRoute = async ({ request, url }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }

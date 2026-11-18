@@ -49,7 +49,10 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }
@@ -160,23 +163,24 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     deadline,
   });
 
-  if (
-    config.signerAddress &&
-    signed.signer.toLowerCase() !== config.signerAddress.toLowerCase()
-  ) {
+  if (signed.signer.toLowerCase() !== config.signerAddress.toLowerCase()) {
     return errorResponse('signer_mismatch', 500);
   }
 
-  await putClaim(kv, {
-    login: session.login,
-    ghId: session.ghId,
-    theme,
-    wallet: address,
-    claimKey,
-    deadline,
-    status: 'issued',
-    createdAt: Date.now(),
-  });
+  try {
+    await putClaim(kv, {
+      login: session.login,
+      ghId: session.ghId,
+      theme,
+      wallet: address,
+      claimKey,
+      deadline,
+      status: 'issued',
+      createdAt: Date.now(),
+    });
+  } catch {
+    return errorResponse('storage_unavailable', 503);
+  }
 
   return jsonResponse({
     chainId: config.chainId,

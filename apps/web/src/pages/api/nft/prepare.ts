@@ -42,7 +42,10 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }
@@ -69,7 +72,9 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
 
   let state;
   try {
-    state = await loadConfigState(session.login, { fresh: true });
+    // prepare runs often; use the existing 5-minute cache. The voucher step
+    // re-checks with `fresh: true` right before signing.
+    state = await loadConfigState(session.login);
   } catch {
     return errorResponse('github_unavailable', 503);
   }

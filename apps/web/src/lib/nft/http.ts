@@ -1,4 +1,5 @@
 import {
+  cookieOptions,
   isSecureUrl,
   sessionCookieName,
   verifySession,
@@ -41,6 +42,23 @@ export const originAllowed = (request: Request, url: URL): boolean => {
 interface CookieReader {
   get(name: string): { value: string } | undefined;
 }
+
+interface CookieWriter {
+  set(
+    name: string,
+    value: string,
+    options: ReturnType<typeof cookieOptions>
+  ): void;
+}
+
+/** Clear a cookie with the same Secure/Path/HttpOnly attributes it was set with. */
+export const clearCookie = (
+  cookies: CookieWriter,
+  name: string,
+  url: URL
+): void => {
+  cookies.set(name, '', cookieOptions(url, 0));
+};
 
 export const readSession = async (
   cookies: CookieReader,

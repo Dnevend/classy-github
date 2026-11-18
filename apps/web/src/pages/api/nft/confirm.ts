@@ -30,7 +30,10 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }
@@ -48,7 +51,16 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
   }
   const txHash = body.txHash as Hex;
 
-  const receipt = await getReceipt(config, txHash);
+  let receipt;
+  try {
+    receipt = await getReceipt(config, txHash);
+  } catch (error) {
+    console.warn(
+      '[classy nft] receipt lookup failed:',
+      error instanceof Error ? error.message : error
+    );
+    return errorResponse('rpc_unavailable', 503);
+  }
   if (!receipt) return errorResponse('tx_not_found', 404);
   if (receipt.status !== 'success') {
     return errorResponse('tx_reverted', 400);
@@ -78,14 +90,18 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     });
   }
 
-  await putClaim(kv, {
-    ...record,
-    status: 'confirmed',
-    tokenId: event.tokenId,
-    serial: event.serial,
-    txHash,
-    confirmedAt: Date.now(),
-  });
+  try {
+    await putClaim(kv, {
+      ...record,
+      status: 'confirmed',
+      tokenId: event.tokenId,
+      serial: event.serial,
+      txHash,
+      confirmedAt: Date.now(),
+    });
+  } catch {
+    return errorResponse('storage_unavailable', 503);
+  }
 
   return jsonResponse({
     ok: true,

@@ -23,7 +23,10 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }
@@ -41,7 +44,7 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
   );
 
   const redirectUri = `${siteOrigin(url)}/api/nft/oauth/callback`;
-  return redirect(
+  const response = redirect(
     buildAuthorizeUrl({
       clientId: config.oauthClientId,
       redirectUri,
@@ -49,4 +52,6 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
     }),
     302
   );
+  response.headers.set('cache-control', 'no-store');
+  return response;
 };

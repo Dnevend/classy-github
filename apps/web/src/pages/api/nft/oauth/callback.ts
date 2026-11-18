@@ -17,7 +17,10 @@ import {
 } from '../../../../lib/nft/eligibility.ts';
 import { loadConfigState } from '../../../../lib/config-loader.ts';
 import { enforceNftRateLimit } from '../../../../lib/nft/rate-limit.ts';
-import { errorResponse } from '../../../../lib/nft/http.ts';
+import {
+  clearCookie,
+  errorResponse,
+} from '../../../../lib/nft/http.ts';
 import { siteOrigin } from '../../../../lib/site.ts';
 
 export const prerender = false;
@@ -31,14 +34,23 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
     config = loadNftConfig();
   } catch (error) {
     if (error instanceof NftConfigError) {
-      return errorResponse('not_configured', 503, { missing: error.missing });
+      return errorResponse('not_configured', 503, {
+        missing: error.missing,
+        invalid: error.invalid,
+      });
     }
     throw error;
   }
 
+  const go = (path: string): Response => {
+    const response = redirect(path, 302);
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  };
+
   const oauthError = url.searchParams.get('error');
   if (oauthError) {
-    return redirect(`/nft?error=oauth_${encodeURIComponent(oauthError)}`, 302);
+    return go(`/nft?error=oauth_${encodeURIComponent(oauthError)}`);
   }
 
   const code = url.searchParams.get('code');
@@ -50,7 +62,7 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
   const secure = isSecureUrl(url);
   const stateCookieName = oauthCookieName(secure);
   const stateCookie = cookies.get(stateCookieName)?.value;
-  cookies.delete(stateCookieName, { path: '/' });
+  clearCookie(cookies, stateCookieName, url);
 
   if (
     !stateCookie ||
@@ -69,13 +81,13 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
     const user = await fetchGitHubUser(token);
 
     if (!isAccountOldEnough(user.created_at, config.minAccountAgeDays)) {
-      return redirect('/nft?error=account_too_new', 302);
+      return go('/nft?error=account_too_new');
     }
 
     const configState = await loadConfigState(user.login, { fresh: true });
     const eligibility = checkEligibility(configState, user.login);
     if (!eligibility.ok) {
-      return redirect(`/nft?error=${eligibility.reason}`, 302);
+      return go(`/nft?error=${eligibility.reason}`);
     }
 
     const session = await createSession(
@@ -89,12 +101,12 @@ export const GET: APIRoute = async ({ request, url, cookies, redirect }) => {
       cookieOptions(url, SESSION_TTL_SECONDS)
     );
 
-    return redirect('/nft/claim', 302);
+    return go('/nft/claim');
   } catch (error) {
     console.warn(
       '[classy nft] oauth callback failed:',
       error instanceof Error ? error.message : error
     );
-    return redirect('/nft?error=oauth_failed', 302);
+    return go('/nft?error=oauth_failed');
   }
 };

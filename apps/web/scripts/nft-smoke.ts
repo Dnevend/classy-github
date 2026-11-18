@@ -10,6 +10,7 @@ import type { ConfigState } from '../src/lib/config-loader.ts';
 import { checkEligibility, isAccountOldEnough } from '../src/lib/nft/eligibility.ts';
 import { deriveClaimKey } from '../src/lib/nft/claim-key.ts';
 import { MINT_TYPES, mintDomain } from '../src/lib/nft/contract.ts';
+import { clearCookie } from '../src/lib/nft/http.ts';
 import { buildClaimMessage } from '../src/lib/nft/message.ts';
 import {
   buildAuthorizeUrl,
@@ -20,6 +21,7 @@ import {
 import {
   createOAuthState,
   createSession,
+  sessionCookieName,
   verifyOAuthState,
   verifySession,
 } from '../src/lib/nft/session.ts';
@@ -260,7 +262,53 @@ const main = async (): Promise<void> => {
   await putClaim(kv, record);
   assert.equal((await getClaim(kv, 42, 0))?.claimKey, claimKey);
   assert.equal((await listClaims(kv, 42)).length, 1);
+  assert.equal(effectiveStatus(record, record.deadline * 1000), 'issued');
   assert.equal(effectiveStatus(record, record.deadline * 1000 + 1), 'expired');
+
+  // A legacy `issued` record under the confirmed key must not mask a new one.
+  const legacyKv = makeKv();
+  await legacyKv.put(
+    'nft:claim:42:0',
+    JSON.stringify({ ...record, status: 'issued' })
+  );
+  assert.equal(await getClaim(legacyKv, 42, 0), null);
+
+  // Clearing a production `__Host-` cookie must keep Secure + Path=/.
+  const cookieWrites: {
+    name: string;
+    value: string;
+    options: { secure?: boolean; maxAge?: number; path?: string };
+  }[] = [];
+  clearCookie(
+    {
+      set: (name, value, options) => {
+        cookieWrites.push({ name, value, options });
+      },
+    },
+    sessionCookieName(true),
+    new URL('https://classygit.dev/nft')
+  );
+  assert.equal(cookieWrites[0]?.options.secure, true);
+  assert.equal(cookieWrites[0]?.options.maxAge, 0);
+  assert.equal(cookieWrites[0]?.options.path, '/');
+  assert.equal(cookieWrites[0]?.value, '');
+
+  // A late pending write must never turn a confirmed claim back into `issued`.
+  const confirmed: ClaimRecord = {
+    ...record,
+    status: 'confirmed',
+    tokenId: 2,
+    serial: 2,
+    confirmedAt: now,
+  };
+  await putClaim(kv, confirmed);
+  await putClaim(kv, {
+    ...record,
+    status: 'issued',
+    deadline: record.deadline + 1000,
+  });
+  assert.equal((await getClaim(kv, 42, 0))?.status, 'confirmed');
+  assert.equal((await listClaims(kv, 42))[0]?.status, 'confirmed');
 
   assert.equal(themeName(0), 'mac');
   assert.equal(themeName(3), 'tui');

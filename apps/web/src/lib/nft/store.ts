@@ -21,10 +21,21 @@ export interface ClaimRecord {
   confirmedAt?: number;
 }
 
-const PREFIX = 'nft:claim:';
+/**
+ * Two keys per claim:
+ * - `nft:claim:` is written once, when the mint is confirmed. It is never
+ *   overwritten by a pending voucher.
+ * - `nft:voucher:` holds the short-lived issued voucher. This avoids a race
+ *   where a late voucher write could turn a confirmed claim back into `issued`.
+ */
+const CONFIRMED_PREFIX = 'nft:claim:';
+const PENDING_PREFIX = 'nft:voucher:';
 
 export const claimKeyFor = (ghId: number, theme: Theme): string =>
-  `${PREFIX}${ghId}:${theme}`;
+  `${CONFIRMED_PREFIX}${ghId}:${theme}`;
+
+const pendingKeyFor = (ghId: number, theme: Theme): string =>
+  `${PENDING_PREFIX}${ghId}:${theme}`;
 
 const parseClaim = (value: string | null): ClaimRecord | null => {
   if (!value) return null;
@@ -53,7 +64,11 @@ export const getClaim = async (
   theme: Theme
 ): Promise<ClaimRecord | null> => {
   try {
-    return parseClaim(await kv.get(claimKeyFor(ghId, theme)));
+    const confirmed = parseClaim(await kv.get(claimKeyFor(ghId, theme)));
+    // Ignore legacy `issued` records under the confirmed key; only a
+    // `confirmed` record is authoritative.
+    if (confirmed?.status === 'confirmed') return confirmed;
+    return parseClaim(await kv.get(pendingKeyFor(ghId, theme)));
   } catch {
     return null;
   }
@@ -63,7 +78,29 @@ export const putClaim = async (
   kv: UsersKv,
   record: ClaimRecord
 ): Promise<void> => {
-  await kv.put(claimKeyFor(record.ghId, record.theme), JSON.stringify(record));
+  if (record.status === 'confirmed') {
+    await kv.put(claimKeyFor(record.ghId, record.theme), JSON.stringify(record));
+    await kv
+      .delete(pendingKeyFor(record.ghId, record.theme))
+      .catch(() => undefined);
+    return;
+  }
+
+  await kv.put(
+    pendingKeyFor(record.ghId, record.theme),
+    JSON.stringify(record)
+  );
+};
+
+const listByPrefix = async (
+  kv: UsersKv,
+  prefix: string
+): Promise<ClaimRecord[]> => {
+  const result = await kv.list({ prefix, limit: 10 });
+  const records = await Promise.all(
+    result.keys.map(async (key) => parseClaim(await kv.get(key.name)))
+  );
+  return records.filter((record): record is ClaimRecord => record !== null);
 };
 
 export const listClaims = async (
@@ -71,16 +108,18 @@ export const listClaims = async (
   ghId: number
 ): Promise<ClaimRecord[]> => {
   try {
-    const result = await kv.list({
-      prefix: `${PREFIX}${ghId}:`,
-      limit: 10,
-    });
-    const records = await Promise.all(
-      result.keys.map(async (key) => parseClaim(await kv.get(key.name)))
-    );
-    return records
-      .filter((record): record is ClaimRecord => record !== null)
-      .sort((a, b) => a.theme - b.theme);
+    const [confirmed, pending] = await Promise.all([
+      listByPrefix(kv, `${CONFIRMED_PREFIX}${ghId}:`),
+      listByPrefix(kv, `${PENDING_PREFIX}${ghId}:`),
+    ]);
+
+    const byTheme = new Map<Theme, ClaimRecord>();
+    for (const record of pending) byTheme.set(record.theme, record);
+    for (const record of confirmed) {
+      if (record.status === 'confirmed') byTheme.set(record.theme, record);
+    }
+
+    return [...byTheme.values()].sort((a, b) => a.theme - b.theme);
   } catch {
     return [];
   }
@@ -91,6 +130,6 @@ export const effectiveStatus = (
   record: ClaimRecord,
   now = Date.now()
 ): ClaimStatus | 'expired' =>
-  record.status === 'issued' && record.deadline * 1000 <= now
+  record.status === 'issued' && record.deadline * 1000 < now
     ? 'expired'
     : record.status;

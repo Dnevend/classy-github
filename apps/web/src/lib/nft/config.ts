@@ -15,11 +15,17 @@ import { getAddress, type Address, type Hex } from 'viem';
 
 export class NftConfigError extends Error {
   readonly missing: string[];
+  readonly invalid: string[];
 
-  constructor(missing: string[]) {
-    super(`missing NFT config: ${missing.join(', ')}`);
+  constructor(missing: string[] = [], invalid: string[] = []) {
+    const parts = [
+      missing.length ? `missing: ${missing.join(', ')}` : '',
+      invalid.length ? `invalid: ${invalid.join(', ')}` : '',
+    ].filter(Boolean);
+    super(`NFT config ${parts.join('; ')}`);
     this.name = 'NftConfigError';
     this.missing = missing;
+    this.invalid = invalid;
   }
 }
 
@@ -29,7 +35,7 @@ export interface NftConfig {
   rpcUrl: string;
   claimSalt: Hex;
   signerPrivateKey: Hex;
-  signerAddress?: Address;
+  signerAddress: Address;
   relayerPrivateKey?: Hex;
   sessionSecret: string;
   oauthClientId: string;
@@ -55,6 +61,7 @@ export const loadNftConfig = (): NftConfig => {
     GITHUB_OAUTH_CLIENT_SECRET,
     NFT_SESSION_SECRET,
     NFT_SIGNER_PRIVATE_KEY,
+    NFT_SIGNER_ADDRESS,
     NFT_CLAIM_SALT,
     NFT_CONTRACT_ADDRESS,
     BASE_RPC_URL,
@@ -65,44 +72,46 @@ export const loadNftConfig = (): NftConfig => {
   }
   if (missing.length > 0) throw new NftConfigError(missing);
 
+  if ((NFT_SESSION_SECRET as string).length < 32) {
+    throw new NftConfigError([], ['NFT_SESSION_SECRET']);
+  }
+
   let contractAddress: Address;
   try {
     contractAddress = getAddress(NFT_CONTRACT_ADDRESS as string);
   } catch {
-    throw new NftConfigError(['NFT_CONTRACT_ADDRESS']);
+    throw new NftConfigError([], ['NFT_CONTRACT_ADDRESS']);
   }
 
   if (!PRIVATE_KEY.test(NFT_SIGNER_PRIVATE_KEY as string)) {
-    throw new NftConfigError(['NFT_SIGNER_PRIVATE_KEY']);
+    throw new NftConfigError([], ['NFT_SIGNER_PRIVATE_KEY']);
   }
   const claimSalt = normalizeBytes32(NFT_CLAIM_SALT);
   if (!claimSalt) {
-    throw new NftConfigError(['NFT_CLAIM_SALT']);
+    throw new NftConfigError([], ['NFT_CLAIM_SALT']);
   }
 
   const chainId = Number(NFT_CHAIN_ID || 84532);
   if (!Number.isSafeInteger(chainId) || chainId <= 0) {
-    throw new NftConfigError(['NFT_CHAIN_ID']);
+    throw new NftConfigError([], ['NFT_CHAIN_ID']);
   }
 
   const minAccountAgeDays = Number(NFT_MIN_ACCOUNT_AGE_DAYS || 90);
   if (!Number.isFinite(minAccountAgeDays) || minAccountAgeDays <= 0) {
-    throw new NftConfigError(['NFT_MIN_ACCOUNT_AGE_DAYS']);
+    throw new NftConfigError([], ['NFT_MIN_ACCOUNT_AGE_DAYS']);
   }
 
-  let signerAddress: Address | undefined;
-  if (NFT_SIGNER_ADDRESS) {
-    try {
-      signerAddress = getAddress(NFT_SIGNER_ADDRESS);
-    } catch {
-      throw new NftConfigError(['NFT_SIGNER_ADDRESS']);
-    }
+  let signerAddress: Address;
+  try {
+    signerAddress = getAddress(NFT_SIGNER_ADDRESS as string);
+  } catch {
+    throw new NftConfigError([], ['NFT_SIGNER_ADDRESS']);
   }
 
   let relayerPrivateKey: Hex | undefined;
   if (RELAYER_PRIVATE_KEY) {
     if (!PRIVATE_KEY.test(RELAYER_PRIVATE_KEY)) {
-      throw new NftConfigError(['RELAYER_PRIVATE_KEY']);
+      throw new NftConfigError([], ['RELAYER_PRIVATE_KEY']);
     }
     relayerPrivateKey = RELAYER_PRIVATE_KEY as Hex;
   }

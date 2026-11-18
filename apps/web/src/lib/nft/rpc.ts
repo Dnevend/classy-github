@@ -1,4 +1,6 @@
 import {
+  BaseError,
+  TransactionReceiptNotFoundError,
   createPublicClient,
   decodeEventLog,
   http,
@@ -71,8 +73,16 @@ export const getReceipt = async (
 ): Promise<NftReceipt | null> => {
   try {
     return await nftPublicClient(config).getTransactionReceipt({ hash });
-  } catch {
-    return null;
+  } catch (error) {
+    // Only "not found" means 404; RPC errors must not look like a missing tx.
+    if (error instanceof TransactionReceiptNotFoundError) return null;
+    if (
+      error instanceof BaseError &&
+      error.walk((cause) => cause instanceof TransactionReceiptNotFoundError)
+    ) {
+      return null;
+    }
+    throw error;
   }
 };
 
