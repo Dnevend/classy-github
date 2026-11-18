@@ -137,6 +137,7 @@ const messages = {
     'profile.noReadme': 'This user has no profile README.',
 
     'section.recent': 'Recently updated',
+    'section.pinned': 'Pinned',
     'section.more': 'View all',
     'repos.title': "{name}'s repositories",
     'repos.empty': 'No public repositories.',
@@ -339,6 +340,7 @@ const messages = {
     'profile.noReadme': '这个用户没有设置 profile README。',
 
     'section.recent': '最近更新',
+    'section.pinned': '置顶项目',
     'section.more': '查看更多',
     'repos.title': '{name} 的仓库',
     'repos.empty': '没有公开仓库。',

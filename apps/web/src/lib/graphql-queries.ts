@@ -7,7 +7,7 @@
  * profile README，classy.config.json 用单独的 Config 查询。
  */
 
-export const PROFILE_QUERY = `query Profile($login: String!, $repoCount: Int!, $gistCount: Int!) {
+export const PROFILE_QUERY = `query Profile($login: String!, $repoCount: Int!, $gistCount: Int!, $pinnedCount: Int!) {
   user(login: $login) {
     login
     name
@@ -39,6 +39,25 @@ export const PROFILE_QUERY = `query Profile($login: String!, $repoCount: Int!, $
         updatedAt
         url
         primaryLanguage { name }
+      }
+    }
+    pinnedItems(first: $pinnedCount, types: [REPOSITORY]) {
+      totalCount
+      nodes {
+        ... on Repository {
+          name
+          description
+          isPrivate
+          stargazerCount
+          forkCount
+          isFork
+          isTemplate
+          homepageUrl
+          updatedAt
+          url
+          primaryLanguage { name }
+          owner { login }
+        }
       }
     }
     gists(
