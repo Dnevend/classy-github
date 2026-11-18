@@ -74,7 +74,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ## 你能得到什么
 
-- **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮和相对图片；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
+- **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片，以及 `#gh-dark-mode-only` / `<picture>` 深浅色主题图片（按站点主题只显示一张）；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
 - **Gist 就是博客**：Gist 描述写 `classy.blog.标题 #标签`（类型名用英文字母），自动变成分类、标题和标签；支持多文件、阅读时间、按月归档和标签筛选。
 - **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主设默认主题，访客用 `?theme=` 或页脚切换。
 - **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；SEO 默认关闭，`seo.index: true` 才允许收录。

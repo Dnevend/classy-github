@@ -13,6 +13,7 @@ import { createTranslator, localeFromConfig } from '../../lib/i18n';
 import { createGistDescriptionParser } from '../../lib/gist-rule';
 import { syncIndexableUser, usersKv } from '../../lib/users-kv';
 import { removeSite, syncSite } from '../../lib/site-registry';
+import { themeColorScheme } from '../../lib/theme';
 import { resolveTheme } from '../../themes';
 import ContribWall from '../../themes/_shared/ContribWall.astro';
 import ClaimBanner from '../../themes/_shared/ClaimBanner.astro';
@@ -93,6 +94,7 @@ const readmeHtml = data
     ? await renderMarkdown(data.readme.source, {
         base: data.readme.base,
         repo: { login: data.userinfo.login, repo: data.userinfo.login, path: data.readme.path },
+        colorScheme: themeColorScheme(themeName),
       })
     : await renderMarkdown(
         buildDefaultReadme({

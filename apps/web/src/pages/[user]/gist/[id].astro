@@ -10,6 +10,7 @@ import { loadConfig } from '../../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../../lib/i18n';
 import { createGistDescriptionParser } from '../../../lib/gist-rule';
 import { estimateReadingMinutes } from '../../../lib/reading';
+import { themeColorScheme } from '../../../lib/theme';
 import { resolveTheme } from '../../../themes';
 
 export const prerender = false;
@@ -17,6 +18,7 @@ export const prerender = false;
 const user = Astro.params.user as string;
 const gistId = Astro.params.id as string;
 const origin = siteOrigin(Astro.url);
+const colorScheme = themeColorScheme(Astro.locals.theme);
 
 const { data, error, retryAt } = await safeLoad(async () => {
   const gist = await loadGistDetail(user, gistId);
@@ -31,7 +33,10 @@ const { data, error, retryAt } = await safeLoad(async () => {
         ? file.content
         : ['```' + (file.language || 'text'), file.content, '```'].join('\n');
 
-      return { filename: file.filename, html: await renderMarkdown(source) };
+      return {
+        filename: file.filename,
+        html: await renderMarkdown(source, { colorScheme }),
+      };
     })
   );
 

@@ -8,6 +8,7 @@ import { loadRepoDetail } from '../../../lib/repo-detail';
 import { DEFAULT_CONFIG } from '../../../lib/config';
 import { loadConfig } from '../../../lib/config-loader';
 import { createTranslator, localeFromConfig } from '../../../lib/i18n';
+import { themeColorScheme } from '../../../lib/theme';
 import { resolveTheme } from '../../../themes';
 
 export const prerender = false;
@@ -45,6 +46,7 @@ const readmeHtml =
     ? await renderMarkdown(data.readme.source, {
         base: data.readme.base,
         repo: { login: user, repo: repoName, path: data.readme.path },
+        colorScheme: themeColorScheme(themeName),
       })
     : null;
 ---

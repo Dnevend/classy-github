@@ -17,6 +17,10 @@ import {
   rewriteRepoHref,
   type RepoLinkContext,
 } from './repo-link.ts';
+import {
+  rehypeThemeImages,
+  type ColorScheme,
+} from './theme-images.ts';
 
 // 只注册真正需要的语言与主题。
 // 用 `@shikijs/rehype` 的默认入口会把全部 ~200 种语法打进 Worker（实测 27MB），
@@ -231,6 +235,12 @@ export interface RenderMarkdownOptions {
   allowImages?: boolean;
   /** 评论不跑 Shiki，避免一页几十条评论把 CPU 打满 */
   highlight?: boolean;
+  /**
+   * 当前主题的亮/暗。README 里 GitHub 的 `#gh-*-mode-only` 片段和
+   * `<picture><source media="(prefers-color-scheme: …)">` 按它取舍；
+   * 不传按 light 处理（与默认的 mac 主题一致）。
+   */
+  colorScheme?: ColorScheme;
 }
 
 export async function renderMarkdown(
@@ -243,6 +253,9 @@ export async function renderMarkdown(
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeSanitize, options.allowImages === false ? commentSchema : schema)
+    // 主题变体图片必须在 sanitize 之后、URL 补全之前解析：
+    // 折叠出来的 <img src> 还要走同一套相对路径改写。
+    .use(rehypeThemeImages, { colorScheme: options.colorScheme })
     // 标题 id 放在 sanitize 之后：生成的是我们自己的 slug，不能被 clobber 前缀改写；
     // 有 id 后 `#锚点` 才能跳到页内小节（GitHub 同名 heading 的 slug 规则一致）。
     .use(rehypeUnprefixAnchors)
