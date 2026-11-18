@@ -1,11 +1,11 @@
 {
   "network": "base-sepolia",
   "chainId": 84532,
-  "status": "awaiting-faucet",
-  "contract": null,
-  "deployer": "0xD9A7EA7Ca388ABEdB77DD0EaF32041832B288dd7",
-  "signer": "0xBe8cb1834DE5b56DFD04E863dfc6fFe83231835f",
-  "relayer": "0x61Ca67B424a03082e755415b9F3ec057F6feFeAb",
+  "status": "deployed-configured-test-minted",
+  "contract": "0x0165c50e8c35d89bca98f5d0db8e5f8fff07dfb7",
+  "deployer": "0xac2A2bd9CAE78f9Af3D4108AF00DCc855225736e",
+  "signer": "0x52394CD302b5166F8Ee6bD60814A0332b87BaeDe",
+  "relayer": "0xad641A58C64A43201922d6D15C11bBC309EBB19B",
   "images": {
     "mac": "ipfs://bafkreiek6jozh6funpf3jhhognaf26js6ktfahpcbycpwgmscbm6adpg3y",
     "nes": "ipfs://bafkreiauzqjoxj4u6jg72qs2o6tspzhyxyc4znfz6wv3kcfbplrr2l43tq",
@@ -14,5 +14,30 @@
   },
   "contractURI": "ipfs://QmUv4adwChceCvsqLkeiaYY7MGmJqRLBUJWiFSSQNsdfmo",
   "createdAt": "2026-11-18",
-  "note": "Public addresses and CIDs only. Secrets live in contracts/.env (gitignored)."
+  "note": "Public addresses and CIDs only. Secrets live in contracts/.env (gitignored).",
+  "owner": "0xac2A2bd9CAE78f9Af3D4108AF00DCc855225736e",
+  "deployTx": "0xdc0b3f5d77d76fd1f7ea8b3b350dfb92fef6ca67ce51aba14d98997df4d6085b",
+  "configureTxs": [
+    "0x889834461061255b16d9eb4edfb5946f37e6c57a2754e03a6a5546ba8fe0dfc9",
+    "0x03604c46b6f49d5dd9535ab327631c796e112009dcc7ea76516ef9b61fa5416c",
+    "0x0e638a568c0a04bd5876190b5718a0c7e106b212d592debfd135aead8f8cec16",
+    "0x522be1e1ef24fe65a9635d422e8643d8d4488ed2ead7148d236ad21812e10b85",
+    "0xd7142c0273151d64756ab68c77fb4e205eb92ca5611d0175d946746cf4388e93"
+  ],
+  "mintTx": "0x0c3efb2865f3b05b838f6fb247be324aa6cf2d01d5e61e834966f1cd60d64118",
+  "testMint": {
+    "tokenId": 1,
+    "theme": "mac",
+    "to": "0xac2A2bd9CAE78f9Af3D4108AF00DCc855225736e"
+  },
+  "verified": true,
+  "verifier": "sourcify",
+  "verification": {
+    "match": "exact_match",
+    "matchId": "59476533",
+    "verifiedAt": "2026-11-18T16:00:10Z",
+    "url": "https://sourcify.dev/#/lookup/0x0165c50e8c35d89bca98f5d0db8e5f8fff07dfb7"
+  },
+  "explorer": "https://sepolia.basescan.org/address/0x0165c50e8c35d89bca98f5d0db8e5f8fff07dfb7",
+  "deployedAt": "2026-11-18"
 }

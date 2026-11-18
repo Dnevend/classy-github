@@ -109,6 +109,32 @@ forge script script/Configure.s.sol:Configure \
 
 This sets the four theme images and the collection metadata. Minting is blocked until each theme image is set.
 
+## Verify without an Etherscan key
+
+Sourcify works on Base Sepolia without an API key:
+
+```bash
+forge verify-contract "$CONTRACT_ADDRESS" src/ClassyPass.sol:ClassyPass \
+  --chain base-sepolia \
+  --verifier sourcify \
+  --constructor-args "$(cast abi-encode 'constructor(address,address,string)' \
+    "$OWNER_ADDRESS" "$SIGNER_ADDRESS" "$CONTRACT_URI")"
+```
+
+## Testnet smoke mint
+
+`MintTest.s.sol` signs one voucher with `SIGNER_PRIVATE_KEY` and mints it to `MINT_TO`.
+It refuses to run on Base mainnet (chainId 8453). It consumes one card from the theme.
+
+```bash
+MINT_TO=0x... MINT_THEME=0 \
+  forge script script/MintTest.s.sol:MintTest \
+  --rpc-url "$BASE_RPC_URL" --broadcast
+```
+
+The deployed Base Sepolia address, transactions and test mint are recorded in
+`deployments/base-sepolia.json`.
+
 ## Claim key
 
 The server computes:
