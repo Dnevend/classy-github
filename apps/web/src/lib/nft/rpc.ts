@@ -4,6 +4,7 @@ import {
   createPublicClient,
   decodeEventLog,
   http,
+  parseAbiItem,
   type Address,
   type Hex,
 } from 'viem';
@@ -17,6 +18,10 @@ export const chainFor = (chainId: number) => {
   if (chainId === baseSepolia.id) return baseSepolia;
   throw new Error(`unsupported chain: ${chainId}`);
 };
+
+const MINTED_EVENT = parseAbiItem(
+  'event Minted(address indexed to, uint8 indexed theme, uint256 indexed tokenId, uint256 serial, bytes32 claimKey)'
+);
 
 export const nftPublicClient = (config: NftConfig) =>
   createPublicClient({
@@ -102,8 +107,7 @@ export interface MintedEvent {
 export const findMintedEvent = (
   config: NftConfig,
   receipt: NftReceipt
-): MintedEvent | null => {
-  for (const log of receipt.logs) {
+): MintedEvent | null => {  for (const log of receipt.logs) {
     if (log.address.toLowerCase() !== config.contractAddress.toLowerCase()) {
       continue;
     }
@@ -134,6 +138,60 @@ export const findMintedEvent = (
       };
     } catch {
       // Not a Minted log; keep looking.
+    }
+  }
+
+  return null;
+};
+
+/** Recover a relayed/self-paid mint's tx hash when only the claimKey is known. */
+export const findMintByClaimKey = async (
+  config: NftConfig,
+  to: Address,
+  theme: Theme,
+  claimKey: Hex
+): Promise<Hex | null> => {
+  const client = nftPublicClient(config);
+  const latest = await client.getBlockNumber();
+  // The public Base RPC caps `eth_getLogs` at 200 blocks, so scan in chunks.
+  // 1200 blocks is roughly 40 minutes on Base; claims are valid for 15.
+  const scanBlocks = 1_200n;
+  const chunk = 200n;
+  const fromBlock = latest > scanBlocks ? latest - scanBlocks : 0n;
+
+  for (let start = fromBlock; start <= latest; start += chunk) {
+    const end = start + chunk - 1n > latest ? latest : start + chunk - 1n;
+    const logs = await client.getLogs({
+      address: config.contractAddress,
+      event: MINTED_EVENT,
+      args: { to, theme },
+      fromBlock: start,
+      toBlock: end,
+    });
+
+    for (const log of logs) {
+      try {
+        const decoded = decodeEventLog({
+          abi: NFT_ABI,
+          eventName: 'Minted',
+          data: log.data,
+          topics: log.topics,
+        });
+        const args = decoded.args as {
+          to: Address;
+          theme: number;
+          claimKey: Hex;
+        };
+        if (
+          args.to.toLowerCase() === to.toLowerCase() &&
+          Number(args.theme) === theme &&
+          args.claimKey.toLowerCase() === claimKey.toLowerCase()
+        ) {
+          return log.transactionHash;
+        }
+      } catch {
+        // Not a Minted log; keep looking.
+      }
     }
   }
 

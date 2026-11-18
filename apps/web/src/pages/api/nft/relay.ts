@@ -16,6 +16,7 @@ import {
   type RelayRequest,
   type RelayResult,
 } from '../../../lib/nft/relayer.ts';
+import { findMintByClaimKey } from '../../../lib/nft/rpc.ts';
 import {
   effectiveStatus,
   getClaim,
@@ -171,15 +172,25 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     return errorResponse('relayer_unavailable', 503, { reason: 'internal' });
   }
 
-  if (result.status === 'sent') {
+  if (result.status === 'sent' || result.status === 'pending') {
     try {
-      await putClaim(kv, { ...record, txHash: result.txHash });
+      // Re-read before merging: a new voucher for the same theme may have
+      // replaced the pending record while the DO was working.
+      const latest = await getClaim(kv, session.ghId, theme);
+      if (
+        latest &&
+        latest.claimKey.toLowerCase() === claimKey.toLowerCase() &&
+        latest.wallet.toLowerCase() === address.toLowerCase()
+      ) {
+        await putClaim(kv, { ...latest, txHash: result.txHash });
+      }
     } catch {
       // The tx is already sent; confirm can still recover from the hash.
     }
     return jsonResponse({
       ok: true,
       gasless: true,
+      pending: result.status === 'pending',
       txHash: result.txHash,
     });
   }
@@ -188,10 +199,55 @@ export const POST: APIRoute = async ({ request, url, cookies }) => {
     return errorResponse('sold_out', 409);
   }
 
+  if (result.status === 'invalid_deadline') {
+    return errorResponse('invalid_deadline', 400);
+  }
+
+  if (result.status === 'invalid_signature') {
+    return errorResponse('invalid_signature', 401);
+  }
+
   if (result.status === 'already_claimed') {
-    return errorResponse('already_claimed', 409, {
-      txHash: result.txHash,
-    });
+    if (result.txHash) {
+      return jsonResponse({
+        ok: true,
+        gasless: true,
+        recovered: true,
+        txHash: result.txHash,
+      });
+    }
+
+    // The DO may have lost its idempotency record (or the mint came from a
+    // manual retry). Recover the hash from recent Minted logs so the client
+    // can still confirm instead of being stuck on a pending record.
+    const recovered = await findMintByClaimKey(
+      config,
+      address,
+      theme,
+      claimKey
+    ).catch(() => null);
+    if (recovered) {
+      try {
+        const latest = await getClaim(kv, session.ghId, theme);
+        if (
+          latest &&
+          latest.claimKey.toLowerCase() === claimKey.toLowerCase() &&
+          latest.wallet.toLowerCase() === address.toLowerCase()
+        ) {
+          await putClaim(kv, { ...latest, txHash: recovered });
+        }
+      } catch {
+        // confirm still works from the returned hash.
+      }
+      return jsonResponse({
+        ok: true,
+        gasless: true,
+        recovered: true,
+        txHash: recovered,
+      });
+    }
+
+    return errorResponse('already_claimed', 409);
   }
 
   return errorResponse('relayer_unavailable', 503, {

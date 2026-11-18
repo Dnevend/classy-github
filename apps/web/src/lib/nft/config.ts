@@ -155,22 +155,38 @@ export const loadNftConfig = (): NftConfig => {
     throw new NftConfigError([], ['NFT_MINT_MODE']);
   }
 
-  const parseGweiCap = (name: string, value: string | undefined, fallback: string): bigint => {
+  const parseGweiCap = (
+    name: string,
+    value: string | undefined,
+    fallback: string
+  ): bigint => {
     if (!value) return parseGwei(fallback);
     const numeric = Number(value);
     if (!Number.isFinite(numeric) || numeric <= 0 || numeric > 1000) {
       throw new NftConfigError([], [name]);
     }
-    return parseGwei(value);
+    try {
+      return parseGwei(value);
+    } catch {
+      throw new NftConfigError([], [name]);
+    }
   };
 
-  const parseEtherCap = (name: string, value: string | undefined, fallback: string): bigint => {
+  const parseEtherCap = (
+    name: string,
+    value: string | undefined,
+    fallback: string
+  ): bigint => {
     if (!value) return parseEther(fallback);
     const numeric = Number(value);
     if (!Number.isFinite(numeric) || numeric <= 0) {
       throw new NftConfigError([], [name]);
     }
-    return parseEther(value);
+    try {
+      return parseEther(value);
+    } catch {
+      throw new NftConfigError([], [name]);
+    }
   };
 
   const maxFeePerGasWei = parseGweiCap('NFT_MAX_FEE_GWEI', NFT_MAX_FEE_GWEI, '0.1');

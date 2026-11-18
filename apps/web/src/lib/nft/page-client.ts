@@ -72,6 +72,7 @@ interface ConfirmResponse {
 interface RelayResponse {
   ok: true;
   gasless: true;
+  pending?: boolean;
   txHash: Hex;
 }
 
@@ -797,9 +798,7 @@ export const initClaim = async (): Promise<void> => {
             return;
           } else if (
             error instanceof ApiError &&
-            (error.code === 'relayer_unavailable' ||
-              error.status === 429 ||
-              error.status === 503)
+            error.code === 'relayer_unavailable'
           ) {
             // Sponsored gas is best-effort; the voucher is still valid for
             // the self-pay path.

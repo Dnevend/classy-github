@@ -88,6 +88,14 @@
       "to": "0x3D71fE731aF566bc6462c81D47B088CFAa59aa14",
       "txHash": "0xee98370959e4f67fd1fc913fa1dd92d49ef2776b80683b136d143a74187bfc4f",
       "path": "nft-relay-smoke.ts / production wrangler dev (DO v2)"
+    },
+    {
+      "tokenId": 6638,
+      "theme": "tui",
+      "serial": 2,
+      "to": "0x7B182E375EB1995C89497A05f80719E73DF7Eeac",
+      "txHash": "0x3f96c09363490a433e04c570a0d3c806b0bc9eb9653608b94f1e02128a916a5b",
+      "path": "nft-relay-smoke.ts after verifier High fixes"
     }
   ]
 }

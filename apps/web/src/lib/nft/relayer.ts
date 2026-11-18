@@ -1,5 +1,7 @@
 import { DurableObject } from 'cloudflare:workers';
 import {
+  BaseError,
+  TransactionNotFoundError,
   createWalletClient,
   encodeFunctionData,
   http,
@@ -11,8 +13,9 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { loadNftConfig } from './config.ts';
 import { NFT_ABI } from './contract.ts';
 import { revertNameOf } from './error-chain.ts';
-import { chainFor, nftPublicClient } from './rpc.ts';
+import { chainFor, getReceipt, nftPublicClient } from './rpc.ts';
 import { isTheme, type Theme } from './types.ts';
+import { verifyMintVoucher } from './voucher.ts';
 
 export interface RelayRequest {
   to: Address;
@@ -25,8 +28,12 @@ export interface RelayRequest {
 
 export type RelayResult =
   | { status: 'sent'; txHash: Hex }
+  /** Signed and at least attempted; the tx may still be in flight. */
+  | { status: 'pending'; txHash: Hex }
   | { status: 'already_claimed'; txHash?: Hex }
   | { status: 'sold_out' }
+  | { status: 'invalid_deadline' }
+  | { status: 'invalid_signature' }
   | {
       status: 'unavailable';
       reason: 'disabled' | 'balance' | 'budget' | 'gas_cap';
@@ -34,16 +41,19 @@ export type RelayResult =
   | { status: 'retry_later'; reason: string };
 
 interface RelayRecord {
-  status: 'sending' | 'sent' | 'failed';
+  status: 'sending' | 'sent';
   txHash: Hex;
   raw: Hex;
   nonce: number;
+  createdAt: number;
   updatedAt: number;
 }
 
 const RELAY_OBJECT_NAME = 'mint-relayer';
 const GAS_LIMIT_MULTIPLIER = 12n;
 const GAS_LIMIT_DIVISOR = 10n;
+/** Give up on a signed-but-never-seen tx after this long and start over. */
+const STALE_TX_MS = 10 * 60_000;
 
 const allowed = (request: RelayRequest): boolean =>
   /^0x[0-9a-fA-F]{40}$/.test(request.to) &&
@@ -137,28 +147,71 @@ export class MintRelayer extends DurableObject {
       return { status: 'unavailable', reason: 'disabled' };
     }
 
+    if (
+      !(await verifyMintVoucher({
+        signerAddress: config.signerAddress,
+        chainId: config.chainId,
+        verifyingContract: config.contractAddress,
+        voucher: {
+          to: request.to,
+          theme: request.theme,
+          claimKey: request.claimKey,
+          deadline: request.deadline,
+        },
+        signature: request.signature,
+      }))
+    ) {
+      return { status: 'invalid_signature' };
+    }
+
     const publicClient = nftPublicClient(config);
     const key = `relay:${request.claimKey.toLowerCase()}`;
     const record = await this.ctx.storage.get<RelayRecord>(key);
 
-    // Idempotency: a previous attempt already produced a hash. Re-broadcast
-    // the raw tx if it never landed, otherwise hand the same hash back.
+    // Idempotency: a previous attempt already produced a hash. Never report a
+    // reverted/failed record as sent, or the claim would be stuck on a dead
+    // hash forever. Re-broadcast only while the raw tx is still plausible.
     if (record) {
-      const settled = await this.hasSettled(publicClient, record.txHash);
-      if (settled) return { status: 'sent', txHash: record.txHash };
-
-      try {
-        await publicClient.sendRawTransaction({
-          serializedTransaction: record.raw,
-        });
-        await this.ctx.storage.put(key, {
-          ...record,
-          status: 'sent',
-          updatedAt: Date.now(),
-        } satisfies RelayRecord);
+      const receipt = await getReceipt(config, record.txHash).catch(() => null);
+      if (receipt?.status === 'success') {
         return { status: 'sent', txHash: record.txHash };
-      } catch {
-        return { status: 'sent', txHash: record.txHash };
+      }
+      if (receipt?.status === 'reverted') {
+        // The nonce was consumed and the claim was not minted; start over.
+        await this.ctx.storage.delete(key);
+      } else {
+        const known = await this.transactionKnown(publicClient, record.txHash);
+        const stale = Date.now() - record.createdAt > STALE_TX_MS;
+        if (known === false && stale) {
+          await this.ctx.storage.delete(key);
+        } else {
+          try {
+            await publicClient.sendRawTransaction({
+              serializedTransaction: record.raw,
+            });
+            await this.ctx.storage.put(key, {
+              ...record,
+              status: 'sent',
+              updatedAt: Date.now(),
+            } satisfies RelayRecord);
+            return { status: 'pending', txHash: record.txHash };
+          } catch {
+            // A rejection here is ambiguous (nonce used, already known, RPC
+            // hiccup). Report the hash and let confirm decide; falling back to
+            // self-pay now could race a tx that is already mining.
+            const retried = await getReceipt(config, record.txHash).catch(
+              () => null
+            );
+            if (retried?.status === 'success') {
+              return { status: 'sent', txHash: record.txHash };
+            }
+            if (retried?.status === 'reverted') {
+              await this.ctx.storage.delete(key);
+            } else {
+              return { status: 'pending', txHash: record.txHash };
+            }
+          }
+        }
       }
     }
 
@@ -213,8 +266,12 @@ export class MintRelayer extends DurableObject {
       if (revert === 'ClaimAlreadyUsed') {
         return { status: 'already_claimed' };
       }
+      if (revert === 'Expired') return { status: 'invalid_deadline' };
+      if (revert === 'InvalidSignature') {
+        return { status: 'invalid_signature' };
+      }
       console.warn('[classy nft] relay simulation failed:', revert ?? 'unknown');
-      return { status: 'retry_later', reason: 'simulation' };
+      return { status: 'retry_later', reason: revert ?? 'simulation' };
     }
 
     const gasLimit = (gas * GAS_LIMIT_MULTIPLIER) / GAS_LIMIT_DIVISOR;
@@ -269,6 +326,7 @@ export class MintRelayer extends DurableObject {
       txHash,
       raw,
       nonce,
+      createdAt: Date.now(),
       updatedAt: Date.now(),
     };
 
@@ -281,17 +339,35 @@ export class MintRelayer extends DurableObject {
       const message =
         error instanceof Error ? error.message.toLowerCase() : 'unknown';
       if (
-        !message.includes('already known') &&
-        !message.includes('nonce too low') &&
-        !message.includes('already imported')
+        message.includes('already known') ||
+        message.includes('already imported')
       ) {
+        // In the mempool already; treat as accepted.
+      } else if (message.includes('nonce too low')) {
+        // The nonce is consumed; the tx may be mined but the receipt lags.
+        const receipt = await getReceipt(config, txHash).catch(() => null);
+        if (receipt?.status === 'reverted') {
+          await this.ctx.storage.delete(key);
+          return { status: 'retry_later', reason: 'reverted' };
+        }
+        if (!receipt) {
+          // Do not let the caller fall back to self-pay here: it could race a
+          // tx that is already mining.
+          await this.ctx.storage.put(key, {
+            ...next,
+            updatedAt: Date.now(),
+          } satisfies RelayRecord);
+          return { status: 'pending', txHash };
+        }
+      } else {
+        console.warn('[classy nft] relay broadcast failed:', message);
+        // Ambiguous network/node failure. Keep the record and hand the hash
+        // back so confirm can resolve it; a self-pay mint could duplicate.
         await this.ctx.storage.put(key, {
           ...next,
-          status: 'failed',
           updatedAt: Date.now(),
         } satisfies RelayRecord);
-        console.warn('[classy nft] relay broadcast failed:', message);
-        return { status: 'retry_later', reason: 'broadcast' };
+        return { status: 'pending', txHash };
       }
     }
 
@@ -304,15 +380,22 @@ export class MintRelayer extends DurableObject {
     return { status: 'sent', txHash };
   }
 
-  private async hasSettled(
+  private async transactionKnown(
     client: ReturnType<typeof nftPublicClient>,
     txHash: Hex
-  ): Promise<boolean> {
+  ): Promise<boolean | null> {
     try {
-      const receipt = await client.getTransactionReceipt({ hash: txHash });
-      return receipt.status === 'success';
-    } catch {
-      return false;
+      await client.getTransaction({ hash: txHash });
+      return true;
+    } catch (error) {
+      if (error instanceof TransactionNotFoundError) return false;
+      if (
+        error instanceof BaseError &&
+        error.walk((cause) => cause instanceof TransactionNotFoundError)
+      ) {
+        return false;
+      }
+      return null;
     }
   }
 }
