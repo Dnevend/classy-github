@@ -1,0 +1,18 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "status": "awaiting-faucet",
+  "contract": null,
+  "deployer": "0xD9A7EA7Ca388ABEdB77DD0EaF32041832B288dd7",
+  "signer": "0xBe8cb1834DE5b56DFD04E863dfc6fFe83231835f",
+  "relayer": "0x61Ca67B424a03082e755415b9F3ec057F6feFeAb",
+  "images": {
+    "mac": "ipfs://bafkreiek6jozh6funpf3jhhognaf26js6ktfahpcbycpwgmscbm6adpg3y",
+    "nes": "ipfs://bafkreiauzqjoxj4u6jg72qs2o6tspzhyxyc4znfz6wv3kcfbplrr2l43tq",
+    "win98": "ipfs://bafkreigjv5mitwkorydxjnbvydhxqwyvic5h66nyezagsapa6kakkujuda",
+    "tui": "ipfs://bafkreiapbvqto7zouqn5lcwkmonu6vacc5wewmrewrz2emwrrbrw4uodi4"
+  },
+  "contractURI": "ipfs://QmUv4adwChceCvsqLkeiaYY7MGmJqRLBUJWiFSSQNsdfmo",
+  "createdAt": "2026-11-18",
+  "note": "Public addresses and CIDs only. Secrets live in contracts/.env (gitignored)."
+}
