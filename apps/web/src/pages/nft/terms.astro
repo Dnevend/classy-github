@@ -1,0 +1,60 @@
+---
+import NftLayout from '../../layouts/NftLayout.astro';
+import { getNftCopy } from '../../lib/nft/copy.ts';
+import { getLegalCopy } from '../../lib/nft/legal.ts';
+import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
+import { siteOrigin } from '../../lib/site.ts';
+
+export const prerender = false;
+
+const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
+const copy = getNftCopy(locale);
+const legal = getLegalCopy(locale);
+const page = legal.terms;
+const origin = siteOrigin(Astro.url);
+
+let config = null;
+try {
+  config = loadNftConfig();
+} catch (error) {
+  if (!(error instanceof NftConfigError)) throw error;
+}
+---
+
+<NftLayout
+  title={`${page.title} — ClassyGit Pass`}
+  description={page.lead}
+  locale={locale}
+  canonical={`${origin}/nft/terms`}
+  image={`${origin}/nft/contact-sheet.png`}
+  robots="index, follow"
+  contract={config?.contractAddress ?? null}
+  chainId={config?.chainId}
+>
+  <section class="nft-section" style="margin-top: 40px">
+    <p class="nft-eyebrow">ClassyGit Pass / {page.title}</p>
+    <h1 class="nft-title nft-title--claim">{page.title}</h1>
+    <p class="nft-lead">{page.lead}</p>
+    <p class="nft-note">{page.updated}</p>
+
+    <div class="nft-legal">
+      {
+        page.sections.map((section) => (
+          <section>
+            <h2 class="nft-section__title">{section.title}</h2>
+            {section.body.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </section>
+        ))
+      }
+    </div>
+
+    <div class="nft-actions" style="margin-top: 28px">
+      <a class="nft-button" href="/nft">{legal.back}</a>
+      <a class="nft-button is-secondary" href="/nft/privacy">
+        {legal.privacy.title}
+      </a>
+    </div>
+  </section>
+</NftLayout>

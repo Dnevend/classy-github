@@ -1,0 +1,282 @@
+---
+import NftLayout from '../../layouts/NftLayout.astro';
+import ThemeCard from '../../components/nft/ThemeCard.astro';
+import { getNftCopy } from '../../lib/nft/copy.ts';
+import { CLASSY_FORK_URL, CLASSY_REPO_URL } from '../../lib/nft/links.ts';
+import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
+import { THEME_NAMES, type Theme } from '../../lib/nft/types.ts';
+import { siteOrigin } from '../../lib/site.ts';
+
+export const prerender = false;
+
+const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
+const copy = getNftCopy(locale);
+const origin = siteOrigin(Astro.url);
+const errorCode = Astro.url.searchParams.get('error');
+const errorText = errorCode
+  ? ((copy.errors as Record<string, string>)[errorCode] ??
+    copy.errors.unknown)
+  : null;
+
+let config = null;
+try {
+  config = loadNftConfig();
+} catch (error) {
+  if (!(error instanceof NftConfigError)) throw error;
+}
+
+const cards = [
+  {
+    theme: 0 as Theme,
+    name: 'mac',
+    title: copy.cards.mac.title,
+    line: copy.cards.mac.line,
+  },
+  {
+    theme: 1 as Theme,
+    name: 'nes',
+    title: copy.cards.nes.title,
+    line: copy.cards.nes.line,
+  },
+  {
+    theme: 2 as Theme,
+    name: 'win98',
+    title: copy.cards.win98.title,
+    line: copy.cards.win98.line,
+  },
+  {
+    theme: 3 as Theme,
+    name: 'tui',
+    title: copy.cards.tui.title,
+    line: copy.cards.tui.line,
+  },
+];
+
+const title =
+  locale === 'zh'
+    ? 'ClassyGit Pass — 四个主题，一个 GitHub'
+    : 'ClassyGit Pass — Four themes. One GitHub.';
+
+const pageData = {
+  locale,
+  copy,
+  chainId: config?.chainId ?? 84532,
+  contract: config?.contractAddress ?? null,
+};
+
+const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
+---
+
+<NftLayout
+  title={title}
+  description={copy.hero.lead}
+  locale={locale}
+  canonical={`${origin}/nft`}
+  image={`${origin}/nft/contact-sheet.png`}
+  robots="index, follow"
+  contract={config?.contractAddress ?? null}
+  chainId={config?.chainId}
+>
+  {
+    errorText && (
+      <div class="nft-banner" role="alert">
+        {errorText}{' '}
+        <a href="/api/nft/oauth/start">{copy.common.retry}</a>
+        {errorCode === 'no_config' && (
+          <>
+            {' · '}
+            <a
+              href={CLASSY_FORK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.common.create}
+            </a>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  <section class="nft-hero">
+    <div>
+      <p class="nft-eyebrow">{copy.hero.eyebrow}</p>
+      <h1 class="nft-title">{copy.hero.title}</h1>
+      <p class="nft-lead">{copy.hero.lead}</p>
+      <div class="nft-actions">
+        <a class="nft-button" href="/nft/claim">{copy.hero.cta}</a>
+        <a class="nft-button is-secondary" href="#rules">
+          {copy.hero.secondary}
+        </a>
+      </div>
+    </div>
+
+    <aside class="nft-hero__meta" aria-label={copy.stats.edition}>
+      <dl style="margin: 0">
+        <div class="nft-meta-row">
+          <dt>{copy.hero.asideSeries}</dt>
+          <dd>01–04 / 04</dd>
+        </div>
+        <div class="nft-meta-row">
+          <dt>{copy.hero.asideEdition}</dt>
+          <dd>8,848</dd>
+        </div>
+        <div class="nft-meta-row">
+          <dt>{copy.hero.asideChain}</dt>
+          <dd>{copy.hero.base}</dd>
+        </div>
+        <div class="nft-meta-row">
+          <dt>{copy.hero.asidePrice}</dt>
+          <dd>{copy.hero.free}</dd>
+        </div>
+        <div class="nft-meta-row">
+          <dt>{copy.stats.minted}</dt>
+          <dd data-total-minted>—</dd>
+        </div>
+        <div class="nft-meta-row">
+          <dt>{copy.stats.remaining}</dt>
+          <dd data-total-remaining>—</dd>
+        </div>
+      </dl>
+      <p class="nft-session-line" data-session-line hidden></p>
+    </aside>
+  </section>
+
+  <section class="nft-section" id="cards">
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.hero.eyebrow}</h2>
+      <p class="nft-section__note">{copy.hero.total}</p>
+    </div>
+
+    <div class="nft-grid">
+      {
+        cards.map((card) => (
+          <ThemeCard
+            theme={card.theme}
+            title={card.title}
+            line={card.line}
+            cta={copy.cardMeta.claim}
+            status={copy.cardMeta.available}
+            mode="link"
+            href={`/nft/claim?theme=${card.name}`}
+          />
+        ))
+      }
+    </div>
+
+    <div class="nft-stats">
+      {
+        THEME_NAMES.map((name) => (
+          <div class="nft-stat" data-stat-theme={name}>
+            <span class="nft-stat__value" data-stat-remaining>
+              —
+            </span>
+            <span class="nft-stat__label">
+              {copy.stats.remaining} · {name.toUpperCase()}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="nft-section" data-recent-section hidden>
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.recent.title}</h2>
+      <span class="nft-section__note">{copy.recent.note}</span>
+    </div>
+    <div class="nft-recent" data-recent-list></div>
+    <p class="nft-note" data-recent-empty hidden>{copy.recent.empty}</p>
+  </section>
+
+  <section class="nft-section" data-session-section hidden>
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.progress.title}</h2>
+      <a class="nft-section__note" href="/nft/claim">
+        {copy.progress.manage} →
+      </a>
+    </div>
+    <div class="nft-progress" aria-hidden="true">
+      {
+        THEME_NAMES.map((name) => (
+          <span
+            class="nft-progress__segment"
+            data-session-segment
+            data-theme={name}
+            data-state="empty"
+          />
+        ))
+      }
+    </div>
+    <div class="nft-progress__meta" style="margin-top: 8px">
+      <span data-session-count>0 / 4</span>
+      <span data-session-note>{copy.progress.none}</span>
+    </div>
+  </section>
+
+  <section class="nft-section" id="how">
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.how.title}</h2>
+      <span class="nft-section__note">01 — 04</span>
+    </div>
+    <div class="nft-steps">
+      {
+        copy.how.steps.map((step, index) => (
+          <article class="nft-step">
+            <span class="nft-step__index">0{index + 1}</span>
+            <h3 class="nft-step__title">{copy.how.titles[index]}</h3>
+            <p class="nft-step__text">{step}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="nft-section" id="rules">
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.rules.title}</h2>
+      <span class="nft-section__note">2212 × 4</span>
+    </div>
+    <ol class="nft-rules">
+      {
+        copy.rules.items.map((item, index) => (
+          <li class="nft-rule">
+            <span class="nft-rule__num">0{index + 1}</span>
+            <span class="nft-rule__text">{item}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="nft-note" style="margin-top: 14px">
+      <a href={CLASSY_REPO_URL} target="_blank" rel="noopener noreferrer">
+        {copy.rules.support}
+      </a>
+    </p>
+
+    <div class="nft-faq">
+      <h3 class="nft-section__title" style="margin: 24px 0 0">
+        {copy.faq.title}
+      </h3>
+      {
+        copy.faq.items.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <script
+    type="application/json"
+    id="nft-page-data"
+    set:html={dataJson}
+  />
+
+  <script>
+    import { initLanding } from '../../lib/nft/page-client.ts';
+    initLanding().catch(() => undefined);
+  </script>
+</NftLayout>

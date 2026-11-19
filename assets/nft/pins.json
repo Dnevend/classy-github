@@ -1,0 +1,26 @@
+{
+  "mac": {
+    "cid": "bafkreiek6jozh6funpf3jhhognaf26js6ktfahpcbycpwgmscbm6adpg3y",
+    "uri": "ipfs://bafkreiek6jozh6funpf3jhhognaf26js6ktfahpcbycpwgmscbm6adpg3y"
+  },
+  "nes": {
+    "cid": "bafkreiauzqjoxj4u6jg72qs2o6tspzhyxyc4znfz6wv3kcfbplrr2l43tq",
+    "uri": "ipfs://bafkreiauzqjoxj4u6jg72qs2o6tspzhyxyc4znfz6wv3kcfbplrr2l43tq"
+  },
+  "win98": {
+    "cid": "bafkreigjv5mitwkorydxjnbvydhxqwyvic5h66nyezagsapa6kakkujuda",
+    "uri": "ipfs://bafkreigjv5mitwkorydxjnbvydhxqwyvic5h66nyezagsapa6kakkujuda"
+  },
+  "tui": {
+    "cid": "bafkreiapbvqto7zouqn5lcwkmonu6vacc5wewmrewrz2emwrrbrw4uodi4",
+    "uri": "ipfs://bafkreiapbvqto7zouqn5lcwkmonu6vacc5wewmrewrz2emwrrbrw4uodi4"
+  },
+  "contactSheet": {
+    "cid": "bafkreig3ivartiw6s4nmkxnqpz42hfm43bwhksrr3ebv66m4aixkapzdya",
+    "uri": "ipfs://bafkreig3ivartiw6s4nmkxnqpz42hfm43bwhksrr3ebv66m4aixkapzdya"
+  },
+  "contractURI": {
+    "cid": "QmUv4adwChceCvsqLkeiaYY7MGmJqRLBUJWiFSSQNsdfmo",
+    "uri": "ipfs://QmUv4adwChceCvsqLkeiaYY7MGmJqRLBUJWiFSSQNsdfmo"
+  }
+}

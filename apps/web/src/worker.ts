@@ -4,6 +4,8 @@ import { isAiBot } from './lib/ai-bots.ts';
 import { enforceRateLimits } from './lib/rate-limit.ts';
 import { withSecurityHeaders } from './lib/security-headers.ts';
 
+export { MintRelayer } from './lib/nft/relayer.ts';
+
 /**
  * 每个用户一个 Durable Object，做原子计数。
  *

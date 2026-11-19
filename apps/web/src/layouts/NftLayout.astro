@@ -1,0 +1,160 @@
+---
+import Seo from '../components/Seo.astro';
+import { getNftCopy, type NftLocale } from '../lib/nft/copy.ts';
+import { CLASSY_REPO_URL } from '../lib/nft/links.ts';
+import { siteOrigin } from '../lib/site.ts';
+import '../styles/global.css';
+import '../styles/nft.css';
+
+interface Props {
+  title: string;
+  description: string;
+  locale: NftLocale;
+  canonical?: string;
+  image?: string;
+  robots?: string;
+  contract?: string | null;
+  chainId?: number;
+}
+
+const {
+  title,
+  description,
+  locale,
+  canonical,
+  image,
+  robots = 'index, follow',
+  contract = null,
+  chainId = 84532,
+} = Astro.props as Props;
+
+const copy = getNftCopy(locale);
+const origin = siteOrigin(Astro.url);
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isOverview = path === '/nft';
+const isClaim = path === '/nft/claim';
+const isCards = path === '/nft/cards';
+const langParams = new URLSearchParams(Astro.url.searchParams);
+langParams.set('lang', locale === 'zh' ? 'en' : 'zh');
+const langHref = `${Astro.url.pathname}?${langParams.toString()}`;
+const explorerBase =
+  chainId === 8453 ? 'https://basescan.org' : 'https://sepolia.basescan.org';
+const contractUrl = contract ? `${explorerBase}/address/${contract}` : null;
+const sourcifyUrl = contract
+  ? `https://sourcify.dev/#/lookup/${contract}`
+  : null;
+const shortContract = contract
+  ? `${contract.slice(0, 6)}…${contract.slice(-4)}`
+  : null;
+---
+
+<!doctype html>
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/svg+xml" href="/github.svg" />
+    <link
+      rel="preload"
+      href="/fonts/fusion-pixel-12px-zh_hans.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/press-start-2p.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta name="theme-color" content="#f2f2f2" />
+    <meta name="color-scheme" content="light" />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical ?? `${origin}/nft`}
+      image={image ?? `${origin}/nft/contact-sheet.png`}
+      robots={robots}
+      type="website"
+    />
+  </head>
+
+  <body class="nft-body" data-locale={locale}>
+    <header class="nft-header">
+      <div class="nft-header__inner">
+        <a class="nft-brand" href="/nft" aria-label="ClassyGit Pass">
+          <span class="nft-mark" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </span>
+          <span>CLASSYGIT PASS</span>
+        </a>
+
+        <nav class="nft-nav" aria-label="Primary">
+          <a href="/nft" aria-current={isOverview ? 'page' : undefined}>
+            {copy.nav.overview}
+          </a>
+          <a href="/nft/claim" aria-current={isClaim ? 'page' : undefined}>
+            {copy.nav.claim}
+          </a>
+          <a href="/nft/cards" aria-current={isCards ? 'page' : undefined}>
+            {copy.nav.cards}
+          </a>
+          <a
+            href={CLASSY_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {copy.nav.github} ↗
+          </a>
+          <a
+            class="nft-lang"
+            href={langHref}
+            hreflang={locale === 'zh' ? 'en' : 'zh-CN'}
+            lang={locale === 'zh' ? 'en' : 'zh-CN'}
+          >
+            {copy.nav.lang}
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="nft-main">
+      <slot />
+    </main>
+
+    <footer class="nft-footer">
+      <div>
+        <p style="margin: 0 0 6px">{copy.footer.disclaimer}</p>
+        <p style="margin: 0">{copy.footer.series}</p>
+      </div>
+      <div class="nft-footer__links">
+        {
+          contractUrl && shortContract && (
+            <a href={contractUrl} target="_blank" rel="noopener noreferrer">
+              {copy.footer.contract} {shortContract} ↗
+            </a>
+          )
+        }
+        {
+          sourcifyUrl && (
+            <a href={sourcifyUrl} target="_blank" rel="noopener noreferrer">
+              {copy.footer.sourcify} ↗
+            </a>
+          )
+        }
+        <a
+          href={CLASSY_REPO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {copy.footer.repo} ↗
+        </a>
+        <a href="/nft#rules">{copy.footer.rules}</a>
+        <a href="/nft/privacy">{copy.footer.privacy}</a>
+        <a href="/nft/terms">{copy.footer.terms}</a>
+      </div>
+    </footer>
+  </body>
+</html>

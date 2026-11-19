@@ -29,7 +29,7 @@ export const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
  * - api 自己管理响应头。
  * robots / sitemap / contrib / card 已进入 ROUTE_TTL。
  */
-export const SKIP_CACHE = /^\/(?:setup|random|api)(?:\/|$)/;
+export const SKIP_CACHE = /^\/(?:setup|random|api|nft)(?:\/|$)/;
 
 export const ttlFor = (pathname: string): number | undefined =>
   ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];

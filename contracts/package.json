@@ -1,0 +1,13 @@
+{
+  "name": "@classy/contracts",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "fmt": "forge fmt"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "5.4.0"
+  }
+}
