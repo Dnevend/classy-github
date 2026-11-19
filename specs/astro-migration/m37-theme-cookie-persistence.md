@@ -29,7 +29,8 @@ M34 让用户页在没有 `?theme=` / cookie 时使用 `classy.config.json` 的
 就写入 `classy_theme` cookie。之后首页、网站环和其他用户页都按 cookie
 渲染，直到访客用 `?theme=` 或页脚主动切换。
 
-- 沿用现有 `classy_theme`，不新增 cookie；1 年、`Path=/`、`SameSite=Lax`。
+- 沿用现有 `classy_theme`，不新增 cookie；1 年、`Path=/`、`HttpOnly`、
+  `SameSite=Lax`，https 下带 `Secure`。
 - 配置为 `mac` 的页面不写 cookie：mac 是全局默认，写进去会把访客锁在
   mac，第一次访问 Dnevend 后就看不到其他站点的 nes / tui 主题。
 - `preview=1` 的同源预览 iframe 不写 cookie（middleware 的
@@ -85,15 +86,15 @@ config smoke 覆盖：
 
 ```text
 /qiangsi（冷缓存）          200  data-theme=nes  x-classy-cache=MISS
-                              Set-Cookie: classy_theme=nes; Max-Age=31536000; Path=/; SameSite=Lax
+                              Set-Cookie: classy_theme=nes; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax
 /qiangsi（无 cookie，热缓存） 200  data-theme=nes  x-classy-cache=HIT
-                              Set-Cookie: classy_theme=nes; Max-Age=31536000; Path=/; SameSite=Lax
+                              Set-Cookie: classy_theme=nes; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax
 /（带 nes cookie）           200  data-theme=nes  x-classy-cache=MISS  无 Set-Cookie
 /woo0ood（带 nes cookie）    200  data-theme=nes  x-classy-cache=MISS  无 Set-Cookie
 /Dnevend（无 cookie，配置 mac） 200 data-theme=mac  无 Set-Cookie
 /octocat（无 cookie，无配置） 200  data-theme=mac  无 Set-Cookie
 /qiangsi?preview=1 + same-origin 200 data-theme=nes 无 Set-Cookie，无缓存头
-/qiangsi?theme=tui          200  data-theme=tui  Set-Cookie: classy_theme=tui
+/qiangsi?theme=tui          200  data-theme=tui  Set-Cookie: classy_theme=tui; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax
 /（带 tui cookie）           200  data-theme=tui  无 Set-Cookie
 /qiangsi?theme=amiga        200  data-theme=nes  Set-Cookie: classy_theme=nes
 /setup                      200  data-theme=mac  无 Set-Cookie
