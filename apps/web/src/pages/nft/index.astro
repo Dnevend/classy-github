@@ -2,7 +2,7 @@
 import NftLayout from '../../layouts/NftLayout.astro';
 import ThemeCard from '../../components/nft/ThemeCard.astro';
 import { getNftCopy } from '../../lib/nft/copy.ts';
-import { CLASSY_FORK_URL } from '../../lib/nft/links.ts';
+import { CLASSY_FORK_URL, CLASSY_REPO_URL } from '../../lib/nft/links.ts';
 import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
 import { THEME_NAMES, type Theme } from '../../lib/nft/types.ts';
 import { siteOrigin } from '../../lib/site.ts';
@@ -247,6 +247,12 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
         ))
       }
     </ol>
+
+    <p class="nft-note" style="margin-top: 14px">
+      <a href={CLASSY_REPO_URL} target="_blank" rel="noopener noreferrer">
+        {copy.rules.support}
+      </a>
+    </p>
 
     <div class="nft-faq">
       <h3 class="nft-section__title" style="margin: 24px 0 0">

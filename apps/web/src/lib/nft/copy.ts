@@ -69,12 +69,12 @@ const en = {
   },
   rules: {
     title: 'Rules',
+    support: 'Like the project? Star or fork it on GitHub ↗',
     items: [
       'Free to claim. No payment, no hidden mint price.',
       'One card per theme per GitHub account, up to four cards total.',
       'Your GitHub account must be at least 90 days old.',
       'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
-      'Stars and forks are welcome.',
       'Cards are transferable ERC-721 tokens on Base.',
       'The NFT metadata does not contain your GitHub identity.',
       'This is a commemorative collectible, not an investment. It has no promised financial value.',
@@ -345,12 +345,12 @@ const zh: NftCopy = {
   },
   rules: {
     title: '规则',
+    support: '喜欢这个项目？去 GitHub 点个 star 或 fork ↗',
     items: [
       '免费领取，没有隐藏的 mint 价格。',
       '每个 GitHub 账号每个主题一张，最多四张。',
       'GitHub 账号需要满 90 天。',
       '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
-      '欢迎 star 和 fork 支持项目。',
       '卡片是 Base 上可转让的 ERC-721。',
       'NFT 元数据不包含你的 GitHub 身份。',
       '这是纪念收藏品，不是投资品，不承诺任何金融价值。',
