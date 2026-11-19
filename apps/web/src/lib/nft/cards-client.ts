@@ -137,6 +137,11 @@ export const initCardsPage = async (): Promise<void> => {
 
   const load = async (rawAddress: string): Promise<void> => {
     const address = rawAddress.trim();
+    list.replaceChildren();
+    if (empty) empty.hidden = true;
+    if (truncated) truncated.hidden = true;
+    if (count) count.textContent = '';
+
     if (!ADDRESS.test(address)) {
       setStatus(copy.cardsPage.invalid, 'error');
       return;
@@ -145,9 +150,6 @@ export const initCardsPage = async (): Promise<void> => {
 
     setBusy(true);
     setStatus(copy.cardsPage.loading, 'info');
-    if (empty) empty.hidden = true;
-    if (truncated) truncated.hidden = true;
-    if (count) count.textContent = '';
 
     try {
       const response = await fetch(
@@ -192,6 +194,15 @@ export const initCardsPage = async (): Promise<void> => {
       const url = new URL(window.location.href);
       url.searchParams.set('address', address);
       window.history.replaceState({}, '', url);
+
+      // The language link is rendered server-side; keep its address query in
+      // sync when the lookup happens without a full navigation.
+      const langLink = $<HTMLAnchorElement>('.nft-lang');
+      if (langLink) {
+        const target = new URL(langLink.href, window.location.href);
+        target.searchParams.set('address', address);
+        langLink.href = target.toString();
+      }
     } catch {
       setStatus(copy.cardsPage.error, 'error');
     } finally {

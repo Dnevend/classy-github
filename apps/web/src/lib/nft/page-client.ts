@@ -309,7 +309,14 @@ const applyRecent = (copy: NftCopy, data: RecentResponse | null): void => {
   const empty = $<HTMLElement>('[data-recent-empty]');
   if (!section || !list) return;
 
-  const mints = data?.mints ?? [];
+  // An RPC failure must not look like an empty chain.
+  if (!data) {
+    section.hidden = true;
+    list.replaceChildren();
+    return;
+  }
+
+  const mints = data.mints ?? [];
   section.hidden = false;
   list.replaceChildren();
   if (empty) empty.hidden = mints.length > 0;
@@ -347,38 +354,50 @@ const applyRecent = (copy: NftCopy, data: RecentResponse | null): void => {
   }
 };
 
+const settle = async <T>(promise: Promise<T>): Promise<T | null> => {
+  try {
+    return await promise;
+  } catch {
+    return null;
+  }
+};
+
 export const initLanding = async (): Promise<void> => {
   const data = readPageData();
   if (!data) return;
   const copy = data.copy;
 
-  const [statsResult, sessionResult, recentResult] = await Promise.allSettled([
-    requestJson<StatsResponse>('/api/nft/stats'),
-    requestJson<SessionResponse>('/api/nft/session'),
-    requestJson<RecentResponse>('/api/nft/recent'),
-  ]);
+  // Start all requests together, but render stats before the slower
+  // session/recent calls finish.
+  const statsPromise = requestJson<StatsResponse>('/api/nft/stats');
+  const sessionPromise = requestJson<SessionResponse>('/api/nft/session');
+  const recentPromise = requestJson<RecentResponse>('/api/nft/recent');
 
-  const stats =
-    statsResult.status === 'fulfilled' ? statsResult.value : null;
-  const session =
-    sessionResult.status === 'fulfilled' ? sessionResult.value : null;
-  const recent =
-    recentResult.status === 'fulfilled' ? recentResult.value : null;
-
+  const stats = await settle(statsPromise);
   applyStats(stats);
-  applyRecent(copy, recent);
+  for (let i = 0; i < THEME_NAMES.length; i += 1) {
+    updateLandingCard(
+      copy,
+      i as Theme,
+      undefined,
+      stats?.remaining[i] ?? null
+    );
+  }
 
+  const session = await settle(sessionPromise);
   const claims = session?.claims ?? [];
   const claimByTheme = new Map(claims.map((claim) => [claim.theme, claim]));
 
-  for (let i = 0; i < THEME_NAMES.length; i += 1) {
-    const theme = i as Theme;
-    updateLandingCard(
-      copy,
-      theme,
-      claimByTheme.get(theme),
-      stats?.remaining[i] ?? null
-    );
+  if (session?.authenticated) {
+    for (let i = 0; i < THEME_NAMES.length; i += 1) {
+      const theme = i as Theme;
+      updateLandingCard(
+        copy,
+        theme,
+        claimByTheme.get(theme),
+        stats?.remaining[i] ?? null
+      );
+    }
   }
 
   const sessionLine = $('[data-session-line]');
@@ -425,6 +444,8 @@ export const initLanding = async (): Promise<void> => {
     if (sessionLine) sessionLine.hidden = true;
     if (sessionSection) sessionSection.hidden = true;
   }
+
+  applyRecent(copy, await settle(recentPromise));
 };
 
 const txKey = (ghId: number, theme: Theme): string =>

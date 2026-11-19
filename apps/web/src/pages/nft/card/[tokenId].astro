@@ -25,15 +25,20 @@ try {
 }
 
 const tokenId = Number(Astro.params.tokenId);
-const token =
-  config && Number.isSafeInteger(tokenId) && tokenId > 0
-    ? await readToken(config, tokenId).catch(() => null)
-    : null;
+let token: Awaited<ReturnType<typeof readToken>> = null;
+let tokenError = false;
+if (config && Number.isSafeInteger(tokenId) && tokenId > 0) {
+  try {
+    token = await readToken(config, tokenId);
+  } catch {
+    tokenError = true;
+  }
+}
 
-if (config && !token) {
-  Astro.response.status = 404;
-} else if (configError) {
+if (configError || tokenError) {
   Astro.response.status = 503;
+} else if (config && !token) {
+  Astro.response.status = 404;
 }
 
 const theme = token?.location.theme;
@@ -147,14 +152,26 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
               {copy.share.claim}
             </a>
           </div>
-          <p class="nft-note" data-share-note hidden>{copy.share.copied}</p>
+          <p
+            class="nft-note"
+            data-share-note
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            {copy.share.copied}
+          </p>
         </div>
       </section>
     ) : (
       <section class="nft-section" style="margin-top: 40px">
         <p class="nft-eyebrow">ClassyGit Pass</p>
         <h1 class="nft-title nft-title--claim">
-          {configError ? copy.errors.not_configured : copy.share.notFound}
+          {configError
+            ? copy.errors.not_configured
+            : tokenError
+              ? copy.errors.rpc_unavailable
+              : copy.share.notFound}
         </h1>
         <div class="nft-actions" style="margin-top: 20px">
           <a class="nft-button" href="/nft">{copy.share.back}</a>
@@ -168,17 +185,40 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
   <script>
     const button = document.querySelector<HTMLButtonElement>('[data-share]');
     const note = document.querySelector<HTMLElement>('[data-share-note]');
+    const copiedText = note?.textContent ?? '';
+
+    const copyLink = async (url: string): Promise<boolean> => {
+      try {
+        await navigator.clipboard.writeText(url);
+        if (note) {
+          note.textContent = copiedText;
+          note.hidden = false;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     button?.addEventListener('click', async () => {
       const url = window.location.href;
-      try {
-        if (navigator.share) {
+      if (navigator.share) {
+        try {
           await navigator.share({ title: document.title, url });
           return;
+        } catch (error) {
+          // A dismissed share sheet is not an error.
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            return;
+          }
         }
-        await navigator.clipboard.writeText(url);
-        if (note) note.hidden = false;
-      } catch {
-        // User dismissed the share sheet; no action needed.
+      }
+      if (!(await copyLink(url))) {
+        // Clipboard needs a secure context; show the URL for manual copy.
+        if (note) {
+          note.textContent = url;
+          note.hidden = false;
+        }
       }
     });
   </script>

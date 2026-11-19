@@ -1,5 +1,6 @@
 import {
   BaseError,
+  ContractFunctionRevertedError,
   TransactionReceiptNotFoundError,
   createPublicClient,
   decodeEventLog,
@@ -325,7 +326,16 @@ export const readToken = async (
       args: [BigInt(tokenId)],
     })) as Address;
     return { owner, location };
-  } catch {
-    return null;
+  } catch (error) {
+    // Only a decoded `ownerOf` revert means the token does not exist. RPC
+    // failures (HTTP 429, -32005, timeouts) must surface as 503, not 404.
+    if (error instanceof ContractFunctionRevertedError) return null;
+    if (
+      error instanceof BaseError &&
+      error.walk((cause) => cause instanceof ContractFunctionRevertedError)
+    ) {
+      return null;
+    }
+    throw error;
   }
 };
