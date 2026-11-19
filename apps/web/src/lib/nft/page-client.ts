@@ -442,6 +442,50 @@ export const initLanding = async (): Promise<void> => {
   }
 
   applyRecent(copy, await recentPromise);
+
+  // The overview is often left open in another tab while the user claims.
+  // Refresh the live counters when the page regains focus or becomes visible.
+  let refreshing = false;
+  let lastRefresh = Date.now();
+  const refreshLive = async (): Promise<void> => {
+    if (refreshing) return;
+    const now = Date.now();
+    if (now - lastRefresh < 5_000) return;
+    lastRefresh = now;
+    refreshing = true;
+    try {
+      const [nextStats, nextRecent] = await Promise.all([
+        settle(requestJson<StatsResponse>('/api/nft/stats')),
+        settle(requestJson<RecentResponse>('/api/nft/recent')),
+      ]);
+
+      if (nextStats) {
+        applyStats(nextStats);
+        for (let i = 0; i < THEME_NAMES.length; i += 1) {
+          const theme = i as Theme;
+          updateLandingCard(
+            copy,
+            theme,
+            claimByTheme.get(theme),
+            nextStats.remaining[i] ?? null
+          );
+        }
+      }
+
+      if (nextRecent) applyRecent(copy, nextRecent);
+    } catch {
+      // Keep the last good values; the next focus will try again.
+    } finally {
+      refreshing = false;
+    }
+  };
+
+  window.addEventListener('focus', () => {
+    void refreshLive();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void refreshLive();
+  });
 };
 
 const txKey = (ghId: number, theme: Theme): string =>

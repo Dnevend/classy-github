@@ -296,7 +296,7 @@ const zh: NftCopy = {
     cta: '验证 GitHub 并领取',
     secondary: '查看规则',
     asideSeries: '系列',
-    asideEdition: '总量',
+    asideEdition: '发行量',
     asideChain: '链',
     asidePrice: '价格',
     free: '免费',
@@ -306,7 +306,7 @@ const zh: NftCopy = {
   stats: {
     minted: '已领取',
     remaining: '剩余',
-    edition: '总量',
+    edition: '发行量',
     total: '总计',
     chain: '链',
   },
