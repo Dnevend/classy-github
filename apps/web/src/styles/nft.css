@@ -587,6 +587,15 @@
   padding: 1px 4px;
 }
 
+.nft-rule__link {
+  white-space: nowrap;
+  border-bottom: 1px solid currentColor;
+}
+
+.nft-rule__link:hover {
+  text-decoration: none;
+}
+
 .nft-faq {
   margin-top: 24px;
   border-top: 1px solid var(--nft-line);

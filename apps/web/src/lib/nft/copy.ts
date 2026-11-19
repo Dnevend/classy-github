@@ -71,11 +71,15 @@ const en = {
   rules: {
     title: 'Rules',
     support: 'Like the project? Star or fork it on GitHub ↗',
+    fork: 'Fork it now',
     items: [
       'Free to claim. No payment, no hidden mint price.',
       'One card per theme per GitHub account, up to four cards total.',
       'Your GitHub account must be at least 90 days old.',
-      'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
+      {
+        text: 'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
+        link: 'fork',
+      },
       'Cards are transferable ERC-721 tokens on Base.',
       'The NFT metadata does not contain your GitHub identity.',
       'This is a commemorative collectible, not an investment. It has no promised financial value.',
@@ -271,11 +275,13 @@ export type NftCopy = {
       : string;
 };
 
+type NftRuleItem = string | { text: string; link: 'fork' };
+
 type NftCopyObject<T> = {
   [K in keyof T]: T[K] extends readonly { q: string; a: string }[]
     ? readonly { q: string; a: string }[]
-    : T[K] extends readonly unknown[]
-      ? readonly string[]
+    : T[K] extends readonly NftRuleItem[]
+      ? readonly NftRuleItem[]
       : T[K] extends object
         ? NftCopyObject<T[K]>
         : string;
@@ -352,11 +358,15 @@ const zh: NftCopy = {
   rules: {
     title: '规则',
     support: '喜欢这个项目？去 GitHub 点个 star 或 fork ↗',
+    fork: 'Fork 立刻创建',
     items: [
       '免费领取，没有隐藏的 mint 价格。',
       '每个 GitHub 账号每个主题一张，最多四张。',
       'GitHub 账号需要满 90 天。',
-      '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
+      {
+        text: '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
+        link: 'fork',
+      },
       '卡片是 Base 上可转让的 ERC-721。',
       'NFT 元数据不包含你的 GitHub 身份。',
       '这是纪念收藏品，不是投资品，不承诺任何金融价值。',

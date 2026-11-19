@@ -11,6 +11,11 @@ export const prerender = false;
 
 const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
 const copy = getNftCopy(locale);
+const rules = copy.rules.items.map((item, index) => ({
+  index,
+  text: typeof item === 'string' ? item : item.text,
+  fork: typeof item !== 'string' && item.link === 'fork',
+}));
 const origin = siteOrigin(Astro.url);
 const errorCode = Astro.url.searchParams.get('error');
 const errorText = errorCode
@@ -239,10 +244,25 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
     </div>
     <ol class="nft-rules">
       {
-        copy.rules.items.map((item, index) => (
+        rules.map((rule) => (
           <li class="nft-rule">
-            <span class="nft-rule__num">0{index + 1}</span>
-            <span class="nft-rule__text">{item}</span>
+            <span class="nft-rule__num">0{rule.index + 1}</span>
+            <span class="nft-rule__text">
+              {rule.text}
+              {rule.fork && (
+                <>
+                  {' '}
+                  <a
+                    class="nft-rule__link"
+                    href={CLASSY_FORK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {copy.rules.fork} ↗
+                  </a>
+                </>
+              )}
+            </span>
           </li>
         ))
       }
