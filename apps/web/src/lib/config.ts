@@ -69,7 +69,7 @@ export interface ResolvedConfig {
     enabled: boolean;
   };
   seo: {
-    /** 是否允许搜索引擎收录这个人的主页 */
+    /** 是否允许搜索引擎收录这个人的主页；已认领站点默认开启 */
     index: boolean;
   };
 }
@@ -104,7 +104,8 @@ export const DEFAULT_CONFIG: ResolvedConfig = {
   guestbook: { gistId: null },
   webring: { enabled: true },
   discover: { enabled: true },
-  seo: { index: false },
+  // 已认领站点默认进搜索；未认领页面由 configured 门控拦在外面。
+  seo: { index: true },
 };
 
 const isHttpUrl = (value: string) => /^https?:\/\/[^\s]+$/i.test(value);

@@ -2,7 +2,7 @@
  * 「可索引用户」注册表（Workers KV）。
  *
  * sitemap 需要知道有哪些用户页，但用户名集合是无限的、也不能枚举 GitHub，
- * 所以在渲染时把选择被索引的用户记下来（`seo.index: true`）。
+ * 所以在渲染时把已认领、且没有关闭 `seo.index` 的用户记下来。
  */
 
 import { env } from 'cloudflare:workers';

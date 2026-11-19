@@ -80,14 +80,19 @@ if (Astro.locals.localeChoice === 'auto') {
 const t = createTranslator(Astro.locals.locale);
 
 
-// 只有显式开启 seo.index 的用户才进 sitemap。
+// 只有已认领、且没有显式关闭 seo.index 的站点才进 sitemap；
+// 未认领页面即使配置默认收录也保持 noindex。
 // 配置读取失败时不要动注册表，否则 GitHub 抖动会把用户误删。
 //
 // 注册表写入（尤其是 syncSite 的快照重建）不参与首屏渲染，
 // 有 waitUntil 时放后台；本地 dev 没有 waitUntil 时保持 await。
 const syncRegistry = async () => {
   if (data && reliable) {
-    await syncIndexableUser(usersKv(), data.userinfo.login, config.seo.index);
+    await syncIndexableUser(
+      usersKv(),
+      data.userinfo.login,
+      config.seo.index && configured
+    );
   }
 
   if (data) {
@@ -167,6 +172,7 @@ const seo = data
         userinfo: data.userinfo,
         origin,
         indexable: config.seo.index,
+        configured,
         theme: themeName,
         defaultTheme: config.theme,
       }),

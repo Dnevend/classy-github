@@ -77,7 +77,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 - **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片，以及 `#gh-dark-mode-only` / `<picture>` 深浅色主题图片（按站点主题只显示一张）；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
 - **Gist 就是博客**：Gist 描述写 `classy.blog.标题 #标签`（类型名用英文字母），自动变成分类、标题和标签；支持多文件、阅读时间、按月归档和标签筛选。
 - **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主设默认主题，访客用 `?theme=` 或页脚切换；首次进入用户页会记住该站的非 `mac` 默认主题。
-- **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；SEO 默认关闭，`seo.index: true` 才允许收录。
+- **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；已认领站点默认允许搜索引擎收录（`seo.index: false` 可关闭），未认领页面保持 `noindex`。
 - **留言簿和网站环**：用公开 Gist 评论当留言板；页脚「上一站 / 随机 / 下一站」连接其他复古站点。
 - **快、干净、可替换**：服务端直出 HTML，边缘缓存；四套主题在 375px 宽下无横向溢出；不存 IP、不做用户画像，只有主题和语言两个功能性 cookie；README / Gist / 留言走白名单清洗，`javascript:` 链接会被丢弃。
 
@@ -164,7 +164,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
   "guestbook": { "gistId": null },
   "webring": { "enabled": true },
   "discover": { "enabled": true },
-  "seo": { "index": false }
+  "seo": { "index": true }
 }
 ```
 
@@ -181,7 +181,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | 加页脚链接 / 近况 | `"links": [{ "title": "Blog", "href": "https://…" }]`、`"now": { "books": ["…"] }` |
 | 开留言簿 | `"guestbook": { "gistId": "…" }` |
 | 参加网站环 / 随机推荐 | `"webring": { "enabled": true }`、`"discover": { "enabled": true }` |
-| 允许搜索引擎收录 | `"seo": { "index": true }` |
+| 关闭搜索引擎收录 | `"seo": { "index": false }` |
 | 导航加外链 | `"nav": { "extra": [{ "title": "…", "href": "https://…" }] }`（mac / win98 主题） |
 
 > `profile.gists` 是主页右栏的「最近 Gist」预览；`gists` 是 Gist 描述规则，两者不是一回事。
@@ -222,7 +222,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
   "guestbook": { "gistId": null },
   "webring": { "enabled": true },
   "discover": { "enabled": true },
-  "seo": { "index": false }
+  "seo": { "index": true }
 }
 ```
 
@@ -247,7 +247,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | `guestbook.gistId` | `null` | 公开且属于你的 Gist ID（20–40 位十六进制）；`null` 关闭留言簿。 |
 | `webring.enabled` | `true` | 是否加入网站环；成员满 3 个后页脚出现「上一站 / 随机 / 下一站」。 |
 | `discover.enabled` | `true` | 是否允许出现在 `/random` 随机推荐里。 |
-| `seo.index` | `false` | 是否允许搜索引擎收录主页；访客切到其他主题时保持 `noindex`。 |
+| `seo.index` | `true` | 是否允许搜索引擎收录主页；只对已认领站点生效，访客切到其他主题时保持 `noindex`。 |
 
 **配置写错了会怎样**：每一段独立校验，坏的那段回退默认值，其他段照常生效；`links` 逐条校验，坏链接只丢一条；未知字段直接丢弃；主题名写错回退 `mac`，语言写错回退 `en`。
 
@@ -310,9 +310,9 @@ GitHub                          Cloudflare
 </details>
 
 <details>
-<summary><strong>为什么默认不被搜索引擎收录？</strong></summary>
+<summary><strong>默认会被搜索引擎收录吗？</strong></summary>
 
-用户页是无限生成的薄内容，默认不收录，避免污染搜索。想收录就设 `seo.index: true`；默认主题页面输出 `index`，访客切到其他主题时保持 `noindex`。
+会，但只限已认领的站点：配置里 `owner` 指向你自己、并且有 `classy.config.json` 时，主页默认输出 `index, follow` 并进入 sitemap。没有自己配置的页面（直接访问任意 GitHub 用户名）保持 `noindex`，避免把陌生人的资料页批量变成薄内容。不想被收录就设 `seo.index: false`；访客切到其他主题时始终 `noindex`。
 </details>
 
 <details>

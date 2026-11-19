@@ -84,8 +84,9 @@ const messages = {
     'setup.webring': 'Join the webring',
     'setup.discover': 'Allow random discovery',
     'setup.seoTitle': 'SEO',
-    'setup.seo': 'Allow search engines to index my profile',
-    'setup.seoHint': "Only the site's configured theme is indexable; other theme URLs stay noindex.",
+    'setup.seo': 'Allow search engines to index my profile (claimed sites only)',
+    'setup.seoHint':
+      "On by default. Only claimed sites with their own classy.config.json are indexed; unclaimed pages stay noindex. Only the site's configured theme is indexable.",
     'setup.output': 'classy.config.json',
     'setup.copy': 'Copy JSON',
     'setup.copied': 'Copied',
@@ -289,8 +290,9 @@ const messages = {
     'setup.webring': '加入网站环',
     'setup.discover': '允许随机推荐',
     'setup.seoTitle': '搜索收录',
-    'setup.seo': '允许搜索引擎收录主页',
-    'setup.seoHint': '只有站主配置的主题可索引，其他主题 URL 始终 noindex。',
+    'setup.seo': '允许搜索引擎收录主页（仅已认领站点）',
+    'setup.seoHint':
+      '默认开启。只有已认领（有自己的 classy.config.json）的站点会被收录；未认领页面保持 noindex。只有站主配置的主题可索引，其他主题 URL 始终 noindex。',
     'setup.output': 'classy.config.json',
     'setup.copy': '复制 JSON',
     'setup.copied': '已复制',

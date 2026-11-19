@@ -33,7 +33,7 @@ import {
 } from './lib/i18n.ts';
 
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '43';
+const CACHE_VERSION = '44';
 
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
@@ -46,10 +46,10 @@ const isDocumentPath = (pathname: string) =>
   ) && !/^\/badge\/[^/]+\.svg$/i.test(pathname);
 
 /**
- * v42 → v43 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
+ * v43 → v44 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
  * 有效期就是 stale 的 24 小时，过了这个窗口删掉即可。
  */
-const PREVIOUS_CACHE_VERSIONS = ['42', '41', '40', '39'];
+const PREVIOUS_CACHE_VERSIONS = ['43', '42', '41', '40'];
 
 const serveStaleAnyVersion = async (
   key: Request,

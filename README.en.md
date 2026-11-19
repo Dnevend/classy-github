@@ -77,7 +77,7 @@ It is for people who want a homepage without maintaining a server, people who al
 - **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting, relative images, and GitHub's light/dark theme variants (`#gh-dark-mode-only` / `<picture>`), showing only the one that matches the site theme; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
 - **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default; visitors switch with `?theme=` or the footer. Opening a profile remembers that site's non-`mac` default theme.
-- **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. SEO is off by default; `seo.index: true` opts in.
+- **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. Claimed sites are indexed by search engines by default (`seo.index: false` opts out); unclaimed pages stay `noindex`.
 - **Guestbook and webring**: use a public Gist's comments as a guestbook, and hop between retro sites with “previous / random / next” footer links.
 - **Fast, clean and replaceable**: server-rendered HTML with edge caching; all four themes fit at 375px wide; no IPs stored, no profiling, only two functional cookies (theme and language); READMEs, Gists and comments go through an allowlist sanitizer, so `javascript:` links are dropped.
 
@@ -164,7 +164,7 @@ Minimal working config:
   "guestbook": { "gistId": null },
   "webring": { "enabled": true },
   "discover": { "enabled": true },
-  "seo": { "index": false }
+  "seo": { "index": true }
 }
 ```
 
@@ -181,7 +181,7 @@ Common changes:
 | Add footer links / fill the Now card | `"links": [{ "title": "Blog", "href": "https://…" }]`, `"now": { "books": ["…"] }` |
 | Enable the guestbook | `"guestbook": { "gistId": "…" }` |
 | Join the webring / allow random discovery | `"webring": { "enabled": true }`, `"discover": { "enabled": true }` |
-| Allow search indexing | `"seo": { "index": true }` |
+| Opt out of search indexing | `"seo": { "index": false }` |
 | Add header links | `"nav": { "extra": [{ "title": "…", "href": "https://…" }] }` (mac / win98 themes) |
 
 > `profile.gists` controls the “Recent Gists” preview on the profile. `gists` controls the Gist description rule. They are not the same thing.
@@ -222,7 +222,7 @@ Common changes:
   "guestbook": { "gistId": null },
   "webring": { "enabled": true },
   "discover": { "enabled": true },
-  "seo": { "index": false }
+  "seo": { "index": true }
 }
 ```
 
@@ -247,7 +247,7 @@ Common changes:
 | `guestbook.gistId` | `null` | A public Gist ID owned by you (20–40 hex characters); `null` disables the guestbook. |
 | `webring.enabled` | `true` | Join the webring; footer links appear once the ring has at least 3 members. |
 | `discover.enabled` | `true` | Allow `/random` to recommend your site. |
-| `seo.index` | `false` | Allow search engines to index the profile; theme variants chosen by a visitor stay `noindex`. |
+| `seo.index` | `true` | Allow search engines to index the profile (claimed sites only); theme variants chosen by a visitor stay `noindex`. |
 
 **If the config is wrong**: each section is validated independently, so a broken section falls back to defaults and the rest still applies; `links` are validated one by one, so a bad link is dropped; unknown fields are discarded; an unknown theme falls back to `mac`, and an unknown language falls back to `en`.
 
@@ -310,9 +310,9 @@ Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an a
 </details>
 
 <details>
-<summary><strong>Why is SEO off by default?</strong></summary>
+<summary><strong>Are profiles indexed by search engines by default?</strong></summary>
 
-Profile pages are infinitely generated thin content, so indexing is opt-in to avoid polluting search results. Set `seo.index: true` to allow it; the default theme page is `index`, while theme variants chosen by a visitor stay `noindex`.
+Yes, but only claimed sites: when `owner` points at you and there is a `classy.config.json`, the profile outputs `index, follow` and enters the sitemap by default. Pages without their own config (visiting any GitHub username directly) stay `noindex`, so strangers' profiles are not turned into thin pages in bulk. Set `seo.index: false` to opt out; theme variants chosen by a visitor always stay `noindex`.
 </details>
 
 <details>

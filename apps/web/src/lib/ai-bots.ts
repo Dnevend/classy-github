@@ -6,8 +6,8 @@
  * `/repo/.../src/...` 导致的）。
  *
  * robots.txt 只是声明，Worker 里的 UA 拦截才是执行；两边共用这份名单。
- * 这里不包含 Googlebot / bingbot 等搜索爬虫，避免误伤主动开启
- * `seo.index` 的用户页。
+ * 这里不包含 Googlebot / bingbot 等搜索爬虫，避免误伤默认允许
+ * 搜索引擎收录的已认领用户页。
  */
 export const AI_BOT_AGENTS = [
   'GPTBot',

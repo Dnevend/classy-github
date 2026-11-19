@@ -15,7 +15,7 @@ type Case = { name: string; run: () => void | Promise<void> };
 
 const cases: Case[] = [
   {
-    name: '空配置 → 全部默认值，主页默认不索引',
+    name: '空配置 → 全部默认值，主页默认索引',
     run: () => {
       const { config, issues } = parseConfig({});
       assert.deepEqual(issues, []);
@@ -24,7 +24,7 @@ const cases: Case[] = [
       assert.equal(config.profile.gists.showCount, 6);
       assert.equal(config.profile.gists.visible, true);
       assert.equal(config.profile.contrib.visible, true);
-      assert.equal(config.seo.index, false);
+      assert.equal(config.seo.index, true);
       assert.deepEqual(config.links, []);
       assert.equal(config.gists.prefix, 'classy');
     },
@@ -43,7 +43,7 @@ const cases: Case[] = [
       assert.equal(config.profile.repos.showCount, 3);
       assert.equal(config.profile.repos.visible, true);
       assert.equal(config.profile.gists.showCount, 6);
-      assert.equal(config.seo.index, false);
+      assert.equal(config.seo.index, true);
     },
   },
   {
@@ -109,9 +109,10 @@ const cases: Case[] = [
     },
   },
   {
-    name: 'seo.index: true 生效',
+    name: 'seo.index 默认开启，显式 false 可关闭',
     run: () => {
-      assert.equal(parseConfig({ seo: { index: true } }).config.seo.index, true);
+      assert.equal(parseConfig({}).config.seo.index, true);
+      assert.equal(parseConfig({ seo: { index: false } }).config.seo.index, false);
     },
   },
   {
@@ -179,7 +180,7 @@ const cases: Case[] = [
     },
   },
   {
-    name: 'seo.index 贯通到 robots meta',
+    name: 'seo.index 与认领状态贯通到 robots meta',
     run: () => {
       const userinfo = {
         login: 'demo',
@@ -203,6 +204,16 @@ const cases: Case[] = [
         indexable: config.seo.index,
       });
       assert.equal(on.robots, 'index, follow');
+
+      // 未认领页面即使配置默认开启也不索引
+      const unclaimed = seoForProfile({
+        user: 'demo',
+        userinfo,
+        origin: 'https://x.test',
+        indexable: true,
+        configured: false,
+      });
+      assert.equal(unclaimed.robots, 'noindex, follow');
     },
   },
   {
@@ -441,6 +452,16 @@ const cases: Case[] = [
       assert.equal(
         seoForProfile({ ...base, theme: 'mac', defaultTheme: 'mac' }).robots,
         'index, follow'
+      );
+      // 未认领站点即使 indexable=true 也不索引
+      assert.equal(
+        seoForProfile({
+          ...base,
+          theme: 'mac',
+          defaultTheme: 'mac',
+          configured: false,
+        }).robots,
+        'noindex, follow'
       );
       // 访客切到别的主题，即使 seo.index=true 也不索引
       assert.equal(

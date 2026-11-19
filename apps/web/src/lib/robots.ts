@@ -24,8 +24,8 @@ Disallow: /setup
 Disallow: /claim/
 Disallow: /nft/claim
 
-# 用户主页默认 noindex（薄内容），只有 classy.config.json 里
-# 显式设置 seo.index: true 的用户才会进 sitemap
+# 已认领站点默认进 sitemap（seo.index 默认为 true）；
+# 未认领页面和显式关闭 seo.index 的站点不会出现在这里
 Sitemap: ${origin}/sitemap.xml
 `;
 };
