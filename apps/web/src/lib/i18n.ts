@@ -209,6 +209,7 @@ const messages = {
     'landing.placeholder': 'GitHub username',
     'landing.submit': 'View',
     'landing.label': 'GitHub username',
+    'landing.nft': 'NFT',
   },
   zh: {
     'nav.repos': '仓库',
@@ -413,6 +414,7 @@ const messages = {
     'landing.placeholder': 'GitHub 用户名',
     'landing.submit': '查看',
     'landing.label': 'GitHub 用户名',
+    'landing.nft': 'NFT',
   },
 } as const;
 
