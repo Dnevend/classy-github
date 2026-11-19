@@ -441,12 +441,11 @@ export const initLanding = async (): Promise<void> => {
     if (sessionSection) sessionSection.hidden = true;
   }
 
-  applyRecent(copy, await recentPromise);
-
-  // The overview is often left open in another tab while the user claims.
-  // Refresh the live counters when the page regains focus or becomes visible.
+  // Attach the focus handlers before awaiting `recent`: a slow recent call
+  // must not delay live refreshes.
   let refreshing = false;
   let lastRefresh = Date.now();
+  let recentApplied = false;
   const refreshLive = async (): Promise<void> => {
     if (refreshing) return;
     const now = Date.now();
@@ -455,8 +454,16 @@ export const initLanding = async (): Promise<void> => {
     refreshing = true;
     try {
       const [nextStats, nextRecent] = await Promise.all([
-        settle(requestJson<StatsResponse>('/api/nft/stats')),
-        settle(requestJson<RecentResponse>('/api/nft/recent')),
+        settle(
+          requestJson<StatsResponse>('/api/nft/stats', {
+            cache: 'no-store',
+          })
+        ),
+        settle(
+          requestJson<RecentResponse>('/api/nft/recent', {
+            cache: 'no-store',
+          })
+        ),
       ]);
 
       if (nextStats) {
@@ -472,7 +479,10 @@ export const initLanding = async (): Promise<void> => {
         }
       }
 
-      if (nextRecent) applyRecent(copy, nextRecent);
+      if (nextRecent) {
+        recentApplied = true;
+        applyRecent(copy, nextRecent);
+      }
     } catch {
       // Keep the last good values; the next focus will try again.
     } finally {
@@ -486,6 +496,9 @@ export const initLanding = async (): Promise<void> => {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') void refreshLive();
   });
+
+  const initialRecent = await recentPromise;
+  if (!recentApplied) applyRecent(copy, initialRecent);
 };
 
 const txKey = (ghId: number, theme: Theme): string =>
