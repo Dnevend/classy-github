@@ -66,12 +66,12 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ## 你能得到什么
 
-- **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片，以及 `#gh-dark-mode-only` / `<picture>` 深浅色主题图片（按站点主题只显示一张）；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
+- **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
 - **Gist 就是博客**：Gist 描述写 `classy.blog.标题 #标签`（类型名用英文字母），自动变成分类、标题和标签；支持多文件、阅读时间、按月归档和标签筛选。
-- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主在配置里设默认主题，访客用 `?theme=` 或页脚切换。
-- **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；已认领站点默认允许搜索引擎收录（`seo.index: false` 可关闭），未认领页面保持 `noindex`。
+- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主在配置里设默认主题。
+- **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；已认领站点默认允许搜索引擎收录。
 - **留言簿和网站环**：用公开 Gist 评论当留言板；页脚「上一站 / 随机 / 下一站」连接其他复古站点。
-- **快、干净、可替换**：服务端直出 HTML，边缘缓存；四套主题在 375px 宽下无横向溢出；不存 IP、不做用户画像，只有主题和语言两个功能性 cookie；README / Gist / 留言走白名单清洗，`javascript:` 链接会被丢弃。
+- **快、干净、可替换**：服务端直出 HTML，边缘缓存；不存 IP、不做用户画像；内容留在 GitHub，随时可以换一个实例或自建。
 
 <details>
 <summary>全部页面路由</summary>
@@ -133,23 +133,6 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 ## 自定义配置
 
 推荐打开 [`/setup?u=<用户名>`](https://classygit.dev/setup) 填表生成，也可以直接编辑 fork 根目录的 `classy.config.json`。仓库名必须是 `classy-github`，`owner` 必须是你的 GitHub 用户名——保留作者的 `owner` 会被当模板忽略。
-
-最小可用配置：
-
-```json
-{
-  "owner": "your-login",
-  "theme": "mac",
-  "language": "zh",
-  "links": [
-    { "title": "GitHub", "href": "https://github.com/your-login" }
-  ],
-  "guestbook": { "gistId": null },
-  "webring": { "enabled": true },
-  "discover": { "enabled": true },
-  "seo": { "index": true }
-}
-```
 
 常用开关：
 
@@ -290,7 +273,7 @@ GitHub                          Cloudflare
 能。公开 Gist 就是文章，支持 Markdown、代码高亮、标签、归档、阅读时长和 Atom 订阅。只读取公开数据；私有仓库和 secret Gist 不会显示。
 </details>
 
-## 开发与自建
+## 开发
 
 需要 Node 22+ 和 pnpm 9+。
 
@@ -299,16 +282,6 @@ git clone https://github.com/Dnevend/classy-github.git
 cd classy-github
 pnpm install
 pnpm dev            # http://localhost:4321
-```
-
-可选：在 `apps/web/.dev.vars` 写入 `GITHUB_TOKEN=github_pat_xxx`（只读公开仓库，classic PAT 不需要任何 scope），提高 API 配额并启用贡献墙。
-
-自建需要 Cloudflare 账号。先创建 KV 命名空间，再把 `apps/web/wrangler.jsonc` 里的 KV `id`、`SITE_ORIGIN` 和 `routes` 换成自己的：
-
-```bash
-pnpm --filter @classy/web exec wrangler kv namespace create USERS  # 把返回的 id 填进 wrangler.jsonc
-pnpm deploy:web
-cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 ```
 
 提交改动前跑 `pnpm check`、`pnpm test` 和 `pnpm build`。欢迎 Issue 和 PR。

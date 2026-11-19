@@ -66,12 +66,12 @@ It is for people who want a homepage without maintaining a server, people who al
 
 ## What you get
 
-- **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting, relative images, and GitHub's light/dark theme variants (`#gh-dark-mode-only` / `<picture>`), showing only the one that matches the site theme; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
+- **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting and relative images; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
-- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default in the config; visitors switch with `?theme=` or the footer.
-- **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. Claimed sites are indexed by search engines by default (`seo.index: false` opts out); unclaimed pages stay `noindex`.
+- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default in the config.
+- **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. Claimed sites are indexed by search engines by default.
 - **Guestbook and webring**: use a public Gist's comments as a guestbook, and hop between retro sites with “previous / random / next” footer links.
-- **Fast, clean and replaceable**: server-rendered HTML with edge caching; all four themes fit at 375px wide; no IPs stored, no profiling, only two functional cookies (theme and language); READMEs, Gists and comments go through an allowlist sanitizer, so `javascript:` links are dropped.
+- **Fast, clean and replaceable**: server-rendered HTML with edge caching; no IPs stored and no profiling; content stays on GitHub, so you can switch instances or self-host anytime.
 
 <details>
 <summary>All routes</summary>
@@ -133,23 +133,6 @@ Posting a comment requires a GitHub account — it reuses GitHub identity, so th
 ## Configuration
 
 The recommended path is the form builder at [`/setup?u=<username>`](https://classygit.dev/setup); you can also edit `classy.config.json` directly in the root of your fork. The repository name must be `classy-github`, and `owner` must be your GitHub username — if you keep the author's `owner`, the file is treated as a template and ignored.
-
-Minimal working config:
-
-```json
-{
-  "owner": "your-login",
-  "theme": "mac",
-  "language": "en",
-  "links": [
-    { "title": "GitHub", "href": "https://github.com/your-login" }
-  ],
-  "guestbook": { "gistId": null },
-  "webring": { "enabled": true },
-  "discover": { "enabled": true },
-  "seo": { "index": true }
-}
-```
 
 Common changes:
 
@@ -290,7 +273,7 @@ The production instance uses a server-side GitHub token plus edge caching, and b
 Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an archive, reading time and an Atom feed. It only reads public data; private repositories and secret Gists are never shown.
 </details>
 
-## Development and self-hosting
+## Development
 
 Requires Node 22+ and pnpm 9+.
 
@@ -299,16 +282,6 @@ git clone https://github.com/Dnevend/classy-github.git
 cd classy-github
 pnpm install
 pnpm dev            # http://localhost:4321
-```
-
-Optional: add `GITHUB_TOKEN=github_pat_xxx` to `apps/web/.dev.vars` (read-only public repos; a classic PAT with no scopes is enough) to raise the API quota and enable the contribution wall.
-
-Self-hosting needs a Cloudflare account. Create a KV namespace, then replace the KV `id`, `SITE_ORIGIN` and `routes` in `apps/web/wrangler.jsonc` with your own:
-
-```bash
-pnpm --filter @classy/web exec wrangler kv namespace create USERS  # put the returned id into wrangler.jsonc
-pnpm deploy:web
-cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 ```
 
 Before submitting changes, run `pnpm check`, `pnpm test` and `pnpm build`. Issues and PRs are welcome.
