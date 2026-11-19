@@ -64,7 +64,7 @@ const en = {
       'Verify your GitHub account with OAuth. We only read your public profile.',
       'We check that your public classy-github repo has a matching owner in classy.config.json.',
       'Connect an EVM wallet on Base and choose one of the four themes.',
-      'Sign the claim message. The card is minted to your wallet; gas is sponsored when available, otherwise your wallet pays the network fee.',
+      'Sign the claim message. The card is minted to your wallet; gas is paid by the project relayer.',
     ],
   },
   rules: {
@@ -93,7 +93,7 @@ const en = {
       },
       {
         q: 'Who pays the network fee?',
-        a: 'During the beta the project sponsors gas when the relayer is available. If sponsorship is unavailable, your wallet pays the fee, usually a fraction of a cent on Base.',
+        a: 'The project relayer pays the network fee, so you do not need ETH. If the relayer is temporarily unavailable, the claim page will tell you before your wallet pays.',
       },
       {
         q: 'Is this an investment?',
@@ -170,7 +170,7 @@ const en = {
     network: 'Network',
     wrongNetwork: 'Wrong network',
     switchNetwork: 'Switch to Base',
-    fee: 'Gas is sponsored when available; otherwise your wallet pays about $0.01 on Base.',
+    fee: 'Gas is paid by the project relayer; you do not need ETH.',
     action: 'Claim',
     preparing: 'Preparing your claim…',
     signing: 'Waiting for your wallet signature…',
@@ -342,7 +342,7 @@ const zh: NftCopy = {
       '用 GitHub OAuth 验证账号。我们只读公开资料。',
       '检查你的公开 classy-github 仓库，以及 classy.config.json 里的 owner 是否匹配。',
       '在 Base 上连接 EVM 钱包，从四个主题里选一个。',
-      '签署领取消息，卡片会 mint 到你的钱包。有代付时 gas 由项目承担，否则由你的钱包支付网络费。',
+      '签署领取消息，卡片会 mint 到你的钱包；gas 由项目方 relayer 代付。',
     ],
   },
   rules: {
@@ -371,7 +371,7 @@ const zh: NftCopy = {
       },
       {
         q: '网络费谁付？',
-        a: '内测阶段 relayer 可用时由项目代付；代付不可用时由你的钱包支付，Base 上通常不到一分钱。',
+        a: '网络费由项目方 relayer 代付，你不需要持有 ETH。relayer 暂时不可用时，页面会提示，并由你的钱包支付网络费。',
       },
       {
         q: '这是投资吗？',
@@ -447,7 +447,7 @@ const zh: NftCopy = {
     network: '网络',
     wrongNetwork: '网络不对',
     switchNetwork: '切换到 Base',
-    fee: '有代付时 gas 由项目承担；否则由你的钱包支付（Base 上约 $0.01）。',
+    fee: 'Gas 由项目方 relayer 代付，你不需要持有 ETH。',
     action: '领取',
     preparing: '正在准备领取…',
     signing: '等待钱包签名…',
