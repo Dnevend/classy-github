@@ -69,8 +69,10 @@ It is for people who want a homepage without maintaining a server, people who al
 - **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting and relative images; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
 - **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default in the config.
-- **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. Claimed sites are indexed by search engines by default.
-- **Guestbook and webring**: use a public Gist's comments as a guestbook, and hop between retro sites with “previous / random / next” footer links.
+- **Discoverable by default**: your profile is open to search engines, with a sitemap and Atom feed generated for you — search your name and Google or Bing can find your homepage more easily.
+- **A webring that brings real visits**: link up with a circle of independent retro sites, like the old blogrolls. Visitors hop through “previous / random / next” in the footer, and your site gets visits from other members — no platform feed, no algorithm.
+- **Guestbook**: public Gist comments as a guestbook; readers can post with their GitHub account.
+- **Sharing built in**: themed share card with a QR code, 1200×630 OG images and 88×31 badges.
 - **Fast, clean and replaceable**: server-rendered HTML with edge caching; no IPs stored and no profiling; content stays on GitHub, so you can switch instances or self-host anytime.
 
 <details>
@@ -96,11 +98,11 @@ It is for people who want a homepage without maintaining a server, people who al
 
 ## Community
 
-ClassyGit is not a single homepage; it is a ring of retro sites that can visit each other.
+ClassyGit is more than a single homepage: it is a ring of retro sites that can visit each other. A webring works like the old blogrolls — members link to each other, and visitors can follow “previous / random / next” in the footer from one site to the next.
 
 | Feature | What it does | How to enable |
 |---|---|---|
-| Webring | Footer “previous / random / next”, with `/webring` as the directory | On by default, `webring.enabled` |
+| Webring | Independent sites link to and send visitors to each other; “previous / random / next” in the footer | On by default, `webring.enabled` |
 | Random discovery | `/random` jumps to a random site | On by default, `discover.enabled` |
 | Guestbook | Public Gist comments as a guestbook | `guestbook.gistId` |
 | Visitor counter | Footer “{count} visitors”, no IP stored | Automatic after claiming |
@@ -109,7 +111,7 @@ ClassyGit is not a single homepage; it is a ring of retro sites that can visit e
 <details>
 <summary>How to enable the webring and guestbook</summary>
 
-**Webring**: joining adds your site to the `/webring` directory. Once the ring has at least 3 members, the footer shows “← previous / 🎲 / next →”. Set `enabled` to `false` to opt out.
+**Webring**: the old-school blogroll, revived. Joining lists your site in the `/webring` directory and in other members' “previous / next” links; visitors can hop from site to site. Set `enabled` to `false` to opt out.
 
 ```json
 {
