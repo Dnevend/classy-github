@@ -316,7 +316,7 @@ const zh: NftCopy = {
       line: 'README，用一个比特呈现。',
     },
     nes: {
-      title: '你的 GitHub。按下 Start。',
+      title: '你的 GitHub。按下开始。',
       line: 'README，装进卡带。',
     },
     win98: {
@@ -324,7 +324,7 @@ const zh: NftCopy = {
       line: 'README，变成一个窗口。',
     },
     tui: {
-      title: '在提示符下读 README。',
+      title: '在提示符下输入 README。',
       line: 'README，在终端里展开。',
     },
   },
