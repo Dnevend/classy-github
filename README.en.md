@@ -70,7 +70,7 @@ It is for people who want a homepage without maintaining a server, people who al
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
 - **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default in the config.
 - **Discoverable by default**: your profile is open to search engines, with a sitemap and Atom feed generated for you — search your name and Google or Bing can find your homepage more easily.
-- **A webring that brings real visits**: link up with a circle of independent retro sites, like the old blogrolls. Visitors hop through “previous / random / next” in the footer, and your site gets visits from other members — no platform feed, no algorithm.
+- **A webring that brings real visits**: link up with a circle of independent retro sites, like the old blogrolls. Visitors wander from site to site via the footer, and your site gets visits from other members — no platform feed, no algorithm.
 - **Guestbook**: public Gist comments as a guestbook; readers can post with their GitHub account.
 - **Sharing built in**: themed share card with a QR code, 1200×630 OG images and 88×31 badges.
 - **Fast, clean and replaceable**: server-rendered HTML with edge caching; no IPs stored and no profiling; content stays on GitHub, so you can switch instances or self-host anytime.
@@ -98,7 +98,7 @@ It is for people who want a homepage without maintaining a server, people who al
 
 ## Community
 
-ClassyGit is more than a single homepage: it is a ring of retro sites that can visit each other. A webring works like the old blogrolls — members link to each other, and visitors can follow “previous / random / next” in the footer from one site to the next.
+ClassyGit is more than a single homepage: it is a ring of retro sites that can visit each other. A webring works like the old blogrolls — members link to each other, and visitors can follow along from one site to the next.
 
 | Feature | What it does | How to enable |
 |---|---|---|
@@ -127,8 +127,6 @@ ClassyGit is more than a single homepage: it is a ring of retro sites that can v
   "guestbook": { "gistId": "9ec0af30..." }
 }
 ```
-
-Posting a comment requires a GitHub account — it reuses GitHub identity, so there is no extra password to manage. Images and embeds in comments are stripped to avoid tracking pixels.
 
 </details>
 
