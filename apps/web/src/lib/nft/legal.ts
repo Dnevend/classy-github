@@ -33,7 +33,6 @@ const en: LegalCopy = {
         title: 'Eligibility check',
         body: [
           'To confirm that you own a ClassyGit site, we read the public <login>/classy-github repository and its classy.config.json through the GitHub API. The owner field must match your GitHub login.',
-          'Stars, forks and other repositories are not read for eligibility.',
         ],
       },
       {
@@ -143,7 +142,6 @@ const zh: LegalCopy = {
         title: '资格检查',
         body: [
           '为了确认你拥有 ClassyGit 站点，我们通过 GitHub API 读取公开的 <login>/classy-github 仓库及其 classy.config.json，owner 必须与你的 GitHub 登录名一致。',
-          '资格检查不读取 star、fork 或其他仓库。',
         ],
       },
       {
