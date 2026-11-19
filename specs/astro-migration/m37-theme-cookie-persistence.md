@@ -34,7 +34,9 @@ M34 让用户页在没有 `?theme=` / cookie 时使用 `classy.config.json` 的
   mac，第一次访问 Dnevend 后就看不到其他站点的 nes / tui 主题。
 - `preview=1` 的同源预览 iframe 不写 cookie（middleware 的
   `isPreviewRequest` 现有逻辑）。
-- 未配置用户、配置读取失败 / 限流不写 cookie。
+- 未配置用户、配置读取失败（没有旧配置可回退）不写 cookie。限流 / 网络
+  失败时如果回退到 24h 内的旧主题缓存，会按旧主题渲染并写入该旧主题；
+  这是现有 stale 兜底的取舍（见「已知限制」）。
 - 非用户页（`/`、`/webring`、`/setup`、`/badge`、`/og` 等）不读配置、
   不写 cookie。
 - 用户页子路径（`/repos`、`/gists`、`/gist/...`）同样生效。
@@ -109,3 +111,7 @@ config smoke 覆盖：
 - 访客一旦有了主题 cookie，后续访问其他用户页也会保持这个主题，直到主动
   切换；这是「cookie 优先于站主配置」的直接结果。
 - 配置为 mac 的页面不会覆盖访客已有的主题 cookie。
+- 主题缓存有 30 分钟新鲜期 + 24 小时 stale 兜底。站主刚改主题、站点又
+  恰好走 stale 路径时，少数首访者可能把旧主题写进 1 年 cookie；后台
+  刷新完成后新访客会拿到新主题。要彻底避免，需要把 config-loader 的
+  stale 标记一路传到主题解析。

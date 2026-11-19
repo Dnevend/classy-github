@@ -284,7 +284,7 @@ const cases: Case[] = [
     },
   },
   {
-    name: 'middleware 主题接线：配置的非 mac 主题写入 cookie，mac / 未配置不写',
+    name: 'middleware 主题接线：配置的非 mac 主题写入 cookie，mac（含未配置）不写',
     run: async () => {
       const calls: { login: string; fresh: boolean }[] = [];
       const load = async (login: string, fresh: boolean) => {
@@ -308,7 +308,7 @@ const cases: Case[] = [
         { theme: 'mac', persist: false }
       );
 
-      // 未配置用户同样回退 mac，不写 cookie
+      // 未配置用户也回退 mac，不写 cookie（主题层无法区分，行为一致）
       assert.deepEqual(
         await resolveRequestTheme({
           pathname: '/octocat',
