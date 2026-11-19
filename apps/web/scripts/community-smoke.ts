@@ -10,7 +10,10 @@ import { buildDefaultReadme } from '../src/lib/default-readme.ts';
 import { buildAtomFeed } from '../src/lib/feed.ts';
 import { createGistDescriptionParser } from '../src/lib/gist-rule.ts';
 import { isBotRequest } from '../src/lib/hit-counter.ts';
-import { localeFromAcceptLanguage } from '../src/lib/i18n.ts';
+import {
+  localeFromAcceptLanguage,
+  parseAcceptLanguage,
+} from '../src/lib/i18n.ts';
 import { estimateReadingMinutes } from '../src/lib/reading.ts';
 import { collectTagCounts, hasTag } from '../src/lib/tags.ts';
 import {
@@ -108,12 +111,19 @@ const cases: Case[] = [
     },
   },
   {
-    name: '首页语言：Accept-Language 只影响首页',
+    name: '语言偏好：Accept-Language 按 q 值解析',
     run: () => {
       assert.equal(localeFromAcceptLanguage('zh-CN,zh;q=0.9'), 'zh');
       assert.equal(localeFromAcceptLanguage('en-US,en;q=0.9'), 'en');
       assert.equal(localeFromAcceptLanguage('fr-FR,zh;q=0.8'), 'zh');
       assert.equal(localeFromAcceptLanguage(null), 'en');
+
+      // q 值高的优先，不能因为「出现过 zh」就选中文
+      assert.equal(parseAcceptLanguage('en-US,en;q=0.9,zh;q=0.8'), 'en');
+      assert.equal(parseAcceptLanguage('fr-FR,zh;q=0.9,en;q=0.8'), 'zh');
+      assert.equal(parseAcceptLanguage('zh;q=0,en;q=0.5'), 'en');
+      assert.equal(parseAcceptLanguage('*'), null);
+      assert.equal(parseAcceptLanguage(''), null);
     },
   },
   {

@@ -42,6 +42,7 @@ const en: LegalCopy = {
           'Cloudflare KV stores the GitHub numeric id and login, the receiving wallet address, the chosen theme, the claim key and deadline, and after confirmation the token id, serial and transaction hash.',
           'We do not write IP addresses to KV or application logs. Rate-limit counters may use a key derived from the IP for up to 60 seconds inside Cloudflare.',
           'Session and OAuth state cookies are HttpOnly, SameSite=Lax, and expire after 15 and 10 minutes. The NFT pages do not load third-party analytics.',
+          'A functional language cookie (classy_lang) remembers your language preference. It is HttpOnly, SameSite=Lax, and expires after one year.',
         ],
       },
       {
@@ -151,6 +152,7 @@ const zh: LegalCopy = {
           'Cloudflare KV 保存 GitHub 数字 id 与登录名、收款钱包地址、主题、claimKey 与 deadline；确认后保存 tokenId、序号和交易哈希。',
           '我们不把 IP 写入 KV 或应用日志。限流计数器最多在 Cloudflare 内使用基于 IP 的 key 60 秒。',
           'Session 与 OAuth state cookie 为 HttpOnly、SameSite=Lax，分别 15 分钟和 10 分钟过期。NFT 页面不加载第三方分析脚本。',
+          '功能性语言 cookie（classy_lang）用于记住你的语言偏好，HttpOnly、SameSite=Lax，有效期一年。',
         ],
       },
       {

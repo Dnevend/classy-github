@@ -27,7 +27,8 @@ import { resolveRequestTheme } from './lib/request-theme.ts';
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
-  localeFromAcceptLanguage,
+  isLocale,
+  parseAcceptLanguage,
   resolveLocale,
 } from './lib/i18n.ts';
 
@@ -37,6 +38,12 @@ const CACHE_VERSION = '43';
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
   /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
+
+/** 只在 HTML 页面写语言 cookie，避免给 API / 图片 / sitemap 加 Set-Cookie。 */
+const isDocumentPath = (pathname: string) =>
+  !/^\/(?:api|og|card|contrib|sitemap|robots\.txt)(?:\/|$|\.[a-z]+$)/i.test(
+    pathname
+  ) && !/^\/badge\/[^/]+\.svg$/i.test(pathname);
 
 /**
  * v42 → v43 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
@@ -148,7 +155,10 @@ const loadConfigTheme = async (
 /**
  * 主题与语言都在这里解析并参与缓存键：
  *   theme  = ?theme= > cookie > 站主配置的默认主题 > mac
- *   locale = ?lang=  > cookie > auto（auto 由页面按用户配置决定）
+ *   locale = ?lang=  > cookie > Accept-Language > auto
+ *
+ * auto 只表示「没有任何语言信号」：独立页面回退默认语言，
+ * 用户页回退站主配置里的 language。
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url);
@@ -232,10 +242,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
     param: url.searchParams.get('lang'),
     cookie: savedLocale ? savedLocale.value : null,
   });
+  const hasExplicitParam = isLocale(url.searchParams.get('lang'));
+  const hasValidCookie = isLocale(savedLocale?.value);
+  const detectedLocale = parseAcceptLanguage(
+    context.request.headers.get('accept-language')
+  );
+  // ?lang= > cookie > Accept-Language > auto（没有任何语言信号）
+  const localeChoice =
+    locale !== 'auto' ? locale : (detectedLocale ?? 'auto');
 
   context.locals.theme = theme;
-  context.locals.localeChoice = locale;
-  context.locals.locale = locale === 'auto' ? DEFAULT_LOCALE : locale;
+  context.locals.localeChoice = localeChoice;
+  context.locals.locale =
+    localeChoice === 'auto' ? DEFAULT_LOCALE : localeChoice;
 
   // 预览不能改写访客的持久主题/语言，也不能命中 HTML 缓存
   if (persistTheme && !isPreview) {
@@ -248,8 +267,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
-  if (locale !== 'auto' && !isPreview) {
-    context.cookies.set(LOCALE_COOKIE, locale, {
+  // 第一次访问按 Accept-Language 落 cookie；显式 ?lang= 始终覆盖。
+  // 已有 cookie 时不再被浏览器语言改写，尊重访客的选择。
+  if (
+    !isPreview &&
+    localeChoice !== 'auto' &&
+    (hasExplicitParam || !hasValidCookie) &&
+    isDocumentPath(url.pathname)
+  ) {
+    context.cookies.set(LOCALE_COOKIE, localeChoice, {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
       sameSite: 'lax',
@@ -281,14 +307,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (ttl === undefined) return next();
 
-  // 首页 / 网站环没有站主配置，按浏览器语言渲染；缓存键必须带上它，
+  // 语言现在统一由 middleware 解析；缓存键必须带上最终语言，
   // 否则中文访客会把中文页缓存给英文访客。
-  // 用户页的 auto 由站主配置决定，不按访客浏览器语言分片。
-  const standaloneLocale = url.pathname === '/' || url.pathname === '/webring';
-  const cacheLocale =
-    standaloneLocale && locale === 'auto'
-      ? localeFromAcceptLanguage(context.request.headers.get('accept-language'))
-      : locale;
+  // localeChoice === 'auto' 只发生在完全没有语言信号时，用户页会回退站主配置。
+  const cacheLocale = localeChoice;
 
   const page = pageParam.value;
   const tag = tagParam.value;

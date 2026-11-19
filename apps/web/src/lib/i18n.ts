@@ -467,9 +467,46 @@ export const localeFromConfig = (value: unknown): Locale =>
   isLocale(value) ? value : DEFAULT_LOCALE;
 
 /**
- * 首页没有站点主配置，首次访问按浏览器语言决定中/英。
- * 用户页不用这个：它们听站主在 classy.config.json 里设置的 language。
+ * 解析 Accept-Language，按 q 值从高到低选第一个支持的 locale。
+ * 只支持 en / zh；没有可用语言（缺失、只有 `*`、全部 q=0）时返回 null。
+ */
+export const parseAcceptLanguage = (
+  value: string | null | undefined
+): Locale | null => {
+  if (!value) return null;
+
+  const parts = value.split(',');
+  let best: { locale: Locale; q: number; index: number } | null = null;
+
+  for (let index = 0; index < parts.length; index += 1) {
+    const [rawTag, ...params] = parts[index].split(';');
+    const tag = rawTag.trim().toLowerCase();
+    if (!tag) continue;
+
+    const base = tag.split('-')[0];
+    if (base !== 'en' && base !== 'zh') continue;
+
+    let q = 1;
+    for (const param of params) {
+      const [key, rawValue] = param.split('=');
+      if (key?.trim().toLowerCase() !== 'q') continue;
+      const parsed = Number(rawValue?.trim());
+      q = Number.isFinite(parsed) ? parsed : 0;
+    }
+    if (q <= 0 || q > 1) continue;
+
+    if (!best || q > best.q || (q === best.q && index < best.index)) {
+      best = { locale: base, q, index };
+    }
+  }
+
+  return best?.locale ?? null;
+};
+
+/**
+ * 浏览器语言偏好：没有可用语言时回退到默认语言。
+ * 想要区分「没有偏好」和「默认值」，直接用 parseAcceptLanguage。
  */
 export const localeFromAcceptLanguage = (
   value: string | null | undefined
-): Locale => (/^zh\b/i.test(value ?? '') || /,\s*zh\b/i.test(value ?? '') ? 'zh' : DEFAULT_LOCALE);
+): Locale => parseAcceptLanguage(value) ?? DEFAULT_LOCALE;

@@ -230,7 +230,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 |---|---|---|
 | `owner` | `null` | 配置归属的 GitHub 用户名。与当前用户不一致时整份配置按模板忽略；为空或非法时按旧配置接受。 |
 | `theme` | `mac` | 默认主题：`mac` / `nes` / `win98` / `tui`。访客没有 `?theme=` 或 cookie 时使用它。 |
-| `language` | `en` | 默认语言：`en` / `zh`。访客可用 `?lang=` 覆盖。 |
+| `language` | `en` | 站主默认语言：`en` / `zh`。访客没有 `?lang=`、语言 cookie，且 `Accept-Language` 里没有 `en` / `zh` 时使用。 |
 | `profile.cover` | `null` | 资料卡封面图；不填时显示主题化默认横幅。接受 http(s) 图片或站内路径。 |
 | `profile.cardUrl` | `null` | 「近况」卡片底部嵌入的第三方统计图，例如 Action 生成的 SVG。 |
 | `profile.contrib.visible` | `true` | 是否显示贡献活跃度。 |
@@ -318,7 +318,7 @@ GitHub                          Cloudflare
 <details>
 <summary><strong>主题和语言会记住吗？隐私怎么处理？</strong></summary>
 
-会。主题和语言选择写在 cookie 里；访客可以用 `?theme=nes` / `?lang=zh` 或页脚切换。访客第一次进入某个用户页且没有显式选择主题时，该站配置的非 `mac` 主题会写入主题 cookie，之后首页和其他页面都跟随它。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
+会。主题和语言选择写在 cookie 里；访客可以用 `?theme=nes` / `?lang=zh` 或页脚切换。语言优先级是 `?lang=` > `classy_lang` cookie > 浏览器 `Accept-Language` > `en`；第一次访问会把浏览器语言写入 cookie，之后进入 `/nft` 等页面直接使用这个偏好，访客切换语言也会覆盖它。用户页默认也跟随访客语言；只有在完全没有语言信号时才回退到站主配置的 `language`。访客第一次进入某个用户页且没有显式选择主题时，该站配置的非 `mac` 主题会写入主题 cookie，之后首页和其他页面都跟随它。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
 </details>
 
 ## 开发与自建

@@ -10,8 +10,8 @@ import LandingScene from '../components/LandingScene.astro';
 // 首页要跟随用户选择的主题，因此从静态资源改为按需渲染
 export const prerender = false;
 
-// 首页没有站点主配置可参考，首次访问按浏览器语言决定中/英；
-// 用户页仍然听站主在 classy.config.json 里设置的 language。
+// 语言优先由 middleware 按 ?lang= > cookie > Accept-Language 解析；
+// 这里只处理完全没有语言信号、需要回退默认值的情况。
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromAcceptLanguage(
     Astro.request.headers.get('accept-language')
