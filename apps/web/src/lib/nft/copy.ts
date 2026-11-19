@@ -158,6 +158,8 @@ const en = {
     lead: 'Choose a theme, connect a wallet on Base, and sign the claim message.',
     signedInAs: 'Signed in as',
     yourSet: 'Your set',
+    setNote:
+      'This set is counted by GitHub account; cards may be in different wallets.',
     select: 'Choose a theme',
     selected: 'Selected',
     connect: 'Connect wallet',
@@ -434,6 +436,7 @@ const zh: NftCopy = {
     lead: '选一个主题，在 Base 上连接钱包，签署领取消息。',
     signedInAs: '已登录',
     yourSet: '你的一套',
+    setNote: '这一套按 GitHub 账号统计，卡片可能在不同的钱包里。',
     select: '选择主题',
     selected: '已选择',
     connect: '连接钱包',
