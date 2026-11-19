@@ -312,11 +312,11 @@ const zh: NftCopy = {
   },
   cards: {
     mac: {
-      title: '一位就够了。',
-      line: 'README，用一位呈现。',
+      title: '一个比特，就够了。',
+      line: 'README，用一个比特呈现。',
     },
     nes: {
-      title: '你的 GitHub。按开始。',
+      title: '你的 GitHub。按下 Start。',
       line: 'README，装进卡带。',
     },
     win98: {
@@ -324,8 +324,8 @@ const zh: NftCopy = {
       line: 'README，变成一个窗口。',
     },
     tui: {
-      title: '在提示符前读 README。',
-      line: 'README，在命令行里呈现。',
+      title: '在提示符下读 README。',
+      line: 'README，在终端里展开。',
     },
   },
   cardMeta: {
