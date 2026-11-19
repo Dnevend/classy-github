@@ -21,11 +21,7 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-<p align="center">
-  <a href="https://linux.do" title="LINUX DO"><img alt="LINUX DO" src="https://img.shields.io/badge/LINUX-DO-FFB003?style=flat-square"></a>
-</p>
-
-No deploy, no login, no server to buy: turn your README, repositories and Gists into a retro personal homepage + blog. Try it at [classygit.dev](https://classygit.dev).
+No deploy, no login, no server: turn GitHub into your retro personal homepage + blog. Try it now at [classygit.dev](https://classygit.dev).
 
 <table>
   <tr>
@@ -50,8 +46,6 @@ No deploy, no login, no server to buy: turn your README, repositories and Gists 
   </tr>
 </table>
 
-<p align="center"><sub>mac / nes / win98 / tui · screenshots from <a href="https://classygit.dev/Dnevend">Dnevend's profile</a></sub></p>
-
 ## Why ClassyGit
 
 ClassyGit is not another static blog generator. It does not host your content, and it does not ask you to move your posts: it renders the public data you already have on GitHub — your profile README, repositories, Gists and Gist comments — as a personal homepage + blog.
@@ -66,17 +60,15 @@ It is for people who want a homepage without maintaining a server, people who al
 
 ## Get started in 3 minutes
 
-1. **Fork**: [Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork). Keep the repository name `classy-github` (the default fork name).
+1. **Fork**: [Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork). Keep the repository name `classy-github`.
 2. **Build your config**: open [`/setup?u=your-username`](https://classygit.dev/setup), fill the form and copy the JSON into `classy.config.json` in the root of your fork. Set `owner` to your GitHub username.
-3. **Wait 5 minutes**: open [`https://classygit.dev/your-username`](https://classygit.dev/). The page refreshes within 5 minutes. No build, deploy or CI.
-
-> Want to see it first? Any public GitHub account gets a page at `https://classygit.dev/<username>` immediately — no fork required. Regular users do not need `pnpm`, a Cloudflare account or a domain.
+3. **Wait 5 minutes**: open [`https://classygit.dev/your-username`](https://classygit.dev/). The page refreshes within 5 minutes.
 
 ## What you get
 
 - **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting, relative images, and GitHub's light/dark theme variants (`#gh-dark-mode-only` / `<picture>`), showing only the one that matches the site theme; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
-- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default; visitors switch with `?theme=` or the footer. Opening a profile remembers that site's non-`mac` default theme.
+- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default in the config; visitors switch with `?theme=` or the footer.
 - **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. Claimed sites are indexed by search engines by default (`seo.index: false` opts out); unclaimed pages stay `noindex`.
 - **Guestbook and webring**: use a public Gist's comments as a guestbook, and hop between retro sites with “previous / random / next” footer links.
 - **Fast, clean and replaceable**: server-rendered HTML with edge caching; all four themes fit at 375px wide; no IPs stored, no profiling, only two functional cookies (theme and language); READMEs, Gists and comments go through an allowlist sanitizer, so `javascript:` links are dropped.
@@ -101,15 +93,6 @@ It is for people who want a homepage without maintaining a server, people who al
 | `/claim/<username>` | Three-step claim page with a starter config |
 
 </details>
-
-## Themes
-
-All four themes share the same data; the theme only changes the shell.
-
-- The default theme comes from `classy.config.json` (`mac` if omitted). Priority: `?theme=` > cookie > configured `theme` > `mac`.
-- When a visitor opens a profile with no `?theme=` or cookie, that site's non-`mac` theme is written to the theme cookie; the landing page, webring and other profiles then follow it until the visitor switches. Profiles configured with `mac` do not write a cookie, so a first visit cannot lock the visitor to the default theme.
-- Each theme ships its own CSS bundle, so a visitor on `mac` does not download the 279KB NES stylesheet. Old links `?theme=default` map to `mac`, and `?theme=win95` maps to `win98`.
-- With no cover configured, each theme renders its own default banner. Share cards, OG images and badges follow the theme palette.
 
 ## Community
 
@@ -149,7 +132,7 @@ Posting a comment requires a GitHub account — it reuses GitHub identity, so th
 
 ## Configuration
 
-The recommended path is the form builder at [`/setup?u=<username>`](https://classygit.dev/setup); it only generates JSON, does not request GitHub authorization and never writes to your repository. You can also edit `classy.config.json` directly in the root of your fork. The repository name must be `classy-github`, and `owner` must be your GitHub username — if you keep the author's `owner`, the file is treated as a template and ignored.
+The recommended path is the form builder at [`/setup?u=<username>`](https://classygit.dev/setup); you can also edit `classy.config.json` directly in the root of your fork. The repository name must be `classy-github`, and `owner` must be your GitHub username — if you keep the author's `owner`, the file is treated as a template and ignored.
 
 Minimal working config:
 
@@ -183,8 +166,6 @@ Common changes:
 | Join the webring / allow random discovery | `"webring": { "enabled": true }`, `"discover": { "enabled": true }` |
 | Opt out of search indexing | `"seo": { "index": false }` |
 | Add header links | `"nav": { "extra": [{ "title": "…", "href": "https://…" }] }` (mac / win98 themes) |
-
-> `profile.gists` controls the “Recent Gists” preview on the profile. `gists` controls the Gist description rule. They are not the same thing.
 
 <details>
 <summary>Full config example, field reference and fallback behavior</summary>
@@ -309,24 +290,7 @@ The production instance uses a server-side GitHub token plus edge caching, and b
 Yes. Public Gists are your posts, with Markdown, syntax highlighting, tags, an archive, reading time and an Atom feed. It only reads public data; private repositories and secret Gists are never shown.
 </details>
 
-<details>
-<summary><strong>Are profiles indexed by search engines by default?</strong></summary>
-
-Yes, but only claimed sites: when `owner` points at you and there is a `classy.config.json`, the profile outputs `index, follow` and enters the sitemap by default. Pages without their own config (visiting any GitHub username directly) stay `noindex`, so strangers' profiles are not turned into thin pages in bulk. Set `seo.index: false` to opt out; theme variants chosen by a visitor always stay `noindex`.
-</details>
-
-<details>
-<summary><strong>Do theme and language choices persist? What about privacy?</strong></summary>
-
-Yes, theme and language choices are stored in cookies. Visitors can switch with `?theme=nes` / `?lang=zh` or the footer. Language priority is `?lang=` > the `classy_lang` cookie > `Accept-Language` > `en`; the first visit writes the browser language to the cookie, so `/nft` and other pages use that preference directly, and switching languages overwrites it. Profiles also follow the visitor's language by default and fall back to the site's configured `language` only when there is no language signal at all. If a visitor opens a profile without an explicit theme choice, that site's non-`mac` theme is written to the theme cookie, and the rest of the site follows it. The app stores no IPs and does no profiling; no analytics scripts are loaded by default, and only two functional cookies (theme and language) are used. The author's instance optionally enables cookieless Cloudflare Web Analytics (controlled by `PUBLIC_CF_ANALYTICS_TOKEN`; nothing is injected when unset). The landing page's “recent visits” is local-only localStorage and is never uploaded.
-</details>
-
 ## Development and self-hosting
-
-<details>
-<summary>Local development, self-hosting and project layout</summary>
-
-### Local development
 
 Requires Node 22+ and pnpm 9+.
 
@@ -334,67 +298,24 @@ Requires Node 22+ and pnpm 9+.
 git clone https://github.com/Dnevend/classy-github.git
 cd classy-github
 pnpm install
-
-# Optional: raise the GitHub API quota
-echo 'GITHUB_TOKEN=github_pat_xxx' > apps/web/.dev.vars
 pnpm dev            # http://localhost:4321
 ```
 
-`GITHUB_TOKEN` only needs read access to public repositories (a classic PAT with no scopes is enough). It is optional, but the anonymous quota is 60 requests/hour and will hit rate limits quickly. The contribution wall also needs the token to query GitHub GraphQL.
+Optional: add `GITHUB_TOKEN=github_pat_xxx` to `apps/web/.dev.vars` (read-only public repos; a classic PAT with no scopes is enough) to raise the API quota and enable the contribution wall.
 
-### Self-hosting
-
-You need a Cloudflare account. `apps/web/wrangler.jsonc` already declares Assets, KV and the Durable Object, but **the KV namespace ID must be replaced with your own**:
+Self-hosting needs a Cloudflare account. Create a KV namespace, then replace the KV `id`, `SITE_ORIGIN` and `routes` in `apps/web/wrangler.jsonc` with your own:
 
 ```bash
-# 1) Create the KV namespace and put the returned ID into wrangler.jsonc
-pnpm --filter @classy/web exec wrangler kv namespace create USERS
-
-# 2) Build and deploy the Worker
+pnpm --filter @classy/web exec wrangler kv namespace create USERS  # put the returned id into wrangler.jsonc
 pnpm deploy:web
-
-# 3) Store the GitHub token (read-only public repos)
 cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 ```
 
-- `SITE_ORIGIN` in `wrangler.jsonc` controls canonical / OG / feed / sitemap URLs. Change it to your final address when self-hosting.
-- `routes` binds `classygit.dev` by default. When self-hosting, replace it with your own domain, or remove the whole `routes` block to use only the `workers.dev` address. Otherwise `wrangler deploy` will try to bind the author's domain and fail.
-- Optional: enable Cloudflare Web Analytics. Create a site for your hostname in the Web Analytics dashboard, copy its token, and put it in `apps/web/.env` (gitignored): `echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`, then build and deploy. Without it, no analytics script is emitted.
-- To maintain your own Pages proxy, change `TARGET` in `apps/web/pages-proxy/_worker.js` and the Pages `project-name` in `apps/web/package.json`, then run `pnpm deploy:pages`; skip it if you do not need it.
-- The author uses Workers Paid ($5/month) mainly for CPU headroom for Shiki syntax highlighting. Light usage can start on the free plan.
-
-### Project layout
-
-```text
-apps/web/
-  src/pages/            profiles / lists / details + webring / badge / claim / setup / api
-  src/themes/           contract (5 slots) + mac / nes / win95 (theme name win98) / tui
-  src/lib/              GitHub fetching, Markdown pipeline, config validation, site registry, edge cache
-  src/middleware.ts     theme / language resolution + per-route caching
-  wrangler.jsonc        Workers / KV / Durable Object bindings
-packages/types/         GitHub data types
-specs/                  refactor plan and per-milestone implementation notes
-```
-
-### Contributing
-
-Issues and PRs are welcome. Before changing anything, run:
-
-```bash
-pnpm check
-pnpm test
-pnpm build
-```
-
-</details>
+Before submitting changes, run `pnpm check`, `pnpm test` and `pnpm build`. Issues and PRs are welcome.
 
 ## Share ClassyGit
 
-If this project makes you want to redecorate your GitHub:
-
-- ⭐ [Star the repository](https://github.com/Dnevend/classy-github)
-- 🐦 [Share on X](https://twitter.com/intent/tweet?text=ClassyGit%20%E2%80%94%20turn%20your%20GitHub%20into%20a%20retro%20personal%20homepage%20%2B%20blog.&url=https%3A%2F%2Fclassygit.dev)
-- Send it to the friend who has been “about to start a blog” for years
+If this project makes you want to redecorate your GitHub, [star the repository](https://github.com/Dnevend/classy-github) or send it to the friend who has been “about to start a blog” for years. You can also [share it on X](https://twitter.com/intent/tweet?text=ClassyGit%20%E2%80%94%20turn%20your%20GitHub%20into%20a%20retro%20personal%20homepage%20%2B%20blog.&url=https%3A%2F%2Fclassygit.dev).
 
 Put the badge in your README or blogroll:
 
@@ -411,16 +332,6 @@ Put the badge in your README or blogroll:
 
 </details>
 
-## Friend links
-
-- [LINUX DO](https://linux.do) — a friendly developer community
-
 ## License
 
-Code is [MIT](./LICENSE). Fonts and third-party styles:
-
-- **Fusion Pixel Font** (OFL-1.1) — `apps/web/public/fonts/fusion-pixel-12px-zh_hans.woff2`
-- **Press Start 2P** (OFL-1.1) — `apps/web/public/fonts/press-start-2p.woff2`
-- **98.css** (MIT) — `apps/web/src/themes/win95/vendor/98.css` (the theme name is `win98`)
-- **NES.css** (MIT) — npm dependency
-- **TuiCss** (MIT) — `apps/web/src/themes/tui/vendor/`; Perfect DOS VGA 437 font is self-hosted
+Code is released under [MIT](./LICENSE). Bundled fonts and third-party styles keep their own licenses: Fusion Pixel Font and Press Start 2P (OFL-1.1); 98.css, NES.css and TuiCss (MIT).

@@ -21,11 +21,7 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-<p align="center">
-  <a href="https://linux.do" title="LINUX DO"><img alt="LINUX DO" src="https://img.shields.io/badge/LINUX-DO-FFB003?style=flat-square"></a>
-</p>
-
-不用部署、不用登录、不用买服务器：把 README、仓库和 Gist 变成一座复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻试。
+不用部署、登录、服务器，把 GitHub 变成你的复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻体验。
 
 <table>
   <tr>
@@ -50,8 +46,6 @@
   </tr>
 </table>
 
-<p align="center"><sub>mac / nes / win98 / tui · 截图来自 <a href="https://classygit.dev/Dnevend">Dnevend 的主页</a></sub></p>
-
 ## 为什么是 ClassyGit
 
 ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要求你把文章搬过来：它把你已经在 GitHub 上的公开数据——个人主页 README、仓库、Gist、Gist 评论——直接渲染成一座个人主页 + 博客。
@@ -66,17 +60,15 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 ## 三分钟开始
 
-1. **Fork**：[Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork)，仓库名保持 `classy-github`（fork 默认就是）。
+1. **Fork**：[Dnevend/classy-github](https://github.com/Dnevend/classy-github/fork)，仓库名保持 `classy-github`。
 2. **填配置**：打开 [`/setup?u=你的用户名`](https://classygit.dev/setup)，填表复制 JSON 到 fork 根目录的 `classy.config.json`；把 `owner` 改成你的 GitHub 用户名。
-3. **等 5 分钟**：打开 [`https://classygit.dev/你的用户名`](https://classygit.dev/)，主页最多 5 分钟刷新，不用构建、部署或 CI。
-
-> 想先看效果：任何公开 GitHub 账号都能直接打开 `https://classygit.dev/<用户名>`，不用 fork。普通用户不需要 `pnpm`、Cloudflare 账号或域名。
+3. **等 5 分钟**：打开 [`https://classygit.dev/你的用户名`](https://classygit.dev/)，主页最多 5 分钟刷新。
 
 ## 你能得到什么
 
 - **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片，以及 `#gh-dark-mode-only` / `<picture>` 深浅色主题图片（按站点主题只显示一张）；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
 - **Gist 就是博客**：Gist 描述写 `classy.blog.标题 #标签`（类型名用英文字母），自动变成分类、标题和标签；支持多文件、阅读时间、按月归档和标签筛选。
-- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主设默认主题，访客用 `?theme=` 或页脚切换；首次进入用户页会记住该站的非 `mac` 默认主题。
+- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主在配置里设默认主题，访客用 `?theme=` 或页脚切换。
 - **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；已认领站点默认允许搜索引擎收录（`seo.index: false` 可关闭），未认领页面保持 `noindex`。
 - **留言簿和网站环**：用公开 Gist 评论当留言板；页脚「上一站 / 随机 / 下一站」连接其他复古站点。
 - **快、干净、可替换**：服务端直出 HTML，边缘缓存；四套主题在 375px 宽下无横向溢出；不存 IP、不做用户画像，只有主题和语言两个功能性 cookie；README / Gist / 留言走白名单清洗，`javascript:` 链接会被丢弃。
@@ -101,15 +93,6 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 | `/claim/<用户名>` | 三步认领页 + 初始配置 |
 
 </details>
-
-## 四套主题
-
-四套主题共用同一份数据，主题只决定外壳。
-
-- 默认主题由 `classy.config.json` 的 `theme` 决定（不填是 `mac`）；优先级是 `?theme=` > cookie > 站主配置 > `mac`。
-- 访客第一次进入某个用户页且没有 `?theme=` 或 cookie 时，该站配置的非 `mac` 主题会写进 cookie；之后首页、网站环和其他用户页都跟随这个主题，直到访客主动切换。配置为 `mac` 的页面不写 cookie，避免把访客锁在默认主题。
-- 每套主题的 CSS 独立打包，访问 `mac` 的访客不会下载 NES 的 279KB；旧链接 `?theme=default` 自动落到 `mac`，`?theme=win95` 落到 `win98`。
-- 没有配置封面时，四套主题各自渲染默认横幅；分享卡、OG 图、徽章都会跟随主题配色。
 
 ## 社区功能
 
@@ -149,7 +132,7 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 
 ## 自定义配置
 
-推荐打开 [`/setup?u=<用户名>`](https://classygit.dev/setup) 填表生成；生成器只生成 JSON，不会请求 GitHub 授权，也不会替你写仓库。也可以直接编辑 fork 根目录的 `classy.config.json`。仓库名必须是 `classy-github`，`owner` 必须是你的 GitHub 用户名——保留作者的 `owner` 会被当模板忽略。
+推荐打开 [`/setup?u=<用户名>`](https://classygit.dev/setup) 填表生成，也可以直接编辑 fork 根目录的 `classy.config.json`。仓库名必须是 `classy-github`，`owner` 必须是你的 GitHub 用户名——保留作者的 `owner` 会被当模板忽略。
 
 最小可用配置：
 
@@ -183,8 +166,6 @@ ClassyGit 不是一个人的主页，而是一圈可以互相串门的复古站�
 | 参加网站环 / 随机推荐 | `"webring": { "enabled": true }`、`"discover": { "enabled": true }` |
 | 关闭搜索引擎收录 | `"seo": { "index": false }` |
 | 导航加外链 | `"nav": { "extra": [{ "title": "…", "href": "https://…" }] }`（mac / win98 主题） |
-
-> `profile.gists` 是主页右栏的「最近 Gist」预览；`gists` 是 Gist 描述规则，两者不是一回事。
 
 <details>
 <summary>完整配置示例、字段说明和容错行为</summary>
@@ -309,94 +290,34 @@ GitHub                          Cloudflare
 能。公开 Gist 就是文章，支持 Markdown、代码高亮、标签、归档、阅读时长和 Atom 订阅。只读取公开数据；私有仓库和 secret Gist 不会显示。
 </details>
 
-<details>
-<summary><strong>默认会被搜索引擎收录吗？</strong></summary>
-
-会，但只限已认领的站点：配置里 `owner` 指向你自己、并且有 `classy.config.json` 时，主页默认输出 `index, follow` 并进入 sitemap。没有自己配置的页面（直接访问任意 GitHub 用户名）保持 `noindex`，避免把陌生人的资料页批量变成薄内容。不想被收录就设 `seo.index: false`；访客切到其他主题时始终 `noindex`。
-</details>
-
-<details>
-<summary><strong>主题和语言会记住吗？隐私怎么处理？</strong></summary>
-
-会。主题和语言选择写在 cookie 里；访客可以用 `?theme=nes` / `?lang=zh` 或页脚切换。语言优先级是 `?lang=` > `classy_lang` cookie > 浏览器 `Accept-Language` > `en`；第一次访问会把浏览器语言写入 cookie，之后进入 `/nft` 等页面直接使用这个偏好，访客切换语言也会覆盖它。用户页默认也跟随访客语言；只有在完全没有语言信号时才回退到站主配置的 `language`。访客第一次进入某个用户页且没有显式选择主题时，该站配置的非 `mac` 主题会写入主题 cookie，之后首页和其他页面都跟随它。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
-</details>
-
 ## 开发与自建
 
-<details>
-<summary>本地开发、自建实例、项目结构</summary>
-
-### 本地开发
-
-需要 Node 22+、pnpm 9+。
+需要 Node 22+ 和 pnpm 9+。
 
 ```bash
 git clone https://github.com/Dnevend/classy-github.git
 cd classy-github
 pnpm install
-
-# 可选：配置 GITHUB_TOKEN 提高 API 配额
-echo 'GITHUB_TOKEN=github_pat_xxx' > apps/web/.dev.vars
 pnpm dev            # http://localhost:4321
 ```
 
-`GITHUB_TOKEN` 只读 public repo 即可（classic PAT 不勾任何 scope 也行）。不配也能跑，但匿名配额是 60 次/小时，容易触发限流提示。贡献墙需要 token 才能拉到 GitHub GraphQL 数据。
+可选：在 `apps/web/.dev.vars` 写入 `GITHUB_TOKEN=github_pat_xxx`（只读公开仓库，classic PAT 不需要任何 scope），提高 API 配额并启用贡献墙。
 
-### 自建实例
-
-自建需要 Cloudflare 账号。仓库里的 `apps/web/wrangler.jsonc` 已经配好 Assets、KV 和 Durable Object，但 **KV 命名空间 ID 需要换成你自己的**：
+自建需要 Cloudflare 账号。先创建 KV 命名空间，再把 `apps/web/wrangler.jsonc` 里的 KV `id`、`SITE_ORIGIN` 和 `routes` 换成自己的：
 
 ```bash
-# 1) 创建 KV 命名空间，把返回的 id 填进 wrangler.jsonc
-pnpm --filter @classy/web exec wrangler kv namespace create USERS
-
-# 2) 构建 + 发布 Worker
+pnpm --filter @classy/web exec wrangler kv namespace create USERS  # 把返回的 id 填进 wrangler.jsonc
 pnpm deploy:web
-
-# 3) 写入 GitHub token（只读 public repo）
 cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TOKEN
 ```
 
-- `SITE_ORIGIN` 在 `wrangler.jsonc` 里，决定 canonical / OG / feed / sitemap 使用的域名；自建时改成你的最终地址。
-- `routes` 里默认绑定 `classygit.dev`。自建时必须把它改成你自己的域名；暂时没有域名就删掉整个 `routes`，只使用 `workers.dev` 地址。否则 `wrangler deploy` 会尝试绑定作者的域名并失败。
-- 可选：启用 Cloudflare Web Analytics。在 dashboard 的 Web Analytics 里为你的域名建一条站点并复制 token，写进 `apps/web/.env`（已在 `.gitignore`）：`echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`，再构建发布。不配则 HTML 里不会出现任何分析脚本。
-- 如果还要维护自己的 Pages 薄代理，改 `apps/web/pages-proxy/_worker.js` 的 `TARGET` 和 `apps/web/package.json` 的 `project-name`，再跑 `pnpm deploy:pages`；不需要就跳过。
-- 作者使用 Workers Paid（$5/月）主要是给 Shiki 语法高亮留 CPU 余量；轻度使用可以先试免费计划。
-
-### 项目结构
-
-```text
-apps/web/
-  src/pages/            用户页 / 列表 / 详情 + webring / badge / claim / setup / api
-  src/themes/           契约（5 个槽位）+ mac / nes / win95（主题名 win98）/ tui
-  src/lib/              GitHub 取数、Markdown 管线、配置校验、站点注册表、边缘缓存
-  src/middleware.ts     主题 / 语言解析 + 按路由分级缓存
-  wrangler.jsonc        Workers / KV / Durable Object 绑定
-packages/types/         GitHub 数据类型
-specs/                  重构计划与每个阶段的实现记录
-```
-
-### 参与贡献
-
-欢迎 Issue 和 PR。改动前先跑：
-
-```bash
-pnpm check
-pnpm test
-pnpm build
-```
-
-</details>
+提交改动前跑 `pnpm check`、`pnpm test` 和 `pnpm build`。欢迎 Issue 和 PR。
 
 ## 分享 ClassyGit
 
-如果这个项目让你想重新装修自己的 GitHub：
+如果这个项目让你想重新装修自己的 GitHub，欢迎 [Star 这个仓库](https://github.com/Dnevend/classy-github)，或者把它发给那个「一直想开博客、却迟迟没动手」的朋友。也可以[分享到 X](https://twitter.com/intent/tweet?text=ClassyGit%20%E2%80%94%20%E6%8A%8A%20GitHub%20%E5%8F%98%E6%88%90%E4%B8%80%E5%BA%A7%E5%A4%8D%E5%8F%A4%E4%B8%AA%E4%BA%BA%E4%B8%BB%E9%A1%B5%20%2B%20%E5%8D%9A%E5%AE%A2%E3%80%82&url=https%3A%2F%2Fclassygit.dev)。
 
-- ⭐ [Star 这个仓库](https://github.com/Dnevend/classy-github)
-- 🐦 [分享到 X](https://twitter.com/intent/tweet?text=ClassyGit%20%E2%80%94%20%E6%8A%8A%20GitHub%20%E5%8F%98%E6%88%90%E4%B8%80%E5%BA%A7%E5%A4%8D%E5%8F%A4%E4%B8%AA%E4%BA%BA%E4%B8%BB%E9%A1%B5%20%2B%20%E5%8D%9A%E5%AE%A2%E3%80%82&url=https%3A%2F%2Fclassygit.dev)
-- 把它发给那个「一直想开博客但迟迟没动手」的朋友
-
-把徽章放到你的 README 或友链：
+把徽章放进你的 README 或友链：
 
 ```md
 [![ClassyGit](https://classygit.dev/badge/你的用户名.svg?theme=mac)](https://classygit.dev/你的用户名)
@@ -411,16 +332,6 @@ pnpm build
 
 </details>
 
-## 友链
-
-- [LINUX DO](https://linux.do) — 一个友好的开发者社区
-
 ## 许可
 
-代码 [MIT](./LICENSE)。字体与第三方样式：
-
-- **Fusion Pixel Font**（OFL-1.1）— `apps/web/public/fonts/fusion-pixel-12px-zh_hans.woff2`
-- **Press Start 2P**（OFL-1.1）— `apps/web/public/fonts/press-start-2p.woff2`
-- **98.css**（MIT）— `apps/web/src/themes/win95/vendor/98.css`（主题名是 `win98`）
-- **NES.css**（MIT）— npm 依赖
-- **TuiCss**（MIT）— `apps/web/src/themes/tui/vendor/`，字体 Perfect DOS VGA 437 自托管
+代码以 [MIT](./LICENSE) 发布。随附字体与第三方样式遵循各自许可：Fusion Pixel Font、Press Start 2P（OFL-1.1），98.css、NES.css、TuiCss（MIT）。
