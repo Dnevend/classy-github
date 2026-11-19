@@ -97,7 +97,7 @@ const t = createTranslator(Astro.locals.locale);
       <CommunityFooter user={user} {configured} webring={config.webring.enabled} />
       <div class="nes-footer__row">
         <span>POWERED BY <a class="footer-credit" href="https://github.com/Dnevend/classy-github" target="_blank" rel="noopener noreferrer">CLASSYGIT</a></span>
-        {shareData && <ShareCard {...shareData} theme={theme} cover={config.profile.cover} />}
+        {shareData && <ShareCard {...shareData} cover={config.profile.cover} />}
         <div class="switchers">
           <LanguageSwitcher current={Astro.locals.locale} />
           <ThemeSwitcher current={theme} />

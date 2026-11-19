@@ -1,4 +1,4 @@
-import type { Follower, Gist, GistComment, Repo, User } from '@classy/types/github';
+import type { Gist, GistComment, Repo, User } from '@classy/types/github';
 
 import { USER_AGENT } from './constants.ts';
 import { cacheGet, cacheGetStale, cachePut } from './edge-cache.ts';
@@ -202,18 +202,6 @@ export const listGists = (user: string, perPage = 100) =>
   ghFetch<Gist[]>(`/users/${encodeURIComponent(user)}/gists`, {
     query: { per_page: perPage },
     ttl: 1800,
-  });
-
-export const listFollowers = (user: string) =>
-  ghFetch<Follower[]>(`/users/${encodeURIComponent(user)}/followers`, {
-    query: { per_page: 100 },
-    ttl: 3600,
-  });
-
-export const listFollowing = (user: string) =>
-  ghFetch<Follower[]>(`/users/${encodeURIComponent(user)}/following`, {
-    query: { per_page: 100 },
-    ttl: 3600,
   });
 
 export interface ReadmeSource {

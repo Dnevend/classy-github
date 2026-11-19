@@ -16,6 +16,7 @@ import {
   normalizePageParam,
   normalizeTagParam,
 } from '../src/lib/request-params.ts';
+import { shouldSkipCache, ttlFor } from '../src/lib/cache-policy.ts';
 
 class MemoryCache {
   readonly map = new Map<string, Response>();
@@ -58,6 +59,18 @@ assert.equal(
   undefined,
   '超过 staleTtl 的缓存不能再用'
 );
+
+assert.equal(ttlFor('/Dnevend'), 300);
+assert.equal(ttlFor('/card/Dnevend'), 600);
+assert.equal(ttlFor('/contrib/Dnevend.json'), 300);
+assert.equal(ttlFor('/sitemap.xml'), 3600);
+assert.equal(ttlFor('/sitemap/1.xml'), 3600);
+assert.equal(ttlFor('/robots.txt'), 300);
+assert.equal(shouldSkipCache('/setup'), true);
+assert.equal(shouldSkipCache('/random'), true);
+assert.equal(shouldSkipCache('/api/hit/Dnevend'), true);
+assert.equal(shouldSkipCache('/robots.txt'), false);
+assert.equal(shouldSkipCache('/sitemap.xml'), false);
 
 assert.deepEqual(normalizePageParam(null), { present: false, valid: true });
 assert.deepEqual(normalizePageParam('2'), {

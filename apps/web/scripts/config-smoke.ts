@@ -270,7 +270,7 @@ const cases: Case[] = [
         '/claim/Dnevend',
         '/contrib/Dnevend.json',
         '/card/Dnevend',
-        '/images/cover.webp',
+        '/images/cover.jpg',
         '/fonts/x.woff2',
         '/cursors/mac-arrow.svg',
         '/%73etup',

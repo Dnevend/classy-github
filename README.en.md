@@ -357,6 +357,7 @@ cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TO
 ```
 
 - `SITE_ORIGIN` in `wrangler.jsonc` controls canonical / OG / feed / sitemap URLs. Change it to your final address when self-hosting.
+- `routes` binds `classygit.dev` by default. When self-hosting, replace it with your own domain, or remove the whole `routes` block to use only the `workers.dev` address. Otherwise `wrangler deploy` will try to bind the author's domain and fail.
 - Optional: enable Cloudflare Web Analytics. Create a site for your hostname in the Web Analytics dashboard, copy its token, and put it in `apps/web/.env` (gitignored): `echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`, then build and deploy. Without it, no analytics script is emitted.
 - To maintain your own Pages proxy, change `TARGET` in `apps/web/pages-proxy/_worker.js` and the Pages `project-name` in `apps/web/package.json`, then run `pnpm deploy:pages`; skip it if you do not need it.
 - The author uses Workers Paid ($5/month) mainly for CPU headroom for Shiki syntax highlighting. Light usage can start on the free plan.

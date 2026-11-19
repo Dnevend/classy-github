@@ -1,3 +1,6 @@
+// 这是 Astro 构建的源配置，不能直接 `wrangler deploy`：入口里的
+// `virtual:astro:app` 只有 Astro/Vite 构建期能解析。部署请用
+// `pnpm deploy:web` 或 apps/web 的 `pnpm deploy`（都会走 dist/server/wrangler.json）。
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "classy-web",
@@ -8,9 +11,11 @@
   "routes": [
     { "pattern": "classygit.dev", "custom_domain": true }
   ],
+  // Assets 必须指向构建后的 client 目录；不要把 ./dist 当成静态根目录，
+  // 否则 dist/server 会被当成公开静态资源。
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist"
+    "directory": "./dist/client"
   },
   "vars": {
     "SITE_ORIGIN": "https://classygit.dev"

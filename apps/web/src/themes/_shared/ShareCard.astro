@@ -1,5 +1,4 @@
 ---
-import type { ThemeName } from '../../lib/config';
 import { createTranslator } from '../../lib/i18n';
 import { siteOrigin } from '../../lib/site';
 import { sameOriginPath } from '../../lib/site-url';
@@ -16,12 +15,11 @@ export interface ShareCardData {
 }
 
 interface Props extends ShareCardData {
-  theme: ThemeName;
   /** 用户资料卡封面；有值时分享卡使用背景图版本 */
   cover?: string | null;
 }
 
-const { title, description, handle, avatar, url, theme, cover } = Astro.props as Props;
+const { title, description, handle, avatar, url, cover } = Astro.props as Props;
 const t = createTranslator(Astro.locals.locale);
 
 // 封面可能是本站另一个入口的绝对地址（例如 classygit.pages.dev），
@@ -175,8 +173,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
 </div>
 
 <script>
-  import qrcode from 'qrcode-generator';
-
   const root = document.querySelector('[data-share]') as HTMLElement | null;
   if (root) {
     const toggle = root.querySelector<HTMLButtonElement>('[data-share-toggle]');
@@ -185,7 +181,6 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
     const copyBtn = root.querySelector<HTMLButtonElement>('[data-share-copy]');
     const qrImg = root.querySelector<HTMLImageElement>('[data-share-qr]');
     const preview = root.querySelector<HTMLElement>('[data-share-preview]');
-    const avatar = root.querySelector<HTMLImageElement>('[data-share-avatar]');
 
     // 面板默认 display:none，封面/头像用 lazy 延迟到打开时再加载；
     // 截图前等它们真正 decode 完，避免保存出一张缺图的卡片。
@@ -200,46 +195,44 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
         })
       );
 
+    // 二维码库只在真正打开分享面板时加载，避免每个页面都下载 qrcode-generator。
+    let qrReady: Promise<void> | undefined;
+    const ensureQr = (): Promise<void> => {
+      if (!qrImg) return Promise.resolve();
+      if (qrReady) return qrReady;
+
+      qrReady = import('qrcode-generator')
+        .then(({ default: qrcode }) => {
+          const qr = qrcode(0, 'M');
+          qr.addData(location.href);
+          qr.make();
+          qrImg.src = qr.createDataURL(4, 0);
+        })
+        .catch((error) => {
+          console.warn('[classy] 二维码生成失败', error);
+          qrReady = undefined;
+        });
+
+      return qrReady;
+    };
+
     const open = (state: boolean) => {
       if (!panel || !toggle) return;
       toggle.setAttribute('aria-expanded', String(state));
-      if (state) root.setAttribute('data-open', '');
-      else root.removeAttribute('data-open');
+      if (state) {
+        root.setAttribute('data-open', '');
+        void ensureQr();
+      } else {
+        root.removeAttribute('data-open');
+      }
     };
 
+    root.addEventListener('pointerenter', () => void ensureQr(), { once: true });
     toggle?.addEventListener('click', () => open(!root.hasAttribute('data-open')));
     document.addEventListener('keydown', (e) => e.key === 'Escape' && open(false));
     document.addEventListener('click', (e) => {
       if (!root.contains(e.target as Node)) open(false);
     });
-
-    const drawQr = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number) => {
-      const qr = qrcode(0, 'M');
-      qr.addData(location.href);
-      qr.make();
-
-      const count = qr.getModuleCount();
-      const cell = size / count;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(x - cell * 2, y - cell * 2, size + cell * 4, size + cell * 4);
-      ctx.fillStyle = '#000000';
-
-      for (let row = 0; row < count; row += 1) {
-        for (let col = 0; col < count; col += 1) {
-          if (qr.isDark(row, col)) {
-            ctx.fillRect(x + col * cell, y + row * cell, Math.ceil(cell), Math.ceil(cell));
-          }
-        }
-      }
-    };
-
-    // 预览里的二维码用 <img>（data URL），这样截图库能把它一起截进去
-    if (qrImg) {
-      const qr = qrcode(0, 'M');
-      qr.addData(location.href);
-      qr.make();
-      qrImg.src = qr.createDataURL(4, 0);
-    }
 
     copyBtn?.addEventListener('click', async () => {
       try {
@@ -260,6 +253,7 @@ const tweetHref = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url
       try {
         // 直接截取用户看到的那张卡，缩放到 1200 宽，所见即所得
         const { domToCanvas } = await import('modern-screenshot');
+        await ensureQr();
         await Promise.all([waitForImages(preview), document.fonts.ready.catch(() => {})]);
         const canvas = await domToCanvas(preview, {
           scale: 1200 / preview.offsetWidth,

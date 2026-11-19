@@ -9,10 +9,21 @@ import { parseThemeName } from '../../lib/theme';
 import { paletteFor } from '../../lib/theme-palette';
 import { loadConfigState } from '../../lib/config-loader';
 import { buildOgCardHtml } from '../../lib/og-card';
+import {
+  MAX_AVATAR_BYTES,
+  MAX_COVER_BYTES,
+  OG_FETCH_HEADER,
+  OG_FETCH_TIMEOUT_MS,
+  isBlockedSameOriginCoverPath,
+  isOgFetchRequest,
+  readBoundedBody,
+} from '../../lib/og-cover';
 
 export const prerender = false;
 
 const LOGIN = /^[a-z\d](?:[a-z\d-]{0,38})$/i;
+
+const fetchSignal = () => AbortSignal.timeout(OG_FETCH_TIMEOUT_MS);
 
 interface AssetFetcher {
   fetch(input: Request): Promise<Response>;
@@ -36,14 +47,23 @@ const fetchCover = async (
   const assets = assetFetcher();
   const sameOrigin = target.origin === new URL(publicOrigin).origin;
 
+  // 同源动态路由不能当封面：/og/... 会递归生成 OG，/api、/card 等也不是静态资源。
+  if (sameOrigin && isBlockedSameOriginCoverPath(target.pathname)) return null;
+
   let response: Response | null = null;
+  const requestHeaders = {
+    'user-agent': USER_AGENT,
+    [OG_FETCH_HEADER]: '1',
+  };
 
   if (sameOrigin && assets) {
     try {
       // 静态资源按 pathname 取；host 用请求 origin，避免 Pages 代理后面
       // ASSETS 绑定收到另一个域名时匹配不到资源。
       const assetUrl = new URL(`${target.pathname}${target.search}`, requestOrigin);
-      response = await assets.fetch(new Request(assetUrl));
+      response = await assets.fetch(
+        new Request(assetUrl, { headers: requestHeaders, signal: fetchSignal() })
+      );
     } catch {
       response = null;
     }
@@ -51,16 +71,34 @@ const fetchCover = async (
 
   if (!response || !response.ok) {
     response = await fetch(target.href, {
-      headers: { 'user-agent': USER_AGENT },
+      headers: requestHeaders,
+      signal: fetchSignal(),
     }).catch(() => null);
   }
 
   if (!response?.ok) return null;
+
+  // 外链 302 回本站动态路由时，即使抓取头被中间层丢掉，也再按最终 URL 挡一次。
+  try {
+    const finalUrl = new URL(response.url);
+    if (
+      finalUrl.origin === new URL(publicOrigin).origin &&
+      isBlockedSameOriginCoverPath(finalUrl.pathname)
+    ) {
+      return null;
+    }
+  } catch {
+    // response.url 为空/非法时不阻塞正常封面
+  }
+
   const type =
     response.headers.get('content-type')?.split(';')[0]?.trim() || 'image/jpeg';
   if (!type.startsWith('image/') || type === 'image/webp') return null;
 
-  return `data:${type};base64,${toBase64(await response.arrayBuffer())}`;
+  const body = await readBoundedBody(response, MAX_COVER_BYTES);
+  if (!body) return null;
+
+  return `data:${type};base64,${toBase64(body)}`;
 };
 
 let fontCache: Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> | undefined;
@@ -71,7 +109,9 @@ const loadFonts = (origin: string) => {
     const load = async (file: string) => {
       if (assets) {
         const response = await assets.fetch(
-          new Request(new URL(`/fonts/${file}`, origin))
+          new Request(new URL(`/fonts/${file}`, origin), {
+            signal: fetchSignal(),
+          })
         );
         if (response.ok) return response.arrayBuffer();
       }
@@ -79,6 +119,7 @@ const loadFonts = (origin: string) => {
       // 理论上 ASSETS 一定存在；这里只作为本地异常场景的兜底。
       const response = await fetch(new URL(`/fonts/${file}`, origin), {
         headers: { 'user-agent': USER_AGENT },
+        signal: fetchSignal(),
       });
       if (!response.ok) throw new Error(`font ${file} unavailable`);
       return response.arrayBuffer();
@@ -110,8 +151,12 @@ const toBase64 = (buffer: ArrayBuffer) => {
  * 只用 ASCII（login / 统计 / 固定 tagline），避免把中文字体打进 Worker；
  * 字体走静态资源 ASSETS，颜色跟随主题。
  */
-export const GET: APIRoute = async ({ params, url, locals }) => {
+export const GET: APIRoute = async ({ params, request, url, locals }) => {
   const user = params.user ?? '';
+
+  if (isOgFetchRequest(request)) {
+    return new Response('OG fetch recursion blocked', { status: 404 });
+  }
 
   if (!LOGIN.test(user)) {
     return new Response('Invalid GitHub login', { status: 400 });
@@ -140,8 +185,11 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
     loadFonts(url.origin).catch(() => null),
     fetch(`https://github.com/${encodeURIComponent(user)}.png?size=160`, {
       headers: { 'user-agent': USER_AGENT },
+      signal: fetchSignal(),
     })
-      .then((response) => (response.ok ? response.arrayBuffer() : null))
+      .then((response) =>
+        response.ok ? readBoundedBody(response, MAX_AVATAR_BYTES) : null
+      )
       .catch(() => null),
   ]);
 

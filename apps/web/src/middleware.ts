@@ -17,6 +17,7 @@ import {
 import { isPreviewRequest } from './lib/preview.ts';
 import { siteOrigin } from './lib/site.ts';
 import { normalizeCacheParams } from './lib/request-params.ts';
+import { shouldSkipCache, ttlFor } from './lib/cache-policy.ts';
 import { DEFAULT_CONFIG, type ThemeName } from './lib/config.ts';
 import { loadProfile } from './lib/profile.ts';
 import { singleFlight } from './lib/single-flight.ts';
@@ -30,36 +31,18 @@ import {
   resolveLocale,
 } from './lib/i18n.ts';
 
-/**
- * 按路由决定缓存时长。顺序敏感：先匹配更具体的路径。
- */
-const ROUTE_TTL: ReadonlyArray<readonly [RegExp, number]> = [
-  [/^\/$/, 3600],
-  [/^\/webring\/?$/, 300],
-  [/^\/badge\/[^/]+\.svg$/, 86400],
-  [/^\/og\/[^/]+\.png$/, 86400],
-  [/^\/[^/]+\/gist\/[^/]+\/?$/, 3600],
-  [/^\/[^/]+\/rss\.xml$/, 3600],
-  [/^\/[^/]+\/archive\/?$/, 300],
-  [/^\/[^/]+\/guestbook\/?$/, 300],
-  [/^\/[^/]+\/(?:repos|gists)\/?$/, 300],
-  [/^\/[^/]+\/repo\/[^/]+\/.+$/, 300],
-  [/^\/[^/]+\/repo\/[^/]+\/?$/, 300],
-  [/^\/[^/]+\/?$/, 300],
-];
-
 /** 缓存版本号：改版时 +1 可以立即让旧 HTML 失效（不用等 TTL） */
-const CACHE_VERSION = '41';
+const CACHE_VERSION = '42';
 
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
   /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
 
 /**
- * v40 → v41 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
+ * v41 → v42 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
  * 有效期就是 stale 的 24 小时，过了这个窗口删掉即可。
  */
-const PREVIOUS_CACHE_VERSIONS = ['40', '39', '38', '37'];
+const PREVIOUS_CACHE_VERSIONS = ['41', '40', '39', '38'];
 
 const serveStaleAnyVersion = async (
   key: Request,
@@ -75,12 +58,6 @@ const serveStaleAnyVersion = async (
 
   return undefined;
 };
-
-const ttlFor = (pathname: string) =>
-  ROUTE_TTL.find(([pattern]) => pattern.test(pathname))?.[1];
-
-/** 这些单段路径长得像用户名，但不是用户页，不能进主题/语言缓存 */
-const SKIP_CACHE = /^\/(?:setup|random|robots\.txt|sitemap(?:\.xml|\/)|api(?:\/|$))/;
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
@@ -266,6 +243,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
       sameSite: 'lax',
+      httpOnly: true,
+      secure: url.protocol === 'https:',
     });
   }
 
@@ -274,6 +253,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
       sameSite: 'lax',
+      httpOnly: true,
+      secure: url.protocol === 'https:',
     });
   }
 
@@ -294,7 +275,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   );
 
   const ttl =
-    context.request.method === 'GET' && !SKIP_CACHE.test(url.pathname)
+    context.request.method === 'GET' && !shouldSkipCache(url.pathname)
       ? ttlFor(url.pathname)
       : undefined;
 

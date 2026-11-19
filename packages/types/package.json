@@ -1,12 +1,9 @@
 {
   "name": "@classy/types",
   "version": "1.0.0",
-  "description": "",
+  "description": "Shared GitHub REST-shaped types for ClassyGit",
+  "private": true,
   "main": "index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
