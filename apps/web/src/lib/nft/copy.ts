@@ -74,7 +74,7 @@ const en = {
       'One card per theme per GitHub account, up to four cards total.',
       'Your GitHub account must be at least 90 days old.',
       'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
-      'Star and fork if you like the project. Forking is the easiest way to create your site, but neither is required for eligibility.',
+      'Stars and forks are welcome.',
       'Cards are transferable ERC-721 tokens on Base.',
       'The NFT metadata does not contain your GitHub identity.',
       'This is a commemorative collectible, not an investment. It has no promised financial value.',
@@ -83,10 +83,6 @@ const en = {
   faq: {
     title: 'Questions',
     items: [
-      {
-        q: 'Do I need to star or fork the repository?',
-        a: 'Not required, but encouraged. Forking is the easiest way to create your own classy-github site, and a star helps others find the project. Eligibility only checks the public repo and its classy.config.json owner.',
-      },
       {
         q: 'Can I claim all four themes?',
         a: 'Yes. Each GitHub account can claim one card per theme, up to four cards. Each card can go to any wallet; the receiving wallet must sign.',
@@ -354,7 +350,7 @@ const zh: NftCopy = {
       '每个 GitHub 账号每个主题一张，最多四张。',
       'GitHub 账号需要满 90 天。',
       '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
-      '欢迎 star 和 fork：fork 是创建自己站点最方便的方式，喜欢的话也点个 star；两者都不是领取的硬性条件。',
+      '欢迎 star 和 fork 支持项目。',
       '卡片是 Base 上可转让的 ERC-721。',
       'NFT 元数据不包含你的 GitHub 身份。',
       '这是纪念收藏品，不是投资品，不承诺任何金融价值。',
@@ -363,10 +359,6 @@ const zh: NftCopy = {
   faq: {
     title: '常见问题',
     items: [
-      {
-        q: '需要 star 或 fork 仓库吗？',
-        a: '不强制，但非常欢迎。fork 是创建自己 classy-github 站点最方便的方式，喜欢的话也点个 star。资格只检查公开仓库和 classy.config.json 的 owner。',
-      },
       {
         q: '四个主题都能领吗？',
         a: '可以。每个 GitHub 账号每个主题一张，最多四张。每张可以进任意钱包，但收款钱包必须签名。',
