@@ -493,6 +493,12 @@ Worker 绑定 `classygit.dev`，`SITE_ORIGIN` 指向新域名；`classygit.pages
 URL 归一化为同源路径，修复跨域导致封面加载失败。详见
 `m36-dev-domain-share-cover.md`。
 
+### M37 · 站主配置主题写入访客 cookie（已完成 2026-11-19）
+
+用户页在没有 `?theme=` / cookie 时，把站主配置的非 `mac` 主题写入
+`classy_theme` cookie；之后首页、网站环和其他页面跟随 cookie，不再在
+`mac` 与站点主题之间来回跳。详见 `m37-theme-cookie-persistence.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

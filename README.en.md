@@ -76,7 +76,7 @@ It is for people who want a homepage without maintaining a server, people who al
 
 - **Your README is the homepage**: renders your GitHub profile README with Markdown, syntax highlighting, relative images, and GitHub's light/dark theme variants (`#gh-dark-mode-only` / `<picture>`), showing only the one that matches the site theme; the profile card, contribution wall, recent repos, recent Gists and Now card are generated for you.
 - **Gists are your blog**: write `classy.blog.title #tag` in a Gist description (type names use Latin letters) and it becomes the type, title and tags. Multi-file posts, reading time, monthly archive and tag filtering included.
-- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default; visitors switch with `?theme=` or the footer.
+- **Four retro themes**: `mac`, `nes`, `win98` and `tui` share the same data. Site owners set the default; visitors switch with `?theme=` or the footer. Opening a profile remembers that site's non-`mac` default theme.
 - **Sharing built in**: themed share card with a QR code, 1200×630 OG images, 88×31 badges, an Atom feed and a sitemap. SEO is off by default; `seo.index: true` opts in.
 - **Guestbook and webring**: use a public Gist's comments as a guestbook, and hop between retro sites with “previous / random / next” footer links.
 - **Fast, clean and replaceable**: server-rendered HTML with edge caching; all four themes fit at 375px wide; no IPs stored, no profiling, only two functional cookies (theme and language); READMEs, Gists and comments go through an allowlist sanitizer, so `javascript:` links are dropped.
@@ -107,6 +107,7 @@ It is for people who want a homepage without maintaining a server, people who al
 All four themes share the same data; the theme only changes the shell.
 
 - The default theme comes from `classy.config.json` (`mac` if omitted). Priority: `?theme=` > cookie > configured `theme` > `mac`.
+- When a visitor opens a profile with no `?theme=` or cookie, that site's non-`mac` theme is written to the theme cookie; the landing page, webring and other profiles then follow it until the visitor switches. Profiles configured with `mac` do not write a cookie, so a first visit cannot lock the visitor to the default theme.
 - Each theme ships its own CSS bundle, so a visitor on `mac` does not download the 279KB NES stylesheet. Old links `?theme=default` map to `mac`, and `?theme=win95` maps to `win98`.
 - With no cover configured, each theme renders its own default banner. Share cards, OG images and badges follow the theme palette.
 
@@ -317,7 +318,7 @@ Profile pages are infinitely generated thin content, so indexing is opt-in to av
 <details>
 <summary><strong>Do theme and language choices persist? What about privacy?</strong></summary>
 
-Yes, choices are stored in cookies. The site default theme comes from `classy.config.json`, and you can use `?theme=nes` / `?lang=zh` to switch temporarily. The app stores no IPs and does no profiling; no analytics scripts are loaded by default, and only two functional cookies (theme and language) are used. The author's instance optionally enables cookieless Cloudflare Web Analytics (controlled by `PUBLIC_CF_ANALYTICS_TOKEN`; nothing is injected when unset). The landing page's “recent visits” is local-only localStorage and is never uploaded.
+Yes, theme and language choices are stored in cookies. Visitors can switch with `?theme=nes` / `?lang=zh` or the footer. If a visitor opens a profile without an explicit theme choice, that site's non-`mac` theme is written to the theme cookie, and the rest of the site follows it. The app stores no IPs and does no profiling; no analytics scripts are loaded by default, and only two functional cookies (theme and language) are used. The author's instance optionally enables cookieless Cloudflare Web Analytics (controlled by `PUBLIC_CF_ANALYTICS_TOKEN`; nothing is injected when unset). The landing page's “recent visits” is local-only localStorage and is never uploaded.
 </details>
 
 ## Development and self-hosting

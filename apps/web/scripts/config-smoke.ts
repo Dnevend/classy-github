@@ -284,7 +284,7 @@ const cases: Case[] = [
     },
   },
   {
-    name: 'middleware 主题接线：配置默认主题进入 fallback，显式选择不读配置',
+    name: 'middleware 主题接线：配置的非 mac 主题写入 cookie，mac / 未配置不写',
     run: async () => {
       const calls: { login: string; fresh: boolean }[] = [];
       const load = async (login: string, fresh: boolean) => {
@@ -292,12 +292,30 @@ const cases: Case[] = [
         return 'nes' as const;
       };
 
-      // 无参数/无 cookie 的用户页 → 读配置，主题变 nes
+      // 无参数/无 cookie 的用户页 → 读配置；非 mac 主题要写 cookie
       assert.deepEqual(
         await resolveRequestTheme({ pathname: '/Dnevend', loadConfigTheme: load }),
-        { theme: 'nes', persist: false }
+        { theme: 'nes', persist: true }
       );
       assert.deepEqual(calls, [{ login: 'Dnevend', fresh: false }]);
+
+      // 站主配置就是 mac → 不写 cookie，避免把后续站点锁在 mac
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          loadConfigTheme: async () => 'mac' as const,
+        }),
+        { theme: 'mac', persist: false }
+      );
+
+      // 未配置用户同样回退 mac，不写 cookie
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/octocat',
+          loadConfigTheme: async () => 'mac' as const,
+        }),
+        { theme: 'mac', persist: false }
+      );
 
       // 显式 ?theme / cookie 不读配置
       calls.length = 0;
@@ -312,36 +330,35 @@ const cases: Case[] = [
       assert.deepEqual(
         await resolveRequestTheme({
           pathname: '/Dnevend',
-          cookie: 'nes',
+          cookie: 'win98',
           loadConfigTheme: load,
         }),
-        { theme: 'nes', persist: false }
+        { theme: 'win98', persist: false }
       );
       assert.deepEqual(calls, []);
 
-      // 非用户页不读配置
-      assert.deepEqual(
-        await resolveRequestTheme({ pathname: '/setup', loadConfigTheme: load }),
-        { theme: 'mac', persist: false }
-      );
-      assert.deepEqual(
-        await resolveRequestTheme({ pathname: '/%73etup', loadConfigTheme: load }),
-        { theme: 'mac', persist: false }
-      );
+      // 非用户页不读配置，也不写 cookie
+      for (const pathname of ['/', '/webring', '/setup', '/%73etup']) {
+        assert.deepEqual(
+          await resolveRequestTheme({ pathname, loadConfigTheme: load }),
+          { theme: 'mac', persist: false },
+          pathname
+        );
+      }
       assert.deepEqual(calls, []);
 
-      // 非法参数时用配置默认主题
+      // 非法参数等同于没选：用配置主题，并写入 cookie
       assert.deepEqual(
         await resolveRequestTheme({
           pathname: '/Dnevend',
           param: 'amiga',
           loadConfigTheme: load,
         }),
-        { theme: 'nes', persist: false }
+        { theme: 'nes', persist: true }
       );
       assert.deepEqual(calls, [{ login: 'Dnevend', fresh: false }]);
 
-      // 配置读取失败回退 mac
+      // 配置读取失败回退 mac，不写 cookie
       assert.deepEqual(
         await resolveRequestTheme({
           pathname: '/Dnevend',
@@ -352,14 +369,51 @@ const cases: Case[] = [
         { theme: 'mac', persist: false }
       );
 
-      // 预览时 fresh=true
+      // 预览时 fresh=true；是否写 cookie 由 middleware 的 isPreview 再拦一层
       calls.length = 0;
-      await resolveRequestTheme({
-        pathname: '/Dnevend',
-        fresh: true,
+      assert.deepEqual(
+        await resolveRequestTheme({
+          pathname: '/Dnevend',
+          fresh: true,
+          loadConfigTheme: load,
+        }),
+        { theme: 'nes', persist: true }
+      );
+      assert.deepEqual(calls, [{ login: 'Dnevend', fresh: true }]);
+    },
+  },
+  {
+    name: '主题不再跳：首页 → 用户页 → 首页 → 同一用户页',
+    run: async () => {
+      const calls: string[] = [];
+      const load = async (login: string) => {
+        calls.push(login);
+        return 'nes' as const;
+      };
+
+      // 首访 qiangsi：读到配置主题 nes，写入 cookie
+      const first = await resolveRequestTheme({
+        pathname: '/qiangsi',
         loadConfigTheme: load,
       });
-      assert.deepEqual(calls, [{ login: 'Dnevend', fresh: true }]);
+      assert.deepEqual(first, { theme: 'nes', persist: true });
+
+      // 回首页：cookie 优先，不再回 mac
+      const home = await resolveRequestTheme({
+        pathname: '/',
+        cookie: first.theme,
+        loadConfigTheme: load,
+      });
+      assert.deepEqual(home, { theme: 'nes', persist: false });
+
+      // 再点同一用户：cookie 优先，不读配置，主题保持 nes
+      const again = await resolveRequestTheme({
+        pathname: '/qiangsi',
+        cookie: home.theme,
+        loadConfigTheme: load,
+      });
+      assert.deepEqual(again, { theme: 'nes', persist: false });
+      assert.deepEqual(calls, ['qiangsi']);
     },
   },
   {
