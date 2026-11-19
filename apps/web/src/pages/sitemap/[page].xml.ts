@@ -15,9 +15,9 @@ export const GET: APIRoute = async ({ url, params }) => {
 
   const users = await listIndexableUsers(usersKv());
   const userPaths = users.map((login) => `/${login}`);
-  const fixed = ['/', '/webring', '/nft'];
+  const fixed = ['/', '/webring', '/nft', '/nft/privacy', '/nft/terms'];
 
-  // 第一页先放固定的三条，剩余位置给用户；后面每页 PAGE_SIZE 条。
+  // 第一页先放固定条目，剩余位置给用户；后面每页 PAGE_SIZE 条。
   // 注意偏移要减掉固定条目，否则边界处的用户会被跳过。
   const slice =
     page === 1

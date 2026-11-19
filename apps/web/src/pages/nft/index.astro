@@ -167,6 +167,15 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
     </div>
   </section>
 
+  <section class="nft-section" data-recent-section hidden>
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.recent.title}</h2>
+      <span class="nft-section__note">{copy.recent.note}</span>
+    </div>
+    <div class="nft-recent" data-recent-list></div>
+    <p class="nft-note" data-recent-empty hidden>{copy.recent.empty}</p>
+  </section>
+
   <section class="nft-section" data-session-section hidden>
     <div class="nft-section__head">
       <h2 class="nft-section__title">{copy.progress.title}</h2>

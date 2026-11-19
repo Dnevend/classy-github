@@ -32,7 +32,10 @@ const origin = siteOrigin(Astro.url);
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isOverview = path === '/nft';
 const isClaim = path === '/nft/claim';
-const langHref = `${Astro.url.pathname}?lang=${locale === 'zh' ? 'en' : 'zh'}`;
+const isCards = path === '/nft/cards';
+const langParams = new URLSearchParams(Astro.url.searchParams);
+langParams.set('lang', locale === 'zh' ? 'en' : 'zh');
+const langHref = `${Astro.url.pathname}?${langParams.toString()}`;
 const explorerBase =
   chainId === 8453 ? 'https://basescan.org' : 'https://sepolia.basescan.org';
 const contractUrl = contract ? `${explorerBase}/address/${contract}` : null;
@@ -94,6 +97,9 @@ const shortContract = contract
           <a href="/nft/claim" aria-current={isClaim ? 'page' : undefined}>
             {copy.nav.claim}
           </a>
+          <a href="/nft/cards" aria-current={isCards ? 'page' : undefined}>
+            {copy.nav.cards}
+          </a>
           <a
             href="https://github.com/Dnevend/classy-github"
             target="_blank"
@@ -145,6 +151,8 @@ const shortContract = contract
           {copy.footer.repo} ↗
         </a>
         <a href="/nft#rules">{copy.footer.rules}</a>
+        <a href="/nft/privacy">{copy.footer.privacy}</a>
+        <a href="/nft/terms">{copy.footer.terms}</a>
       </div>
     </footer>
   </body>

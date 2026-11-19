@@ -1,0 +1,185 @@
+---
+import NftLayout from '../../../layouts/NftLayout.astro';
+import { getNftCopy } from '../../../lib/nft/copy.ts';
+import { loadNftConfig, NftConfigError } from '../../../lib/nft/config.ts';
+import { readToken } from '../../../lib/nft/rpc.ts';
+import { THEME_NAMES, themeName } from '../../../lib/nft/types.ts';
+import { shortAddress } from '../../../lib/nft/client.ts';
+import { siteOrigin } from '../../../lib/site.ts';
+
+export const prerender = false;
+
+Astro.response.headers.set('cache-control', 'no-store');
+
+const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
+const copy = getNftCopy(locale);
+const origin = siteOrigin(Astro.url);
+
+let config = null;
+let configError: NftConfigError | null = null;
+try {
+  config = loadNftConfig();
+} catch (error) {
+  if (error instanceof NftConfigError) configError = error;
+  else throw error;
+}
+
+const tokenId = Number(Astro.params.tokenId);
+const token =
+  config && Number.isSafeInteger(tokenId) && tokenId > 0
+    ? await readToken(config, tokenId).catch(() => null)
+    : null;
+
+if (config && !token) {
+  Astro.response.status = 404;
+} else if (configError) {
+  Astro.response.status = 503;
+}
+
+const theme = token?.location.theme;
+const serial = token?.location.serial;
+const name =
+  theme != null && serial != null
+    ? `${themeName(theme).toUpperCase()} #${serial}`
+    : copy.share.notFound;
+
+const explorerBase =
+  config?.chainId === 8453
+    ? 'https://basescan.org'
+    : 'https://sepolia.basescan.org';
+const tokenUrl =
+  config && token
+    ? `${explorerBase}/token/${config.contractAddress}?a=${tokenId}`
+    : null;
+const ownerUrl =
+  token != null ? `${explorerBase}/address/${token.owner}` : null;
+
+const title = token
+  ? `ClassyGit Pass — ${name}`
+  : `ClassyGit Pass — ${copy.share.notFound}`;
+
+const pageData = {
+  locale,
+  copy,
+  chainId: config?.chainId ?? 84532,
+  contract: config?.contractAddress ?? null,
+};
+
+const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
+---
+
+<NftLayout
+  title={title}
+  description={copy.hero.lead}
+  locale={locale}
+  canonical={`${origin}/nft/card/${tokenId}`}
+  image={
+    theme != null
+      ? `${origin}/nft/${THEME_NAMES[theme]}.png`
+      : `${origin}/nft/contact-sheet.png`
+  }
+  robots="noindex, follow"
+  contract={config?.contractAddress ?? null}
+  chainId={config?.chainId}
+>
+  {
+    token && theme != null && serial != null ? (
+      <section class="nft-hero nft-card-page">
+        <div class="nft-card-page__media">
+          <img
+            src={`/nft/${THEME_NAMES[theme]}.png`}
+            alt={`ClassyGit Pass — ${name}`}
+            width="1024"
+            height="1024"
+          />
+        </div>
+
+        <div>
+          <p class="nft-eyebrow">{copy.share.eyebrow}</p>
+          <h1 class="nft-title nft-title--claim">{name}</h1>
+          <dl class="nft-hero__meta" style="margin: 0 0 20px">
+            <div class="nft-meta-row">
+              <dt>{copy.share.theme}</dt>
+              <dd>{themeName(theme).toUpperCase()}</dd>
+            </div>
+            <div class="nft-meta-row">
+              <dt>{copy.share.serial}</dt>
+              <dd>{serial} / 2212</dd>
+            </div>
+            <div class="nft-meta-row">
+              <dt>{copy.share.token}</dt>
+              <dd>#{tokenId}</dd>
+            </div>
+            <div class="nft-meta-row">
+              <dt>{copy.share.owner}</dt>
+              <dd>
+                {ownerUrl ? (
+                  <a
+                    href={ownerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={token.owner}
+                  >
+                    {shortAddress(token.owner)} ↗
+                  </a>
+                ) : (
+                  shortAddress(token.owner)
+                )}
+              </dd>
+            </div>
+          </dl>
+
+          <div class="nft-actions">
+            <button class="nft-button" type="button" data-share>
+              {copy.share.share}
+            </button>
+            {tokenUrl && (
+              <a
+                class="nft-button is-secondary"
+                href={tokenUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {copy.share.viewExplorer} ↗
+              </a>
+            )}
+            <a class="nft-button is-secondary" href="/nft/claim">
+              {copy.share.claim}
+            </a>
+          </div>
+          <p class="nft-note" data-share-note hidden>{copy.share.copied}</p>
+        </div>
+      </section>
+    ) : (
+      <section class="nft-section" style="margin-top: 40px">
+        <p class="nft-eyebrow">ClassyGit Pass</p>
+        <h1 class="nft-title nft-title--claim">
+          {configError ? copy.errors.not_configured : copy.share.notFound}
+        </h1>
+        <div class="nft-actions" style="margin-top: 20px">
+          <a class="nft-button" href="/nft">{copy.share.back}</a>
+        </div>
+      </section>
+    )
+  }
+
+  <script type="application/json" id="nft-page-data" set:html={dataJson} />
+
+  <script>
+    const button = document.querySelector<HTMLButtonElement>('[data-share]');
+    const note = document.querySelector<HTMLElement>('[data-share-note]');
+    button?.addEventListener('click', async () => {
+      const url = window.location.href;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: document.title, url });
+          return;
+        }
+        await navigator.clipboard.writeText(url);
+        if (note) note.hidden = false;
+      } catch {
+        // User dismissed the share sheet; no action needed.
+      }
+    });
+  </script>
+</NftLayout>

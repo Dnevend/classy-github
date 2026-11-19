@@ -38,6 +38,7 @@ import {
 } from '../src/lib/nft/store.ts';
 import { isTheme, themeName } from '../src/lib/nft/types.ts';
 import { signMintVoucher, verifyMintVoucher } from '../src/lib/nft/voucher.ts';
+import { locateToken, tokenIdFor } from '../src/lib/nft/tokens.ts';
 import type { UsersKv } from '../src/lib/users-kv.ts';
 
 const baseConfig = { owner: 'alice' } as ConfigState['config'];
@@ -313,6 +314,18 @@ const main = async (): Promise<void> => {
     }),
     false
   );
+
+  // Token id ranges match the contract's per-theme allocation.
+  assert.deepEqual(locateToken(1), { theme: 0, serial: 1 });
+  assert.deepEqual(locateToken(2212), { theme: 0, serial: 2212 });
+  assert.deepEqual(locateToken(2213), { theme: 1, serial: 1 });
+  assert.deepEqual(locateToken(4425), { theme: 2, serial: 1 });
+  assert.deepEqual(locateToken(6637), { theme: 3, serial: 1 });
+  assert.deepEqual(locateToken(8848), { theme: 3, serial: 2212 });
+  assert.equal(locateToken(0), null);
+  assert.equal(locateToken(8849), null);
+  assert.equal(tokenIdFor(2, 1), 4425);
+  assert.equal(tokenIdFor(0, 2212), 2212);
 
   // Claim storage: keyed by (ghId, theme), expiry is computed.
   const kv = makeKv();

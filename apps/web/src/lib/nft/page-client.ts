@@ -35,6 +35,18 @@ interface StatsResponse {
   total: number;
 }
 
+interface RecentMintView {
+  tokenId: number;
+  owner: string;
+  theme: Theme;
+  serial: number;
+}
+
+interface RecentResponse {
+  total: number;
+  mints: RecentMintView[];
+}
+
 interface SessionResponse {
   authenticated: boolean;
   login?: string;
@@ -291,22 +303,70 @@ const updateLandingCard = (
   }
 };
 
+const applyRecent = (copy: NftCopy, data: RecentResponse | null): void => {
+  const section = $<HTMLElement>('[data-recent-section]');
+  const list = $<HTMLElement>('[data-recent-list]');
+  const empty = $<HTMLElement>('[data-recent-empty]');
+  if (!section || !list) return;
+
+  const mints = data?.mints ?? [];
+  section.hidden = false;
+  list.replaceChildren();
+  if (empty) empty.hidden = mints.length > 0;
+
+  for (const mint of mints) {
+    if (!isTheme(mint.theme)) continue;
+    const item = document.createElement('a');
+    item.className = 'nft-recent__item';
+    item.href = `/nft/card/${mint.tokenId}`;
+
+    const img = document.createElement('img');
+    img.src = `/nft/${THEME_NAMES[mint.theme]}.png`;
+    img.alt = '';
+    img.width = 56;
+    img.height = 56;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    const meta = document.createElement('div');
+    meta.className = 'nft-recent__meta';
+    const title = document.createElement('span');
+    title.className = 'nft-recent__title';
+    title.textContent = `${themeName(mint.theme).toUpperCase()} #${mint.serial}`;
+    const owner = document.createElement('span');
+    owner.className = 'nft-recent__owner';
+    owner.textContent = shortAddress(mint.owner);
+    meta.append(title, owner);
+
+    const token = document.createElement('span');
+    token.className = 'nft-recent__token';
+    token.textContent = `#${mint.tokenId}`;
+
+    item.append(img, meta, token);
+    list.append(item);
+  }
+};
+
 export const initLanding = async (): Promise<void> => {
   const data = readPageData();
   if (!data) return;
   const copy = data.copy;
 
-  const [statsResult, sessionResult] = await Promise.allSettled([
+  const [statsResult, sessionResult, recentResult] = await Promise.allSettled([
     requestJson<StatsResponse>('/api/nft/stats'),
     requestJson<SessionResponse>('/api/nft/session'),
+    requestJson<RecentResponse>('/api/nft/recent'),
   ]);
 
   const stats =
     statsResult.status === 'fulfilled' ? statsResult.value : null;
   const session =
     sessionResult.status === 'fulfilled' ? sessionResult.value : null;
+  const recent =
+    recentResult.status === 'fulfilled' ? recentResult.value : null;
 
   applyStats(stats);
+  applyRecent(copy, recent);
 
   const claims = session?.claims ?? [];
   const claimByTheme = new Map(claims.map((claim) => [claim.theme, claim]));

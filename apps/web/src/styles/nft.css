@@ -841,6 +841,140 @@
   color: var(--nft-ink);
 }
 
+.nft-lookup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nft-input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--nft-line);
+  border-radius: 0;
+  background: var(--nft-white);
+  color: var(--nft-ink);
+  font-family: var(--nft-mono);
+  font-size: 12px;
+}
+
+.nft-input:focus {
+  outline: 2px solid var(--nft-ink);
+  outline-offset: 1px;
+}
+
+.nft-card-page {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+}
+
+.nft-card-page__media {
+  border: 1px solid var(--nft-line);
+  background: var(--nft-white);
+}
+
+.nft-card-page__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.nft-legal {
+  display: grid;
+  gap: 28px;
+  max-width: 760px;
+  margin-top: 28px;
+}
+
+.nft-legal h2 {
+  margin-bottom: 8px;
+}
+
+.nft-legal p {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #3b3b3b;
+}
+
+.nft-legal p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1000px) {
+  .nft-card-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nft-recent {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.nft-recent__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--nft-line);
+  background: var(--nft-white);
+}
+
+.nft-recent__item:hover {
+  border-color: var(--nft-ink);
+  text-decoration: none;
+}
+
+.nft-recent__item img {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border: 1px solid var(--nft-line);
+  object-fit: cover;
+}
+
+.nft-recent__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nft-recent__title {
+  font-size: 12.5px;
+  line-height: 1.3;
+}
+
+.nft-recent__owner {
+  font-family: var(--nft-mono);
+  font-size: 10.5px;
+  color: var(--nft-muted);
+}
+
+.nft-recent__token {
+  margin-left: auto;
+  font-family: var(--nft-pixel);
+  font-size: 9px;
+  color: var(--nft-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1000px) {
+  .nft-recent {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .nft-recent {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1000px) {
   .nft-hero {
     grid-template-columns: 1fr;

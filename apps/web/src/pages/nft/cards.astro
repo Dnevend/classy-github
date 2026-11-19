@@ -1,0 +1,115 @@
+---
+import NftLayout from '../../layouts/NftLayout.astro';
+import { getNftCopy } from '../../lib/nft/copy.ts';
+import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
+import { siteOrigin } from '../../lib/site.ts';
+
+export const prerender = false;
+
+const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
+const copy = getNftCopy(locale);
+const origin = siteOrigin(Astro.url);
+const initialAddress = Astro.url.searchParams.get('address') ?? '';
+
+let config = null;
+try {
+  config = loadNftConfig();
+} catch (error) {
+  if (!(error instanceof NftConfigError)) throw error;
+}
+
+const title =
+  locale === 'zh'
+    ? '我的 ClassyGit Pass — 按钱包查看'
+    : 'My ClassyGit Pass — Cards by wallet';
+
+const pageData = {
+  locale,
+  copy,
+  chainId: config?.chainId ?? 84532,
+  contract: config?.contractAddress ?? null,
+  initialAddress,
+};
+
+const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
+---
+
+<NftLayout
+  title={title}
+  description={copy.cardsPage.lead}
+  locale={locale}
+  canonical={`${origin}/nft/cards`}
+  image={`${origin}/nft/contact-sheet.png`}
+  robots="noindex, follow"
+  contract={config?.contractAddress ?? null}
+  chainId={config?.chainId}
+>
+  <section class="nft-hero">
+    <div>
+      <p class="nft-eyebrow">{copy.cardsPage.eyebrow}</p>
+      <h1 class="nft-title nft-title--claim">{copy.cardsPage.title}</h1>
+      <p class="nft-lead">{copy.cardsPage.lead}</p>
+      <div class="nft-actions">
+        <a class="nft-button" href="/nft/claim">{copy.cardsPage.claim}</a>
+        <a class="nft-button is-secondary" href="/nft">
+          {copy.share.back}
+        </a>
+      </div>
+    </div>
+
+    <aside class="nft-hero__meta" aria-label={copy.cardsPage.address}>
+      <form class="nft-lookup" data-card-form novalidate>
+        <label class="nft-panel__label" for="cards-address">
+          {copy.cardsPage.address}
+        </label>
+        <input
+          id="cards-address"
+          class="nft-input"
+          data-card-address
+          value={initialAddress}
+          placeholder={copy.cardsPage.placeholder}
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          inputmode="text"
+        />
+        <div class="nft-inline">
+          <button class="nft-button" type="submit">
+            {copy.cardsPage.lookup}
+          </button>
+          <button class="nft-button is-secondary" type="button" data-card-connect>
+            {copy.cardsPage.connect}
+          </button>
+        </div>
+      </form>
+      <p class="nft-note" data-card-hint hidden>{copy.cardsPage.noWallet}</p>
+    </aside>
+  </section>
+
+  <section class="nft-section" style="margin-top: 32px">
+    <div class="nft-section__head">
+      <h2 class="nft-section__title">{copy.cardsPage.title}</h2>
+      <span class="nft-section__note" data-card-count></span>
+    </div>
+
+    <div class="nft-grid" data-card-list></div>
+    <p class="nft-note" data-card-empty hidden>{copy.cardsPage.empty}</p>
+    <p class="nft-note" data-card-truncated hidden>
+      {copy.cardsPage.truncated}
+    </p>
+    <div
+      class="nft-status-line"
+      data-card-status
+      role="status"
+      aria-live="polite"
+      hidden
+    />
+  </section>
+
+  <script type="application/json" id="nft-cards-data" set:html={dataJson} />
+
+  <script>
+    import { initCardsPage } from '../../lib/nft/cards-client.ts';
+    initCardsPage().catch(() => undefined);
+  </script>
+</NftLayout>
