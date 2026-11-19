@@ -55,6 +55,8 @@ export const initCardsPage = async (): Promise<void> => {
   const status = $<HTMLElement>('[data-card-status]');
   const hint = $<HTMLElement>('[data-card-hint]');
   const connect = $<HTMLButtonElement>('[data-card-connect]');
+  const openSeaWrap = $<HTMLElement>('[data-opensea-wrap]');
+  const openSeaLink = $<HTMLAnchorElement>('[data-opensea]');
   if (!form || !input || !list) return;
 
   let provider: InjectedProvider | null = getInjectedProvider();
@@ -89,6 +91,17 @@ export const initCardsPage = async (): Promise<void> => {
         '{n}',
         String(response.balance)
       );
+    }
+
+    if (openSeaWrap && openSeaLink) {
+      const showOpenSea =
+        data.chainId === 8453 &&
+        response.balance > 0 &&
+        ADDRESS.test(response.address);
+      openSeaWrap.hidden = !showOpenSea;
+      if (showOpenSea) {
+        openSeaLink.href = `https://opensea.io/${response.address}`;
+      }
     }
 
     for (const card of response.cards) {
@@ -141,6 +154,7 @@ export const initCardsPage = async (): Promise<void> => {
     if (empty) empty.hidden = true;
     if (truncated) truncated.hidden = true;
     if (count) count.textContent = '';
+    if (openSeaWrap) openSeaWrap.hidden = true;
 
     if (!ADDRESS.test(address)) {
       setStatus(copy.cardsPage.invalid, 'error');

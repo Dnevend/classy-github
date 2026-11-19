@@ -126,6 +126,7 @@ const en = {
     claim: 'Claim a pass',
     open: 'Open card',
     owned: 'Owned by this wallet',
+    openSea: 'View on OpenSea',
     invalid: 'Enter a valid EVM address.',
   },
   share: {
@@ -135,6 +136,7 @@ const en = {
     serial: 'Serial',
     token: 'Token',
     viewExplorer: 'View on explorer',
+    openSea: 'OpenSea',
     share: 'Share card',
     copied: 'Link copied',
     claim: 'Claim your own',
@@ -404,6 +406,7 @@ const zh: NftCopy = {
     claim: '领取一张',
     open: '查看卡片',
     owned: '该钱包持有',
+    openSea: '在 OpenSea 查看',
     invalid: '请输入合法的 EVM 地址。',
   },
   share: {
@@ -413,6 +416,7 @@ const zh: NftCopy = {
     serial: '序号',
     token: 'Token',
     viewExplorer: '在区块浏览器查看',
+    openSea: 'OpenSea',
     share: '分享卡片',
     copied: '链接已复制',
     claim: '领取你自己的',

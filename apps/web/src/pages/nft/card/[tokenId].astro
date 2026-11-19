@@ -56,6 +56,10 @@ const tokenUrl =
   config && token
     ? `${explorerBase}/token/${config.contractAddress}?a=${tokenId}`
     : null;
+const openSeaUrl =
+  config && token && config.chainId === 8453
+    ? `https://opensea.io/assets/base/${config.contractAddress}/${tokenId}`
+    : null;
 const ownerUrl =
   token != null ? `${explorerBase}/address/${token.owner}` : null;
 
@@ -146,6 +150,16 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
                 rel="noopener noreferrer"
               >
                 {copy.share.viewExplorer} ↗
+              </a>
+            )}
+            {openSeaUrl && (
+              <a
+                class="nft-button is-secondary"
+                href={openSeaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {copy.share.openSea} ↗
               </a>
             )}
             <a class="nft-button is-secondary" href="/nft/claim">

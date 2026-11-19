@@ -332,6 +332,13 @@
   border-top: 1px solid var(--nft-line);
 }
 
+/* After a hero that already has a bottom border, avoid a second line. */
+.nft-section--flush {
+  margin-top: 0;
+  padding-top: 28px;
+  border-top: 0;
+}
+
 .nft-section__head {
   display: flex;
   align-items: baseline;

@@ -86,10 +86,21 @@ const dataJson = JSON.stringify(pageData).replace(/</g, '\\u003c');
     </aside>
   </section>
 
-  <section class="nft-section" style="margin-top: 32px">
+  <section class="nft-section nft-section--flush">
     <div class="nft-section__head">
       <h2 class="nft-section__title">{copy.cardsPage.title}</h2>
       <span class="nft-section__note" data-card-count></span>
+    </div>
+
+    <div class="nft-inline" style="margin-bottom: 14px" data-opensea-wrap hidden>
+      <a
+        class="nft-button is-secondary"
+        data-opensea
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {copy.cardsPage.openSea} ↗
+      </a>
     </div>
 
     <div class="nft-grid" data-card-list></div>
