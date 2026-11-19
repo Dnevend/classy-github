@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 export const LOCALES = ['en', 'zh'] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -120,6 +118,7 @@ const messages = {
     'profile.gists': 'gists',
     'profile.reposTitle': 'Repos',
     'profile.gistsTitle': 'Gists',
+    'profile.avatarAlt': "{name}'s avatar",
     'profile.blog': 'Blog',
     'stats.title': 'At a glance',
     'contrib.title': 'Contribution activity',
@@ -323,6 +322,7 @@ const messages = {
     'profile.gists': '片段',
     'profile.reposTitle': '仓库',
     'profile.gistsTitle': '片段',
+    'profile.avatarAlt': '{name} 的头像',
     'profile.blog': '博客',
     'stats.title': '数据一览',
     'contrib.title': '贡献活跃度',
@@ -471,5 +471,3 @@ export const localeFromConfig = (value: unknown): Locale =>
 export const localeFromAcceptLanguage = (
   value: string | null | undefined
 ): Locale => (/^zh\b/i.test(value ?? '') || /,\s*zh\b/i.test(value ?? '') ? 'zh' : DEFAULT_LOCALE);
-
-export const localeSchema = z.enum(LOCALES);

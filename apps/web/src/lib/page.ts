@@ -13,5 +13,3 @@ export async function loadUser(user: string): Promise<User | null> {
     throw error;
   }
 }
-
-export const originOf = (url: URL) => url.origin;

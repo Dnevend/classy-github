@@ -25,7 +25,7 @@ const t = createTranslator(Astro.locals.locale);
         <img
           class="w95-avatar"
           src={avatarUrl(userinfo)}
-          alt={`${userinfo.login} 的头像`}
+          alt={t('profile.avatarAlt', { name: userinfo.login })}
           width="64"
           height="64"
           loading="lazy"

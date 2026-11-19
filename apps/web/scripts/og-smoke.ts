@@ -8,9 +8,15 @@
 import assert from 'node:assert/strict';
 
 import { asciiName, buildOgCardHtml } from '../src/lib/og-card.ts';
+import {
+  OG_FETCH_HEADER,
+  isBlockedSameOriginCoverPath,
+  isOgFetchRequest,
+  readBoundedBody,
+} from '../src/lib/og-cover.ts';
 import { THEME_PALETTE } from '../src/lib/theme-palette.ts';
 
-type Case = { name: string; run: () => void };
+type Case = { name: string; run: () => void | Promise<void> };
 
 const base = {
   login: 'shadowzzh',
@@ -26,6 +32,58 @@ const base = {
 };
 
 const cases: Case[] = [
+  {
+    name: '同源动态路由不能作为 OG 封面（防递归）',
+    run: () => {
+      assert.equal(isBlockedSameOriginCoverPath('/og/Dnevend.png'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/api/hit/Dnevend'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/card/Dnevend'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/badge/Dnevend.svg'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/setup'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/%6fg/Dnevend.png'), true);
+      assert.equal(isBlockedSameOriginCoverPath('/images/cover.jpg'), false);
+      assert.equal(isBlockedSameOriginCoverPath('/cursors/mac-arrow.svg'), false);
+    },
+  },
+  {
+    name: '内部抓取头能识别嵌套 OG 请求',
+    run: () => {
+      assert.equal(
+        isOgFetchRequest(
+          new Request('https://classygit.dev/og/Dnevend.png', {
+            headers: { [OG_FETCH_HEADER]: '1' },
+          })
+        ),
+        true
+      );
+      assert.equal(
+        isOgFetchRequest(new Request('https://classygit.dev/og/Dnevend.png')),
+        false
+      );
+    },
+  },
+  {
+    name: '封面/头像读取有大小上限',
+    run: async () => {
+      const ok = await readBoundedBody(
+        new Response(new Uint8Array([1, 2, 3, 4])),
+        4
+      );
+      assert.equal(ok?.byteLength, 4);
+
+      assert.equal(
+        await readBoundedBody(new Response(new Uint8Array([1, 2, 3, 4, 5])), 4),
+        null
+      );
+
+      const declared = new Response(new Uint8Array([1]), {
+        headers: { 'content-length': '100' },
+      });
+      assert.equal(await readBoundedBody(declared, 4), null);
+
+      assert.equal(await readBoundedBody(new Response(null), 4), null);
+    },
+  },
   {
     name: '无封面：完全不输出 background-image（不能是 none）',
     run: () => {
@@ -102,7 +160,7 @@ let failed = 0;
 
 for (const { name, run } of cases) {
   try {
-    run();
+    await run();
     console.log(`  ✓ ${name}`);
   } catch (error) {
     failed += 1;

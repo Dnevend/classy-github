@@ -2,6 +2,7 @@ import { handle } from '@astrojs/cloudflare/handler';
 import { DurableObject } from 'cloudflare:workers';
 import { isAiBot } from './lib/ai-bots.ts';
 import { enforceRateLimits } from './lib/rate-limit.ts';
+import { withSecurityHeaders } from './lib/security-headers.ts';
 
 /**
  * 每个用户一个 Durable Object，做原子计数。
@@ -33,19 +34,21 @@ export default {
       url.pathname !== '/robots.txt' &&
       isAiBot(request.headers.get('user-agent'))
     ) {
-      return new Response('AI crawlers are not allowed', {
-        status: 403,
-        headers: {
-          'content-type': 'text/plain; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-robots-tag': 'noindex, nofollow',
-        },
-      });
+      return withSecurityHeaders(
+        new Response('AI crawlers are not allowed', {
+          status: 403,
+          headers: {
+            'content-type': 'text/plain; charset=utf-8',
+            'cache-control': 'no-store',
+            'x-robots-tag': 'noindex, nofollow',
+          },
+        })
+      );
     }
 
     const limited = await enforceRateLimits(request, env);
-    if (limited) return limited;
+    if (limited) return withSecurityHeaders(limited);
 
-    return handle(request, env as never, ctx as never);
+    return withSecurityHeaders(await handle(request, env as never, ctx as never));
   },
 };

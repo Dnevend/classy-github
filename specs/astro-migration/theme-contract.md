@@ -157,7 +157,7 @@ export function themeFromUrl(url: URL): ThemeName {
 ---
 // apps/web/src/pages/[user]/index.astro
 import { resolveTheme } from '../../themes';
-import { getUser, getUserReadme, listRepos, listFollowers, listFollowing } from '../../lib/github';
+import { getUser, getUserReadme, listRepos } from '../../lib/github';
 import { loadConfig } from '../../lib/config';
 import { renderMarkdown } from '../../lib/markdown';
 import { seoForProfile } from '../../lib/seo';
@@ -177,11 +177,9 @@ const themeName = themeFromUrl(Astro.url);
 const { components } = await resolveTheme(themeName);
 const { Layout, ProfileCard, RepoCard, Markdown } = components;
 
-const [repos, readme, followers, following] = await Promise.all([
+const [repos, readme] = await Promise.all([
   listRepos(user, { sort: 'updated', per_page: 100 }),
   getUserReadme(user),
-  listFollowers(user),
-  listFollowing(user),
 ]);
 
 const html = readme ? await renderMarkdown(readme.source, readme.path) : null;
@@ -207,8 +205,8 @@ Astro.response.headers.set(
     stats={{
       repos: userinfo.public_repos,
       gists: userinfo.public_gists,
-      followers: followers.length,
-      following: following.length,
+      followers: userinfo.followers,
+      following: userinfo.following,
     }}
     links={{ repos: `/${user}/repos`, gists: `/${user}/gists` }}
   />

@@ -32,7 +32,7 @@ const extractTags = (value: string): { title: string; tags: string[] } => {
   const seen = new Set<string>();
 
   const title = value
-    .replace(TAG_PATTERN, (match, prefix: string, rawTag: string) => {
+    .replace(TAG_PATTERN, (_match, prefix: string, rawTag: string) => {
       const key = rawTag.toLowerCase();
 
       // 超出上限或重复的标签从标题里剥掉，但不再加入 tags

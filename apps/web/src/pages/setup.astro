@@ -389,9 +389,6 @@ const display = userinfo?.name || userinfo?.login || user;
               .filter(Boolean)
               .slice(0, 8);
 
-          const optionalUrl = (value) =>
-            /^https?:\/\/\S+$/i.test(value.trim()) ? value.trim() : null;
-
           // 封面额外允许站内根路径（/images/cover.jpg），与 config.ts 保持一致。
           const optionalMediaUrl = (value) =>
             /^(https?:\/\/|\/(?!\/))\S+$/i.test(value.trim())

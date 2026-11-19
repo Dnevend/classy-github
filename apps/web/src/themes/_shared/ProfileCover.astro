@@ -11,5 +11,15 @@ const coverSrc = sameOriginPath(cover, siteOrigin(Astro.url));
 ---
 
 <div class:list={['profile-cover', { 'profile-cover--default': !coverSrc }]}>
-  {coverSrc && <img src={coverSrc} alt="" loading="lazy" />}
+  {
+    coverSrc && (
+      <img
+        src={coverSrc}
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    )
+  }
 </div>

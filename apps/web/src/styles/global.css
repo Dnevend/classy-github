@@ -2087,3 +2087,15 @@ img {
     min-width: 0;
   }
 }
+
+/* 主题里的闪烁/进度条是装饰；系统要求减少动态效果时全部停掉。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

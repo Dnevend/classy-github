@@ -1,13 +1,11 @@
 ---
 import type { User } from '@classy/types/github';
-import { createTranslator } from '../../lib/i18n';
 
 interface Props {
   userinfo: User;
 }
 
 const { userinfo } = Astro.props as Props;
-const t = createTranslator(Astro.locals.locale);
 
 const joined = userinfo.created_at ? userinfo.created_at.slice(0, 7) : null;
 const items = [

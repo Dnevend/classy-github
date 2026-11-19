@@ -1,4 +1,5 @@
 ---
+import { createTranslator } from '../../lib/i18n';
 import { availableThemes } from '../../themes';
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 const { current } = Astro.props as Props;
+const t = createTranslator(Astro.locals.locale);
 
 // 切换主题 = 一次导航。四套主题的 DOM 结构不同，浏览器端换 class 做不到。
 const hrefFor = (theme: string) => {
@@ -17,7 +19,7 @@ const hrefFor = (theme: string) => {
 
 {
   availableThemes.length > 1 && (
-    <nav class="theme-switcher" aria-label="切换主题">
+    <nav class="theme-switcher" aria-label={t('switch.theme')}>
       {availableThemes.map((theme) => (
         <a
           href={hrefFor(theme)}

@@ -357,6 +357,7 @@ cd apps/web/dist/server && ../../node_modules/.bin/wrangler secret put GITHUB_TO
 ```
 
 - `SITE_ORIGIN` 在 `wrangler.jsonc` 里，决定 canonical / OG / feed / sitemap 使用的域名；自建时改成你的最终地址。
+- `routes` 里默认绑定 `classygit.dev`。自建时必须把它改成你自己的域名；暂时没有域名就删掉整个 `routes`，只使用 `workers.dev` 地址。否则 `wrangler deploy` 会尝试绑定作者的域名并失败。
 - 可选：启用 Cloudflare Web Analytics。在 dashboard 的 Web Analytics 里为你的域名建一条站点并复制 token，写进 `apps/web/.env`（已在 `.gitignore`）：`echo 'PUBLIC_CF_ANALYTICS_TOKEN=...' > apps/web/.env`，再构建发布。不配则 HTML 里不会出现任何分析脚本。
 - 如果还要维护自己的 Pages 薄代理，改 `apps/web/pages-proxy/_worker.js` 的 `TARGET` 和 `apps/web/package.json` 的 `project-name`，再跑 `pnpm deploy:pages`；不需要就跳过。
 - 作者使用 Workers Paid（$5/月）主要是给 Shiki 语法高亮留 CPU 余量；轻度使用可以先试免费计划。

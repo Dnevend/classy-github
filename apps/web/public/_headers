@@ -5,3 +5,12 @@
 
 /images/*
   Cache-Control: public, max-age=604800
+
+# 静态资源不经过 Worker，安全头在这里兜底；HTML 由 Worker 统一加。
+# 放在最后：具体路径的缓存规则优先匹配。
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'
