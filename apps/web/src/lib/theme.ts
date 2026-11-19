@@ -25,9 +25,9 @@ export const themeColorScheme = (name: ThemeName): 'light' | 'dark' =>
   THEME_COLOR_SCHEMES[name];
 
 /**
- * `?theme=` 的解析规则。
- * 纯函数，方便在 node 里断言；主题是 URL 维度，不做 cookie 维度
- * （四套主题的 DOM 结构不同，浏览器端切不了）。
+ * `?theme=` / cookie 的解析规则。
+ * 纯函数，方便在 node 里断言；主题是服务端渲染的维度，
+ * 持久化靠 cookie，不在浏览器端切 class（四套主题的 DOM 结构不同）。
  */
 /**
  * 严格解析：不是合法主题名就返回 null（用于区分「没选」和「选了旧主题」）。
@@ -48,7 +48,7 @@ export const THEME_COOKIE = 'classy_theme';
 
 export interface ThemeChoice {
   theme: ThemeName;
-  /** 是否应该把这次选择写进 cookie */
+  /** 是否应该把这次解析出的主题写进 cookie */
   persist: boolean;
 }
 

@@ -37,5 +37,14 @@ export const resolveRequestTheme = async ({
     }
   }
 
-  return resolveThemeChoice({ param, cookie, fallback });
+  const choice = resolveThemeChoice({ param, cookie, fallback });
+
+  return {
+    ...choice,
+    // 访客没有显式选择时，站主配置的非 mac 主题也写入 cookie：
+    // 否则首页（mac）↔ 有主题的用户页会来回切换。
+    // mac 是全局默认，不写 cookie；否则第一次点进配置为 mac 的站点
+    // 就会把后续所有站点锁在 mac，看不到其他站点的主题。
+    persist: choice.persist || (!explicit && fallback !== 'mac'),
+  };
 };

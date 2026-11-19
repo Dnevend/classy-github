@@ -76,7 +76,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 
 - **README 直接当主页**：读取你的 GitHub profile README，保留 Markdown、代码高亮、相对图片，以及 `#gh-dark-mode-only` / `<picture>` 深浅色主题图片（按站点主题只显示一张）；资料卡、贡献墙、最近仓库、最近 Gist、近况都会自动生成。
 - **Gist 就是博客**：Gist 描述写 `classy.blog.标题 #标签`（类型名用英文字母），自动变成分类、标题和标签；支持多文件、阅读时间、按月归档和标签筛选。
-- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主设默认主题，访客用 `?theme=` 或页脚切换。
+- **四套复古主题**：`mac`、`nes`、`win98`、`tui` 共用同一份数据；站主设默认主题，访客用 `?theme=` 或页脚切换；首次进入用户页会记住该站的非 `mac` 默认主题。
 - **分享与传播**：主题化分享卡（带二维码）、1200×630 OG 图、88×31 徽章、Atom 订阅和 Sitemap；SEO 默认关闭，`seo.index: true` 才允许收录。
 - **留言簿和网站环**：用公开 Gist 评论当留言板；页脚「上一站 / 随机 / 下一站」连接其他复古站点。
 - **快、干净、可替换**：服务端直出 HTML，边缘缓存；四套主题在 375px 宽下无横向溢出；不存 IP、不做用户画像，只有主题和语言两个功能性 cookie；README / Gist / 留言走白名单清洗，`javascript:` 链接会被丢弃。
@@ -107,6 +107,7 @@ ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要�
 四套主题共用同一份数据，主题只决定外壳。
 
 - 默认主题由 `classy.config.json` 的 `theme` 决定（不填是 `mac`）；优先级是 `?theme=` > cookie > 站主配置 > `mac`。
+- 访客第一次进入某个用户页且没有 `?theme=` 或 cookie 时，该站配置的非 `mac` 主题会写进 cookie；之后首页、网站环和其他用户页都跟随这个主题，直到访客主动切换。配置为 `mac` 的页面不写 cookie，避免把访客锁在默认主题。
 - 每套主题的 CSS 独立打包，访问 `mac` 的访客不会下载 NES 的 279KB；旧链接 `?theme=default` 自动落到 `mac`，`?theme=win95` 落到 `win98`。
 - 没有配置封面时，四套主题各自渲染默认横幅；分享卡、OG 图、徽章都会跟随主题配色。
 
@@ -317,7 +318,7 @@ GitHub                          Cloudflare
 <details>
 <summary><strong>主题和语言会记住吗？隐私怎么处理？</strong></summary>
 
-会。选择写在 cookie 里；站点默认主题由 `classy.config.json` 的 `theme` 决定，也可以用 `?theme=nes` / `?lang=zh` 临时切换。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
+会。主题和语言选择写在 cookie 里；访客可以用 `?theme=nes` / `?lang=zh` 或页脚切换。访客第一次进入某个用户页且没有显式选择主题时，该站配置的非 `mac` 主题会写入主题 cookie，之后首页和其他页面都跟随它。应用不存 IP、不做用户画像，默认不加载分析脚本，只有主题和语言两个功能性 cookie；作者实例可选启用无 Cookie 的 Cloudflare Web Analytics（由 `PUBLIC_CF_ANALYTICS_TOKEN` 控制，不配则不注入）；首页「最近访问」只存在本机 localStorage，不上传。
 </details>
 
 ## 开发与自建
