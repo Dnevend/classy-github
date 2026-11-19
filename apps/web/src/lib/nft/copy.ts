@@ -2,6 +2,7 @@ export type NftLocale = 'en' | 'zh';
 
 const en = {
   nav: {
+    home: 'Home',
     overview: 'Overview',
     claim: 'Claim',
     cards: 'My cards',
@@ -282,6 +283,7 @@ type NftCopyObject<T> = {
 
 const zh: NftCopy = {
   nav: {
+    home: '主页',
     overview: '总览',
     claim: '领取',
     cards: '我的卡片',
