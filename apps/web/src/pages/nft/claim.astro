@@ -2,6 +2,7 @@
 import NftLayout from '../../layouts/NftLayout.astro';
 import ThemeCard from '../../components/nft/ThemeCard.astro';
 import { getNftCopy } from '../../lib/nft/copy.ts';
+import { CLASSY_FORK_URL } from '../../lib/nft/links.ts';
 import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
 import { readSession } from '../../lib/nft/http.ts';
 import {
@@ -169,6 +170,18 @@ const title =
           <div class="nft-banner" role="alert">
             {errorText}{' '}
             <a href="/api/nft/oauth/start">{copy.common.retry}</a>
+            {errorCode === 'no_config' && (
+              <>
+                {' · '}
+                <a
+                  href={CLASSY_FORK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {copy.common.create}
+                </a>
+              </>
+            )}
           </div>
         )}
 

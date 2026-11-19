@@ -74,7 +74,7 @@ const en = {
       'One card per theme per GitHub account, up to four cards total.',
       'Your GitHub account must be at least 90 days old.',
       'You need a public <login>/classy-github repo with a valid classy.config.json whose owner matches your login.',
-      'No star or fork is required. A site is the only requirement.',
+      'Star and fork if you like the project. Forking is the easiest way to create your site, but neither is required for eligibility.',
       'Cards are transferable ERC-721 tokens on Base.',
       'The NFT metadata does not contain your GitHub identity.',
       'This is a commemorative collectible, not an investment. It has no promised financial value.',
@@ -85,7 +85,7 @@ const en = {
     items: [
       {
         q: 'Do I need to star or fork the repository?',
-        a: 'No. The only requirement is a public classy-github repo with a config that points to your GitHub login.',
+        a: 'Not required, but encouraged. Forking is the easiest way to create your own classy-github site, and a star helps others find the project. Eligibility only checks the public repo and its classy.config.json owner.',
       },
       {
         q: 'Can I claim all four themes?',
@@ -214,6 +214,7 @@ const en = {
     loading: 'Loading…',
     unavailable: 'Unavailable',
     retry: 'Retry',
+    create: 'Create',
     back: 'Back to overview',
     close: 'Close',
     copy: 'Copy',
@@ -353,7 +354,7 @@ const zh: NftCopy = {
       '每个 GitHub 账号每个主题一张，最多四张。',
       'GitHub 账号需要满 90 天。',
       '需要一个公开的 <login>/classy-github 仓库，classy.config.json 的 owner 与登录名一致。',
-      '不需要 star 或 fork，只需要一个真实的站点。',
+      '欢迎 star 和 fork：fork 是创建自己站点最方便的方式，喜欢的话也点个 star；两者都不是领取的硬性条件。',
       '卡片是 Base 上可转让的 ERC-721。',
       'NFT 元数据不包含你的 GitHub 身份。',
       '这是纪念收藏品，不是投资品，不承诺任何金融价值。',
@@ -364,7 +365,7 @@ const zh: NftCopy = {
     items: [
       {
         q: '需要 star 或 fork 仓库吗？',
-        a: '不需要。唯一条件是一个公开的 classy-github 仓库，配置里的 owner 指向你的 GitHub 登录名。',
+        a: '不强制，但非常欢迎。fork 是创建自己 classy-github 站点最方便的方式，喜欢的话也点个 star。资格只检查公开仓库和 classy.config.json 的 owner。',
       },
       {
         q: '四个主题都能领吗？',
@@ -490,6 +491,7 @@ const zh: NftCopy = {
     loading: '加载中…',
     unavailable: '不可用',
     retry: '重试',
+    create: '去创建',
     back: '返回总览',
     close: '关闭',
     copy: '复制',

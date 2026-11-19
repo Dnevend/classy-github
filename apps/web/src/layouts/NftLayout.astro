@@ -1,6 +1,7 @@
 ---
 import Seo from '../components/Seo.astro';
 import { getNftCopy, type NftLocale } from '../lib/nft/copy.ts';
+import { CLASSY_REPO_URL } from '../lib/nft/links.ts';
 import { siteOrigin } from '../lib/site.ts';
 import '../styles/global.css';
 import '../styles/nft.css';
@@ -101,7 +102,7 @@ const shortContract = contract
             {copy.nav.cards}
           </a>
           <a
-            href="https://github.com/Dnevend/classy-github"
+            href={CLASSY_REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -144,7 +145,7 @@ const shortContract = contract
           )
         }
         <a
-          href="https://github.com/Dnevend/classy-github"
+          href={CLASSY_REPO_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
