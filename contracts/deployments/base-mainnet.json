@@ -1,0 +1,39 @@
+{
+  "network": "base-mainnet",
+  "chainId": 8453,
+  "status": "deployed-configured-verified",
+  "contract": "0xD6AE438F918b390A4B2d56591F739be83F27b126",
+  "deployer": "0xac2A2bd9CAE78f9Af3D4108AF00DCc855225736e",
+  "owner": "0xac2A2bd9CAE78f9Af3D4108AF00DCc855225736e",
+  "signer": "0x52394CD302b5166F8Ee6bD60814A0332b87BaeDe",
+  "relayer": "0xad641A58C64A43201922d6D15C11bBC309EBB19B",
+  "images": {
+    "mac": "ipfs://bafkreiek6jozh6funpf3jhhognaf26js6ktfahpcbycpwgmscbm6adpg3y",
+    "nes": "ipfs://bafkreiauzqjoxj4u6jg72qs2o6tspzhyxyc4znfz6wv3kcfbplrr2l43tq",
+    "win98": "ipfs://bafkreigjv5mitwkorydxjnbvydhxqwyvic5h66nyezagsapa6kakkujuda",
+    "tui": "ipfs://bafkreiapbvqto7zouqn5lcwkmonu6vacc5wewmrewrz2emwrrbrw4uodi4"
+  },
+  "contractURI": "ipfs://QmUv4adwChceCvsqLkeiaYY7MGmJqRLBUJWiFSSQNsdfmo",
+  "createdAt": "2026-11-19",
+  "note": "Public addresses and CIDs only. Secrets live in contracts/.env and apps/web/.dev.vars (gitignored). Mainnet claim salt is generated once and must never be rotated.",
+  "deployTx": "0xeb6f9be2e3d22bda2c64d724b998204366f2aaed2eb8c646df71b23d8e109fbd",
+  "configureTxs": [
+    "0x3621dd33f168963d849308c5e8e9ccac5f041a7d856a2c85555cab2de48abe73",
+    "0x9f14a09ae09d827929fd2c3cb187fc5ae345fb063fcd1854e613e8baec41ad4c",
+    "0xcfcf8729ef6133ebe5cd72688f5085f85de966bd59642c7ce950d444e6b62b57",
+    "0x959f22d6989fee6dd38ac16e1c4eac038b6ff7dca2e4f101e7bfd5b8d2c876ff",
+    "0x4fb69db376e528eab25f5158790a666799e7eff92d2517acaece23207a9de5e2"
+  ],
+  "verified": true,
+  "verifier": "basescan+sourcify",
+  "verification": {
+    "basescan": "https://basescan.org/address/0xD6AE438F918b390A4B2d56591F739be83F27b126",
+    "sourcify": "exact_match",
+    "sourcifyMatchId": "59514596",
+    "sourcifyVerifiedAt": "2026-11-19T09:07:42Z",
+    "sourcifyUrl": "https://sourcify.dev/#/lookup/0xD6AE438F918b390A4B2d56591F739be83F27b126"
+  },
+  "explorer": "https://basescan.org/address/0xD6AE438F918b390A4B2d56591F739be83F27b126",
+  "deployedAt": "2026-11-19",
+  "apiSmokeMints": []
+}
