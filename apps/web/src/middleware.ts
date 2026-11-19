@@ -24,6 +24,7 @@ import { singleFlight } from './lib/single-flight.ts';
 import { userFromPath } from './lib/user-route.ts';
 import { parseThemeName, THEME_COOKIE } from './lib/theme.ts';
 import { resolveRequestTheme } from './lib/request-theme.ts';
+import { isDocumentNavigation } from './lib/document-request.ts';
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -38,12 +39,6 @@ const CACHE_VERSION = '44';
 /** 仓库文件页不参与索引；meta 之外再加一层响应头，覆盖 302 和非 HTML。 */
 const isRepoPath = (pathname: string) =>
   /^\/[^/]+\/repo(?:\/|$)/.test(pathname);
-
-/** 只在 HTML 页面写语言 cookie，避免给 API / 图片 / sitemap 加 Set-Cookie。 */
-const isDocumentPath = (pathname: string) =>
-  !/^\/(?:api|og|card|contrib|sitemap|robots\.txt)(?:\/|$|\.[a-z]+$)/i.test(
-    pathname
-  ) && !/^\/badge\/[^/]+\.svg$/i.test(pathname);
 
 /**
  * v43 → v44 迁移期：新 key 没有缓存时，旧 key 的 stale HTML 仍然比 503 好。
@@ -256,8 +251,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.locale =
     localeChoice === 'auto' ? DEFAULT_LOCALE : localeChoice;
 
-  // 预览不能改写访客的持久主题/语言，也不能命中 HTML 缓存
-  if (persistTheme && !isPreview) {
+  // 预览不能改写访客的持久主题/语言，也不能命中 HTML 缓存。
+  //
+  // 只有顶层 HTML 导航才允许写偏好 cookie。badge / OG / contrib / RSS 这类
+  // 子资源即使带 `?theme=` / `?lang=`，也只用于本次渲染：否则 README 里
+  // 并发的主题徽章会互相覆盖 `classy_theme`，刷新时主题就会乱跳。
+  const documentNavigation = isDocumentNavigation({
+    method: context.request.method,
+    pathname: url.pathname,
+    destination: context.request.headers.get('sec-fetch-dest'),
+    accept: context.request.headers.get('accept'),
+    purpose:
+      context.request.headers.get('sec-purpose') ??
+      context.request.headers.get('purpose'),
+  });
+
+  if (persistTheme && !isPreview && documentNavigation) {
     context.cookies.set(THEME_COOKIE, theme, {
       path: '/',
       maxAge: COOKIE_MAX_AGE,
@@ -273,7 +282,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     !isPreview &&
     localeChoice !== 'auto' &&
     (hasExplicitParam || !hasValidCookie) &&
-    isDocumentPath(url.pathname)
+    documentNavigation
   ) {
     context.cookies.set(LOCALE_COOKIE, localeChoice, {
       path: '/',

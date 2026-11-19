@@ -499,6 +499,12 @@ URL 归一化为同源路径，修复跨域导致封面加载失败。详见
 `classy_theme` cookie；之后首页、网站环和其他页面跟随 cookie，不再在
 `mac` 与站点主题之间来回跳。详见 `m37-theme-cookie-persistence.md`。
 
+### M38 · 主题偏好 cookie 只允许顶层 HTML 导航写入（已完成 2026-11-19）
+
+README 里的 `/badge/<user>.svg?theme=...` 等子资源请求不再覆盖
+`classy_theme` / `classy_lang`；只有顶层 HTML 导航才写偏好 cookie。
+详见 `m38-theme-cookie-subresources.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |
