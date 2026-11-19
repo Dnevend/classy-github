@@ -97,6 +97,11 @@ export const NFT_ABI = [
   { type: 'error', name: 'InvalidRecipient', inputs: [] },
   {
     type: 'error',
+    name: 'ERC721NonexistentToken',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+  },
+  {
+    type: 'error',
     name: 'InvalidTheme',
     inputs: [{ name: 'theme', type: 'uint8' }],
   },

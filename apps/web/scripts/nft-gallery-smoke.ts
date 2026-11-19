@@ -20,6 +20,11 @@ const recent = await getJson('/api/nft/recent');
 assert.equal(recent.status, 200);
 assert.ok(Array.isArray(recent.data.mints));
 assert.ok(recent.data.mints.length <= 12);
+assert.equal(
+  recent.data.mints.length,
+  Math.min(recent.data.total, 12),
+  'recent should fill up to 12 items'
+);
 assert.equal(typeof recent.data.total, 'number');
 
 for (const mint of recent.data.mints) {
@@ -56,7 +61,9 @@ if (recent.data.mints.length > 0) {
   assert.match(await cardPage.text(), /ClassyGit Pass/);
 }
 
-const missingToken = await fetch(`${API}/nft/card/999999`);
+// 8000 is inside the tui range but unminted, so this exercises the real
+// `ownerOf` revert rather than the tokenId range check.
+const missingToken = await fetch(`${API}/nft/card/8000`);
 assert.equal(missingToken.status, 404);
 
 const invalid = await getJson('/api/nft/cards?address=not-an-address');

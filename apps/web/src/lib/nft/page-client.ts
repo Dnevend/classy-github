@@ -354,13 +354,8 @@ const applyRecent = (copy: NftCopy, data: RecentResponse | null): void => {
   }
 };
 
-const settle = async <T>(promise: Promise<T>): Promise<T | null> => {
-  try {
-    return await promise;
-  } catch {
-    return null;
-  }
-};
+const settle = <T>(promise: Promise<T>): Promise<T | null> =>
+  promise.catch(() => null);
 
 export const initLanding = async (): Promise<void> => {
   const data = readPageData();
@@ -368,12 +363,13 @@ export const initLanding = async (): Promise<void> => {
   const copy = data.copy;
 
   // Start all requests together, but render stats before the slower
-  // session/recent calls finish.
-  const statsPromise = requestJson<StatsResponse>('/api/nft/stats');
-  const sessionPromise = requestJson<SessionResponse>('/api/nft/session');
-  const recentPromise = requestJson<RecentResponse>('/api/nft/recent');
+  // session/recent calls finish. Attach the catches immediately so a fast
+  // rejection never becomes an unhandled rejection while stats is pending.
+  const statsPromise = settle(requestJson<StatsResponse>('/api/nft/stats'));
+  const sessionPromise = settle(requestJson<SessionResponse>('/api/nft/session'));
+  const recentPromise = settle(requestJson<RecentResponse>('/api/nft/recent'));
 
-  const stats = await settle(statsPromise);
+  const stats = await statsPromise;
   applyStats(stats);
   for (let i = 0; i < THEME_NAMES.length; i += 1) {
     updateLandingCard(
@@ -384,7 +380,7 @@ export const initLanding = async (): Promise<void> => {
     );
   }
 
-  const session = await settle(sessionPromise);
+  const session = await sessionPromise;
   const claims = session?.claims ?? [];
   const claimByTheme = new Map(claims.map((claim) => [claim.theme, claim]));
 
@@ -445,7 +441,7 @@ export const initLanding = async (): Promise<void> => {
     if (sessionSection) sessionSection.hidden = true;
   }
 
-  applyRecent(copy, await settle(recentPromise));
+  applyRecent(copy, await recentPromise);
 };
 
 const txKey = (ghId: number, theme: Theme): string =>

@@ -1,6 +1,5 @@
 import {
   BaseError,
-  ContractFunctionRevertedError,
   TransactionReceiptNotFoundError,
   createPublicClient,
   decodeEventLog,
@@ -12,6 +11,7 @@ import {
 import { base, baseSepolia } from 'viem/chains';
 import { NFT_ABI } from './contract.ts';
 import type { NftConfig } from './config.ts';
+import { revertNameOf } from './error-chain.ts';
 import { locateToken, type TokenLocation } from './tokens.ts';
 import { isTheme, PER_THEME, type Theme } from './types.ts';
 
@@ -327,15 +327,10 @@ export const readToken = async (
     })) as Address;
     return { owner, location };
   } catch (error) {
-    // Only a decoded `ownerOf` revert means the token does not exist. RPC
-    // failures (HTTP 429, -32005, timeouts) must surface as 503, not 404.
-    if (error instanceof ContractFunctionRevertedError) return null;
-    if (
-      error instanceof BaseError &&
-      error.walk((cause) => cause instanceof ContractFunctionRevertedError)
-    ) {
-      return null;
-    }
+    // Only a decoded ERC721NonexistentToken revert means the token does not
+    // exist. `-32603` / transport failures also surface as contract-call
+    // errors, so they must not be turned into a 404.
+    if (revertNameOf(error) === 'ERC721NonexistentToken') return null;
     throw error;
   }
 };
