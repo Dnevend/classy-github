@@ -13,7 +13,7 @@ const en = {
     eyebrow: 'ClassyGit Pass / Series 01–04',
     title: 'Four themes. One GitHub.',
     lead:
-      'A free commemorative pass for people who turned their GitHub into a homepage. Verify your site, choose a theme, claim up to four.',
+      'A free commemorative pass for people who turned GitHub into a homepage. Verify your site, choose a theme, claim up to four. Permanent on-chain, transferable, verifiable.',
     cta: 'Verify GitHub & claim',
     secondary: 'Read the rules',
     asideSeries: 'Series',
@@ -300,7 +300,7 @@ const zh: NftCopy = {
     eyebrow: 'ClassyGit Pass / 系列 01–04',
     title: '四个主题，一\u2060个 GitHub。',
     lead:
-      '给把 GitHub 变成个人主页的人，一张免费纪念卡。验证你的站点，选一个主题，最多领四张。',
+      '给把 GitHub 变成个人主页的人，一张免费 NFT 纪念卡。验证你的站点，选择主题，最多领四张。永久存证、可转让、可验证。',
     cta: '验证 GitHub 并领取',
     secondary: '查看规则',
     asideSeries: '系列',
