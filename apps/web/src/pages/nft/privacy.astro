@@ -1,6 +1,5 @@
 ---
 import NftLayout from '../../layouts/NftLayout.astro';
-import { getNftCopy } from '../../lib/nft/copy.ts';
 import { getLegalCopy } from '../../lib/nft/legal.ts';
 import { loadNftConfig, NftConfigError } from '../../lib/nft/config.ts';
 import { siteOrigin } from '../../lib/site.ts';
@@ -8,7 +7,6 @@ import { siteOrigin } from '../../lib/site.ts';
 export const prerender = false;
 
 const locale = Astro.locals.locale === 'zh' ? 'zh' : 'en';
-const copy = getNftCopy(locale);
 const legal = getLegalCopy(locale);
 const page = legal.privacy;
 const origin = siteOrigin(Astro.url);

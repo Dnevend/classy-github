@@ -303,7 +303,7 @@ const updateLandingCard = (
   }
 };
 
-const applyRecent = (copy: NftCopy, data: RecentResponse | null): void => {
+const applyRecent = (data: RecentResponse | null): void => {
   const section = $<HTMLElement>('[data-recent-section]');
   const list = $<HTMLElement>('[data-recent-list]');
   const empty = $<HTMLElement>('[data-recent-empty]');
@@ -481,7 +481,7 @@ export const initLanding = async (): Promise<void> => {
 
       if (nextRecent) {
         recentApplied = true;
-        applyRecent(copy, nextRecent);
+        applyRecent(nextRecent);
       }
     } catch {
       // Keep the last good values; the next focus will try again.
@@ -498,7 +498,7 @@ export const initLanding = async (): Promise<void> => {
   });
 
   const initialRecent = await recentPromise;
-  if (!recentApplied) applyRecent(copy, initialRecent);
+  if (!recentApplied) applyRecent(initialRecent);
 };
 
 const txKey = (ghId: number, theme: Theme): string =>
