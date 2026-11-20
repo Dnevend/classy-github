@@ -5,6 +5,11 @@ export interface SeoMeta {
   description?: string;
   canonical?: string;
   image?: string;
+  /** OG 图尺寸（像素），帮助社交平台在下载前确定预览比例 */
+  imageWidth?: number;
+  imageHeight?: number;
+  /** OG 图替代文本；会同时输出 og:image:alt 与 twitter:image:alt */
+  imageAlt?: string;
   /** Atom / RSS 自动发现链接 */
   rss?: string;
   robots?: string;

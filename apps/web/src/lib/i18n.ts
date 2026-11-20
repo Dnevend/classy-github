@@ -207,6 +207,8 @@ const messages = {
     'landing.subtitle': 'Type a username to get a personal homepage, code snippets and notes. No deploy, no login.',
     'landing.seoDescription':
       'Type a GitHub username to get a shareable homepage, code snippets and notes: repos, stars, README and Gists in one page. Four retro themes, no deploy, no login.',
+    'landing.ogAlt':
+      'ClassyGit — your GitHub, a different way. Four retro themes (Mac, NES, Win98, TUI) at classygit.dev.',
     'landing.placeholder': 'GitHub username',
     'landing.submit': 'View',
     'landing.label': 'GitHub username',
@@ -413,6 +415,8 @@ const messages = {
     'landing.subtitle': '输入用户名，即刻得到个人主页、代码片段和随笔集。无需部署，无需登录。',
     'landing.seoDescription':
       '输入 GitHub 用户名，即刻得到个人主页、代码片段和随笔集：仓库、关注、README、Gist 文章自动整理成可分享的页面，四套复古主题随时切换。无需部署，无需登录，打开即用。',
+    'landing.ogAlt':
+      'ClassyGit：你的 GitHub，换一种打开方式。Mac、NES、Win98、TUI 四套复古主题，classygit.dev。',
     'landing.placeholder': 'GitHub 用户名',
     'landing.submit': '查看',
     'landing.label': 'GitHub 用户名',

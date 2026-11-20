@@ -22,10 +22,16 @@ const { name: themeName, components } = await resolveTheme(Astro.locals.theme);
 const t = createTranslator(Astro.locals.locale);
 const { Layout } = components;
 
+const origin = siteOrigin(Astro.url);
+
 const seo: SeoMeta = {
   title: `ClassyGit · ${t('landing.title')}`,
   description: t('landing.seoDescription'),
-  canonical: `${siteOrigin(Astro.url)}/`,
+  canonical: `${origin}/`,
+  image: `${origin}/images/social-preview.png`,
+  imageWidth: 1280,
+  imageHeight: 640,
+  imageAlt: t('landing.ogAlt'),
   robots: 'index, follow',
 };
 ---
