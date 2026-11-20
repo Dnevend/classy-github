@@ -21,7 +21,7 @@ const messages = {
     'webring.next': 'Next site',
     'webring.random': 'Random site',
     'webring.join': 'Join the webring',
-    'webring.title': 'ClassyGit Webring',
+    'webring.title': 'Webring',
     'webring.desc': 'A ring of retro personal homepages. Hop from one to the next.',
     'webring.empty': 'The ring is still empty. Be one of the first three sites.',
     'webring.members': '{count} sites',
@@ -204,9 +204,10 @@ const messages = {
     'error.retry': 'Retry',
 
     'landing.title': 'Your GitHub, a different way',
-    'landing.subtitle': 'Type a username to get a personal homepage, code snippets and notes. No deploy, no login.',
+    'landing.subtitle':
+      'No deploy, no login, no server: type a username to instantly visit your retro homepage, code and notes.',
     'landing.seoDescription':
-      'Type a GitHub username to get a shareable homepage, code snippets and notes: repos, stars, README and Gists in one page. Four retro themes, no deploy, no login.',
+      'No deploy, no login, no server: type a GitHub username to instantly visit your retro homepage, code and notes. Repos, stars, README and Gists on one shareable page, with four retro themes.',
     'landing.ogAlt':
       'ClassyGit — your GitHub, a different way. Four retro themes (Mac, NES, Win98, TUI) at classygit.dev.',
     'landing.placeholder': 'GitHub username',
@@ -229,7 +230,7 @@ const messages = {
     'webring.next': '下一站',
     'webring.random': '随机一站',
     'webring.join': '加入网站环',
-    'webring.title': 'ClassyGit 网站环',
+    'webring.title': '网站环',
     'webring.desc': '一圈复古个人主页。点下一站，去别人家串门。',
     'webring.empty': '网站环还是空的。成为前三个站点之一吧。',
     'webring.members': '{count} 个站点',
@@ -412,9 +413,10 @@ const messages = {
     'error.retry': '重试',
 
     'landing.title': '你的 GitHub，换一种打开方式',
-    'landing.subtitle': '输入用户名，即刻得到个人主页、代码片段和随笔集。无需部署，无需登录。',
+    'landing.subtitle':
+      '不用部署、登录、服务器，输入用户名，即刻访问你的复古主页、代码和随笔集。',
     'landing.seoDescription':
-      '输入 GitHub 用户名，即刻得到个人主页、代码片段和随笔集：仓库、关注、README、Gist 文章自动整理成可分享的页面，四套复古主题随时切换。无需部署，无需登录，打开即用。',
+      '不用部署、登录、服务器，输入 GitHub 用户名，即刻访问你的复古主页、代码和随笔集：仓库、关注、README、Gist 文章自动整理成可分享的页面，四套复古主题随时切换。',
     'landing.ogAlt':
       'ClassyGit：你的 GitHub，换一种打开方式。Mac、NES、Win98、TUI 四套复古主题，classygit.dev。',
     'landing.placeholder': 'GitHub 用户名',
