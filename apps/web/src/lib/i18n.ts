@@ -184,6 +184,15 @@ const messages = {
     'gist.files': '{count} files',
     'gist.created': 'Created {date}',
     'gist.untitled': 'Untitled gist',
+    'gist.comments': 'Comments ({count})',
+    'gist.commentsLoading': 'Loading comments…',
+    'gist.commentsEmpty': 'No comments yet. Be the first on GitHub.',
+    'gist.commentsUnavailable': 'Comments are unavailable right now.',
+    'gist.commentsNoJs':
+      'Comments load from GitHub in your browser. Enable JavaScript to see them here.',
+    'gist.commentOnGitHub': 'Comment on GitHub',
+    'gist.commentsHosted': 'Comments are hosted on GitHub.',
+    'gist.viewOnGitHub': 'View on GitHub',
 
     'share.trigger': 'Share',
     'share.save': 'Save image',
@@ -396,6 +405,15 @@ const messages = {
     'gist.files': '{count} 个文件',
     'gist.created': '创建于 {date}',
     'gist.untitled': '未命名 Gist',
+    'gist.comments': '评论（{count}）',
+    'gist.commentsLoading': '正在加载评论…',
+    'gist.commentsEmpty': '还没有评论，去 GitHub 抢沙发。',
+    'gist.commentsUnavailable': '评论暂时加载不出来。',
+    'gist.commentsNoJs':
+      '评论由浏览器从 GitHub 加载，启用 JavaScript 后会自动显示。',
+    'gist.commentOnGitHub': '去 GitHub 评论',
+    'gist.commentsHosted': '评论托管在 GitHub 上。',
+    'gist.viewOnGitHub': '在 GitHub 查看',
 
     'share.trigger': '分享',
     'share.save': '保存图片',

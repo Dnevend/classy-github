@@ -1,0 +1,66 @@
+---
+import { createTranslator, type Locale } from '../lib/i18n';
+
+interface Props {
+  gistId: string;
+  gistUrl: string;
+  /** GistDetail 里的评论总数；客户端拉取完成后会更新为实际加载数 */
+  count: number;
+  locale: Locale;
+}
+
+const { gistId, gistUrl, count, locale } = Astro.props as Props;
+
+const t = createTranslator(locale);
+const commentsUrl = `https://api.github.com/gists/${encodeURIComponent(gistId)}/comments?per_page=100`;
+const countTemplate = t('gist.comments', { count: '__count__' });
+---
+
+<section
+  class="gist-comments"
+  id="comments"
+  data-gist-comments
+  data-gist-id={gistId}
+  data-gist-url={gistUrl}
+  data-comments-url={commentsUrl}
+  data-count-template={countTemplate}
+  data-label-loading={t('gist.commentsLoading')}
+  data-label-empty={t('gist.commentsEmpty')}
+  data-label-unavailable={t('gist.commentsUnavailable')}
+  data-label-view={t('gist.viewOnGitHub')}
+  aria-busy="true"
+>
+  <h2 class="section__title" data-comments-heading>
+    {t('gist.comments', { count })}
+  </h2>
+
+  <p class="bio gist-comments__status" data-comments-status role="status" hidden></p>
+  <ol class="guestbook-list" data-comments-list hidden></ol>
+
+  <noscript>
+    <p class="bio">
+      {t('gist.commentsNoJs')}{' '}
+      <a href={gistUrl} target="_blank" rel="noopener noreferrer">
+        {t('gist.viewOnGitHub')} ↗
+      </a>
+    </p>
+  </noscript>
+
+  <div class="guestbook__actions">
+    <a
+      class="guestbook__cta"
+      href={gistUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {t('gist.commentOnGitHub')} ↗
+    </a>
+    <span class="guestbook__hosted">{t('gist.commentsHosted')}</span>
+  </div>
+</section>
+
+<script>
+  import { initGistComments } from '../scripts/gist-comments';
+
+  initGistComments();
+</script>

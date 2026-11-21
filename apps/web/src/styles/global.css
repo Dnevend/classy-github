@@ -1827,6 +1827,16 @@ img {
   color: var(--fg-muted);
 }
 
+/* Gist 评论区：卡片样式复用上面的留言簿，只补区块间距 */
+.gist-comments {
+  max-width: 760px;
+  margin-top: 32px;
+}
+
+.gist-comments__status {
+  margin: 0 0 14px;
+}
+
 /* 网站环页面 */
 .webring-page__head {
   margin-bottom: 22px;

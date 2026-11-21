@@ -1,5 +1,6 @@
 ---
 import { siteOrigin } from "../../../lib/site";
+import GistComments from '../../../components/GistComments.astro';
 import NotFound from '../../../components/NotFound.astro';
 import ServiceError from '../../../components/ServiceError.astro';
 import { loadGistDetail } from '../../../lib/gist-detail';
@@ -129,6 +130,13 @@ const readingMinutes = data
             <Markdown html={file.html} title={file.filename} />
           </>
         ))}
+
+        <GistComments
+          gistId={gistId}
+          gistUrl={data.gist.html_url}
+          count={data.gist.comments}
+          locale={Astro.locals.locale}
+        />
       </>
     ) : null
   }
