@@ -45,3 +45,5 @@ build
 
 # Playwright MCP 的截图/快照临时目录
 .playwright-mcp/
+
+specs/
