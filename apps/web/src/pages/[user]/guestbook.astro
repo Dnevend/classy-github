@@ -35,6 +35,7 @@ const userinfo = data?.userinfo ?? null;
 const gist = data?.gist ?? null;
 const comments = data?.comments ?? [];
 const commentsUnavailable = data?.commentsUnavailable ?? false;
+const gistMisconfigured = data?.gistMisconfigured ?? false;
 
 if (Astro.locals.localeChoice === 'auto') {
   Astro.locals.locale = localeFromConfig(config.language);
@@ -83,6 +84,7 @@ const rendered = await Promise.all(
 
 const display = userinfo?.name || userinfo?.login || user;
 const gistUrl = gist ? `${gist.html_url}#comments` : null;
+const setupUrl = `/setup?u=${encodeURIComponent(user)}#guestbook`;
 ---
 
 <Layout
@@ -118,7 +120,16 @@ const gistUrl = gist ? `${gist.html_url}#comments` : null;
         {!gistId ? (
           <p class="bio">{t('guestbook.disabled')}</p>
         ) : !gist ? (
-          <p class="bio">{t('guestbook.unavailable')}</p>
+          gistMisconfigured ? (
+            <div class="guestbook__notice">
+              <p class="bio">{t('guestbook.misconfigured')}</p>
+              <a class="guestbook__cta" href={setupUrl}>
+                {t('guestbook.configure')} →
+              </a>
+            </div>
+          ) : (
+            <p class="bio">{t('guestbook.unavailable')}</p>
+          )
         ) : (
           <>
             {commentsUnavailable ? (

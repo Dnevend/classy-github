@@ -1533,6 +1533,11 @@ img {
   background: var(--bg-elevated);
 }
 
+/* 留言簿不可用时的「去配置页」深链落点，避免被吸顶导航挡住 */
+#guestbook {
+  scroll-margin-top: calc(var(--classy-header-offset, 96px) + 12px);
+}
+
 .setup-section h2 {
   margin: 0 0 10px;
   font-size: 14px;
@@ -1733,6 +1738,12 @@ img {
 
 .guestbook__head {
   margin-bottom: 20px;
+}
+
+.guestbook__notice {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
 }
 
 .guestbook__count {

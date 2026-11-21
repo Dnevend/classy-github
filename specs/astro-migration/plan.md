@@ -505,6 +505,13 @@ README 里的 `/badge/<user>.svg?theme=...` 等子资源请求不再覆盖
 `classy_theme` / `classy_lang`；只有顶层 HTML 导航才写偏好 cookie。
 详见 `m38-theme-cookie-subresources.md`。
 
+### M39 · 留言簿配置错误提示（已完成 2026-11-21）
+
+留言簿不可用时区分「配置错误」和「临时故障」：Gist 404 / 非公开 /
+owner 不匹配时提示站主检查 Gist ID，并链接到
+`/setup?u=<user>#guestbook`；限流和评论接口故障仍显示「暂时不可用」。
+详见 `m39-guestbook-setup-hint.md`。
+
 ## 9. 分支与部署策略
 
 | 分支 | 角色 | 部署 |

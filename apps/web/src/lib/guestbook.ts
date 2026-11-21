@@ -21,6 +21,8 @@ export interface GuestbookData {
   comments: GistComment[];
   /** 评论接口失败时保留 gist 本身，页面显示“评论暂时不可用” */
   commentsUnavailable: boolean;
+  /** Gist 不存在、非公开或不属于当前用户：提示站主改配置 */
+  gistMisconfigured: boolean;
 }
 
 interface GistCommentsQueryData {
@@ -65,13 +67,23 @@ const loadGuestbookRest = async (
   let gist: Gist | null = null;
   let comments: GistComment[] = [];
   let commentsUnavailable = false;
+  let gistMisconfigured = false;
 
   if (gistId) {
-    gist = await getGist(gistId).catch(() => null);
+    try {
+      gist = await getGist(gistId);
+    } catch (error) {
+      // 404 = Gist 不存在 / 已删除 / 对匿名请求不可见；
+      // 限流、网络和 5xx 只是暂时取不到，不能据此让站主改配置。
+      gistMisconfigured = isNotFound(error);
+    }
 
     // 配置是公开的，必须确认这条 Gist 确实属于当前用户，
     // 否则任何人都能把别人的评论区嵌进自己的页面。
-    if (gist && !validGist(gist, userinfo)) gist = null;
+    if (gist && !validGist(gist, userinfo)) {
+      gist = null;
+      gistMisconfigured = true;
+    }
 
     if (gist) {
       try {
@@ -82,7 +94,7 @@ const loadGuestbookRest = async (
     }
   }
 
-  return { userinfo, gist, comments, commentsUnavailable };
+  return { userinfo, gist, comments, commentsUnavailable, gistMisconfigured };
 };
 
 /**
@@ -112,13 +124,21 @@ export async function loadGuestbook(
   }
 
   let gist = gistId ? gists.find((item) => item.id === gistId) ?? null : null;
+  let gistMisconfigured = false;
 
   // 用户 gist 超过 100 个时，配置里的 gist 可能不在第一页；回退一次 REST。
   if (gistId && !gist) {
-    gist = await getGist(gistId).catch(() => null);
+    try {
+      gist = await getGist(gistId);
+    } catch (error) {
+      gistMisconfigured = isNotFound(error);
+    }
   }
 
-  if (gist && !validGist(gist, userinfo)) gist = null;
+  if (gist && !validGist(gist, userinfo)) {
+    gist = null;
+    gistMisconfigured = true;
+  }
 
   let comments: GistComment[] = [];
   let commentsUnavailable = false;
@@ -133,5 +153,5 @@ export async function loadGuestbook(
     }
   }
 
-  return { userinfo, gist, comments, commentsUnavailable };
+  return { userinfo, gist, comments, commentsUnavailable, gistMisconfigured };
 }

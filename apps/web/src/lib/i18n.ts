@@ -110,6 +110,9 @@ const messages = {
     'guestbook.count': '{count} messages',
     'guestbook.view': 'View on GitHub',
     'guestbook.unavailable': 'This guestbook is unavailable right now.',
+    'guestbook.misconfigured':
+      "This guestbook's Gist ID is misconfigured. If you're the owner, make sure it points to a public Gist you created.",
+    'guestbook.configure': 'Open setup',
     'guestbook.disabled': 'This user has not opened a guestbook yet.',
     'guestbook.back': 'Back to profile',
 
@@ -319,6 +322,9 @@ const messages = {
     'guestbook.count': '{count} 条留言',
     'guestbook.view': '在 GitHub 查看',
     'guestbook.unavailable': '这个留言簿暂时不可用。',
+    'guestbook.misconfigured':
+      '这个留言簿的 Gist ID 配置有误。如果你是站主，请确认它指向你自己创建的公开 Gist。',
+    'guestbook.configure': '去配置页修改',
     'guestbook.disabled': '这个用户还没有开留言簿。',
     'guestbook.back': '返回主页',
 
