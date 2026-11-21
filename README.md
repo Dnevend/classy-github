@@ -9,7 +9,6 @@
 <p align="center">
   <a href="https://classygit.dev" target="_blank"><strong>在线体验</strong></a> ·
   <a href="#三分钟开始"><strong>3 分钟开始</strong></a> ·
-  <a href="https://classygit.dev/setup" target="_blank"><strong>配置生成器</strong></a> ·
   <a href="./README.en.md">English</a>
 </p>
 
@@ -21,7 +20,9 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-不用部署、登录、服务器，把 GitHub 变成你的复古个人主页 + 博客。打开 [classygit.dev](https://classygit.dev) 立刻体验。
+不用部署、登录、服务器，把 GitHub 变成你的复古主页和博客。加入的站点互相链接，就像早期互联网的[友链圈](https://classygit.dev/webring)。
+
+没有数据库、没有后台、没有账号体系，只有 GitHub 里的文件；不搬文章、不换编辑器，Gist 写完就算发布。
 
 <table>
   <tr>
@@ -48,15 +49,13 @@
 
 ## 为什么是 ClassyGit
 
-ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要求你把文章搬过来：它把你已经在 GitHub 上的公开数据——个人主页 README、仓库、Gist、Gist 评论——直接渲染成一座个人主页 + 博客。
+ClassyGit 不是又一个静态博客生成器。它不托管内容，也不要求你把文章搬过来：它把你已经在 GitHub 上的公开数据（个人主页 README、仓库、Gist、Gist 评论）直接渲染成你的个人主页和博客。
 
 - **不用部署**：Fork 仓库，改一个 `classy.config.json`，最多 5 分钟生效。没有 build、CI、发布按钮。
 - **不用登录**：访客打开链接就能看；站主也不用注册，配置就是 GitHub 上的一个文件。
 - **不用服务器**：内容在 GitHub，页面由 Cloudflare 边缘渲染。没有 VPS、数据库、对象存储要维护。
 
-> 你的内容不在 ClassyGit 的数据库里，它一直在你的 GitHub 上。ClassyGit 只是一层可以替换的皮肤。即使公共实例哪天停止，README、仓库、Gist 和留言仍然在 GitHub；代码是 MIT，换一个实例或自建就能继续。
-
-适合想有主页但不想维护服务器的人、已经在 GitHub 写 README / 用 Gist 记笔记的人，以及喜欢 System 6、8-bit、Windows 98、DOS 复古美学的人。
+> 你的内容不在 ClassyGit 的数据库里，它一直在你的 GitHub 上。ClassyGit 只是一层可以替换的皮肤。即使公共实例哪天停止，README、仓库、Gist 和留言仍然在 GitHub，换一个实例或自建就能继续。
 
 ## 三分钟开始
 

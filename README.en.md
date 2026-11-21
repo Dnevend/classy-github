@@ -9,7 +9,6 @@
 <p align="center">
   <a href="https://classygit.dev" target="_blank"><strong>Live demo</strong></a> ·
   <a href="#get-started-in-3-minutes"><strong>3-minute setup</strong></a> ·
-  <a href="https://classygit.dev/setup" target="_blank"><strong>Config builder</strong></a> ·
   <a href="./README.md">中文</a>
 </p>
 
@@ -21,7 +20,9 @@
   <a href="https://github.com/Dnevend/classy-github"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Dnevend/classy-github?style=flat-square&color=black"></a>
 </p>
 
-No deploy, no login, no server: turn GitHub into your retro personal homepage + blog. Try it now at [classygit.dev](https://classygit.dev).
+No deploy, no login, no server: turn GitHub into your retro homepage and blog. Sites in the ring link to each other, like the [blogrolls](https://classygit.dev/webring) of the early web.
+
+No database, no backend, no accounts — just files on GitHub. No migrating posts, no switching editors: writing a Gist is publishing.
 
 <table>
   <tr>
@@ -48,15 +49,13 @@ No deploy, no login, no server: turn GitHub into your retro personal homepage + 
 
 ## Why ClassyGit
 
-ClassyGit is not another static blog generator. It does not host your content, and it does not ask you to move your posts: it renders the public data you already have on GitHub — your profile README, repositories, Gists and Gist comments — as a personal homepage + blog.
+ClassyGit is not another static blog generator. It does not host your content, and it does not ask you to move your posts: it renders the public data you already have on GitHub (your profile README, repositories, Gists and Gist comments) as your personal homepage and blog.
 
 - **No deploy**: fork the repo, edit one `classy.config.json`, and it goes live within 5 minutes. No build, no CI, no publish button.
 - **No login**: visitors just open the link. Site owners do not need a ClassyGit account either; the config is a file on GitHub.
 - **No server to buy**: content lives on GitHub and pages are rendered at Cloudflare's edge. No VPS, database or object storage to maintain.
 
-> **Your content is not in a ClassyGit database. It stays on your GitHub. ClassyGit is just a replaceable skin.** Even if this public instance disappears one day, your README, repositories, Gists and comments are still on GitHub. The code is MIT, so you can point another instance at it or self-host.
-
-It is for people who want a homepage without maintaining a server, people who already write READMEs and keep notes in Gists, and people who like System 6, 8-bit, Windows 98 or DOS aesthetics.
+> **Your content is not in a ClassyGit database. It stays on your GitHub. ClassyGit is just a replaceable skin.** Even if this public instance disappears one day, your README, repositories, Gists and comments are still on GitHub; point another instance at it or self-host.
 
 ## Get started in 3 minutes
 
